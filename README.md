@@ -6,8 +6,14 @@ related work doc: https://docs.google.com/document/d/1TV4DK-k_piT9tu1Gv3QvJAEDqo
 
 ### startup
 
+cloning:
+
     git clone https://github.com/jeremywrnr/peer-feedback
     cd app
+    meteor npm install
+
+running:
+
+    open http://localhost:3000
     meteor
-    open http://localhost:4000
 

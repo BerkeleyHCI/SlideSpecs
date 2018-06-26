@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import React, {Component} from 'react';
+import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Meteor } from 'meteor/meteor';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
+import {Meteor} from 'meteor/meteor';
 
-import { Lists } from '../../api/lists/lists.js';
+import {Lists} from '../../api/lists/lists.js';
 import UserMenu from '../components/UserMenu.jsx';
 import ListList from '../components/ListList.jsx';
 import LanguageToggle from '../components/LanguageToggle.jsx';
@@ -21,7 +21,7 @@ export default class App extends Component {
   static getDerivedStateFromProps(nextProps) {
     // Store a default list path that can be redirected to from "/" when
     // the list is ready.
-    const newState = { defaultList: null, redirectTo: null };
+    const newState = {defaultList: null, redirectTo: null};
     if (!nextProps.loading) {
       const list = Lists.findOne();
       newState.defaultList = `/lists/${list._id}`;
@@ -44,7 +44,7 @@ export default class App extends Component {
   componentDidMount() {
     setTimeout(() => {
       /* eslint-disable react/no-did-mount-set-state */
-      this.setState({ showConnectionIssue: true });
+      this.setState({showConnectionIssue: true});
     }, CONNECTION_ISSUE_TIMEOUT);
   }
 
@@ -60,8 +60,8 @@ export default class App extends Component {
   }
 
   renderRedirect(location) {
-    const { redirectTo, defaultList } = this.state;
-    const { pathname } = location;
+    const {redirectTo, defaultList} = this.state;
+    const {pathname} = location;
     let redirect = null;
     if (redirectTo && redirectTo !== pathname) {
       redirect = <Redirect to={redirectTo} />;
@@ -72,14 +72,8 @@ export default class App extends Component {
   }
 
   renderContent(location) {
-    const {
-      user,
-      connected,
-      lists,
-      menuOpen,
-      loading,
-    } = this.props;
-    const { showConnectionIssue } = this.state;
+    const {user, connected, lists, menuOpen, loading} = this.props;
+    const {showConnectionIssue} = this.state;
 
     const commonChildProps = {
       menuOpen: this.props.menuOpen,
@@ -88,28 +82,21 @@ export default class App extends Component {
     return (
       <div id="container" className={menuOpen ? 'menu-open' : ''}>
         <section id="menu">
-          <LanguageToggle />
           <UserMenu user={user} logout={this.logout} />
           <ListList lists={lists} />
         </section>
-        {showConnectionIssue && !connected
-          ? <ConnectionNotification />
-          : null}
+        {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div className="content-overlay" onClick={this.closeMenu} />
         <div id="content-container">
           {loading ? (
             <Loading key="loading" />
           ) : (
             <TransitionGroup>
-              <CSSTransition
-                key={location.key}
-                classNames="fade"
-                timeout={200}
-              >
+              <CSSTransition key={location.key} classNames="fade" timeout={200}>
                 <Switch location={location}>
                   <Route
                     path="/lists/:id"
-                    render={({ match }) => (
+                    render={({match}) => (
                       <ListPageContainer match={match} {...commonChildProps} />
                     )}
                   />
@@ -138,9 +125,9 @@ export default class App extends Component {
     return (
       <BrowserRouter>
         <Route
-          render={({ location }) => (
+          render={({location}) =>
             this.renderRedirect(location) || this.renderContent(location)
-          )}
+          }
         />
       </BrowserRouter>
     );
