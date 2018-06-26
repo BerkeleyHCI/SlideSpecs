@@ -64,4 +64,4 @@ shell-server@0.3.1
 # security
 audit-argument-checks@1.0.7
 dynamic-import@0.3.0
-reactive-var
+reactive-var@1.0.11
