@@ -5,11 +5,7 @@ import BaseComponent from './BaseComponent.jsx';
 class Loading extends BaseComponent {
   render() {
     return (
-      <img
-        src="/logo-todos.svg"
-        className="loading-app"
-        alt={i18n.__('components.loading.loading')}
-      />
+      <img src="/logo-todos.svg" className="loading-app" alt="loading..." />
     );
   }
 }

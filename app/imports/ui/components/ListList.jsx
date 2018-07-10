@@ -2,10 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
-import i18n from 'meteor/universe:i18n';
+import {NavLink} from 'react-router-dom';
 import BaseComponent from './BaseComponent.jsx';
-import { insert } from '../../api/lists/methods.js';
+import {insert} from '../../api/lists/methods.js';
 
 export default class ListList extends BaseComponent {
   constructor(props) {
@@ -14,42 +13,41 @@ export default class ListList extends BaseComponent {
   }
 
   createNewList() {
-    const listId = insert.call({ locale: i18n.getLocale() }, (err) => {
+    const listId = insert.call({locale: i18n.getLocale()}, err => {
       if (err) {
         this.redirectTo('/');
         /* eslint-disable no-alert */
-        alert(i18n.__('components.listList.newListError'));
+        alert('Error.');
       }
     });
     this.redirectTo(`/lists/${listId}`);
   }
 
   render() {
-    const { lists } = this.props;
-    return this.renderRedirect() || (
-      <div className="list-todos">
-        <a className="link-list-new" onClick={this.createNewList}>
-          <span className="icon-plus" />
-          {i18n.__('components.listList.newList')}
-        </a>
-        {lists.map(list => (
-          <NavLink
-            to={`/lists/${list._id}`}
-            key={list._id}
-            title={list.name}
-            className="list-todo"
-            activeClassName="active"
-          >
-            {list.userId
-              ? <span className="icon-lock" />
-              : null}
-            {list.incompleteCount
-              ? <span className="count-list">{list.incompleteCount}</span>
-              : null}
-            {list.name}
-          </NavLink>
-        ))}
-      </div>
+    const {lists} = this.props;
+    return (
+      this.renderRedirect() || (
+        <div className="list-todos">
+          <a className="link-list-new" onClick={this.createNewList}>
+            <span className="icon-plus" />
+            New List
+          </a>
+          {lists.map(list => (
+            <NavLink
+              to={`/lists/${list._id}`}
+              key={list._id}
+              title={list.name}
+              className="list-todo"
+              activeClassName="active">
+              {list.userId ? <span className="icon-lock" /> : null}
+              {list.incompleteCount ? (
+                <span className="count-list">{list.incompleteCount}</span>
+              ) : null}
+              {list.name}
+            </NavLink>
+          ))}
+        </div>
+      )
     );
   }
 }

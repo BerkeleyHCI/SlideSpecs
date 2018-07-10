@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import i18n from 'meteor/universe:i18n';
 
 import BaseComponent from '../components/BaseComponent.jsx';
 import ListHeader from '../components/ListHeader.jsx';
@@ -38,8 +37,8 @@ export default class ListPage extends BaseComponent {
     if (!todos || !todos.length) {
       Todos = (
         <Message
-          title={i18n.__('pages.listPage.noTasks')}
-          subtitle={i18n.__('pages.listPage.addAbove')}
+          title='no tasks'
+          subtitle='add above'
         />
       );
     } else {
@@ -58,7 +57,7 @@ export default class ListPage extends BaseComponent {
         <ListHeader list={list} menuOpen={this.props.menuOpen} />
         <div className="content-scrollable list-items">
           {loading
-            ? <Message title={i18n.__('pages.listPage.loading')} />
+            ? <Message title='loading' />
             : Todos}
         </div>
       </div>

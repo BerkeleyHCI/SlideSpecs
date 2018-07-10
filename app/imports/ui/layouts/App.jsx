@@ -7,7 +7,6 @@ import {Meteor} from 'meteor/meteor';
 import {Lists} from '../../api/lists/lists.js';
 import UserMenu from '../components/UserMenu.jsx';
 import ListList from '../components/ListList.jsx';
-import LanguageToggle from '../components/LanguageToggle.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import ListPageContainer from '../containers/ListPageContainer.jsx';

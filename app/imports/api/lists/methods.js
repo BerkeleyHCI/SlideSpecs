@@ -1,31 +1,31 @@
-import { Meteor } from 'meteor/meteor';
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
-import { _ } from 'meteor/underscore';
+import {Meteor} from 'meteor/meteor';
+import {ValidatedMethod} from 'meteor/mdg:validated-method';
+import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
+import {_} from 'meteor/underscore';
 
-import { Lists } from './lists.js';
+import {Lists} from './lists.js';
 
 const LIST_ID_ONLY = new SimpleSchema({
-  listId: { type: String },
+  listId: {type: String},
 }).validator();
 
 export const insert = new ValidatedMethod({
-  name: 'lists.insert',
+  name: 'insert',
   validate: new SimpleSchema({
     locale: {
       type: String,
     },
   }).validator(),
-  run({ locale }) {
+  run({locale}) {
     return Lists.insert({}, null, locale);
   },
 });
 
 export const makePrivate = new ValidatedMethod({
-  name: 'lists.makePrivate',
+  name: 'make private',
   validate: LIST_ID_ONLY,
-  run({ listId }) {
+  run({listId}) {
     if (!this.userId) {
       throw new Meteor.Error(
         'api.lists.makePrivate.notLoggedIn',
@@ -43,15 +43,15 @@ export const makePrivate = new ValidatedMethod({
     }
 
     Lists.update(listId, {
-      $set: { userId: this.userId },
+      $set: {userId: this.userId},
     });
   },
 });
 
 export const makePublic = new ValidatedMethod({
-  name: 'lists.makePublic',
+  name: 'make public',
   validate: LIST_ID_ONLY,
-  run({ listId }) {
+  run({listId}) {
     if (!this.userId) {
       throw new Meteor.Error(
         'api.lists.makePublic.notLoggedIn',
@@ -64,31 +64,31 @@ export const makePublic = new ValidatedMethod({
     if (!list.editableBy(this.userId)) {
       throw new Meteor.Error(
         'api.lists.makePublic.accessDenied',
-        'You don\'t have permission to edit this list.',
+        "You don't have permission to edit this list.",
       );
     }
 
     // XXX the security check above is not atomic, so in theory a race condition could
     // result in exposing private data
     Lists.update(listId, {
-      $unset: { userId: true },
+      $unset: {userId: true},
     });
   },
 });
 
 export const updateName = new ValidatedMethod({
-  name: 'lists.updateName',
+  name: 'update name',
   validate: new SimpleSchema({
-    listId: { type: String },
-    newName: { type: String },
+    listId: {type: String},
+    newName: {type: String},
   }).validator(),
-  run({ listId, newName }) {
+  run({listId, newName}) {
     const list = Lists.findOne(listId);
 
     if (!list.editableBy(this.userId)) {
       throw new Meteor.Error(
         'api.lists.updateName.accessDenied',
-        'You don\'t have permission to edit this list.',
+        "You don't have permission to edit this list.",
       );
     }
 
@@ -96,21 +96,21 @@ export const updateName = new ValidatedMethod({
     // result in exposing private data
 
     Lists.update(listId, {
-      $set: { name: newName },
+      $set: {name: newName},
     });
   },
 });
 
 export const remove = new ValidatedMethod({
-  name: 'lists.remove',
+  name: 'remove',
   validate: LIST_ID_ONLY,
-  run({ listId }) {
+  run({listId}) {
     const list = Lists.findOne(listId);
 
     if (!list.editableBy(this.userId)) {
       throw new Meteor.Error(
-        'api.lists.remove.accessDenied',
-        'You don\'t have permission to remove this list.',
+        'access denied',
+        "You don't have permission to remove this list.",
       );
     }
 
@@ -119,7 +119,7 @@ export const remove = new ValidatedMethod({
 
     if (list.isLastPublicList()) {
       throw new Meteor.Error(
-        'api.lists.remove.lastPublicList',
+        'remove last public list',
         'Cannot delete the last public list.',
       );
     }
@@ -129,22 +129,25 @@ export const remove = new ValidatedMethod({
 });
 
 // Get list of all method names on Lists
-const LISTS_METHODS = _.pluck([
-  insert,
-  makePublic,
-  makePrivate,
-  updateName,
-  remove,
-], 'name');
+const LISTS_METHODS = _.pluck(
+  [insert, makePublic, makePrivate, updateName, remove],
+  'name',
+);
 
 if (Meteor.isServer) {
   // Only allow 5 list operations per connection per second
-  DDPRateLimiter.addRule({
-    name(name) {
-      return _.contains(LISTS_METHODS, name);
-    },
+  DDPRateLimiter.addRule(
+    {
+      name(name) {
+        return _.contains(LISTS_METHODS, name);
+      },
 
-    // Rate limit per connection ID
-    connectionId() { return true; },
-  }, 5, 1000);
+      // Rate limit per connection ID
+      connectionId() {
+        return true;
+      },
+    },
+    5,
+    1000,
+  );
 }

@@ -1,18 +1,13 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Factory } from 'meteor/factory';
-import i18n from 'meteor/universe:i18n';
 import { Todos } from '../todos/todos.js';
 
 class ListsCollection extends Mongo.Collection {
   insert(list, callback, locale = 'en') {
     const ourList = list;
     if (!ourList.name) {
-      const defaultName = i18n.__(
-        'api.lists.insert.list',
-        null,
-        { _locale: locale },
-      );
+      const defaultName = 'insert list'
       let nextLetter = 'A';
       ourList.name = `${defaultName} ${nextLetter}`;
 
