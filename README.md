@@ -21,4 +21,5 @@ running:
 ### reference
 
 - tesseract, ocr library: https://github.com/tesseract-ocr/tesseract/wiki
+    - faq: https://github.com/tesseract-ocr/tesseract/wiki/FAQ
 
