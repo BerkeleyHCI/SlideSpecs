@@ -1,26 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { _ } from 'meteor/underscore';
+import {_} from 'meteor/underscore';
 import classnames from 'classnames';
-import i18n from 'meteor/universe:i18n';
 import BaseComponent from './BaseComponent.jsx';
-import { displayError } from '../helpers/errors.js';
+import {displayError} from '../helpers/errors.js';
 
-import {
-  setCheckedStatus,
-  updateText,
-  remove,
-} from '../../api/todos/methods.js';
+import {setCheckedStatus, updateText, remove} from '../../api/todos/methods.js';
 
 export default class TodoItem extends BaseComponent {
   constructor(props) {
     super(props);
-    this.throttledUpdate = _.throttle((value) => {
+    this.throttledUpdate = _.throttle(value => {
       if (value) {
-        updateText.call({
-          todoId: this.props.todo._id,
-          newText: value,
-        }, displayError);
+        updateText.call(
+          {
+            todoId: this.props.todo._id,
+            newText: value,
+          },
+          displayError,
+        );
       }
     }, 300);
 
@@ -51,11 +49,11 @@ export default class TodoItem extends BaseComponent {
   }
 
   deleteTodo() {
-    remove.call({ todoId: this.props.todo._id }, displayError);
+    remove.call({todoId: this.props.todo._id}, displayError);
   }
 
   render() {
-    const { todo, editing } = this.props;
+    const {todo, editing} = this.props;
     const todoClass = classnames({
       'list-item': true,
       checked: todo.checked,
@@ -75,10 +73,9 @@ export default class TodoItem extends BaseComponent {
           <span className="checkbox-custom" />
         </label>
         <input
-
           type="text"
           defaultValue={todo.text}
-          placeholder={i18n.__('components.todoItem.taskName')}
+          placeholder="taskName"
           onFocus={this.onFocus}
           onBlur={this.onBlur}
           onChange={this.updateTodo}
@@ -87,8 +84,7 @@ export default class TodoItem extends BaseComponent {
           className="delete-item"
           href="#delete"
           onClick={this.deleteTodo}
-          onMouseDown={this.deleteTodo}
-        >
+          onMouseDown={this.deleteTodo}>
           <span className="icon-trash" />
         </a>
       </div>

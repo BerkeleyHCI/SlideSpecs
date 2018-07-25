@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import i18n from 'meteor/universe:i18n';
 import BaseComponent from './BaseComponent.jsx';
 
 class MobileMenu extends BaseComponent {
@@ -17,10 +16,7 @@ class MobileMenu extends BaseComponent {
     return (
       <div className="nav-group">
         <a href="#toggle-menu" className="nav-item" onClick={this.toggleMenu}>
-          <span
-            className="icon-list-unordered"
-            title={i18n.__('components.mobileMenu.showMenu')}
-          />
+          <span className="icon-list-unordered" title="showMenu" />
         </a>
       </div>
     );

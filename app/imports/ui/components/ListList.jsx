@@ -13,7 +13,7 @@ export default class ListList extends BaseComponent {
   }
 
   createNewList() {
-    const listId = insert.call({locale: i18n.getLocale()}, err => {
+    const listId = insert.call({}, err => {
       if (err) {
         this.redirectTo('/');
         /* eslint-disable no-alert */
