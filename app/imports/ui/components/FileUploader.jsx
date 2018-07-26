@@ -1,5 +1,6 @@
 import {withTracker} from 'meteor/react-meteor-data';
 import {Meteor} from 'meteor/meteor';
+import {Files} from '../../api/files/files.js';
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
@@ -31,7 +32,7 @@ class FileUploadComponent extends Component {
       var file = e.currentTarget.files[0];
 
       if (file) {
-        let uploadInstance = UserFiles.insert(
+        let uploadInstance = Files.insert(
           {
             file: file,
             meta: {
@@ -128,7 +129,7 @@ class FileUploadComponent extends Component {
       // (make sure the subscription only sends files owned by this user)
       let display = fileCursors.map((aFile, key) => {
         // console.log('A file: ', aFile.link(), aFile.get('name'))
-        let link = UserFiles.findOne({_id: aFile._id}).link(); //The "view/download" link
+        let link = Files.findOne({_id: aFile._id}).link(); //The "view/download" link
 
         // Send out components that show details of each file
         return (
@@ -177,7 +178,7 @@ class FileUploadComponent extends Component {
 export default withTracker(props => {
   const filesHandle = Meteor.subscribe('files.all');
   const docsReadyYet = filesHandle.ready();
-  const files = UserFiles.find({}, {sort: {name: 1}}).fetch();
+  const files = Files.find({}, {sort: {name: 1}}).fetch();
 
   return {
     docsReadyYet,
