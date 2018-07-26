@@ -6,6 +6,8 @@ import { Todos } from '../../api/todos/todos.js';
 // TODO write this data with your slide information.
 // Sketching out the database structure for application.
 
+// import { FilesCollection } from 'meteor/ostrio:files';
+
 Meteor.startup(() => {
   if (Lists.find().count() === 0) {
     const data = [
