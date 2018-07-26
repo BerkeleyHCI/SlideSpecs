@@ -19,22 +19,11 @@ const Files = new FilesCollection({
   },
 });
 
-if (Meteor.isClient) {
+/*
   Meteor.subscribe('files.images.all');
-}
-
-if (Meteor.isServer) {
   Meteor.publish('files.images.all', function() {
     return Images.find().cursor;
   });
-}
-
-// unused
-
-const schema = new SimpleSchema({
-  name: {type: String},
-  incompleteCount: {type: Number, defaultValue: 0},
-  userId: {type: String, regEx: SimpleSchema.RegEx.Id, optional: true},
-});
+ * */
 
 export default Files;
