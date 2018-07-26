@@ -8,7 +8,7 @@ import IndividualFile from './FileIndividualFile.jsx';
 
 const debug = require('debug')('demo:file');
 
-class FileUploadComponent extends Component {
+class FileUploader extends Component {
   constructor(props) {
     super(props);
 
@@ -175,13 +175,4 @@ class FileUploadComponent extends Component {
 // This is the HOC - included in this file just for convenience, but usually kept
 // in a separate file to provide separation of concerns.
 //
-export default withTracker(props => {
-  const filesHandle = Meteor.subscribe('files.all');
-  const docsReadyYet = filesHandle.ready();
-  const files = Files.find({}, {sort: {name: 1}}).fetch();
-
-  return {
-    docsReadyYet,
-    files,
-  };
-})(FileUploadComponent);
+export default FileUploader;
