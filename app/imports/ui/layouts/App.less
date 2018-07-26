@@ -16,12 +16,12 @@ body {
 
   @media screen and (min-width: 60em) {
     left: @column;
-    right: @column;
+    /*right: @column;*/
   }
 
   @media screen and (min-width: 80em) {
-    left: 2*@column;
-    right: 2*@column;
+    left: 2 * @column;
+    /*right: 2 * @column;*/
   }
 
   // Hide anything offscreen
@@ -55,12 +55,16 @@ body {
   // Toggle menu on mobile
   .menu-open & {
     transform: translate3d(@menu-width, 0, 0);
-    opacity: .85;
+    opacity: 0.85;
     left: 0;
 
     @media screen and (min-width: 40em) {
       // Show menu on desktop, negate .menu-open
-      transform: translate3d(0, 0, 0); //reset transform and use position properties instead
+      transform: translate3d(
+        0,
+        0,
+        0
+      ); //reset transform and use position properties instead
       opacity: 1;
       left: @menu-width;
     }
@@ -78,5 +82,7 @@ body {
   }
 
   // Hide overlay on desktop
-  @media screen and (min-width: 40em) { display: none; }
+  @media screen and (min-width: 40em) {
+    display: none;
+  }
 }
