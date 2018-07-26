@@ -13,4 +13,14 @@ const Files = new FilesCollection({
   },
 });
 
+if (Meteor.isClient) {
+  Meteor.subscribe('files.all');
+}
+
+if (Meteor.isServer) {
+  Meteor.publish('files.all', function() {
+    return Files.find().cursor;
+  });
+}
+
 export default Files;
