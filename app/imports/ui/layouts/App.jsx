@@ -91,7 +91,7 @@ export default class App extends Component {
             <Loading key="loading" />
           ) : (
             <TransitionGroup>
-              <CSSTransition key={location.key} classNames="fade" timeout={200}>
+              <CSSTransition key={location.key} classNames="fade" timeout={100}>
                 <Switch location={location}>
                   <Route
                     path="/lists/:id"

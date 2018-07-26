@@ -6,31 +6,6 @@ import {Todos} from '../todos/todos.js';
 import {Meteor} from 'meteor/meteor';
 import {FilesCollection} from 'meteor/ostrio:files';
 
-class FilesCollection extends Mongo.Collection {
-  insert(list, callback, locale = 'en') {
-    const ourList = list;
-    if (!ourList.name) {
-      const defaultName = 'insert list';
-      let nextLetter = 'A';
-      ourList.name = `${defaultName} ${nextLetter}`;
-
-      while (this.findOne({name: ourList.name})) {
-        // not going to be too smart here, can go past Z
-        nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
-        ourList.name = `${defaultName} ${nextLetter}`;
-      }
-    }
-
-    return super.insert(ourList, callback);
-  }
-  remove(selector, callback) {
-    Todos.remove({listId: selector});
-    return super.remove(selector, callback);
-  }
-}
-
-export const Files = new FilesCollection('Files');
-
 // Deny all client-side updates since we will be using methods to manage this collection
 Files.deny({
   insert() {
@@ -107,3 +82,5 @@ if (Meteor.isServer) {
     return Images.find().cursor;
   });
 }
+
+export const Files = new FilesCollection('Files');
