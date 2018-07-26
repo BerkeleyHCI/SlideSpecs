@@ -29,12 +29,12 @@ if (Meteor.isServer) {
   });
 }
 
-Files.schema = new SimpleSchema({
+// unused
+
+const schema = new SimpleSchema({
   name: {type: String},
   incompleteCount: {type: Number, defaultValue: 0},
   userId: {type: String, regEx: SimpleSchema.RegEx.Id, optional: true},
 });
-
-Files.attachSchema(Files.schema);
 
 export default Files;

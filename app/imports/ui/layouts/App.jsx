@@ -9,6 +9,7 @@ import UserMenu from '../components/UserMenu.jsx';
 import ListList from '../components/ListList.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
+import FileUpload from '../components/FileUpload.jsx';
 import ListPageContainer from '../containers/ListPageContainer.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
@@ -99,6 +100,7 @@ export default class App extends Component {
                       <ListPageContainer match={match} {...commonChildProps} />
                     )}
                   />
+                  <Route path="/addFile" render={() => <FileUpload />} />
                   <Route
                     path="/signin"
                     render={() => <AuthPageSignIn {...commonChildProps} />}
@@ -136,12 +138,16 @@ export default class App extends Component {
 App.propTypes = {
   // current meteor user
   user: PropTypes.object,
+
   // server connection status
   connected: PropTypes.bool.isRequired,
+
   // subscription status
   loading: PropTypes.bool.isRequired,
+
   // is side menu open?
   menuOpen: PropTypes.object.isRequired,
+
   // all lists visible to the current user
   lists: PropTypes.array,
 };
