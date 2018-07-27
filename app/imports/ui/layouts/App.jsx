@@ -5,6 +5,7 @@ import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {Meteor} from 'meteor/meteor';
 
 import {Lists} from '../../api/lists/lists.js';
+import {Files} from '../../api/files/files.js';
 import UserMenu from '../components/UserMenu.jsx';
 import ListList from '../components/ListList.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
@@ -72,7 +73,7 @@ export default class App extends Component {
   }
 
   renderContent(location) {
-    const {user, connected, lists, menuOpen, loading} = this.props;
+    const {user, connected, lists, files, menuOpen, loading} = this.props;
     const {showConnectionIssue} = this.state;
 
     const commonChildProps = {
@@ -85,7 +86,8 @@ export default class App extends Component {
           <UserMenu user={user} logout={this.logout} />
           <ListList lists={lists} />
           <h2>
-            <a href="/addFile"> add file </a>
+            {' '}
+            <a href="/addFile"> add file </a>{' '}
           </h2>
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
@@ -103,7 +105,12 @@ export default class App extends Component {
                       <ListPageContainer match={match} {...commonChildProps} />
                     )}
                   />
-                  <Route path="/addFile" render={() => <FileUpload />} />
+                  <Route
+                    path="/addFile"
+                    render={() => (
+                      <FileUpload files={files} {...commonChildProps} />
+                    )}
+                  />
                   <Route
                     path="/signin"
                     render={() => <AuthPageSignIn {...commonChildProps} />}
@@ -153,9 +160,13 @@ App.propTypes = {
 
   // all lists visible to the current user
   lists: PropTypes.array,
+
+  // all visible files
+  files: PropTypes.object,
 };
 
 App.defaultProps = {
   user: null,
   lists: [],
+  files: {},
 };
