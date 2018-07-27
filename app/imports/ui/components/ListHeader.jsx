@@ -80,12 +80,8 @@ export default class ListHeader extends BaseComponent {
 
   deleteList() {
     const {list} = this.props;
-    const message = `Really delete? ${list.name}?`;
-
-    if (confirm(message)) {
-      remove.call({listId: list._id}, displayError);
-      this.redirectTo('/');
-    }
+    remove.call({listId: list._id}, displayError);
+    this.redirectTo('/');
   }
 
   toggleListPrivacy() {

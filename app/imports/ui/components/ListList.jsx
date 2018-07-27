@@ -29,7 +29,7 @@ export default class ListList extends BaseComponent {
         <div className="list-todos">
           <a className="link-list-new" onClick={this.createNewList}>
             <span className="icon-plus" />
-            New List
+            new deck
           </a>
           {lists.map(list => (
             <NavLink

@@ -7,8 +7,8 @@ class ListsCollection extends Mongo.Collection {
   insert(list, callback) {
     const ourList = list;
     if (!ourList.name) {
-      const defaultName = 'insert list';
-      let nextLetter = 'A';
+      const defaultName = 'deck';
+      let nextLetter = 'a';
       ourList.name = `${defaultName} ${nextLetter}`;
 
       while (this.findOne({name: ourList.name})) {
