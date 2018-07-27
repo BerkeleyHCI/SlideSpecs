@@ -10,12 +10,6 @@ export const remove = new ValidatedMethod({
   }).validator(),
   run({fileId}) {
     const file = Files.findOne(fileId);
-    if (!file.editableBy(this.userId)) {
-      throw new Meteor.Error(
-        'files.rename.unauthorized',
-        'Cannot rename file which is not yours',
-      );
-    }
     Files.remove(fileId);
   },
 });
@@ -28,12 +22,6 @@ export const rename = new ValidatedMethod({
   }).validator(),
   run({fileId, newName}) {
     const file = Files.findOne(fileId);
-    if (!file.editableBy(this.userId)) {
-      throw new Meteor.Error(
-        'files.rename.unauthorized',
-        'Cannot rename file which is not yours',
-      );
-    }
     Todos.update(todoId, {$set: {name: newText}});
   },
 });
