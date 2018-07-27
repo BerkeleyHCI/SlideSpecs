@@ -22,6 +22,6 @@ export const rename = new ValidatedMethod({
   }).validator(),
   run({fileId, newName}) {
     const file = Files.findOne(fileId);
-    Todos.update(todoId, {$set: {name: newText}});
+    Files.update(fileId, {$set: {fileName: newName}});
   },
 });
