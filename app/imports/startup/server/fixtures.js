@@ -11,32 +11,6 @@ Meteor.startup(() => {
   if (Lists.find().count() === 0) {
     const data = [
       {
-        name: 'Meteor Principles',
-        items: [
-          'Data on the Wire',
-          'One Language',
-          'Database Everywhere',
-          'Latency Compensation',
-          'Full Stack Reactivity',
-          'Embrace the Ecosystem',
-          'Simplicity Equals Productivity',
-        ],
-      },
-      {
-        name: 'Languages',
-        items: [
-          'Lisp',
-          'C',
-          'C++',
-          'Python',
-          'Ruby',
-          'JavaScript',
-          'Scala',
-          'Erlang',
-          '6502 Assembly',
-        ],
-      },
-      {
         name: 'Favorite Scientists',
         items: [
           'Ada Lovelace',
@@ -50,7 +24,6 @@ Meteor.startup(() => {
     ];
 
     let timestamp = new Date().getTime();
-
     data.forEach(list => {
       const listId = Lists.insert({
         name: list.name,
