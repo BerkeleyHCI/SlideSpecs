@@ -11,12 +11,11 @@ const menuOpen = new ReactiveVar(false);
 export default withTracker(() => {
   const pubH = Meteor.subscribe('lists.public');
   const privH = Meteor.subscribe('lists.private');
-  const pubF = Meteor.subscribe('files.public');
-  const privF = Meteor.subscribe('files.private');
+  const pubF = Meteor.subscribe('files.all');
 
   return {
     user: Meteor.user(),
-    loading: ![pubH, privH, pubF, privF].every(x => x.ready()),
+    loading: ![pubH, privH, pubF].every(x => x.ready()),
     connected: Meteor.status().connected,
     menuOpen,
     lists: Lists.find({
