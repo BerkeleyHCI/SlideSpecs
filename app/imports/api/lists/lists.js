@@ -4,7 +4,7 @@ import {Factory} from 'meteor/factory';
 import {Todos} from '../todos/todos.js';
 
 class ListsCollection extends Mongo.Collection {
-  insert(list, callback, locale = 'en') {
+  insert(list, callback) {
     const ourList = list;
     if (!ourList.name) {
       const defaultName = 'insert list';

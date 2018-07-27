@@ -232,7 +232,7 @@ if (Meteor.isServer) {
           const connection = DDP.connect(Meteor.absoluteUrl());
 
           _.times(5, () => {
-            connection.call(insert.name, { locale: 'en' });
+            connection.call(insert.name);
           });
 
           assert.throws(() => {

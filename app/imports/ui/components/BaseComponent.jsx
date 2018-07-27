@@ -13,11 +13,6 @@ class BaseComponent extends Component {
     this.state = {
       redirectTo: null,
     };
-    this.handleLocaleChange = this.handleLocaleChange.bind(this);
-  }
-
-  handleLocaleChange(locale) {
-    this.setState({locale});
   }
 
   redirectTo(path) {

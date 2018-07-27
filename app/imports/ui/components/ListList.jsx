@@ -15,9 +15,8 @@ export default class ListList extends BaseComponent {
   createNewList() {
     const listId = insert.call({}, err => {
       if (err) {
+        console.error(err);
         this.redirectTo('/');
-        /* eslint-disable no-alert */
-        alert('Error.');
       }
     });
     this.redirectTo(`/lists/${listId}`);
