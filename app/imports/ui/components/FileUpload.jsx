@@ -7,7 +7,7 @@ class FileUpload extends BaseComponent {
     return (
       <div>
         <h1>FILE UPLOAD</h1>
-        <FileUploader />
+        <FileUploader files={this.props.files} />
       </div>
     );
   }

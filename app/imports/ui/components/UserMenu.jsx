@@ -47,7 +47,7 @@ export default class UserMenu extends BaseComponent {
     return (
       <div className="user-menu">
         <Link to="/signin" className="btn-secondary">
-          login
+          sign in
         </Link>
         <Link to="/join" className="btn-secondary">
           join

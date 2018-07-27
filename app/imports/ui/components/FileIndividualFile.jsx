@@ -7,10 +7,9 @@ class IndividualFile extends Component {
 
     this.state = {
     };
-    
+
     this.removeFile = this.removeFile.bind(this);
     this.renameFile = this.renameFile.bind(this);
-
   }
 
   propTypes: {

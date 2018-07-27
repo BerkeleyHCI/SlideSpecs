@@ -75,7 +75,7 @@ class JoinPage extends BaseComponent {
               ref={c => {
                 this.email = c;
               }}
-              placeholder="your Email"
+              placeholder="your email"
             />
             <span className="icon-email" title="your email" />
           </div>
@@ -97,9 +97,9 @@ class JoinPage extends BaseComponent {
               ref={c => {
                 this.confirm = c;
               }}
-              placeholder="confirm Password"
+              placeholder="confirm password"
             />
-            <span className="icon-lock" title="confirm Password" />
+            <span className="icon-lock" title="confirm password" />
           </div>
           <button type="submit" className="btn-primary">
             join now

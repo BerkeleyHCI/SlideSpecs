@@ -20,10 +20,10 @@ class SignInPage extends BaseComponent {
     const errors = {};
 
     if (!email) {
-      errors.email = 'email Required';
+      errors.email = 'email required';
     }
     if (!password) {
-      errors.password = 'passwordRequired';
+      errors.password = 'password required';
     }
 
     this.setState({errors});
@@ -49,7 +49,8 @@ class SignInPage extends BaseComponent {
 
     const content = (
       <div className="wrapper-auth">
-        <h1 className="title-auth">signIn</h1>
+        <h1 className="title-auth">sign in</h1>
+        <h3 className="subtitle-auth">.</h3>
         <form onSubmit={this.onSubmit}>
           <div className="list-errors">
             {errorMessages.map(msg => (
@@ -65,9 +66,9 @@ class SignInPage extends BaseComponent {
               ref={c => {
                 this.email = c;
               }}
-              placeholder="your Email"
+              placeholder="your email"
             />
-            <span className="icon-email" title="your Email" />
+            <span className="icon-email" title="your email" />
           </div>
           <div className={`input-symbol ${errorClass('password')}`}>
             <input
@@ -81,7 +82,7 @@ class SignInPage extends BaseComponent {
             <span className="icon-lock" title="password" />
           </div>
           <button type="submit" className="btn-primary">
-            sign In Button
+            sign in
           </button>
         </form>
       </div>
@@ -89,7 +90,7 @@ class SignInPage extends BaseComponent {
 
     const link = (
       <Link to="/join" className="link-auth-alt">
-        need Account
+        join
       </Link>
     );
 
