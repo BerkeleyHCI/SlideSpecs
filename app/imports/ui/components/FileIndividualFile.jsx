@@ -9,7 +9,10 @@ class IndividualFile extends Component {
   }
 
   removeFile() {
-    Meteor.call('files.remove', this.props.fileId, function(err, res) {
+    Meteor.call('files.remove', {fileId: this.props.fileId}, function(
+      err,
+      res,
+    ) {
       if (err) console.log(err);
     });
   }
@@ -25,12 +28,13 @@ class IndividualFile extends Component {
     }
 
     if (!_.isEmpty(prompt)) {
-      Meteor.call('files.rename', this.props.fileId, prompt, function(
-        err,
-        res,
-      ) {
-        if (err) console.log(err);
-      });
+      Meteor.call(
+        'files.rename',
+        {fileId: this.props.fileId, newName: prompt},
+        function(err, res) {
+          if (err) console.log(err);
+        },
+      );
     }
   }
 
@@ -41,9 +45,7 @@ class IndividualFile extends Component {
           <strong>{this.props.fileName}</strong>
           <em> {this.props.fileSize}</em>
         </a>
-
         <button onClick={this.renameFile}>Rename</button>
-
         <button onClick={this.removeFile}>Delete</button>
       </div>
     );
