@@ -9,19 +9,19 @@ import App from '../layouts/App.jsx';
 const menuOpen = new ReactiveVar(false);
 
 export default withTracker(() => {
-  const publicHandle = Meteor.subscribe('lists.public');
-  const privateHandle = Meteor.subscribe('lists.private');
-
-  const publicFiles = Meteor.subscribe('files.public');
-  const privateFiles = Meteor.subscribe('files.private');
+  const pubH = Meteor.subscribe('lists.public');
+  const privH = Meteor.subscribe('lists.private');
+  const pubF = Meteor.subscribe('files.public');
+  const privF = Meteor.subscribe('files.private');
 
   return {
     user: Meteor.user(),
-    loading: !(publicHandle.ready() && privateHandle.ready()),
+    loading: ![pubH, privH, pubF, privF].every(x => x.ready()),
     connected: Meteor.status().connected,
     menuOpen,
     lists: Lists.find({
       $or: [{userId: {$exists: false}}, {userId: Meteor.userId()}],
     }).fetch(),
+    files: Files.find({}),
   };
 })(App);
