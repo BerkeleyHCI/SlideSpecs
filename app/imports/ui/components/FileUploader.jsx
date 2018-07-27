@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Files} from '../../api/files/files.js';
+import {_} from 'meteor/underscore';
 import {withTracker} from 'meteor/react-meteor-data';
 
 import IndividualFile from './FileIndividualFile.jsx';
@@ -18,17 +19,24 @@ class FileUploader extends Component {
     this.uploadIt = this.uploadIt.bind(this);
   }
 
+  humanFileSize(bytes) {
+    let fileSizeInBytes = bytes;
+    var i = -1;
+    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+      fileSizeInBytes = fileSizeInBytes / 1024;
+      i++;
+    } while (fileSizeInBytes > 1024);
+    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+  }
+
   uploadIt(e) {
     e.preventDefault();
 
     let self = this;
 
-    if (e.currentTarget.files && e.currentTarget.files[0]) {
-      // We upload only one file, in case
-      // there was multiple files selected
-      var file = e.currentTarget.files[0];
-
-      if (file) {
+    if (e.currentTarget.files) {
+      _.each(e.currentTarget.files, file => {
         let uploadInstance = Files.insert(
           {
             file: file,
@@ -84,7 +92,7 @@ class FileUploader extends Component {
         });
 
         uploadInstance.start(); // Must manually start the upload
-      }
+      });
     }
   }
 
@@ -134,7 +142,7 @@ class FileUploader extends Component {
               fileName={aFile.name}
               fileUrl={link}
               fileId={aFile._id}
-              fileSize={aFile.size}
+              fileSize={this.humanFileSize(aFile.size)}
             />
           </div>
         );
@@ -151,6 +159,7 @@ class FileUploader extends Component {
                 disabled={this.state.inProgress}
                 ref="fileinput"
                 onChange={this.uploadIt}
+                multiple
               />
             </div>
           </div>
