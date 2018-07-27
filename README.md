@@ -8,7 +8,7 @@ related work doc: https://docs.google.com/document/d/1TV4DK-k_piT9tu1Gv3QvJAEDqo
 
 cloning:
 
-    git clone https://github.com/jeremywrnr/peer-feedback
+    git clone https://github.com/berkeleyhci/peer-feedback
     cd app
     meteor npm install
     brew install tesseract
