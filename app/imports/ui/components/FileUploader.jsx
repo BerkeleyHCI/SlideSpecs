@@ -99,13 +99,10 @@ class FileUploader extends Component {
   // This is our progress bar, bootstrap styled
   // Remove this function if not needed
   showUploads() {
-    console.log('**********************************', this.state.uploading);
-
     if (!_.isEmpty(this.state.uploading)) {
       return (
         <div>
           {this.state.uploading.file.name}
-
           <div className="progress progress-bar-default">
             <div
               style={{width: this.state.progress + '%'}}

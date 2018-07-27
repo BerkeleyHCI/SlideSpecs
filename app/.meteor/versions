@@ -121,6 +121,7 @@ templating-tools@1.1.2
 tmeasday:check-npm-versions@0.3.2
 tmeasday:test-reporter-helpers@0.2.1
 tracker@1.2.0
+twbs:bootstrap@3.3.6
 underscore@1.0.10
 universe:i18n@1.16.1
 url@1.2.0
