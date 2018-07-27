@@ -1,19 +1,19 @@
-import { Meteor } from 'meteor/meteor';
-import { _ } from 'meteor/underscore';
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
+import {Meteor} from 'meteor/meteor';
+import {_} from 'meteor/underscore';
+import {ValidatedMethod} from 'meteor/mdg:validated-method';
+import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
 
-import { Todos } from './todos.js';
-import { Lists } from '../lists/lists.js';
+import {Todos} from './todos.js';
+import {Lists} from '../lists/lists.js';
 
 export const insert = new ValidatedMethod({
   name: 'todos.insert',
   validate: new SimpleSchema({
-    listId: { type: String },
-    text: { type: String },
+    listId: {type: String},
+    text: {type: String},
   }).validator(),
-  run({ listId, text }) {
+  run({listId, text}) {
     const list = Lists.findOne(listId);
 
     if (list.isPrivate() && list.userId !== this.userId) {
@@ -37,10 +37,10 @@ export const insert = new ValidatedMethod({
 export const setCheckedStatus = new ValidatedMethod({
   name: 'todos.makeChecked',
   validate: new SimpleSchema({
-    todoId: { type: String },
-    newCheckedStatus: { type: Boolean },
+    todoId: {type: String},
+    newCheckedStatus: {type: Boolean},
   }).validator(),
-  run({ todoId, newCheckedStatus }) {
+  run({todoId, newCheckedStatus}) {
     const todo = Todos.findOne(todoId);
 
     if (todo.checked === newCheckedStatus) {
@@ -66,10 +66,10 @@ export const setCheckedStatus = new ValidatedMethod({
 export const updateText = new ValidatedMethod({
   name: 'todos.updateText',
   validate: new SimpleSchema({
-    todoId: { type: String },
-    newText: { type: String },
+    todoId: {type: String},
+    newText: {type: String},
   }).validator(),
-  run({ todoId, newText }) {
+  run({todoId, newText}) {
     // This is complex auth stuff - perhaps denormalizing a userId onto todos
     // would be correct here?
     const todo = Todos.findOne(todoId);
@@ -82,7 +82,7 @@ export const updateText = new ValidatedMethod({
     }
 
     Todos.update(todoId, {
-      $set: { text: newText },
+      $set: {text: newText},
     });
   },
 });
@@ -90,9 +90,9 @@ export const updateText = new ValidatedMethod({
 export const remove = new ValidatedMethod({
   name: 'todos.remove',
   validate: new SimpleSchema({
-    todoId: { type: String },
+    todoId: {type: String},
   }).validator(),
-  run({ todoId }) {
+  run({todoId}) {
     const todo = Todos.findOne(todoId);
 
     if (!todo.editableBy(this.userId)) {
@@ -107,21 +107,25 @@ export const remove = new ValidatedMethod({
 });
 
 // Get list of all method names on Todos
-const TODOS_METHODS = _.pluck([
-  insert,
-  setCheckedStatus,
-  updateText,
-  remove,
-], 'name');
+const TODOS_METHODS = _.pluck(
+  [insert, setCheckedStatus, updateText, remove],
+  'name',
+);
 
 if (Meteor.isServer) {
   // Only allow 5 todos operations per connection per second
-  DDPRateLimiter.addRule({
-    name(name) {
-      return _.contains(TODOS_METHODS, name);
-    },
+  DDPRateLimiter.addRule(
+    {
+      name(name) {
+        return _.contains(TODOS_METHODS, name);
+      },
 
-    // Rate limit per connection ID
-    connectionId() { return true; },
-  }, 5, 1000);
+      // Rate limit per connection ID
+      connectionId() {
+        return true;
+      },
+    },
+    5,
+    1000,
+  );
 }
