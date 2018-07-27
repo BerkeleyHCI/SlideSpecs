@@ -86,9 +86,9 @@ export default class App extends Component {
         <section id="menu">
           <UserMenu user={user} logout={this.logout} />
           <ListList lists={lists} />
-          <h2>
+          <h3>
             <a href="/addFile"> slides </a>
-          </h2>
+          </h3>
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div className="content-overlay" onClick={this.closeMenu} />
