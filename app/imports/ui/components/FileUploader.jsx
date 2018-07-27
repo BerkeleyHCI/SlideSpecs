@@ -125,20 +125,17 @@ class FileUploader extends Component {
   render() {
     if (this.props.files) {
       let fileCursors = this.props.files;
-
       // Run through each file that the user has stored
       // (make sure the subscription only sends files owned by this user)
       let display = fileCursors.map((aFile, key) => {
-        // console.log('A file: ', aFile.link(), aFile.get('name'))
         let link = Files.findOne({_id: aFile._id}).link(); //The "view/download" link
-
         // Send out components that show details of each file
         return (
           <div key={'file' + key}>
             <IndividualFile
+              fileId={aFile._id}
               fileName={aFile.name}
               fileUrl={link}
-              fileId={aFile._id}
               fileSize={this.humanFileSize(aFile.size)}
             />
           </div>
@@ -147,24 +144,16 @@ class FileUploader extends Component {
 
       return (
         <div>
-          <div className="row">
-            <div className="col-md-12">
-              <p>Upload New File:</p>
-              <input
-                type="file"
-                id="fileinput"
-                disabled={this.state.inProgress}
-                ref="fileinput"
-                onChange={this.uploadIt}
-                multiple
-              />
-            </div>
-          </div>
+          <input
+            type="file"
+            id="fileinput"
+            disabled={this.state.inProgress}
+            ref="fileinput"
+            onChange={this.uploadIt}
+            multiple
+          />
 
-          <div className="row m-t-sm m-b-sm">
-            <div className="col-md-6">{this.showUploads()}</div>
-            <div className="col-md-6" />
-          </div>
+          <div className="row">{this.showUploads()}</div>
 
           {display}
         </div>

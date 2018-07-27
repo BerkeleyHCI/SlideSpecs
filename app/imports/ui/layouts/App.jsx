@@ -86,8 +86,7 @@ export default class App extends Component {
           <UserMenu user={user} logout={this.logout} />
           <ListList lists={lists} />
           <h2>
-            {' '}
-            <a href="/addFile"> add file </a>{' '}
+            <a href="/addFile"> slides </a>
           </h2>
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
