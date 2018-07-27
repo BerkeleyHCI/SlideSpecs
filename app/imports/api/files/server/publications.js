@@ -1,10 +1,8 @@
 /* eslint-disable prefer-arrow-callback */
-
 import {Meteor} from 'meteor/meteor';
+import {Files} from '../files.js';
 
-import {Files} from '../lists.js';
-
-Meteor.publish('lists.public', function listsPublic() {
+Meteor.publish('files.public', function filesPublic() {
   return Files.find(
     {
       userId: {$exists: false},
@@ -15,7 +13,7 @@ Meteor.publish('lists.public', function listsPublic() {
   );
 });
 
-Meteor.publish('lists.private', function listsPrivate() {
+Meteor.publish('files.private', function filesPrivate() {
   if (!this.userId) {
     return this.ready();
   }
