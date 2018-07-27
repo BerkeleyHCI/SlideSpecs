@@ -1,11 +1,9 @@
-import {withTracker} from 'meteor/react-meteor-data';
 import {Meteor} from 'meteor/meteor';
-import {Files} from '../../api/files/files.js';
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import {Files} from '../../api/files/files.js';
+import {withTracker} from 'meteor/react-meteor-data';
 
 import IndividualFile from './FileIndividualFile.jsx';
-
 const debug = require('debug')('demo:file');
 
 class FileUploader extends Component {
@@ -120,8 +118,7 @@ class FileUploader extends Component {
   }
 
   render() {
-    debug('Rendering FileUpload', this.props.docsReadyYet);
-    if (this.props.files && this.props.docsReadyYet) {
+    if (this.props.files) {
       let fileCursors = this.props.files;
 
       // Run through each file that the user has stored
@@ -166,7 +163,7 @@ class FileUploader extends Component {
           {display}
         </div>
       );
-    } else return <div>Loading file list</div>;
+    } else return <div>loading file list...</div>;
   }
 }
 
