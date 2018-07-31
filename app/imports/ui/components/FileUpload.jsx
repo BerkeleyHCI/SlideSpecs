@@ -5,8 +5,8 @@ import FileUploader from './FileUploader.jsx';
 class FileUpload extends BaseComponent {
   render() {
     return (
-      <div>
-        <h1>FILE UPLOAD</h1>
+      <div className="container slides-container">
+        <h1>SLIDE UPLOAD</h1>
         <FileUploader {...this.props} />
       </div>
     );

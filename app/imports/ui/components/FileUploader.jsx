@@ -98,6 +98,7 @@ class FileUploader extends Component {
 
   // This is our progress bar, bootstrap styled
   // Remove this function if not needed
+  //
   showUploads() {
     if (!_.isEmpty(this.state.uploading)) {
       return (
@@ -125,6 +126,8 @@ class FileUploader extends Component {
   render() {
     if (this.props.files) {
       let fileCursors = this.props.files;
+      let uploads = this.showUploads();
+
       // Run through each file that the user has stored
       // (make sure the subscription only sends files owned by this user)
       let display = fileCursors.map((aFile, key) => {
@@ -142,8 +145,9 @@ class FileUploader extends Component {
         );
       });
 
+      // todo: this is a single call, need to make reactive
       return (
-        <div>
+        <div className="container">
           <input
             type="file"
             id="fileinput"
@@ -152,9 +156,9 @@ class FileUploader extends Component {
             onChange={this.uploadIt}
             multiple
           />
-
-          <div className="row">{this.showUploads()}</div>
-
+          <br />
+          <br />
+          <div className="row">{uploads}</div>
           {display}
         </div>
       );
@@ -162,8 +166,4 @@ class FileUploader extends Component {
   }
 }
 
-//
-// This is the HOC - included in this file just for convenience, but usually kept
-// in a separate file to provide separation of concerns.
-//
 export default FileUploader;

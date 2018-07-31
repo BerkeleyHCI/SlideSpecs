@@ -16,16 +16,11 @@ body {
 
   @media screen and (min-width: 60em) {
     left: @column;
-    /*right: @column;*/
   }
 
   @media screen and (min-width: 80em) {
     left: 2 * @column;
-    /*right: 2 * @column;*/
   }
-
-  // Hide anything offscreen
-  overflow: hidden;
 }
 
 #menu {
@@ -38,7 +33,7 @@ body {
   .position(absolute, 0, 0, 0, 0);
   transition: all 200ms ease-out;
   transform: translate3d(0, 0, 0);
-  background: @color-tertiary;
+  height: 100%;
   opacity: 1;
 
   @media screen and (min-width: 40em) {
