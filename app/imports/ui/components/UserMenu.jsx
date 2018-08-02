@@ -21,8 +21,7 @@ export default class UserMenu extends BaseComponent {
   renderLoggedIn() {
     const {open} = this.state;
     const {user, logout} = this.props;
-    const email = user.emails[0].address;
-    const emailLocalPart = email.substring(0, email.indexOf('@'));
+    const username = user.username;
 
     return (
       <div className="user-menu vertical">
@@ -32,7 +31,7 @@ export default class UserMenu extends BaseComponent {
           ) : (
             <span className="icon-arrow-down" />
           )}
-          {emailLocalPart}
+          {username}
         </a>
         {open ? (
           <a className="btn-secondary" onClick={logout}>

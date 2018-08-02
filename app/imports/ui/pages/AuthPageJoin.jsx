@@ -15,14 +15,11 @@ class JoinPage extends BaseComponent {
 
   onSubmit(event) {
     event.preventDefault();
-    const email = this.email.value;
+    const username = this.username.value;
     const password = this.password.value;
     const confirm = this.confirm.value;
     const errors = {};
 
-    if (!email) {
-      errors.email = 'emailRequired';
-    }
     if (!password) {
       errors.password = 'passwordRequired';
     }
@@ -37,7 +34,7 @@ class JoinPage extends BaseComponent {
 
     Accounts.createUser(
       {
-        email,
+        username: username,
         password,
       },
       err => {
@@ -68,16 +65,16 @@ class JoinPage extends BaseComponent {
               </div>
             ))}
           </div>
-          <div className={`input-symbol ${errorClass('email')}`}>
+          <div className={`input-symbol ${errorClass('username')}`}>
             <input
-              type="email"
-              name="email"
+              type="username"
+              name="username"
               ref={c => {
-                this.email = c;
+                this.username = c;
               }}
-              placeholder="your email"
+              placeholder="username"
             />
-            <span className="icon-email" title="your email" />
+            <span className="icon-lock" title="username" />
           </div>
           <div className={`input-symbol ${errorClass('password')}`}>
             <input

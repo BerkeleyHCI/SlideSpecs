@@ -15,12 +15,12 @@ class SignInPage extends BaseComponent {
 
   onSubmit(event) {
     event.preventDefault();
-    const email = this.email.value;
+    const username = this.username.value;
     const password = this.password.value;
     const errors = {};
 
-    if (!email) {
-      errors.email = 'email required';
+    if (!username) {
+      errors.username = 'username required';
     }
     if (!password) {
       errors.password = 'password required';
@@ -31,7 +31,7 @@ class SignInPage extends BaseComponent {
       return;
     }
 
-    Meteor.loginWithPassword(email, password, err => {
+    Meteor.loginWithPassword(username, password, err => {
       if (err) {
         this.setState({
           errors: {none: err.reason},
@@ -59,16 +59,16 @@ class SignInPage extends BaseComponent {
               </div>
             ))}
           </div>
-          <div className={`input-symbol ${errorClass('email')}`}>
+          <div className={`input-symbol ${errorClass('username')}`}>
             <input
-              type="email"
-              name="email"
+              type="username"
+              name="username"
               ref={c => {
-                this.email = c;
+                this.username = c;
               }}
-              placeholder="your email"
+              placeholder="username"
             />
-            <span className="icon-email" title="your email" />
+            <span className="icon-angle-right" title="username" />
           </div>
           <div className={`input-symbol ${errorClass('password')}`}>
             <input

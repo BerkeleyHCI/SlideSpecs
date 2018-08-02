@@ -63,6 +63,8 @@ export default class App extends Component {
 
   renderRedirect(location) {
     const {redirectTo, defaultList} = this.state;
+    const {user} = this.props;
+    console.log(user);
     const {pathname} = location;
     let redirect = null;
     if (redirectTo && redirectTo !== pathname) {
