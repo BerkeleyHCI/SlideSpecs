@@ -40,7 +40,6 @@ export default class App extends Component {
   }
 
   renderContent(location) {
-    console.log(location);
     const {user, connected, lists, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
     return (
@@ -51,60 +50,71 @@ export default class App extends Component {
           </h1>
           <UserMenu user={user} logout={this.logout} />
           {user && (
-          <div>
-            <ListList lists={lists} />
-            <Link to="/upload"> slides </Link>
-          </div>
+            <div>
+              <ListList lists={lists} />
+              <Link to="/upload"> slides </Link>
+            </div>
           )}
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div id="content-container">
           {loading ? (
-          <Loading key="loading" />
+            <Loading key="loading" />
           ) : (
-          <TransitionGroup>
-            <CSSTransition key={location.key} classNames="fade" timeout={100}>
-              <Switch location={location}>
-                <Route path="/signin" component={AuthPageSignIn} />
-                <Route path="/join" component={AuthPageJoin} />
+            <TransitionGroup>
+              <CSSTransition key={location.key} classNames="fade" timeout={100}>
+                <Switch location={location}>
+                  <Route path="/signin" component={AuthPageSignIn} />
+                  <Route path="/join" component={AuthPageJoin} />
 
-                <PrivateRoute
-                  exact path="/" user={user}
-                  render={() => <SessionsList/>}
-                />
+                  <PrivateRoute
+                    exact
+                    path="/"
+                    user={user}
+                    render={() => <SessionsList />}
+                  />
 
-                <PrivateRoute
-                  path="/upload" user={user}
-                  render={() => <FileUploader  files={files} />}
-                />
+                  <PrivateRoute
+                    path="/upload"
+                    user={user}
+                    render={() => <FileUploader files={files} />}
+                  />
 
-                <Route
-                  path="/lists/:id" user={user}
-                  render={({match}) => <ListPageContainer match={match} />}
-                />
+                  <PrivateRoute
+                    path="/lists/:id"
+                    user={user}
+                    render={({match}) => <ListPageContainer match={match} />}
+                  />
 
-              <Route path="/*" component={NotFoundPage} />
-              </Switch>
-            </CSSTransition>
-          </TransitionGroup>
+                  <Route path="/*" component={NotFoundPage} />
+                </Switch>
+              </CSSTransition>
+            </TransitionGroup>
           )}
         </div>
       </div>
-      );
+    );
   }
 
   render() {
     return (
       <BrowserRouter>
-        <Route render={({location}) => this.renderContent(location) } />
+        <Route render={({location}) => this.renderContent(location)} />
       </BrowserRouter>
-      );
+    );
   }
 }
 
-const PrivateRoute = ({ user, render, ...other }) => (
-  <Route {...other} render={() => user ? render() : (<Redirect to="/signin" />) } />
-);
+const PrivateRoute = ({user, render, ...other}) => {
+  let out;
+  if (user) {
+    out = render;
+  } else {
+    out = () => <Redirect to="/signin" />;
+  }
+
+  return <Route {...other} render={out} />;
+};
 
 App.propTypes = {
   user: PropTypes.object, // current meteor user
@@ -118,5 +128,4 @@ App.defaultProps = {
   user: null,
   lists: [],
   files: [],
-}
-
+};
