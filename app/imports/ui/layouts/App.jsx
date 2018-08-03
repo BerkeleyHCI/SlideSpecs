@@ -1,17 +1,16 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
+import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {Meteor} from 'meteor/meteor';
-
 import {Lists} from '../../api/lists/lists.js';
 import {Files} from '../../api/files/files.js';
-
 import UserMenu from '../components/UserMenu.jsx';
 import ListList from '../components/ListList.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
-import FileUpload from '../components/FileUpload.jsx';
+import FileUploader from '../components/FileUploader.jsx';
+import SessionsList from '../components/SessionsList.jsx';
 import ListPageContainer from '../containers/ListPageContainer.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
@@ -20,26 +19,12 @@ import NotFoundPage from '../pages/NotFoundPage.jsx';
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
 export default class App extends Component {
-  static getDerivedStateFromProps(nextProps) {
-    // Store a default list path that can be redirected to from "/" when
-    // the list is ready.
-    const newState = {defaultList: null, redirectTo: null};
-    if (!nextProps.loading) {
-      const list = Lists.findOne();
-      newState.defaultList = `/lists/${list._id}`;
-    }
-    return newState;
-  }
-
   constructor(props) {
     super(props);
     this.state = {
       showConnectionIssue: false,
-      defaultList: null,
       redirectTo: null,
     };
-    this.toggleMenu = this.toggleMenu.bind(this);
-    this.closeMenu = this.toggleMenu.bind(this, false);
     this.logout = this.logout.bind(this);
   }
 
@@ -50,50 +35,36 @@ export default class App extends Component {
     }, CONNECTION_ISSUE_TIMEOUT);
   }
 
-  toggleMenu() {
-    this.props.menuOpen.set(!this.props.menuOpen.get());
-  }
-
   logout() {
-    Meteor.logout();
-    this.setState({
-      redirectTo: this.state.defaultList,
+    Meteor.logout(() => {
+      this.renderRedirect('/signin');
     });
   }
 
   renderRedirect(location) {
-    const {redirectTo, defaultList} = this.state;
-    const {user} = this.props;
-    console.log(user);
-    const {pathname} = location;
-    let redirect = null;
-    if (redirectTo && redirectTo !== pathname) {
-      redirect = <Redirect to={redirectTo} />;
-    } else if (pathname === '/' && defaultList) {
-      redirect = <Redirect to={defaultList} />;
-    }
-    return redirect;
+    //let redirect = <Redirect to={location} />;
+    //return redirect;
   }
 
   renderContent(location) {
-    const {user, connected, lists, files, menuOpen, loading} = this.props;
+    console.log(location);
+    const {user, connected, lists, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
-
-    const commonChildProps = {
-      menuOpen: this.props.menuOpen,
-    };
-
     return (
-      <div id="container" className={menuOpen ? 'menu-open' : ''}>
+      <div id="container">
         <section id="menu">
+          <h1>
+            <Link to="/">feedback</Link>
+          </h1>
           <UserMenu user={user} logout={this.logout} />
-          <ListList lists={lists} />
-          <h3>
-            <a href="/addFile"> slides </a>
-          </h3>
+          {user && (
+            <div>
+              <ListList lists={lists} />
+              <Link to="/upload"> slides </Link>
+            </div>
+          )}
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
-        <div className="content-overlay" onClick={this.closeMenu} />
         <div id="content-container">
           {loading ? (
             <Loading key="loading" />
@@ -101,30 +72,15 @@ export default class App extends Component {
             <TransitionGroup>
               <CSSTransition key={location.key} classNames="fade" timeout={100}>
                 <Switch location={location}>
+                  <Route exact path="/" component={SessionsList} />
+                  <Route path="/upload" render={() => <FileUploader files={files} />} />
+                  <Route path="/signin" component={AuthPageSignIn} />
+                  <Route path="/join" component={AuthPageJoin} />
                   <Route
                     path="/lists/:id"
-                    render={({match}) => (
-                      <ListPageContainer match={match} {...commonChildProps} />
-                    )}
+                    render={({match}) => <ListPageContainer match={match} />}
                   />
-                  <Route
-                    path="/addFile"
-                    render={() => (
-                      <FileUpload files={files} {...commonChildProps} />
-                    )}
-                  />
-                  <Route
-                    path="/signin"
-                    render={() => <AuthPageSignIn {...commonChildProps} />}
-                  />
-                  <Route
-                    path="/join"
-                    render={() => <AuthPageJoin {...commonChildProps} />}
-                  />
-                  <Route
-                    path="/*"
-                    render={() => <NotFoundPage {...commonChildProps} />}
-                  />
+                  <Route path="/*" component={NotFoundPage} />
                 </Switch>
               </CSSTransition>
             </TransitionGroup>
@@ -148,26 +104,16 @@ export default class App extends Component {
 }
 
 App.propTypes = {
-  // current meteor user
-  user: PropTypes.object,
-
-  // server connection status
-  connected: PropTypes.bool.isRequired,
-
-  // subscription status
-  loading: PropTypes.bool.isRequired,
-
-  // is side menu open?
-  menuOpen: PropTypes.object.isRequired,
-
-  // all lists visible to the current user
-  lists: PropTypes.array,
-
-  // all visible files
-  files: PropTypes.object,
+  user: PropTypes.object, // current meteor user
+  connected: PropTypes.bool.isRequired, // server connection status
+  loading: PropTypes.bool.isRequired, // subscription status
+  lists: PropTypes.array, // all lists visible to the current user
+  files: PropTypes.array, // all visible files
 };
 
 App.defaultProps = {
   user: null,
   lists: [],
-};
+  files: [],
+}
+

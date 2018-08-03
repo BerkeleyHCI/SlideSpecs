@@ -1,5 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
+import BaseComponent from './BaseComponent.jsx';
 import {Files} from '../../api/files/files.js';
 import {_} from 'meteor/underscore';
 import {withTracker} from 'meteor/react-meteor-data';
@@ -7,7 +8,7 @@ import {withTracker} from 'meteor/react-meteor-data';
 import IndividualFile from './FileIndividualFile.jsx';
 const debug = require('debug')('demo:file');
 
-class FileUploader extends Component {
+class FileUploader extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -147,19 +148,22 @@ class FileUploader extends Component {
 
       // todo: this is a single call, need to make reactive
       return (
-        <div className="container">
-          <input
-            type="file"
-            id="fileinput"
-            disabled={this.state.inProgress}
-            ref="fileinput"
-            onChange={this.uploadIt}
-            multiple
-          />
-          <br />
-          <br />
-          <div className="row">{uploads}</div>
-          {display}
+        <div className="container slides-container">
+          <h1>upload slides </h1>
+          <div className="container">
+            <input
+              type="file"
+              id="fileinput"
+              disabled={this.state.inProgress}
+              ref="fileinput"
+              onChange={this.uploadIt}
+              multiple
+            />
+            <br />
+            <br />
+            <div className="row">{uploads}</div>
+            {display}
+          </div>
         </div>
       );
     } else return <div>loading file list...</div>;

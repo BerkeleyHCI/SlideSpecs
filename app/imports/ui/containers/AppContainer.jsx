@@ -1,12 +1,9 @@
 import {Meteor} from 'meteor/meteor';
-import {ReactiveVar} from 'meteor/reactive-var';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Lists} from '../../api/lists/lists.js';
 import {Files} from '../../api/files/files.js';
 
 import App from '../layouts/App.jsx';
-
-const menuOpen = new ReactiveVar(false);
 
 export default withTracker(() => {
   const pubH = Meteor.subscribe('lists.public');
@@ -17,10 +14,9 @@ export default withTracker(() => {
     user: Meteor.user(),
     loading: ![pubH, privH, pubF].every(x => x.ready()),
     connected: Meteor.status().connected,
-    menuOpen,
+    files: Files.find({}).fetch(),
     lists: Lists.find({
       $or: [{userId: {$exists: false}}, {userId: Meteor.userId()}],
     }).fetch(),
-    files: Files.find({}),
   };
 })(App);

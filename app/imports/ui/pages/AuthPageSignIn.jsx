@@ -68,7 +68,7 @@ class SignInPage extends BaseComponent {
               }}
               placeholder="username"
             />
-            <span className="icon-angle-right" title="username" />
+            <span className="icon-user-add" title="username" />
           </div>
           <div className={`input-symbol ${errorClass('password')}`}>
             <input
@@ -94,20 +94,8 @@ class SignInPage extends BaseComponent {
       </Link>
     );
 
-    return (
-      this.renderRedirect() || (
-        <AuthPage
-          content={content}
-          link={link}
-          menuOpen={this.props.menuOpen}
-        />
-      )
-    );
+    return this.renderRedirect() || <AuthPage content={content} link={link} />;
   }
 }
-
-SignInPage.propTypes = {
-  menuOpen: PropTypes.object.isRequired,
-};
 
 export default SignInPage;

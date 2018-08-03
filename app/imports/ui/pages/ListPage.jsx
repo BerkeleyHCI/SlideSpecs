@@ -10,7 +10,7 @@ import Message from '../components/Message.jsx';
 export default class ListPage extends BaseComponent {
   constructor(props) {
     super(props);
-    this.state = Object.assign(this.state, { editingTodo: null });
+    this.state = Object.assign(this.state, {editingTodo: null});
     this.onEditingChange = this.onEditingChange.bind(this);
   }
 
@@ -21,26 +21,16 @@ export default class ListPage extends BaseComponent {
   }
 
   render() {
-    const {
-      list,
-      listExists,
-      loading,
-      todos,
-    } = this.props;
-    const { editingTodo } = this.state;
+    const {list, listExists, loading, todos} = this.props;
+    const {editingTodo} = this.state;
 
     if (!listExists) {
-      return <NotFoundPage menuOpen={this.props.menuOpen} />;
+      return <NotFoundPage />;
     }
 
     let Todos;
     if (!todos || !todos.length) {
-      Todos = (
-        <Message
-          title='no tasks'
-          subtitle='add above'
-        />
-      );
+      Todos = <Message title="no tasks" subtitle="add above" />;
     } else {
       Todos = todos.map(todo => (
         <TodoItem
@@ -54,11 +44,9 @@ export default class ListPage extends BaseComponent {
 
     return (
       <div className="page lists-show">
-        <ListHeader list={list} menuOpen={this.props.menuOpen} />
+        <ListHeader list={list} />
         <div className="content-scrollable list-items">
-          {loading
-            ? <Message title='loading' />
-            : Todos}
+          {loading ? <Message title="loading" /> : Todos}
         </div>
       </div>
     );
@@ -70,5 +58,4 @@ ListPage.propTypes = {
   todos: PropTypes.array,
   loading: PropTypes.bool,
   listExists: PropTypes.bool,
-  menuOpen: PropTypes.object.isRequired,
 };

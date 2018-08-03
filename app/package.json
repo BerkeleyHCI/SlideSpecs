@@ -4,9 +4,11 @@
     "pretest": "npm run lint --silent",
     "test": "meteor test --once --driver-package dispatch:mocha-phantomjs",
     "test-watch": "meteor test --driver-package practicalmeteor:mocha",
-    "test-app-watch": "meteor test --full-app --driver-package practicalmeteor:mocha",
+    "test-app-watch":
+      "meteor test --full-app --driver-package practicalmeteor:mocha",
     "lint": "eslint --ext .js,.jsx .",
-    "chimp-watch": "chimp --ddp=http://localhost:3000 --watch --mocha --path=tests"
+    "chimp-watch":
+      "chimp --ddp=http://localhost:3000 --watch --mocha --path=tests"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.44",
@@ -46,13 +48,8 @@
       },
       "allowImportExportEverywhere": true
     },
-    "plugins": [
-      "meteor"
-    ],
-    "extends": [
-      "airbnb",
-      "plugin:meteor/recommended"
-    ],
+    "plugins": ["meteor"],
+    "extends": ["airbnb", "plugin:meteor/recommended"],
     "rules": {
       "import/extensions": "off",
       "import/no-extraneous-dependencies": "off",
@@ -73,16 +70,11 @@
           "templateInstanceParamName": "instance"
         }
       ],
-      "meteor/template-names": [
-        "off"
-      ],
+      "meteor/template-names": ["off"],
       "react/jsx-filename-extension": [
         1,
         {
-          "extensions": [
-            ".js",
-            ".jsx"
-          ]
+          "extensions": [".js", ".jsx"]
         }
       ],
       "react/forbid-prop-types": "off",
@@ -98,9 +90,7 @@
   "postcss": {
     "plugins": {
       "autoprefixer": {
-        "browsers": [
-          "last 2 versions"
-        ]
+        "browsers": ["last 2 versions"]
       }
     }
   }
