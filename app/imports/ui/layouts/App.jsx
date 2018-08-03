@@ -18,6 +18,8 @@ import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
+//<ListList lists={lists} />
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -51,7 +53,6 @@ export default class App extends Component {
           <UserMenu user={user} logout={this.logout} />
           {user && (
             <div>
-              <ListList lists={lists} />
               <Link to="/upload"> slides </Link>
             </div>
           )}
@@ -62,7 +63,7 @@ export default class App extends Component {
             <Loading key="loading" />
           ) : (
             <TransitionGroup>
-              <CSSTransition key={location.key} classNames="fade" timeout={100}>
+              <CSSTransition key={location.key} classNames="fade" timeout={300}>
                 <Switch location={location}>
                   <Route path="/signin" component={AuthPageSignIn} />
                   <Route path="/join" component={AuthPageJoin} />
@@ -106,11 +107,12 @@ export default class App extends Component {
 }
 
 const PrivateRoute = ({user, render, ...other}) => {
+  let loc = window.location.pathname;
   let out;
   if (user) {
     out = render;
   } else {
-    out = () => <Redirect to="/signin" />;
+    out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   }
 
   return <Route {...other} render={out} />;

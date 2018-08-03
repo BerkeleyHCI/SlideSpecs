@@ -33,9 +33,7 @@ class SignInPage extends BaseComponent {
 
     Meteor.loginWithPassword(username, password, err => {
       if (err) {
-        this.setState({
-          errors: {none: err.reason},
-        });
+        this.setState({errors: {none: err.reason}});
       } else {
         this.redirectTo('/');
       }

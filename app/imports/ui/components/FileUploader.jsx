@@ -148,9 +148,9 @@ class FileUploader extends BaseComponent {
 
       // todo: this is a single call, need to make reactive
       return (
-        <div className="container slides-container">
+        <div className="main-content">
           <h1>upload slides </h1>
-          <div className="container">
+          <div>
             <input
               type="file"
               id="fileinput"

@@ -10,13 +10,13 @@ class BaseComponent extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      redirectTo: null,
-    };
+    this.state = {redirectTo: null};
   }
 
   redirectTo(path) {
-    this.setState({redirectTo: path});
+    setTimeout(() => {
+      this.setState({redirectTo: path});
+    }, 100);
   }
 
   renderRedirect() {

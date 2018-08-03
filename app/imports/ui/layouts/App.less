@@ -15,26 +15,35 @@ body {
 #menu {
   text-align: center;
   .position(absolute, 0, 0, 0, 0, @menu-width);
-  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
   h1,
   h3 {
+    color: white !important;
     padding-top: 20px;
     padding-bottom: 10px;
-    color: white;
+    a {
+      color: white !important;
+    }
   }
 }
 
 #content-container {
-  .position(absolute, 0, 0, 0, @menu-width);
+  .position(relative, auto, auto, auto, @menu-width);
+  background: @color-secondary;
   transition: all 200ms ease-out;
-  transform: translate3d(0, 0, 0);
-  height: 100%;
+  max-width: 900px;
+  height: 100vh;
   opacity: 1;
   .content-scrollable {
     .position(absolute, 0, 0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
   }
+}
+
+div.main-content {
+  padding: 2em;
+}
+
+div.slide-container {
+  padding-bottom: 2em;
 }
