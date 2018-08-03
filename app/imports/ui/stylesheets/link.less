@@ -6,7 +6,17 @@ a {
   cursor: pointer;
   text-decoration: none;
 
-  &:hover { color: darken(@color-primary, 10%); }
-  &:active { color: @color-secondary; }
-  &:focus { color: @color-secondary; outline:none; } //removes FF dotted outline
+  &:hover {
+    color: darken(@color-primary, 10%);
+    text-decoration: none;
+  }
+  &:active {
+    color: @color-secondary;
+    text-decoration: none;
+  }
+  &:focus {
+    color: @color-secondary;
+    text-decoration: none;
+    outline: none;
+  } //removes FF dotted outline
 }

@@ -127,5 +127,6 @@ App.propTypes = {
 App.defaultProps = {
   user: null,
   lists: [],
+  slides: [],
   files: [],
 };
