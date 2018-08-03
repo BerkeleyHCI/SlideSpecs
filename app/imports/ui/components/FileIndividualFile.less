@@ -1,11 +1,18 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
-div.slide-container {
-  padding-bottom: 2em;
-}
-
-img.slide {
+div.file-item {
+  display: inline;
+  margin-bottom: 2em;
+  margin-right: 2em;
   max-width: 100%;
-  max-height: 600px;
-  display: block;
+  width: 300px;
+
+  img.slide {
+    max-width: 100%;
+    display: block;
+  }
+
+  button {
+    color: @color-tertiary;
+  }
 }

@@ -40,19 +40,19 @@ class IndividualFile extends Component {
 
   render() {
     return (
-      <div className="slide-container">
+      <div className="file-item">
         <h4>
           {this.props.fileName} <small> {this.props.fileSize}</small>
         </h4>
-        <div className="">
-          <button className="btn-primary float-right" onClick={this.renameFile}>
-            Rename
+        <img className="slide" src={this.props.fileUrl} />
+        <div class="btns-group">
+          <button onClick={this.renameFile} class="btn btn-sm">
+            rename
           </button>
-          <button className="btn-primary float-right" onClick={this.removeFile}>
-            Delete
+          <button onClick={this.removeFile} class="btn btn-sm">
+            delete
           </button>
         </div>
-        <img className="slide" src={this.props.fileUrl} />
       </div>
     );
   }

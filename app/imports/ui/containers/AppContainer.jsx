@@ -14,7 +14,7 @@ export default withTracker(() => {
     user: Meteor.user(),
     loading: ![pubH, privH, pubF].every(x => x.ready()),
     connected: Meteor.status().connected,
-    files: Files.find({}).fetch(),
+    files: Files.find({name: {$exists: true}}, {sort: {name: 1}}).fetch(),
     lists: Lists.find({
       $or: [{userId: {$exists: false}}, {userId: Meteor.userId()}],
     }).fetch(),

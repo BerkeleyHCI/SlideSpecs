@@ -20,6 +20,12 @@ class FileUploader extends BaseComponent {
     this.uploadIt = this.uploadIt.bind(this);
   }
 
+  componentDidMount() {
+    var msnry = new Masonry('.grid', {
+      itemSelector: '.file-item',
+    });
+  }
+
   humanFileSize(bytes) {
     let fileSizeInBytes = bytes;
     var i = -1;
@@ -135,7 +141,7 @@ class FileUploader extends BaseComponent {
         let link = Files.findOne({_id: aFile._id}).link(); //The "view/download" link
         // Send out components that show details of each file
         return (
-          <div className="file-item" key={'file' + key}>
+          <div key={'file' + key}>
             <IndividualFile
               fileId={aFile._id}
               fileName={aFile.name}
@@ -149,7 +155,7 @@ class FileUploader extends BaseComponent {
       // todo: this is a single call, need to make reactive
       return (
         <div className="main-content">
-          <h1>upload slides </h1>
+          <h1>upload slides</h1>
           <div>
             <input
               type="file"
@@ -161,11 +167,7 @@ class FileUploader extends BaseComponent {
             />
             <br />
             {uploads}
-            <div
-              className="grid"
-              data-masonry="{&quot;itemSelector&quot;:&quot;.file-item&quot;,&quot;columnWidth&quot;:200}">
-              {display}
-            </div>
+            <div className="grid">{display}</div>
           </div>
         </div>
       );
