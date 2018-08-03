@@ -135,7 +135,7 @@ class FileUploader extends BaseComponent {
         let link = Files.findOne({_id: aFile._id}).link(); //The "view/download" link
         // Send out components that show details of each file
         return (
-          <div key={'file' + key}>
+          <div className="file-item" key={'file' + key}>
             <IndividualFile
               fileId={aFile._id}
               fileName={aFile.name}
@@ -160,9 +160,12 @@ class FileUploader extends BaseComponent {
               multiple
             />
             <br />
-            <br />
-            <div className="row">{uploads}</div>
-            {display}
+            {uploads}
+            <div
+              className="grid"
+              data-masonry="{&quot;itemSelector&quot;:&quot;.file-item&quot;,&quot;columnWidth&quot;:200}">
+              {display}
+            </div>
           </div>
         </div>
       );
