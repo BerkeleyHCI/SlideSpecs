@@ -36,14 +36,7 @@ export default class App extends Component {
   }
 
   logout() {
-    Meteor.logout(() => {
-      this.renderRedirect('/signin');
-    });
-  }
-
-  renderRedirect(location) {
-    //let redirect = <Redirect to={location} />;
-    //return redirect;
+    Meteor.logout();
   }
 
   renderContent(location) {
@@ -58,50 +51,60 @@ export default class App extends Component {
           </h1>
           <UserMenu user={user} logout={this.logout} />
           {user && (
-            <div>
-              <ListList lists={lists} />
-              <Link to="/upload"> slides </Link>
-            </div>
+          <div>
+            <ListList lists={lists} />
+            <Link to="/upload"> slides </Link>
+          </div>
           )}
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div id="content-container">
           {loading ? (
-            <Loading key="loading" />
+          <Loading key="loading" />
           ) : (
-            <TransitionGroup>
-              <CSSTransition key={location.key} classNames="fade" timeout={100}>
-                <Switch location={location}>
-                  <Route exact path="/" component={SessionsList} />
-                  <Route path="/upload" render={() => <FileUploader files={files} />} />
-                  <Route path="/signin" component={AuthPageSignIn} />
-                  <Route path="/join" component={AuthPageJoin} />
-                  <Route
-                    path="/lists/:id"
-                    render={({match}) => <ListPageContainer match={match} />}
-                  />
-                  <Route path="/*" component={NotFoundPage} />
-                </Switch>
-              </CSSTransition>
-            </TransitionGroup>
+          <TransitionGroup>
+            <CSSTransition key={location.key} classNames="fade" timeout={100}>
+              <Switch location={location}>
+                <Route path="/signin" component={AuthPageSignIn} />
+                <Route path="/join" component={AuthPageJoin} />
+
+                <PrivateRoute
+                  exact path="/" user={user}
+                  render={() => <SessionsList/>}
+                />
+
+                <PrivateRoute
+                  path="/upload" user={user}
+                  render={() => <FileUploader  files={files} />}
+                />
+
+                <Route
+                  path="/lists/:id" user={user}
+                  render={({match}) => <ListPageContainer match={match} />}
+                />
+
+              <Route path="/*" component={NotFoundPage} />
+              </Switch>
+            </CSSTransition>
+          </TransitionGroup>
           )}
         </div>
       </div>
-    );
+      );
   }
 
   render() {
     return (
       <BrowserRouter>
-        <Route
-          render={({location}) =>
-            this.renderRedirect(location) || this.renderContent(location)
-          }
-        />
+        <Route render={({location}) => this.renderContent(location) } />
       </BrowserRouter>
-    );
+      );
   }
 }
+
+const PrivateRoute = ({ user, render, ...other }) => (
+  <Route {...other} render={() => user ? render() : (<Redirect to="/signin" />) } />
+);
 
 App.propTypes = {
   user: PropTypes.object, // current meteor user

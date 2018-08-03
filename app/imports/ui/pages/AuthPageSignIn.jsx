@@ -50,7 +50,6 @@ class SignInPage extends BaseComponent {
     const content = (
       <div className="wrapper-auth">
         <h1 className="title-auth">sign in</h1>
-        <h3 className="subtitle-auth">.</h3>
         <form onSubmit={this.onSubmit}>
           <div className="list-errors">
             {errorMessages.map(msg => (
