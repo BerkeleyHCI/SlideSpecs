@@ -10,15 +10,14 @@ import ListList from '../components/ListList.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import FileUploader from '../components/FileUploader.jsx';
-import SessionsList from '../components/SessionsList.jsx';
+
 import ListPageContainer from '../containers/ListPageContainer.jsx';
+import SessionListPage from '../pages/SessionListPage.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
-
-//<ListList lists={lists} />
 
 export default class App extends Component {
   constructor(props) {
@@ -72,13 +71,19 @@ export default class App extends Component {
                     exact
                     path="/"
                     user={user}
-                    render={() => <SessionsList />}
+                    render={() => <SessionListPage />}
                   />
 
                   <PrivateRoute
                     path="/upload"
                     user={user}
                     render={() => <FileUploader files={files} />}
+                  />
+
+                  <PrivateRoute
+                    path="/sessions/:id"
+                    user={user}
+                    render={({match}) => <SessionPageContainer match={match} />}
                   />
 
                   <PrivateRoute
