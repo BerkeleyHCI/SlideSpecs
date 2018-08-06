@@ -7,6 +7,7 @@ import UserMenu from '../components/UserMenu.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import FileUploader from '../components/FileUploader.jsx';
+import PrivateRoute from '../components/PrivateRoute.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
