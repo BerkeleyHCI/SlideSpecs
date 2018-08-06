@@ -5,9 +5,10 @@ import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
 
 import UserMenu from '../components/UserMenu.jsx';
-import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import FileUploader from '../components/FileUploader.jsx';
+import ConnectionNotification from '../components/ConnectionNotification.jsx';
+import SessionContainer from '../containers/SessionContainer.jsx';
 
 import SessionListPage from '../pages/SessionListPage.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
@@ -80,7 +81,7 @@ export default class App extends Component {
                   <PrivateRoute
                     path="/sessions/:id"
                     user={user}
-                    render={({match}) => <SessionPageContainer match={match} />}
+                    render={({match}) => <SessionContainer match={match} />}
                   />
 
                   <Route path="/*" component={NotFoundPage} />

@@ -21,9 +21,12 @@ class FileUploader extends BaseComponent {
   }
 
   componentDidMount() {
-    var msnry = new Masonry('.grid', {
-      itemSelector: '.file-item',
-    });
+    let mason = new Masonry('.grid', {itemSelector: '.file-item'});
+    this.setState({...this.state, mason});
+  }
+
+  componentDidUpdate() {
+    this.state.mason.reloadItems();
   }
 
   humanFileSize(bytes) {
@@ -49,6 +52,7 @@ class FileUploader extends BaseComponent {
             file: file,
             meta: {
               locator: self.props.fileLocator,
+              sessionId: self.props.sessionId,
               userId: Meteor.userId(), // Optional, used to check on server for file tampering
             },
             streams: 'dynamic',
@@ -105,7 +109,7 @@ class FileUploader extends BaseComponent {
 
   // This is our progress bar, bootstrap styled
   // Remove this function if not needed
-  //
+
   showUploads() {
     if (!_.isEmpty(this.state.uploading)) {
       return (
@@ -152,7 +156,6 @@ class FileUploader extends BaseComponent {
         );
       });
 
-      // todo: this is a single call, need to make reactive
       return (
         <div className="main-content">
           <h1>upload slides</h1>
