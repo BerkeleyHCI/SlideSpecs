@@ -48,11 +48,6 @@ export default class App extends Component {
             <Link to="/">feedback</Link>
           </h1>
           <UserMenu user={user} logout={this.logout} />
-          {user && (
-            <div>
-              <Link to="/upload"> slides </Link>
-            </div>
-          )}
         </section>
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div id="content-container">
@@ -73,15 +68,17 @@ export default class App extends Component {
                   />
 
                   <PrivateRoute
-                    path="/upload"
-                    user={user}
-                    render={() => <FileUploader files={files} />}
-                  />
-
-                  <PrivateRoute
                     path="/sessions/:id"
                     user={user}
                     render={({match}) => <SessionContainer match={match} />}
+                  />
+
+                  <PrivateRoute
+                    path="/upload/:id"
+                    user={user}
+                    render={({match}) => (
+                      <FileUploader files={files} match={match} />
+                    )}
                   />
 
                   <Route path="/*" component={NotFoundPage} />

@@ -15,7 +15,11 @@ export default class SessionContainer extends BaseComponent {
 
   render() {
     console.log(this.props);
-    return <Message title="sessions!!!" subtitle="yes" />;
+    if (this.hasSlides()) {
+      return <Message title="sessions!!!" subtitle="has slides" />;
+    } else {
+      return <Message title="sessions!!!" subtitle="no slides" />;
+    }
   }
 }
 
