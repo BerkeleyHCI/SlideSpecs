@@ -4,18 +4,18 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 class SessionsCollection extends Mongo.Collection {
   insert(session, callback) {
-    const ourSess = session;
+    let ourSess = session;
     if (!ourSess.name) {
-      const defaultName = 'session ';
-      let nextLetter = Date.now();
-      ourList.name = `${defaultName} ${nextLetter}`;
+      const basename = 'session ';
+      let iter = Date.now().toLocaleString();
+      ourSess.name = `${basename} ${iter}`;
     }
-    return super.insert(ourList, callback);
+    return super.insert(ourSess, callback);
   }
 
   remove(selector, callback) {
-    // TODO
-    // Remove all slides related to this session
+    // TODO: Remove all slides related to this session
+    // Files.remove({session: ourSess.id})
     return super.remove(selector, callback);
   }
 }

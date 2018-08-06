@@ -8,39 +8,55 @@ import {Sessions} from './sessions.js';
 
 export const createSession = new ValidatedMethod({
   name: 'sessions.create',
-  validate: new SimpleSchema({
-    userId: {type: String},
-  }).validator(),
-  run({userId}) {
-    if (!userId || !userId === this.userId) {
+  validate: new SimpleSchema({}).validator(),
+  run({}) {
+    if (!this.userId) {
       throw new Meteor.Error(
         'api.sessions.create.accessDenied',
         'You must log in to create a session.',
       );
     } else {
       Sessions.insert({
-        userId,
+        userId: this.userId,
         created: Date.now(),
       });
     }
   },
 });
 
-export const updateSessionName = new ValidatedMethod({
-  name: 'sessions.updateName',
+export const updateSession = new ValidatedMethod({
+  name: 'sessions.update',
   validate: new SimpleSchema({
     sessionId: {type: String},
     newName: {type: String},
   }).validator(),
   run({sessionId, newName}) {
     const session = Sessions.findOne(sessionId);
-    if (!session.userId !== this.userId) {
+    if (session.userId !== this.userId) {
       throw new Meteor.Error(
-        'api.sessions.updateName.accessDenied',
+        'api.sessions.update.accessDenied',
         "You don't have permission to edit this session.",
       );
     } else {
       Sessions.update(sessionId, {$set: {name: newName}});
+    }
+  },
+});
+
+export const deleteSession = new ValidatedMethod({
+  name: 'sessions.delete',
+  validate: new SimpleSchema({
+    sessionId: {type: String},
+  }).validator(),
+  run({sessionId}) {
+    const session = Sessions.findOne(sessionId);
+    if (session.userId !== this.userId) {
+      throw new Meteor.Error(
+        'api.sessions.delete.accessDenied',
+        "You don't have permission to edit this session.",
+      );
+    } else {
+      Sessions.remove(sessionId);
     }
   },
 });
