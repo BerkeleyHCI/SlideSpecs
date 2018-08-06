@@ -16,7 +16,7 @@ export const createSession = new ValidatedMethod({
         'You must log in to create a session.',
       );
     } else {
-      Sessions.insert({
+      return Sessions.insert({
         userId: this.userId,
         created: Date.now(),
       });

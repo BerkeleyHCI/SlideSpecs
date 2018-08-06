@@ -34,7 +34,6 @@ class SessionItem extends BaseComponent {
           delete
         </button>
       </div>
-      //onClick={() => }
     );
   }
 }
@@ -48,7 +47,13 @@ export default class SessionListPage extends BaseComponent {
   }
 
   addSession() {
-    createSession.call({});
+    createSession.call({}, (err, res) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.redirectTo(`/sessions/${res}`);
+      }
+    });
   }
 
   render() {
@@ -65,7 +70,7 @@ export default class SessionListPage extends BaseComponent {
       <div className="main-content">
         <h1>sessions</h1>
         <button onClick={this.addSession} className="btn btn-primary">
-          + new
+          + new session
         </button>
         {Sessions}
       </div>
