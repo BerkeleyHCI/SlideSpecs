@@ -1,22 +1,19 @@
 import {Meteor} from 'meteor/meteor';
 import {withTracker} from 'meteor/react-meteor-data';
-import {Lists} from '../../api/lists/lists.js';
+import {Sessions} from '../../api/files/files.js';
 import {Files} from '../../api/files/files.js';
 
 import App from '../layouts/App.jsx';
 
 export default withTracker(() => {
-  const pubH = Meteor.subscribe('lists.public');
-  const privH = Meteor.subscribe('lists.private');
-  const pubF = Meteor.subscribe('files.all');
+  const sessions = Meteor.subscribe('sessions');
+  const files = Meteor.subscribe('files');
 
   return {
     user: Meteor.user(),
-    loading: ![pubH, privH, pubF].every(x => x.ready()),
+    loading: ![sessions, files].every(x => x.ready()),
     connected: Meteor.status().connected,
+    sessions: Sessions.find({name: {$exists: true}}, {sort: {name: 1}}).fetch(),
     files: Files.find({name: {$exists: true}}, {sort: {name: 1}}).fetch(),
-    lists: Lists.find({
-      $or: [{userId: {$exists: false}}, {userId: Meteor.userId()}],
-    }).fetch(),
   };
 })(App);

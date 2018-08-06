@@ -1,17 +1,12 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {Meteor} from 'meteor/meteor';
-import {Lists} from '../../api/lists/lists.js';
-import {Files} from '../../api/files/files.js';
+import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import UserMenu from '../components/UserMenu.jsx';
-import ListList from '../components/ListList.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import FileUploader from '../components/FileUploader.jsx';
-
-import ListPageContainer from '../containers/ListPageContainer.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
@@ -86,12 +81,6 @@ export default class App extends Component {
                     render={({match}) => <SessionPageContainer match={match} />}
                   />
 
-                  <PrivateRoute
-                    path="/lists/:id"
-                    user={user}
-                    render={({match}) => <ListPageContainer match={match} />}
-                  />
-
                   <Route path="/*" component={NotFoundPage} />
                 </Switch>
               </CSSTransition>
@@ -127,13 +116,12 @@ App.propTypes = {
   user: PropTypes.object, // current meteor user
   connected: PropTypes.bool.isRequired, // server connection status
   loading: PropTypes.bool.isRequired, // subscription status
-  lists: PropTypes.array, // all lists visible to the current user
+  sessions: PropTypes.array, // all visible files
   files: PropTypes.array, // all visible files
 };
 
 App.defaultProps = {
   user: null,
-  lists: [],
-  slides: [],
+  sessions: [],
   files: [],
 };
