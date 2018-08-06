@@ -6,7 +6,7 @@ class SessionsCollection extends Mongo.Collection {
   insert(session, callback) {
     const ourSess = session;
     if (!ourSess.name) {
-      const defaultName = 'session';
+      const defaultName = 'session ';
       let nextLetter = Date.now();
       ourList.name = `${defaultName} ${nextLetter}`;
     }

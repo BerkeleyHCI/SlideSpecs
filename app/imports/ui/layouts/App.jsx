@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
 import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
+
 import UserMenu from '../components/UserMenu.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import FileUploader from '../components/FileUploader.jsx';
-import PrivateRoute from '../components/PrivateRoute.jsx';
+
 import SessionListPage from '../pages/SessionListPage.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
@@ -37,7 +38,7 @@ export default class App extends Component {
   }
 
   renderContent(location) {
-    const {user, connected, lists, files, loading} = this.props;
+    const {user, connected, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
     return (
       <div id="container">
@@ -67,7 +68,7 @@ export default class App extends Component {
                     exact
                     path="/"
                     user={user}
-                    render={() => <SessionListPage />}
+                    render={() => <SessionListPage sessions={sessions} />}
                   />
 
                   <PrivateRoute

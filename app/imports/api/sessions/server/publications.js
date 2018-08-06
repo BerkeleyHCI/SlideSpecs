@@ -6,9 +6,7 @@ import {Sessions} from '../sessions.js';
 Meteor.publish('sessions', function sessionsPrivate() {
   if (!this.userId) {
     return this.ready();
+  } else {
+    return Sessions.find({userId: this.userId});
   }
-
-  return Sessions.find({
-    userId: this.userId,
-  });
 });

@@ -2,43 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import BaseComponent from '../components/BaseComponent.jsx';
-import NotFoundPage from '../pages/NotFoundPage.jsx';
 import Message from '../components/Message.jsx';
+import {createSession} from '../../api/sessions/methods.js';
 
-export default class SessionPage extends BaseComponent {
+export default class SessionListPage extends BaseComponent {
+  constructor(props) {
+    super(props);
+    this.addSession = this.addSession.bind(this);
+  }
+
+  addSession() {
+    createSession.call({});
+  }
+
   render() {
-    const {session, sessionExists, loading, sessions} = this.props;
-    const {editingSession} = this.state;
-
-    if (!sessionExists) {
-      return <NotFoundPage />;
-    }
+    const {sessions} = this.props;
 
     let Sessions;
     if (!sessions || !sessions.length) {
       Sessions = <Message title="no sessions" subtitle="add above" />;
     } else {
-      Sessions = sessions.map(sess => (
-        <SessionItem
-          todo={todo}
-          key={todo._id}
-          editing={todo._id === editingSession}
-          onEditingChange={this.onEditingChange}
-        />
-      ));
+      Sessions = sessions.map(sess => <li> {sess.name} </li>);
     }
 
     return (
       <div className="main-content">
         <h1>sessions</h1>
-        {loading ? <Message title="loading" /> : Sessions}
+        <button onClick={this.addSession} className="btn btn-primary">
+          + new
+        </button>
+        <ul> {Sessions} </ul>
       </div>
     );
   }
 }
 
-SessionPage.propTypes = {
-  session: PropTypes.object,
-  loading: PropTypes.bool,
-  sessionExists: PropTypes.bool,
-};
+SessionListPage.propTypes = {sessions: PropTypes.array};

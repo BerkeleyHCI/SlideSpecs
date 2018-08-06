@@ -46,10 +46,10 @@ class IndividualFile extends Component {
         </h4>
         <img className="slide" src={this.props.fileUrl} />
         <div class="btns-group">
-          <button onClick={this.renameFile} class="btn btn-sm">
+          <button onClick={this.renameFile} className="btn btn-sm">
             rename
           </button>
-          <button onClick={this.removeFile} class="btn btn-sm">
+          <button onClick={this.removeFile} className="btn btn-sm">
             delete
           </button>
         </div>

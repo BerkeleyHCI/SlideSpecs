@@ -165,10 +165,9 @@ class FileUploader extends BaseComponent {
               onChange={this.uploadIt}
               multiple
             />
-            <br />
             {uploads}
-            <div className="grid">{display}</div>
           </div>
+          <div className="grid">{display}</div>
         </div>
       );
     } else return <div>loading file list...</div>;

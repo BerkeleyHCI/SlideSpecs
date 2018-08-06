@@ -6,46 +6,41 @@ import {_} from 'meteor/underscore';
 
 import {Sessions} from './sessions.js';
 
-export const updateName = new ValidatedMethod({
-  name: 'update session name',
+export const createSession = new ValidatedMethod({
+  name: 'sessions.create',
+  validate: new SimpleSchema({
+    userId: {type: String},
+  }).validator(),
+  run({userId}) {
+    if (!userId || !userId === this.userId) {
+      throw new Meteor.Error(
+        'api.sessions.create.accessDenied',
+        'You must log in to create a session.',
+      );
+    } else {
+      Sessions.insert({
+        userId,
+        created: Date.now(),
+      });
+    }
+  },
+});
+
+export const updateSessionName = new ValidatedMethod({
+  name: 'sessions.updateName',
   validate: new SimpleSchema({
     sessionId: {type: String},
     newName: {type: String},
   }).validator(),
   run({sessionId, newName}) {
     const session = Sessions.findOne(sessionId);
-
-    if (!session.editableBy(this.userId)) {
+    if (!session.userId !== this.userId) {
       throw new Meteor.Error(
         'api.sessions.updateName.accessDenied',
         "You don't have permission to edit this session.",
       );
+    } else {
+      Sessions.update(sessionId, {$set: {name: newName}});
     }
-
-    Sessions.update(sessionId, {
-      $set: {name: newName},
-    });
   },
 });
-
-// Get session of all method names on Sessions
-const LISTS_METHODS = _.pluck([updateName], 'name');
-
-// Only allow 5 session operations per connection per second
-
-if (Meteor.isServer) {
-  DDPRateLimiter.addRule(
-    {
-      name(name) {
-        return _.contains(LISTS_METHODS, name);
-      },
-
-      // Rate limit per connection ID
-      connectionId() {
-        return true;
-      },
-    },
-    5,
-    1000,
-  );
-}
