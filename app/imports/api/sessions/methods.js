@@ -7,7 +7,7 @@ import {_} from 'meteor/underscore';
 import {Sessions} from './sessions.js';
 
 export const updateName = new ValidatedMethod({
-  name: 'update name',
+  name: 'update session name',
   validate: new SimpleSchema({
     sessionId: {type: String},
     newName: {type: String},

@@ -8,12 +8,7 @@ Meteor.publish('sessions', function sessionsPrivate() {
     return this.ready();
   }
 
-  return Sessions.find(
-    {
-      userId: this.userId,
-    },
-    {
-      fields: Sessions.publicFields,
-    },
-  );
+  return Sessions.find({
+    userId: this.userId,
+  });
 });
