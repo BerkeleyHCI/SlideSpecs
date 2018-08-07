@@ -67,30 +67,40 @@ class SlideReviewPage extends BaseComponent {
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.getText();
-    createComment.call(
-      {
-        author: reviewer,
-        content: cText,
-        session: sessionId,
-        slides,
-      },
-      () => this.clearText(),
-    );
+    const commentFields = {
+      author: reviewer,
+      content: cText,
+      session: sessionId,
+      slides,
+    };
+    console.log(commentFields);
+    createComment.call(commentFields, (err, res) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.clearText();
+      }
+    });
   };
 
-  renderSlideTags = filter => {
-    if (filter.length === 0)
-      return 'no slides selected, attach as general feedback';
-    else {
+  renderSlideTags = (filter, done: false) => {
+    if (filter.length === 0) {
+      return done ? (
+        <kbd>general</kbd>
+      ) : (
+        'no slides selected, attach as general feedback'
+      );
+    } else {
       const plural = filter.length > 1;
       const slideNos = filter
         .map(x => parseInt(x.slideNo))
         .sort((a, b) => a - b);
       const slideKeys = slideNos.map(sn => <kbd key={`key-${sn}`}>{sn}</kbd>);
       return (
-        <div>
-          attach comment to slide{plural && 's'} {slideKeys}
-        </div>
+        <span>
+          {!done && <span>attach comment to slide{plural && 's'}</span>}
+          {slideKeys}
+        </span>
       );
     }
   };
@@ -142,12 +152,13 @@ class SlideReviewPage extends BaseComponent {
       return <div className="alert"> no comments yet</div>;
     } else {
       return comments.map(c => {
-        const context = this.renderSlideTags(c.slides);
+        const context = this.renderSlideTags(c.slides, true);
         return (
-          <p key={c.created}>
-            <strong>{c.author}</strong>
-            {c.content} - {context}
-          </p>
+          <div key={c._id}>
+            <strong>{c.author} </strong>
+            {c.content}
+            <div className="pull-right"> {context} </div>
+          </div>
         );
       });
     }

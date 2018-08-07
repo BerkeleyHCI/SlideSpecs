@@ -6,13 +6,18 @@ import {_} from 'meteor/underscore';
 
 import {Comments} from './comments.js';
 
+SlideSchema = new SimpleSchema({
+  slideNo: {type: String},
+  slideId: {type: String},
+});
+
 export const createComment = new ValidatedMethod({
   name: 'comments.create',
   validate: new SimpleSchema({
     session: {type: String},
     author: {type: String},
     content: {type: String},
-    slides: {type: [Object]},
+    slides: {type: [SlideSchema]},
   }).validator(),
   run({author, content, session, slides}) {
     return Comments.insert({

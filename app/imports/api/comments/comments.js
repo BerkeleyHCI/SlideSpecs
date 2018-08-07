@@ -18,12 +18,17 @@ Comments.deny({
   },
 });
 
+SlideSchema = new SimpleSchema({
+  slideNo: {type: String},
+  slideId: {type: String},
+});
+
 Comments.schema = new SimpleSchema({
   created: {type: Date},
   author: {type: String},
   content: {type: String},
   session: {type: String},
-  slides: {type: [Object]},
+  slides: {type: [SlideSchema]},
 });
 
 Comments.attachSchema(Comments.schema);
