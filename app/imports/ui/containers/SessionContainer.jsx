@@ -21,9 +21,11 @@ export default class SessionContainer extends BaseComponent {
     const {_id, name, files} = this.props;
     const uLink = `/slides/${_id}`;
     const copyUrl = () => {
-      var copyText = document.getElementByClass('code');
-      copyText.select();
-      document.execCommand('copy');
+      var copyText = document.getElementsByClassName('code')[0];
+      if (copyText) {
+        copyText.select();
+        document.execCommand('copy');
+      }
     };
 
     return (
@@ -33,24 +35,36 @@ export default class SessionContainer extends BaseComponent {
           <div className="padded">
             <div className="alert">
               <h3>1. upload slides</h3>
-              manage the slides for this presentation session
-              <Link to={uLink}> here</Link>
+              manage the slides for this presentation session [<Link to={uLink}>
+                here
+              </Link>]
             </div>
 
             <div className="alert">
               <h3>2. present slides</h3>
               once the slides are uploaded, share this link with the audience
               for review
-              <br />
-              <input type="text" value="google.com" className="code" readonly />
-              <button onClick={copyUrl}>copy url</button>
+              <hr />
+              <input
+                type="text"
+                value="google.comla;tuirweutiruweotpureiwoturopweutoirewuiotruewturoepwtref"
+                className="code"
+                readOnly
+              />
+              <hr />
+              <div className="btns-group">
+                <button className="btn btn-menu" onClick={copyUrl}>
+                  copy url
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="alert">
             <h3>3. review feedback</h3>
-            after your presentation, review the gathered feedback
-            <Link to="/"> here</Link>
+            after your presentation, review the gathered feedback [<Link to="/">
+              here
+            </Link>]
           </div>
         </div>
       )

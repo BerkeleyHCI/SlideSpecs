@@ -2,11 +2,12 @@ import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {_} from 'meteor/underscore';
 import {withTracker} from 'meteor/react-meteor-data';
-import Message from '../components/Message.jsx';
+import {Link} from 'react-router-dom';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import IndividualFile from '../components/FileIndividualFile.jsx';
+import Message from '../components/Message.jsx';
 
 class UploadPage extends BaseComponent {
   constructor(props) {
@@ -132,7 +133,7 @@ class UploadPage extends BaseComponent {
   };
 
   render() {
-    const {name, files} = this.props;
+    const {_id, name, files} = this.props;
     if (files) {
       let fileCursors = files;
       let uploads = this.showUploads();
@@ -158,8 +159,10 @@ class UploadPage extends BaseComponent {
         this.renderRedirect() || (
           <div className="main-content">
             <h1>
-              {name} <small>manage slides</small>
+              <Link to={`/sessions/${_id}`}>{name}</Link>
             </h1>
+            <h2>manage slides</h2>
+
             <div className="custom-upload">
               <label className="btn btn-primary">
                 + upload slides
