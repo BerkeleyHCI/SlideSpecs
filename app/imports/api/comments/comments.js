@@ -2,7 +2,7 @@ import {Mongo} from 'meteor/mongo';
 import {Factory} from 'meteor/factory';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
-export const Comments = new Mongo.Collectio('Comments');
+export const Comments = new Mongo.Collection('Comments');
 
 // Deny all client-side updates since we will be using methods to manage this collection
 
