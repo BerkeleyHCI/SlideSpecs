@@ -159,7 +159,11 @@ class UploadPage extends BaseComponent {
         this.renderRedirect() || (
           <div className="main-content">
             <h1>
-              <Link to={`/sessions/${_id}`}>{name}</Link>
+              {files.length > 0 ? (
+                <Link to={`/sessions/${_id}`}>{name}</Link>
+              ) : (
+                <span>{name}</span>
+              )}
             </h1>
             <h2>manage slides</h2>
 
@@ -176,7 +180,7 @@ class UploadPage extends BaseComponent {
                 />
               </label>
               <button className="btn btn-danger">delete all</button>
-              {!this.state.uploading &&
+              {this.state.uploading.length === 0 &&
                 display.length === 0 && (
                   <Message title="no slides yet" subtitle="add above" />
                 )}

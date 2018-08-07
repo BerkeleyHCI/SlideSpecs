@@ -28,13 +28,17 @@ export default class SessionContainer extends BaseComponent {
       }
     };
 
+    const shareLink = 'localhost:3000/share/' + _id;
+
     return (
       this.renderRedirect() || (
         <div className="main-content">
           <h1> {name} </h1>
           <div className="padded">
             <div className="alert">
-              <h3>1. upload slides</h3>
+              <h3>
+                1. check slides <small>{files.length} uploaded</small>
+              </h3>
               manage the slides for this presentation session [<Link to={uLink}>
                 here
               </Link>]
@@ -42,15 +46,10 @@ export default class SessionContainer extends BaseComponent {
 
             <div className="alert">
               <h3>2. present slides</h3>
-              once the slides are uploaded, share this link with the audience
-              for review
+              once the slides ready, share this link with the audience for
+              review:
               <hr />
-              <input
-                type="text"
-                value="google.comla;tuirweutiruweotpureiwoturopweutoirewuiotruewturoepwtref"
-                className="code"
-                readOnly
-              />
+              <input type="text" value={shareLink} className="code" readOnly />
               <hr />
               <div className="btns-group">
                 <button className="btn btn-menu" onClick={copyUrl}>
