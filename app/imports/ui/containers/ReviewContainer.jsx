@@ -30,9 +30,8 @@ export default class ReviewContainer extends BaseComponent {
         <hr />
         <input
           type="text"
-          defaultValue="your name"
+          placeholder="enter your name here"
           className="code"
-          onSubmit={this.setName}
         />
         <hr />
         <div className="btns-group">

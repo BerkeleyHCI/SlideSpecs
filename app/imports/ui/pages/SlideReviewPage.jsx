@@ -10,6 +10,14 @@ import FileReview from '../components/FileReview.jsx';
 import Message from '../components/Message.jsx';
 
 class SlideReviewPage extends BaseComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      redirectTo: null,
+      filtered: [],
+    };
+  }
+
   handleLoad = () => {
     const items = document.querySelectorAll('.file-item');
     new Masonry('.grid', items);
@@ -28,7 +36,8 @@ class SlideReviewPage extends BaseComponent {
           slideNo: el.getAttribute('data-iter'),
         };
       });
-      console.log(filtered);
+      const newState = {...this.state, filtered};
+      this.setState(newState);
     };
     this.setState({ds});
   };
@@ -46,11 +55,7 @@ class SlideReviewPage extends BaseComponent {
 
   clearText = () => {
     var copyText = document.getElementsByClassName('code')[0];
-    if (copyText) {
-      return (copyText.value = '');
-    } else {
-      return '';
-    }
+    copyText.value = 'enter comment';
   };
 
   addComment = () => {
@@ -60,58 +65,87 @@ class SlideReviewPage extends BaseComponent {
     //addComment.call('name', name);
   };
 
-  renderComment = () => {
+  renderSubmit = () => {
+    let context;
+    let filter = this.state.filtered;
+    if (filter.length === 0)
+      context = 'no slides selected, attach as general feedback';
+    else {
+      const plural = filter.length > 1;
+      const slideNos = filter
+        .map(x => parseInt(x.slideNo))
+        .sort((a, b) => a - b);
+      const slideKeys = slideNos.map(sn => <kbd key={`key-${sn}`}>{sn}</kbd>);
+      context = (
+        <div>
+          attach comment to slide{plural && 's'} {slideKeys}
+        </div>
+      );
+    }
+
     return (
       <div className="alert">
-        <h3>enter your feedback:</h3>
+        {context}
         <hr />
         <input
           type="text"
-          defaultValue="your name"
+          placeholder="enter comment here"
           className="code"
           onSubmit={this.setName}
         />
         <hr />
         <div className="btns-group">
-          <button onClick={this.setName} className="btn btn-menu">
-            set name
+          <button onClick={this.addComment} className="btn btn-menu">
+            submit comment
           </button>
         </div>
       </div>
     );
   };
 
-  render() {
-    const {_id, name, files} = this.props;
-    const commenter = this.renderComment();
-    if (files) {
-      let display = files.map((aFile, key) => {
-        let link = Files.findOne({_id: aFile._id}).link();
-        return (
-          <FileReview
-            key={'file-' + key}
-            iter={key}
-            fileUrl={link}
-            fileId={aFile._id}
-            fileName={aFile.name}
-            handleLoad={this.handleLoad}
-          />
-        );
-      });
+  renderContext = () => {};
 
+  renderFiles = () => {
+    const {_id, files} = this.props;
+    return files.map((aFile, key) => {
+      const link = Files.findOne({_id: aFile._id}).link();
       return (
-        this.renderRedirect() || (
-          <div className="reviewView">
-            <h2>comment</h2>
-            {commenter}
-            <h2>slides view</h2>
-            <div id="grid" className="padded grid">
-              {display}
-            </div>
-          </div>
-        )
+        <FileReview
+          key={'file-' + key}
+          iter={key}
+          fileUrl={link}
+          fileId={aFile._id}
+          fileName={aFile.name}
+          handleLoad={this.handleLoad}
+        />
       );
-    } else return <div>loading file list...</div>;
+    });
+  };
+
+  renderComments = () => {};
+
+  render() {
+    const {files} = this.props;
+    const submitter = this.renderSubmit();
+    const fileList = this.renderFiles();
+    const comments = this.renderComments();
+
+    return files ? (
+      this.renderRedirect() || (
+        <div className="reviewView">
+          <h2>submit</h2>
+          {submitter}
+          <h2>slides</h2>
+          <div id="grid" className="padded grid">
+            {fileList}
+          </div>
+          <h2>comments</h2>
+          {comments}
+        </div>
+      )
+    ) : (
+      <div>loading file list...</div>
+    );
   }
 }
 
