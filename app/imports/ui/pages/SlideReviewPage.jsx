@@ -60,33 +60,44 @@ class SlideReviewPage extends BaseComponent {
 
   clearText = () => {
     var copyText = document.getElementsByClassName('code')[0];
-    copyText.value = 'enter comment';
+    copyText.value = '';
   };
 
   addComment = () => {
+    const {reviewer, sessionId} = this.props;
+    const slides = this.state.filtered;
     const cText = this.getText();
-    console.log(cText);
-    this.clearText();
-    //addComment.call('name', name);
+    createComment.call(
+      {
+        author: reviewer,
+        content: cText,
+        session: sessionId,
+        slides,
+      },
+      () => this.clearText(),
+    );
   };
 
-  renderSubmit = () => {
-    let context;
-    let filter = this.state.filtered;
+  renderSlideTags = filter => {
     if (filter.length === 0)
-      context = 'no slides selected, attach as general feedback';
+      return 'no slides selected, attach as general feedback';
     else {
       const plural = filter.length > 1;
       const slideNos = filter
         .map(x => parseInt(x.slideNo))
         .sort((a, b) => a - b);
       const slideKeys = slideNos.map(sn => <kbd key={`key-${sn}`}>{sn}</kbd>);
-      context = (
+      return (
         <div>
           attach comment to slide{plural && 's'} {slideKeys}
         </div>
       );
     }
+  };
+
+  renderSubmit = () => {
+    let {filtered} = this.state;
+    let context = this.renderSlideTags(filtered);
 
     return (
       <div className="alert">
@@ -107,8 +118,6 @@ class SlideReviewPage extends BaseComponent {
       </div>
     );
   };
-
-  renderContext = () => {};
 
   renderFiles = () => {
     const {_id, files} = this.props;
@@ -132,7 +141,15 @@ class SlideReviewPage extends BaseComponent {
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      return comments.map(sess => <span key={sess._id}> {sess}</span>);
+      return comments.map(c => {
+        const context = this.renderSlideTags(c.slides);
+        return (
+          <p key={c.created}>
+            <strong>{c.author}</strong>
+            {c.content} - {context}
+          </p>
+        );
+      });
     }
   };
 
@@ -147,7 +164,6 @@ class SlideReviewPage extends BaseComponent {
         <div className="reviewView">
           <h2>submit</h2>
           {submitter}
-          <h2>slides</h2>
           <div id="grid" className="padded grid">
             {fileList}
           </div>

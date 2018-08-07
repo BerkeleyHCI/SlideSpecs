@@ -77,6 +77,7 @@ export default class App extends Component {
           files={sFiles}
           reviewer={reviewer}
           comments={comments}
+          sessionId={sessionId}
         />
       );
     }

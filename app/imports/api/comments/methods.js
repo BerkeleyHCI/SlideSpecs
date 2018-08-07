@@ -8,19 +8,20 @@ import {Comments} from './comments.js';
 
 export const createComment = new ValidatedMethod({
   name: 'comments.create',
-  validate: new SimpleSchema({}).validator(),
-  run({}) {
-    if (!this.userId) {
-      throw new Meteor.Error(
-        'api.comments.create.accessDenied',
-        'You must log in to create a comment.',
-      );
-    } else {
-      return Comments.insert({
-        userId: this.userId,
-        created: Date.now(),
-      });
-    }
+  validate: new SimpleSchema({
+    session: {type: String},
+    author: {type: String},
+    content: {type: String},
+    slides: {type: [Object]},
+  }).validator(),
+  run({author, content, session, slides}) {
+    return Comments.insert({
+      created: Date.now(),
+      author,
+      content,
+      session,
+      slides,
+    });
   },
 });
 
@@ -31,15 +32,8 @@ export const renameComment = new ValidatedMethod({
     newName: {type: String},
   }).validator(),
   run({commentId, newName}) {
-    const comment = Comments.findOne(commentId);
-    if (comment.userId !== this.userId) {
-      throw new Meteor.Error(
-        'api.comments.rename.accessDenied',
-        "You don't have permission to edit this comment.",
-      );
-    } else {
-      Comments.update(commentId, {$set: {name: newName}});
-    }
+    // TODO - have SOME type of auth in here... yikes
+    Comments.update(commentId, {$set: {content: newName}});
   },
 });
 
@@ -49,14 +43,7 @@ export const deleteComment = new ValidatedMethod({
     commentId: {type: String},
   }).validator(),
   run({commentId}) {
-    const comment = Comments.findOne(commentId);
-    if (comment.userId !== this.userId) {
-      throw new Meteor.Error(
-        'api.comments.delete.accessDenied',
-        "You don't have permission to edit this comment.",
-      );
-    } else {
-      Comments.remove(commentId);
-    }
+    // TODO - have SOME type of auth in here... yikes
+    Comments.remove(commentId);
   },
 });
