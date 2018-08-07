@@ -122,7 +122,7 @@ class SlideReviewPage extends BaseComponent {
         <hr />
         <div className="btns-group">
           <button onClick={this.addComment} className="btn btn-menu">
-            submit comment
+            share
           </button>
         </div>
       </div>
@@ -173,7 +173,7 @@ class SlideReviewPage extends BaseComponent {
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
-          <h2>submit</h2>
+          <h1>share feedback</h1>
           {submitter}
           <div id="grid" className="padded grid">
             {fileList}

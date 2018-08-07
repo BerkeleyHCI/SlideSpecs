@@ -72,7 +72,6 @@ export default class App extends Component {
       const {sessions, files, comments} = this.props;
       const session = sessions.find(s => s._id === sessionId);
       const sComments = comments.filter(c => c.session === sessionId);
-      console.log(comments, sComments);
       const sFiles = files.filter(f => f.meta.sessionId === sessionId);
       return <FeedbackPage {...session} files={sFiles} comments={sComments} />;
     }
