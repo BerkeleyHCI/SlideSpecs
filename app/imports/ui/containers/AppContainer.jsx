@@ -1,4 +1,5 @@
 import {Meteor} from 'meteor/meteor';
+import {Session} from 'meteor/session';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Sessions} from '../../api/sessions/sessions.js';
 import {Files} from '../../api/files/files.js';
@@ -11,7 +12,11 @@ export default withTracker(() => {
     user: Meteor.user(),
     loading: ![sessions, files].every(x => x.ready()),
     connected: Meteor.status().connected,
-    sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
+    reviewer: Session.get('name'),
+    sessions: Sessions.find(
+      {userId: Meteor.userId()},
+      {sort: {created: -1}},
+    ).fetch(),
     files: Files.find({}, {sort: {name: 1}}).fetch(),
   };
 })(App);

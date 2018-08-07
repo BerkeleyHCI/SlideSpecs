@@ -67,21 +67,23 @@ export default class App extends Component {
     if (!match) {
       return <Loading key="loading" />;
     } else {
-      const {sessions, files} = this.props;
+      const {sessions, files, reviewer} = this.props;
       const sessionId = match.params.id;
       const session = sessions.find(s => s._id === sessionId);
       const sFiles = files.filter(f => f.meta.sessionId === sessionId);
-      return <ReviewContainer {...session} files={sFiles} />;
+      return (
+        <ReviewContainer {...session} files={sFiles} reviewer={reviewer} />
+      );
     }
   };
 
   renderContent(location) {
     const {user, connected, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
-    //const guest = location.pathname.match(/share/);
+    const guest = location.pathname.match(/share/);
     return (
       <div id="container">
-        <UserMenu user={user} logout={this.logout} />
+        <UserMenu user={user} guest={guest} logout={this.logout} />
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div id="content-container">
           {loading ? (

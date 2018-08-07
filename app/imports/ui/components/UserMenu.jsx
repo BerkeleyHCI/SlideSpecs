@@ -71,15 +71,15 @@ export default class UserMenu extends BaseComponent {
     );
   }
 
+  renderGuest() {}
+
   render() {
-    const content = this.props.user
-      ? this.renderLoggedIn()
-      : this.renderLoggedOut();
+    const {user, guest} = this.props;
+    let content = user ? this.renderLoggedIn() : this.renderLoggedOut();
+    if (guest) content = this.renderGuest();
     return (
       <section id="menu">
-        <h1>
-          <Link to="/">feedback</Link>
-        </h1>
+        <h1>{guest ? <span>feedback</span> : <Link to="/">feedback</Link>}</h1>
         {content}
       </section>
     );
