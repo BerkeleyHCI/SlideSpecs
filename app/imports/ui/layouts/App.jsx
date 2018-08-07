@@ -67,12 +67,17 @@ export default class App extends Component {
     if (!match) {
       return <Loading key="loading" />;
     } else {
-      const {sessions, files, reviewer} = this.props;
+      const {sessions, files, reviewer, comments} = this.props;
       const sessionId = match.params.id;
       const session = sessions.find(s => s._id === sessionId);
       const sFiles = files.filter(f => f.meta.sessionId === sessionId);
       return (
-        <ReviewContainer {...session} files={sFiles} reviewer={reviewer} />
+        <ReviewContainer
+          {...session}
+          files={sFiles}
+          reviewer={reviewer}
+          comments={comments}
+        />
       );
     }
   };

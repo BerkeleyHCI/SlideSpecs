@@ -8,6 +8,11 @@ import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Message from '../components/Message.jsx';
+import {
+  createComment,
+  renameComment,
+  deleteComment,
+} from '../../api/comments/methods.js';
 
 class SlideReviewPage extends BaseComponent {
   constructor(props) {
@@ -122,7 +127,14 @@ class SlideReviewPage extends BaseComponent {
     });
   };
 
-  renderComments = () => {};
+  renderComments = () => {
+    const {comments} = this.props;
+    if (!comments || !comments.length) {
+      return <div className="alert"> no comments yet</div>;
+    } else {
+      return comments.map(sess => <span key={sess._id}> {sess}</span>);
+    }
+  };
 
   render() {
     const {files} = this.props;
