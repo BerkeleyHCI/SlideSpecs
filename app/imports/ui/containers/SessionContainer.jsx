@@ -20,6 +20,7 @@ export default class SessionContainer extends BaseComponent {
   render() {
     const {_id, name, files} = this.props;
     const uLink = `/slides/${_id}`;
+    const fLink = `/feedback/${_id}`;
     const copyUrl = () => {
       var copyText = document.getElementsByClassName('code')[0];
       if (copyText) {
@@ -61,7 +62,8 @@ export default class SessionContainer extends BaseComponent {
 
           <div className="alert">
             <h3>3. review feedback</h3>
-            after your presentation, review the gathered feedback [<Link to="/">
+            after your presentation, review the gathered feedback [<Link
+              to={fLink}>
               here
             </Link>]
           </div>

@@ -1,7 +1,5 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
-import {_} from 'meteor/underscore';
-import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 
 import {Files} from '../../api/files/files.js';
@@ -14,7 +12,7 @@ import {
   deleteComment,
 } from '../../api/comments/methods.js';
 
-class SlideReviewPage extends BaseComponent {
+class FeedbackPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,40 +47,6 @@ class SlideReviewPage extends BaseComponent {
 
   componentDidUpdate = this.handleLoad;
 
-  getText = () => {
-    var copyText = document.getElementsByClassName('code')[0];
-    if (copyText) {
-      return copyText.value;
-    } else {
-      return '';
-    }
-  };
-
-  clearText = () => {
-    var copyText = document.getElementsByClassName('code')[0];
-    copyText.value = '';
-  };
-
-  addComment = () => {
-    const {reviewer, sessionId} = this.props;
-    const slides = this.state.filtered;
-    const cText = this.getText();
-    const commentFields = {
-      author: reviewer,
-      content: cText,
-      session: sessionId,
-      slides,
-    };
-    console.log(commentFields);
-    createComment.call(commentFields, (err, res) => {
-      if (err) {
-        console.error(err);
-      } else {
-        this.clearText();
-      }
-    });
-  };
-
   renderSlideTags = (filter, done: false) => {
     if (filter.length === 0) {
       return done ? (
@@ -103,30 +67,6 @@ class SlideReviewPage extends BaseComponent {
         </span>
       );
     }
-  };
-
-  renderSubmit = () => {
-    let {filtered} = this.state;
-    let context = this.renderSlideTags(filtered);
-
-    return (
-      <div className="alert">
-        {context}
-        <hr />
-        <input
-          type="text"
-          placeholder="enter comment here"
-          className="code"
-          onSubmit={this.setName}
-        />
-        <hr />
-        <div className="btns-group">
-          <button onClick={this.addComment} className="btn btn-menu">
-            submit comment
-          </button>
-        </div>
-      </div>
-    );
   };
 
   renderFiles = () => {
@@ -165,16 +105,17 @@ class SlideReviewPage extends BaseComponent {
   };
 
   render() {
-    const {files} = this.props;
-    const submitter = this.renderSubmit();
+    const {_id, files, name} = this.props;
     const fileList = this.renderFiles();
     const comments = this.renderComments();
 
     return files ? (
       this.renderRedirect() || (
-        <div className="reviewView">
-          <h2>submit</h2>
-          {submitter}
+        <div className="main-content reviewView">
+          <h1>
+            <Link to={`/sessions/${_id}`}>{name}</Link>
+          </h1>
+          <h2>review feedback</h2>
           <div id="grid" className="padded grid">
             {fileList}
           </div>
@@ -188,4 +129,4 @@ class SlideReviewPage extends BaseComponent {
   }
 }
 
-export default SlideReviewPage;
+export default FeedbackPage;

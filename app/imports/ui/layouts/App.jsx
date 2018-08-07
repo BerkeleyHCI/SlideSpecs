@@ -13,6 +13,7 @@ import ReviewContainer from '../containers/ReviewContainer.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
+import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 
@@ -55,11 +56,25 @@ export default class App extends Component {
     if (!match) {
       return <Loading key="loading" />;
     } else {
-      const {sessions, files} = this.props;
       const sessionId = match.params.id;
+      const {sessions, files} = this.props;
       const session = sessions.find(s => s._id === sessionId);
       const sFiles = files.filter(f => f.meta.sessionId === sessionId);
       return <UploadPage {...session} files={sFiles} />;
+    }
+  };
+
+  renderFeedback = ({match}) => {
+    if (!match) {
+      return <Loading key="loading" />;
+    } else {
+      const sessionId = match.params.id;
+      const {sessions, files, comments} = this.props;
+      const session = sessions.find(s => s._id === sessionId);
+      const sComments = comments.filter(c => c.session === sessionId);
+      console.log(comments, sComments);
+      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
+      return <FeedbackPage {...session} files={sFiles} comments={sComments} />;
     }
   };
 
@@ -70,13 +85,14 @@ export default class App extends Component {
       const {sessions, files, reviewer, comments} = this.props;
       const sessionId = match.params.id;
       const session = sessions.find(s => s._id === sessionId);
+      const sComments = comments.filter(c => c.session === sessionId);
       const sFiles = files.filter(f => f.meta.sessionId === sessionId);
       return (
         <ReviewContainer
           {...session}
           files={sFiles}
           reviewer={reviewer}
-          comments={comments}
+          comments={sComments}
           sessionId={sessionId}
         />
       );
@@ -123,6 +139,12 @@ export default class App extends Component {
                   <PrivateRoute
                     path="/slides/:id"
                     render={this.renderUpload}
+                    user={user}
+                  />
+
+                  <PrivateRoute
+                    path="/feedback/:id"
+                    render={this.renderFeedback}
                     user={user}
                   />
 

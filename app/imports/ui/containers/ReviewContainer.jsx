@@ -44,21 +44,33 @@ export default class ReviewContainer extends BaseComponent {
   };
 
   render() {
-    const {reviewer} = this.props;
+    let content;
+    const {files, reviewer} = this.props;
+    if (!files || files.length <= 0) {
+      content = (
+        <Message title="no slides here yet" subtitle="wait for presenter" />
+      );
+    } else {
+      content = reviewer ? (
+        <SlideReviewPage {...this.props} />
+      ) : (
+        this.renderName()
+      );
+    }
     return (
-      <div className="main-content">
-        {reviewer ? <SlideReviewPage {...this.props} /> : this.renderName()}
-      </div>
+      this.renderRedirect() || <div className="main-content">{content}</div>
     );
   }
 }
 
 ReviewContainer.propTypes = {
   _id: PropTypes.string, // current session
-  files: PropTypes.array, // current session files
-  reviewer: PropTypes.string, // current session files
+  files: PropTypes.array, // session files
+  reviewer: PropTypes.string,
+  session: PropTypes.object,
 };
 
 ReviewContainer.defaultProps = {
+  session: {},
   files: [],
 };
