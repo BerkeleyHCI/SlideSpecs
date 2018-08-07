@@ -6,14 +6,14 @@ import {TransitionGroup, CSSTransition} from 'react-transition-group';
 
 import UserMenu from '../components/UserMenu.jsx';
 import Loading from '../components/Loading.jsx';
-import FileUploader from '../components/FileUploader.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
 
-import SessionListPage from '../pages/SessionListPage.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
+import SessionListPage from '../pages/SessionListPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
+import UploadPage from '../pages/UploadPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -45,8 +45,20 @@ export default class App extends Component {
       const {sessions, files} = this.props;
       const sessionId = match.params.id;
       const session = sessions.find(s => s._id === sessionId);
-      const sFiles = files.filter(f => f.sessionId === sessionId);
+      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
       return <SessionContainer {...session} files={sFiles} />;
+    }
+  };
+
+  renderUpload = ({match}) => {
+    if (!match) {
+      return <Loading key="loading" />;
+    } else {
+      const {sessions, files} = this.props;
+      const sessionId = match.params.id;
+      const session = sessions.find(s => s._id === sessionId);
+      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
+      return <UploadPage {...session} files={sFiles} />;
     }
   };
 
@@ -81,16 +93,14 @@ export default class App extends Component {
 
                   <PrivateRoute
                     path="/sessions/:id"
-                    user={user}
                     render={this.renderSession}
+                    user={user}
                   />
 
                   <PrivateRoute
-                    path="/upload/:id"
+                    path="/slides/:id"
+                    render={this.renderUpload}
                     user={user}
-                    render={({match}) => (
-                      <FileUploader files={files} match={match} />
-                    )}
                   />
 
                   <Route path="/*" component={NotFoundPage} />

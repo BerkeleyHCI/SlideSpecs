@@ -3,9 +3,7 @@ import BaseComponent from './BaseComponent.jsx';
 
 class Loading extends BaseComponent {
   render() {
-    return (
-      <img src="/logo-todos.svg" className="loading-app" alt="loading..." />
-    );
+    return <img src="/loading.svg" className="loading-app" alt="loading..." />;
   }
 }
 

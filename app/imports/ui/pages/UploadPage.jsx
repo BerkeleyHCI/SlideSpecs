@@ -1,14 +1,14 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
-import BaseComponent from './BaseComponent.jsx';
-import {Files} from '../../api/files/files.js';
 import {_} from 'meteor/underscore';
 import {withTracker} from 'meteor/react-meteor-data';
+import Message from '../components/Message.jsx';
 
-import IndividualFile from './FileIndividualFile.jsx';
-const debug = require('debug')('demo:file');
+import {Files} from '../../api/files/files.js';
+import BaseComponent from '../components/BaseComponent.jsx';
+import IndividualFile from '../components/FileIndividualFile.jsx';
 
-class FileUploader extends BaseComponent {
+class UploadPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,12 +21,11 @@ class FileUploader extends BaseComponent {
   }
 
   componentDidMount() {
-    let mason = new Masonry('.grid', {itemSelector: '.file-item'});
-    this.setState({...this.state, mason});
+    new Masonry('.grid', {itemSelector: '.file-item'});
   }
 
   componentDidUpdate() {
-    this.state.mason.reloadItems();
+    new Masonry('.grid', {itemSelector: '.file-item'});
   }
 
   humanFileSize(bytes) {
@@ -42,17 +41,17 @@ class FileUploader extends BaseComponent {
 
   uploadIt(e) {
     e.preventDefault();
-
     let self = this;
-
-    if (e.currentTarget.files) {
+    let files = e.currentTarget.files;
+    if (files) {
+      let uploadCount = files.length;
       _.each(e.currentTarget.files, file => {
         let uploadInstance = Files.insert(
           {
             file: file,
             meta: {
               locator: self.props.fileLocator,
-              sessionId: self.props.sessionId,
+              sessionId: self.props._id,
               userId: Meteor.userId(), // Optional, used to check on server for file tampering
             },
             streams: 'dynamic',
@@ -69,15 +68,15 @@ class FileUploader extends BaseComponent {
 
         // These are the event functions, don't need most of them, it shows where we are in the process
         uploadInstance.on('start', function() {
-          console.log('Starting');
+          //console.log('Starting');
         });
 
         uploadInstance.on('end', function(error, fileObj) {
-          console.log('On end File Object: ', fileObj);
+          uploadCount -= 1;
         });
 
         uploadInstance.on('uploaded', function(error, fileObj) {
-          console.log('uploaded: ', fileObj);
+          //console.log('uploaded: ', fileObj);
 
           // Remove the filename from the upload box
           self.refs['fileinput'].value = '';
@@ -95,7 +94,7 @@ class FileUploader extends BaseComponent {
         });
 
         uploadInstance.on('progress', function(progress, fileObj) {
-          console.log('Upload Percentage: ' + progress);
+          //console.log('Upload Percentage: ' + progress);
           // Update our progress bar
           self.setState({
             progress: progress,
@@ -113,26 +112,14 @@ class FileUploader extends BaseComponent {
   showUploads() {
     if (!_.isEmpty(this.state.uploading)) {
       return (
-        <div>
-          {this.state.uploading.file.name}
-          <div className="progress progress-bar-default">
-            <div
-              style={{width: this.state.progress + '%'}}
-              aria-valuemax="100"
-              aria-valuemin="0"
-              aria-valuenow={this.state.progress || 0}
-              role="progressbar"
-              className="progress-bar">
-              <span className="sr-only">
-                {this.state.progress}% Complete (success)
-              </span>
-              <span>{this.state.progress}%</span>
-            </div>
-          </div>
-        </div>
+        <Message title="uploading now" subtitle={this.state.progress + '%'} />
       );
     }
   }
+
+  handleLoad = () => {
+    new Masonry('.grid', {itemSelector: '.file-item'});
+  };
 
   render() {
     if (this.props.files) {
@@ -145,36 +132,42 @@ class FileUploader extends BaseComponent {
         let link = Files.findOne({_id: aFile._id}).link(); //The "view/download" link
         // Send out components that show details of each file
         return (
-          <div key={'file' + key}>
-            <IndividualFile
-              fileId={aFile._id}
-              fileName={aFile.name}
-              fileUrl={link}
-              fileSize={this.humanFileSize(aFile.size)}
-            />
-          </div>
+          <IndividualFile
+            key={'file' + key}
+            fileId={aFile._id}
+            fileName={aFile.name}
+            fileUrl={link}
+            fileSize={this.humanFileSize(aFile.size)}
+            handleLoad={this.handleLoad}
+          />
         );
       });
 
       return (
-        <div className="main-content">
-          <h1>upload slides</h1>
-          <div>
-            <input
-              type="file"
-              id="fileinput"
-              disabled={this.state.inProgress}
-              ref="fileinput"
-              onChange={this.uploadIt}
-              multiple
-            />
-            {uploads}
+        this.renderRedirect() || (
+          <div className="main-content">
+            <h1>manage slides</h1>
+            <div className="custom-upload">
+              <label className="btn btn-primary">
+                + upload slides
+                <input
+                  type="file"
+                  id="fileinput"
+                  disabled={this.state.inProgress}
+                  ref="fileinput"
+                  onChange={this.uploadIt}
+                  multiple
+                />
+              </label>
+              <button className="btn btn-danger">delete all</button>
+              {uploads}
+            </div>
+            <div className="padded grid">{display}</div>
           </div>
-          <div className="grid">{display}</div>
-        </div>
+        )
       );
     } else return <div>loading file list...</div>;
   }
 }
 
-export default FileUploader;
+export default UploadPage;

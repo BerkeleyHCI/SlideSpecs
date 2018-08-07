@@ -10,7 +10,7 @@
   // Style
   .title-caps;
   transition: all 100ms ease-in;
-  color: @color-empty;
+  color: @color-empty !important;
   display: inline-block;
   position: relative;
   text-align: center;
@@ -49,6 +49,7 @@
   &[class*='danger'] {
     background-color: @color-danger;
     color: @color-empty;
+    border: none;
 
     &:hover {
       background-color: darken(@color-danger, 5%);

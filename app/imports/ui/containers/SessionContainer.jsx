@@ -14,18 +14,38 @@ export default class SessionContainer extends BaseComponent {
   }
 
   hasSlides() {
-    return true;
+    const {files} = this.props;
+    return files.length > 0;
   }
+
+  gotoUpload = () => {
+    const {_id} = this.props;
+    this.redirectTo(`/slides/${_id}`);
+  };
 
   getContent() {
     if (this.hasFeedback()) {
       return <Message title="session" subtitle="has feedback" />;
       // redirect to viewing
     } else if (this.hasSlides()) {
-      return <Message title="session" subtitle="has slides" />;
+      return (
+        <div className="card">
+          <img className="card-img-top" src="/" alt="Card image cap" />
+          <div className="card-body">
+            <h5 className="card-title">Card title</h5>
+            <p className="card-text">
+              Some quick example text to build on the card title and make up the
+              bulk of the card's content.
+            </p>
+            <a href="#" className="btn btn-primary">
+              Go somewhere
+            </a>
+          </div>
+        </div>
+      );
       // redirect to link sharing, code generation
     } else {
-      return <Message title="session" subtitle="no slides" />;
+      return <Message title="no slides yet" subtitle="add above" />;
       // redirect to uploading
     }
   }
@@ -33,11 +53,15 @@ export default class SessionContainer extends BaseComponent {
   render() {
     const {_id, name, files} = this.props;
     return (
-      <div className="main-content">
-        <h1> {name} </h1>
-        <Link to={`/upload/${_id}`}>upload slides</Link>
-        {this.getContent()}
-      </div>
+      this.renderRedirect() || (
+        <div className="main-content">
+          <h1> {name} </h1>
+          <button onClick={this.gotoUpload} className="btn btn-primary">
+            + slides
+          </button>
+          {this.getContent()}
+        </div>
+      )
     );
   }
 }

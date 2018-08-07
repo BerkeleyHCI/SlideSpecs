@@ -1,11 +1,11 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
 div.file-item {
-  display: inline;
+  position: absolute;
   margin-bottom: 2em;
   margin-right: 2em;
   max-width: 100%;
-  width: 300px;
+  width: 270px;
 
   img.slide {
     max-width: 100%;
@@ -13,6 +13,10 @@ div.file-item {
   }
 
   button {
-    color: @color-tertiary;
+    color: @color-danger !important;
+    padding: 0.4em;
+    &:hover {
+      background: darken(@color-empty, 3%);
+    }
   }
 }

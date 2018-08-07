@@ -44,7 +44,11 @@ class IndividualFile extends Component {
         <h4>
           {this.props.fileName} <small> {this.props.fileSize}</small>
         </h4>
-        <img className="slide" src={this.props.fileUrl} />
+        <img
+          className="slide"
+          onLoad={this.props.handleLoad}
+          src={this.props.fileUrl}
+        />
         <div className="btns-group">
           <button onClick={this.renameFile} className="btn btn-sm">
             rename
