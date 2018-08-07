@@ -19,7 +19,16 @@ class SlideReviewPage extends BaseComponent {
     this.handleLoad();
     const items = document.querySelectorAll('.file-item');
     const ds = new DragSelect({selectables: items});
-    ds.callback = () => console.log(ds.getSelection());
+    ds.callback = () => {
+      const selected = ds.getSelection();
+      const filtered = selected.map(el => {
+        return {
+          slideId: el.getAttribute('data-file-id'),
+          slideNo: el.getAttribute('data-iter'),
+        };
+      });
+      console.log(filtered);
+    };
     this.setState({ds});
   };
 
