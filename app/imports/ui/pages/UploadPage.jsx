@@ -160,6 +160,9 @@ class UploadPage extends BaseComponent {
                 />
               </label>
               <button className="btn btn-danger">delete all</button>
+              {display.length === 0 && (
+                <Message title="no slides yet" subtitle="add above" />
+              )}
               {uploads}
             </div>
             <div className="padded grid">{display}</div>

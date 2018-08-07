@@ -74,7 +74,7 @@ export default class SessionListPage extends BaseComponent {
 
     let Sessions;
     if (!sessions || !sessions.length) {
-      Sessions = <Message title="no sessions" subtitle="add above" />;
+      Sessions = <Message title="no sessions yet" subtitle="add above" />;
     } else {
       Sessions = sessions.map(sess => <SessionItem key={sess._id} {...sess} />);
     }
