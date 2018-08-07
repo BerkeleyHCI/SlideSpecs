@@ -17,17 +17,18 @@ export default class SessionContainer extends BaseComponent {
     }
   };
 
+  copyUrl = () => {
+    var copyText = document.getElementsByClassName('code')[0];
+    if (copyText) {
+      copyText.select();
+      document.execCommand('copy');
+    }
+  };
+
   render() {
-    const {_id, name, files} = this.props;
+    const {_id, name, files, comments} = this.props;
     const uLink = `/slides/${_id}`;
     const fLink = `/feedback/${_id}`;
-    const copyUrl = () => {
-      var copyText = document.getElementsByClassName('code')[0];
-      if (copyText) {
-        copyText.select();
-        document.execCommand('copy');
-      }
-    };
 
     const shareLink = 'localhost:3000/share/' + _id;
 
@@ -38,7 +39,7 @@ export default class SessionContainer extends BaseComponent {
           <div className="padded">
             <div className="alert">
               <h3>
-                1. review slides <small>{files.length} uploaded</small>
+                1. review slides <small>{files.length} slides</small>
               </h3>
               manage the slides for this presentation session [<Link to={uLink}>
                 here
@@ -47,21 +48,25 @@ export default class SessionContainer extends BaseComponent {
 
             <div className="alert">
               <h3>2. present slides</h3>
-              once the slides ready, share this link with the audience for
-              review:
+              share this link with the audience to collect their feedback.
               <hr />
               <input type="text" value={shareLink} className="code" readOnly />
               <hr />
               <div className="btns-group">
-                <button className="btn btn-menu" onClick={copyUrl}>
+                <button className="btn btn-menu" onClick={this.copyUrl}>
                   copy url
                 </button>
               </div>
+              <hr />
+              once ready, give your presentation. feedback can be accessed
+              below.
             </div>
           </div>
 
           <div className="alert">
-            <h3>3. review feedback</h3>
+            <h3>
+              3. review feedback <small>{comments.length} comments</small>
+            </h3>
             after your presentation, review the gathered feedback [<Link
               to={fLink}>
               here

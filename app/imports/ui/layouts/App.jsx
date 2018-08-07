@@ -44,11 +44,14 @@ export default class App extends Component {
     if (!match) {
       return <Loading key="loading" />;
     } else {
-      const {sessions, files} = this.props;
       const sessionId = match.params.id;
+      const {sessions, files, comments} = this.props;
       const session = sessions.find(s => s._id === sessionId);
       const sFiles = files.filter(f => f.meta.sessionId === sessionId);
-      return <SessionContainer {...session} files={sFiles} />;
+      const sComments = comments.filter(c => c.session === sessionId);
+      return (
+        <SessionContainer {...session} files={sFiles} comments={sComments} />
+      );
     }
   };
 
