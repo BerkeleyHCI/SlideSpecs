@@ -9,65 +9,49 @@ export default class SessionContainer extends BaseComponent {
     super(props);
   }
 
-  hasFeedback() {
-    return false;
-  }
-
-  hasSlides() {
-    const {files} = this.props;
-    return files.length > 0;
-  }
-
-  renderFeedback = () => {
-    return <Message title="session" subtitle="has feedback" />;
+  componentDidMount = () => {
+    const {_id, files} = this.props;
+    const uLink = `/slides/${_id}`;
+    if (files.length === 0) {
+      this.redirectTo(uLink);
+    }
   };
-
-  renderSlides = () => {
-    return (
-      <div className="padded card">
-        <pre>
-          <code>
-            &lt;p&gt;Sample text here...&lt;/p&gt; &lt;p&gt;And another line of
-            sample text here...&lt;/p&gt;
-          </code>
-        </pre>
-        <img className="card-img-top" src="/" alt="Card image cap" />
-        <div className="card-body">
-          <h5 className="card-title">Card title</h5>
-          <p className="card-text">
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </p>
-          <a href="#" className="btn btn-primary">
-            Go somewhere
-          </a>
-        </div>
-      </div>
-    );
-  };
-
-  renderUpload = () => {
-    const gotoUpload = () => {
-      const {_id} = this.props;
-      const uLink = `/slides/${_id}`
-      return <Redirect to={uLink} />
-    };
 
   render() {
-    let content;
     const {_id, name, files} = this.props;
-    if (this.hasFeedback()) {
-      content = this.renderFeedback(); // redirect to viewing
-    } else if (this.hasSlides()) {
-      content = this.renderSlides(); // redirect to link sharing, code generation
-    } else {
-      content = this.renderUpload(); // redirect to uploading
-    }
+    const uLink = `/slides/${_id}`;
+    const copyUrl = () => {
+      var copyText = document.getElementByClass('code');
+      copyText.select();
+      document.execCommand('copy');
+    };
+
     return (
       this.renderRedirect() || (
         <div className="main-content">
           <h1> {name} </h1>
-          {content}
+          <div className="padded">
+            <div className="alert">
+              <h3>1. upload slides</h3>
+              manage the slides for this presentation session
+              <Link to={uLink}> here</Link>
+            </div>
+
+            <div className="alert">
+              <h3>2. present slides</h3>
+              once the slides are uploaded, share this link with the audience
+              for review
+              <br />
+              <input type="text" value="google.com" className="code" readonly />
+              <button onClick={copyUrl}>copy url</button>
+            </div>
+          </div>
+
+          <div className="alert">
+            <h3>3. review feedback</h3>
+            after your presentation, review the gathered feedback
+            <Link to="/"> here</Link>
+          </div>
         </div>
       )
     );

@@ -69,7 +69,9 @@ export default class App extends Component {
       <div id="container">
         <section id="menu">
           <h1>
-            <Link to="/">feedback</Link>
+            <Link to="/" as="h1">
+              feedback
+            </Link>
           </h1>
           <UserMenu user={user} logout={this.logout} />
         </section>

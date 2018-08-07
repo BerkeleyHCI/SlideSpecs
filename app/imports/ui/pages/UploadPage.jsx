@@ -42,6 +42,7 @@ class UploadPage extends BaseComponent {
   uploadIt(e) {
     e.preventDefault();
     let self = this;
+    let {_id} = self.props;
     let files = e.currentTarget.files;
     if (files) {
       let uploadCount = files.length;
@@ -51,7 +52,7 @@ class UploadPage extends BaseComponent {
             file: file,
             meta: {
               locator: self.props.fileLocator,
-              sessionId: self.props._id,
+              sessionId: _id,
               userId: Meteor.userId(), // Optional, used to check on server for file tampering
             },
             streams: 'dynamic',
@@ -103,6 +104,15 @@ class UploadPage extends BaseComponent {
 
         uploadInstance.start(); // Must manually start the upload
       });
+
+      let uploadInterval = setInterval(() => {
+        if (uploadCount === 0) {
+          clearInterval(uploadInterval);
+          setTimeout(() => {
+            this.redirectTo(`/sessions/${_id}`);
+          }, 1000);
+        }
+      }, 100);
     }
   }
 
@@ -122,8 +132,9 @@ class UploadPage extends BaseComponent {
   };
 
   render() {
-    if (this.props.files) {
-      let fileCursors = this.props.files;
+    const {name, files} = this.props;
+    if (files) {
+      let fileCursors = files;
       let uploads = this.showUploads();
 
       // Run through each file that the user has stored
@@ -146,7 +157,9 @@ class UploadPage extends BaseComponent {
       return (
         this.renderRedirect() || (
           <div className="main-content">
-            <h1>manage slides</h1>
+            <h1>
+              {name} <small>manage slides</small>
+            </h1>
             <div className="custom-upload">
               <label className="btn btn-primary">
                 + upload slides
@@ -160,9 +173,10 @@ class UploadPage extends BaseComponent {
                 />
               </label>
               <button className="btn btn-danger">delete all</button>
-              {display.length === 0 && (
-                <Message title="no slides yet" subtitle="add above" />
-              )}
+              {!this.state.uploading &&
+                display.length === 0 && (
+                  <Message title="no slides yet" subtitle="add above" />
+                )}
               {uploads}
             </div>
             <div className="padded grid">{display}</div>
