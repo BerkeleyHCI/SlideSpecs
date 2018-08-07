@@ -7,7 +7,7 @@ class SessionsCollection extends Mongo.Collection {
     let ourSess = session;
     if (!ourSess.name) {
       const basename = 'session ';
-      let iter = new Date().toLocaleString();
+      let iter = new Date().toLocaleDateString();
       ourSess.name = `${basename} ${iter}`;
     }
     return super.insert(ourSess, callback);

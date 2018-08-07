@@ -11,7 +11,7 @@ export default withTracker(() => {
     user: Meteor.user(),
     loading: ![sessions, files].every(x => x.ready()),
     connected: Meteor.status().connected,
-    sessions: Sessions.find({}, {sort: {name: 1}}).fetch(),
+    sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
     files: Files.find({}, {sort: {name: 1}}).fetch(),
   };
 })(App);

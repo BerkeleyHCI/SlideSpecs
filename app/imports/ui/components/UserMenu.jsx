@@ -18,28 +18,47 @@ export default class UserMenu extends BaseComponent {
     });
   }
 
-  renderLoggedIn() {
-    const {open} = this.state;
+  renderOpen() {
     const {user, logout} = this.props;
     const username = user.username;
-
     return (
       <div className="user-menu vertical">
         <a href="#toggle" className="btn-secondary" onClick={this.toggle}>
-          {open ? (
-            <span className="icon-arrow-up" />
-          ) : (
-            <span className="icon-arrow-down" />
-          )}
           {username}
+          <span className="icon-arrow-up" />
         </a>
-        {open ? (
-          <a className="btn-secondary" onClick={logout}>
-            log out
-          </a>
-        ) : null}
+        <a className="btn-secondary" href="/">
+          sessions
+        </a>
+        <a className="btn-secondary" onClick={logout}>
+          feedback
+        </a>
+        <a className="btn-secondary" onClick={logout}>
+          log out
+        </a>
       </div>
     );
+  }
+
+  renderClosed() {
+    const {user, logout} = this.props;
+    const username = user.username;
+    return (
+      <div className="user-menu vertical">
+        <a href="#toggle" className="btn-secondary" onClick={this.toggle}>
+          {username}
+          <span className="icon-arrow-down" />
+        </a>
+      </div>
+    );
+  }
+
+  renderLoggedIn() {
+    if (this.state.open) {
+      return this.renderOpen();
+    } else {
+      return this.renderClosed();
+    }
   }
 
   renderLoggedOut() {
