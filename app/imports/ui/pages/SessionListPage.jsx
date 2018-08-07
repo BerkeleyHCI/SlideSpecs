@@ -36,7 +36,7 @@ class SessionItem extends BaseComponent {
     const {_id, name} = this.props;
     const sessLink = `/sessions/${_id}`;
     return (
-      <a href={sessLink} className="list-group-item list-group-item-action">
+      <a href="#" className="list-group-item list-group-item-action">
         <Link to={sessLink}>{name}</Link>
         <div className="btn-group pull-right">
           <button

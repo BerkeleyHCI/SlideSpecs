@@ -38,6 +38,18 @@ export default class App extends Component {
     Meteor.logout();
   }
 
+  renderSession = ({match}) => {
+    console.log(match);
+    return (
+      <SessionContainer
+        name={name}
+        files={files}
+        match={match}
+        session={sessions}
+      />
+    );
+  };
+
   renderContent(location) {
     const {user, connected, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
@@ -70,14 +82,7 @@ export default class App extends Component {
                   <PrivateRoute
                     path="/sessions/:id"
                     user={user}
-                    render={({match}) => (
-                      <SessionContainer
-                        name={name}
-                        files={files}
-                        match={match}
-                        session={sessions}
-                      />
-                    )}
+                    render={this.renderSession}
                   />
 
                   <PrivateRoute

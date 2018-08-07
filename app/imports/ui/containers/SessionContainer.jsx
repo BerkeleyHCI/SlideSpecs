@@ -36,13 +36,6 @@ export default class SessionContainer extends BaseComponent {
         <h1> {name} </h1>
         <Link to={`/upload/${_id}`}>upload slides</Link>
         {this.getContent()}
-        <ul class="list-group">
-          <li class="list-group-item">Cras justo odio</li>
-          <li class="list-group-item">Dapibus ac facilisis in</li>
-          <li class="list-group-item">Morbi leo risus</li>
-          <li class="list-group-item">Porta ac consectetur ac</li>
-          <li class="list-group-item">Vestibulum at eros</li>
-        </ul>
       </div>
     );
   }
@@ -50,7 +43,7 @@ export default class SessionContainer extends BaseComponent {
 
 SessionContainer.propTypes = {
   user: PropTypes.object, // current meteor user
-  session: PropTypes.object, // current session
+  //session: PropTypes.object, // current session
   files: PropTypes.array, // all visible files
 };
 
