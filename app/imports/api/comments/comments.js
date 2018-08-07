@@ -23,7 +23,7 @@ Comments.schema = new SimpleSchema({
   author: {type: String},
   content: {type: String},
   session: {type: String},
-  slides: {type: Array},
+  slides: {type: [String]},
 });
 
 Comments.attachSchema(Comments.schema);
