@@ -17,8 +17,9 @@ class SlideReviewPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
+    const grid = document.getElementById('grid');
     const items = document.querySelectorAll('.file-item');
-    const ds = new DragSelect({selectables: items});
+    const ds = new DragSelect({selectables: items, area: grid});
     ds.callback = () => {
       const selected = ds.getSelection();
       const filtered = selected.map(el => {
@@ -34,19 +35,55 @@ class SlideReviewPage extends BaseComponent {
 
   componentDidUpdate = this.handleLoad;
 
-  humanFileSize(bytes) {
-    let fileSizeInBytes = bytes;
-    var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-    do {
-      fileSizeInBytes = fileSizeInBytes / 1024;
-      i++;
-    } while (fileSizeInBytes > 1024);
-    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
-  }
+  getText = () => {
+    var copyText = document.getElementsByClassName('code')[0];
+    if (copyText) {
+      return copyText.value;
+    } else {
+      return '';
+    }
+  };
+
+  clearText = () => {
+    var copyText = document.getElementsByClassName('code')[0];
+    if (copyText) {
+      return (copyText.value = '');
+    } else {
+      return '';
+    }
+  };
+
+  addComment = () => {
+    const cText = this.getText();
+    console.log(cText);
+    this.clearText();
+    //addComment.call('name', name);
+  };
+
+  renderComment = () => {
+    return (
+      <div className="alert">
+        <h3>enter your feedback:</h3>
+        <hr />
+        <input
+          type="text"
+          defaultValue="your name"
+          className="code"
+          onSubmit={this.setName}
+        />
+        <hr />
+        <div className="btns-group">
+          <button onClick={this.setName} className="btn btn-menu">
+            set name
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   render() {
     const {_id, name, files} = this.props;
+    const commenter = this.renderComment();
     if (files) {
       let display = files.map((aFile, key) => {
         let link = Files.findOne({_id: aFile._id}).link();
@@ -54,10 +91,9 @@ class SlideReviewPage extends BaseComponent {
           <FileReview
             key={'file-' + key}
             iter={key}
+            fileUrl={link}
             fileId={aFile._id}
             fileName={aFile.name}
-            fileUrl={link}
-            fileSize={this.humanFileSize(aFile.size)}
             handleLoad={this.handleLoad}
           />
         );
@@ -66,8 +102,12 @@ class SlideReviewPage extends BaseComponent {
       return (
         this.renderRedirect() || (
           <div className="reviewView">
-            <h1>slides view</h1>
-            <div className=" padded grid">{display}</div>
+            <h2>comment</h2>
+            {commenter}
+            <h2>slides view</h2>
+            <div id="grid" className="padded grid">
+              {display}
+            </div>
           </div>
         )
       );
