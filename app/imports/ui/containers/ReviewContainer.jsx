@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Session} from 'meteor/session';
-import BaseComponent from '../components/BaseComponent.jsx';
 import {Link} from 'react-router-dom';
+
 import Message from '../components/Message.jsx';
+import BaseComponent from '../components/BaseComponent.jsx';
+import SlideReviewPage from '../pages/SlideReviewPage.jsx';
 
 export default class ReviewContainer extends BaseComponent {
   getText = () => {
@@ -43,15 +45,10 @@ export default class ReviewContainer extends BaseComponent {
   };
 
   render() {
-    console.log(this.props);
-    const {files, reviewer} = this.props;
+    const {reviewer} = this.props;
     return (
       <div className="main-content">
-        {reviewer ? (
-          <Message title={reviewer} subtitle="begin review" />
-        ) : (
-          this.renderName()
-        )}
+        {reviewer ? <SlideReviewPage {...this.props} /> : this.renderName()}
       </div>
     );
   }

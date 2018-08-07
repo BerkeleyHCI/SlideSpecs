@@ -1,0 +1,46 @@
+@import '{}/imports/ui/stylesheets/utils.less';
+
+div.file-item {
+  position: absolute;
+  margin-bottom: 2em;
+  margin-right: 2em;
+  max-width: 100%;
+  width: 280px;
+
+  img.slide {
+    .no-select();
+    max-width: 100%;
+    display: block;
+  }
+
+  button {
+    color: @color-danger !important;
+    padding: 0.4em;
+    &:hover {
+      background: darken(@color-empty, 3%);
+    }
+  }
+}
+
+div.file-item.file-item-review {
+  width: 200px;
+  margin-bottom: 0.5em;
+  margin-right: 0.5em;
+  &:hover img {
+    opacity: 0.4;
+  }
+}
+
+.ds-selector {
+  border: 4px dashed @color-danger !important;
+  background: transparent !important;
+}
+
+div.reviewView {
+  .ds-selected {
+    outline: 2px double @color-primary;
+    img {
+      opacity: 0.7;
+    }
+  }
+}
