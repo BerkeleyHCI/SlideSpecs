@@ -71,10 +71,21 @@ export default class UserMenu extends BaseComponent {
     );
   }
 
-  renderGuest() {}
+  renderGuest = () => {
+    const {reviewer} = this.props;
+    if (reviewer) {
+      return (
+        <div className="user-menu vertical">
+          <a className="btn-secondary" onClick={this.toggle}>
+            {reviewer}
+          </a>
+        </div>
+      );
+    }
+  };
 
   render() {
-    const {user, guest} = this.props;
+    const {user, guest, reviewer} = this.props;
     let content = user ? this.renderLoggedIn() : this.renderLoggedOut();
     if (guest) content = this.renderGuest();
     return (

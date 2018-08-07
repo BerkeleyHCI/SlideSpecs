@@ -78,12 +78,17 @@ export default class App extends Component {
   };
 
   renderContent(location) {
-    const {user, connected, sessions, files, loading} = this.props;
+    const {user, connected, reviewer, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
     const guest = location.pathname.match(/share/);
     return (
       <div id="container">
-        <UserMenu user={user} guest={guest} logout={this.logout} />
+        <UserMenu
+          user={user}
+          guest={guest}
+          reviewer={reviewer}
+          logout={this.logout}
+        />
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div id="content-container">
           {loading ? (
