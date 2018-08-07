@@ -2,19 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import {Link} from 'react-router-dom';
+import {_} from 'meteor/underscore';
 import Message from '../components/Message.jsx';
 import {
   createSession,
-  updateSession,
+  renameSession,
   deleteSession,
 } from '../../api/sessions/methods.js';
 
 // Helper class for individual file items.
 
 class SessionItem extends BaseComponent {
-  updateSession = () => {
-    console.log(this.props._id);
-    //updateSession.call({ sessionId: this.props.id, newName: Date.now().toLocaleString(), })
+  renameSession = () => {
+    const {_id, name} = this.props;
+    let validName = /[^a-zA-Z0-9 \.:\+()\-_%!&]/gi;
+    let prompt = window.prompt('New session name?', name);
+
+    if (prompt) {
+      prompt = prompt.replace(validName, '-');
+      prompt.trim();
+    }
+
+    if (!_.isEmpty(prompt)) {
+      renameSession.call({sessionId: _id, newName: prompt});
+    }
   };
 
   deleteSession = () => {
@@ -27,7 +38,7 @@ class SessionItem extends BaseComponent {
     return (
       <div>
         <Link to={sessLink}>{name}</Link>
-        <button onClick={this.updateSession} className="btn btn-sm">
+        <button onClick={this.renameSession} className="btn btn-sm">
           rename
         </button>
         <button onClick={this.deleteSession} className="btn btn-sm">
@@ -67,13 +78,15 @@ export default class SessionListPage extends BaseComponent {
     }
 
     return (
-      <div className="main-content">
-        <h1>sessions</h1>
-        <button onClick={this.addSession} className="btn btn-primary">
-          + new session
-        </button>
-        {Sessions}
-      </div>
+      this.renderRedirect() || (
+        <div className="main-content">
+          <h1>sessions</h1>
+          <button onClick={this.addSession} className="btn btn-primary">
+            + new session
+          </button>
+          {Sessions}
+        </div>
+      )
     );
   }
 }

@@ -24,8 +24,8 @@ export const createSession = new ValidatedMethod({
   },
 });
 
-export const updateSession = new ValidatedMethod({
-  name: 'sessions.update',
+export const renameSession = new ValidatedMethod({
+  name: 'sessions.rename',
   validate: new SimpleSchema({
     sessionId: {type: String},
     newName: {type: String},
@@ -34,7 +34,7 @@ export const updateSession = new ValidatedMethod({
     const session = Sessions.findOne(sessionId);
     if (session.userId !== this.userId) {
       throw new Meteor.Error(
-        'api.sessions.update.accessDenied',
+        'api.sessions.rename.accessDenied',
         "You don't have permission to edit this session.",
       );
     } else {
