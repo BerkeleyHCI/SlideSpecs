@@ -9,17 +9,42 @@ export default class SessionContainer extends BaseComponent {
     super(props);
   }
 
+  hasFeedback() {
+    return false;
+  }
+
   hasSlides() {
     return true;
   }
 
+  getContent() {
+    if (this.hasFeedback()) {
+      return <Message title="session" subtitle="has feedback" />;
+    } else if (this.hasSlides()) {
+      return <Message title="session" subtitle="has slides" />;
+    } else {
+      return <Message title="session" subtitle="no slides" />;
+    }
+  }
+
   render() {
     console.log(this.props);
-    if (this.hasSlides()) {
-      return <Message title="sessions!!!" subtitle="has slides" />;
-    } else {
-      return <Message title="sessions!!!" subtitle="no slides" />;
-    }
+    const {match, name} = this.props;
+    const _id = match.params.id;
+    return (
+      <div className="main-content">
+        <h1> {name} </h1>
+        <Link to={`/upload/${_id}`}>upload slides</Link>
+        {this.getContent()}
+        <ul class="list-group">
+          <li class="list-group-item">Cras justo odio</li>
+          <li class="list-group-item">Dapibus ac facilisis in</li>
+          <li class="list-group-item">Morbi leo risus</li>
+          <li class="list-group-item">Porta ac consectetur ac</li>
+          <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+      </div>
+    );
   }
 }
 

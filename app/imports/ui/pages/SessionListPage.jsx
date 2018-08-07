@@ -36,15 +36,21 @@ class SessionItem extends BaseComponent {
     const {_id, name} = this.props;
     const sessLink = `/sessions/${_id}`;
     return (
-      <div>
+      <a href={sessLink} className="list-group-item list-group-item-action">
         <Link to={sessLink}>{name}</Link>
-        <button onClick={this.renameSession} className="btn btn-sm">
-          rename
-        </button>
-        <button onClick={this.deleteSession} className="btn btn-sm">
-          delete
-        </button>
-      </div>
+        <div className="btn-group pull-right">
+          <button
+            onClick={this.renameSession}
+            className="btn btn-primary btn-menu">
+            rename
+          </button>
+          <button
+            onClick={this.deleteSession}
+            className="btn btn-primary btn-menu">
+            delete
+          </button>
+        </div>
+      </a>
     );
   }
 }
@@ -84,7 +90,7 @@ export default class SessionListPage extends BaseComponent {
           <button onClick={this.addSession} className="btn btn-primary">
             + new session
           </button>
-          {Sessions}
+          <div className="padded list-group">{Sessions}</div>
         </div>
       )
     );

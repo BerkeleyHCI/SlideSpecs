@@ -70,7 +70,14 @@ export default class App extends Component {
                   <PrivateRoute
                     path="/sessions/:id"
                     user={user}
-                    render={({match}) => <SessionContainer match={match} />}
+                    render={({match}) => (
+                      <SessionContainer
+                        name={name}
+                        files={files}
+                        match={match}
+                        session={sessions}
+                      />
+                    )}
                   />
 
                   <PrivateRoute
