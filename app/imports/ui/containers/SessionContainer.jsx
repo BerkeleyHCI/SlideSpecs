@@ -37,7 +37,7 @@ export default class SessionContainer extends BaseComponent {
           <div className="padded">
             <div className="alert">
               <h3>
-                1. check slides <small>{files.length} uploaded</small>
+                1. review slides <small>{files.length} uploaded</small>
               </h3>
               manage the slides for this presentation session [<Link to={uLink}>
                 here

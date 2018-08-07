@@ -8,6 +8,7 @@ import UserMenu from '../components/UserMenu.jsx';
 import Loading from '../components/Loading.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
+import ReviewContainer from '../containers/ReviewContainer.jsx';
 
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
@@ -62,19 +63,25 @@ export default class App extends Component {
     }
   };
 
+  renderReview = ({match}) => {
+    if (!match) {
+      return <Loading key="loading" />;
+    } else {
+      const {sessions, files} = this.props;
+      const sessionId = match.params.id;
+      const session = sessions.find(s => s._id === sessionId);
+      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
+      return <ReviewContainer {...session} files={sFiles} />;
+    }
+  };
+
   renderContent(location) {
     const {user, connected, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
+    //const guest = location.pathname.match(/share/);
     return (
       <div id="container">
-        <section id="menu">
-          <h1>
-            <Link to="/" as="h1">
-              feedback
-            </Link>
-          </h1>
-          <UserMenu user={user} logout={this.logout} />
-        </section>
+        <UserMenu user={user} logout={this.logout} />
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
         <div id="content-container">
           {loading ? (
@@ -85,6 +92,7 @@ export default class App extends Component {
                 <Switch location={location}>
                   <Route path="/signin" component={AuthPageSignIn} />
                   <Route path="/join" component={AuthPageJoin} />
+                  <Route path="/share/:id" render={this.renderReview} />
 
                   <PrivateRoute
                     exact

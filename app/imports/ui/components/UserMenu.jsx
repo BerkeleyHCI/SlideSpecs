@@ -31,9 +31,6 @@ export default class UserMenu extends BaseComponent {
           sessions
         </a>
         <a className="btn-secondary" onClick={logout}>
-          feedback
-        </a>
-        <a className="btn-secondary" onClick={logout}>
           log out
         </a>
       </div>
@@ -75,7 +72,17 @@ export default class UserMenu extends BaseComponent {
   }
 
   render() {
-    return this.props.user ? this.renderLoggedIn() : this.renderLoggedOut();
+    const content = this.props.user
+      ? this.renderLoggedIn()
+      : this.renderLoggedOut();
+    return (
+      <section id="menu">
+        <h1>
+          <Link to="/">feedback</Link>
+        </h1>
+        {content}
+      </section>
+    );
   }
 }
 
