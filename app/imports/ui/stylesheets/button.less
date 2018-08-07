@@ -9,7 +9,7 @@
 
   // Style
   .title-caps;
-  transition: all 200ms ease-in;
+  transition: all 100ms ease-in;
   color: @color-empty;
   display: inline-block;
   position: relative;
@@ -63,7 +63,12 @@
   }
 
   &[class*='menu'] {
-    padding: 0em 1em;
+    background-color: @color-danger;
+    color: @color-empty;
+    padding: 0.3em;
+    &:hover {
+      background-color: @color-primary;
+    }
   }
 
   &[disabled] {

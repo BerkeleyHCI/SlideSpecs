@@ -1,0 +1,19 @@
+@import '../stylesheets/utils.less';
+
+// Session styling.
+
+.main-content {
+  .list-group-item a {
+    .font-m1;
+    color: @color-danger;
+    &:hover {
+      color: @color-primary;
+    }
+  }
+
+  .list-group-item {
+    &:hover {
+      background: darken(@color-empty, 3%);
+    }
+  }
+}

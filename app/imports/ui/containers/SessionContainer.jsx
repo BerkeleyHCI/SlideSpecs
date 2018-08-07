@@ -20,17 +20,18 @@ export default class SessionContainer extends BaseComponent {
   getContent() {
     if (this.hasFeedback()) {
       return <Message title="session" subtitle="has feedback" />;
+      // redirect to viewing
     } else if (this.hasSlides()) {
       return <Message title="session" subtitle="has slides" />;
+      // redirect to link sharing, code generation
     } else {
       return <Message title="session" subtitle="no slides" />;
+      // redirect to uploading
     }
   }
 
   render() {
-    console.log(this.props);
-    const {match, name} = this.props;
-    const _id = match.params.id;
+    const {_id, name, files} = this.props;
     return (
       <div className="main-content">
         <h1> {name} </h1>
@@ -43,12 +44,11 @@ export default class SessionContainer extends BaseComponent {
 
 SessionContainer.propTypes = {
   user: PropTypes.object, // current meteor user
-  //session: PropTypes.object, // current session
-  files: PropTypes.array, // all visible files
+  _id: PropTypes.string, // current session
+  files: PropTypes.array, // current session files
 };
 
 SessionContainer.defaultProps = {
   user: null,
-  session: {},
   files: [],
 };

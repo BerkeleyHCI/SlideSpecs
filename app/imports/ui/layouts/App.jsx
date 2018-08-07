@@ -39,15 +39,15 @@ export default class App extends Component {
   }
 
   renderSession = ({match}) => {
-    console.log(match);
-    return (
-      <SessionContainer
-        name={name}
-        files={files}
-        match={match}
-        session={sessions}
-      />
-    );
+    if (!match) {
+      return <Loading key="loading" />;
+    } else {
+      const {sessions, files} = this.props;
+      const sessionId = match.params.id;
+      const session = sessions.find(s => s._id === sessionId);
+      const sFiles = files.filter(f => f.sessionId === sessionId);
+      return <SessionContainer {...session} files={sFiles} />;
+    }
   };
 
   renderContent(location) {
