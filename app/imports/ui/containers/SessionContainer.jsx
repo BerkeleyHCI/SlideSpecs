@@ -30,7 +30,9 @@ export default class SessionContainer extends BaseComponent {
     const uLink = `/slides/${_id}`;
     const fLink = `/feedback/${_id}`;
 
-    const shareLink = 'localhost:3000/share/' + _id;
+    // TODO - update this based on local or production
+    //const shareLink = 'localhost:3000/share/' + _id;
+    const shareLink = 'https://feedbacks.meteorapp.com/share/' + _id;
 
     return (
       this.renderRedirect() || (
