@@ -7,6 +7,7 @@ import {Files} from '../../api/files/files.js';
 import App from '../layouts/App.jsx';
 
 export default withTracker(() => {
+
   const sessions = Meteor.subscribe('sessions');
   const comments = Meteor.subscribe('comments');
   const files = Meteor.subscribe('files');

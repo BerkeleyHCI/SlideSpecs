@@ -19,7 +19,7 @@ export default class ReviewContainer extends BaseComponent {
 
   setName = () => {
     const name = this.getText();
-    Session.set('name', name);
+    Session.setPersistent('name', name);
   };
 
   renderName = () => {
