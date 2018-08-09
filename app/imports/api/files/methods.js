@@ -26,7 +26,11 @@ export const deleteFile = new ValidatedMethod({
     fileId: {type: String},
   }).validator(),
   run({fileId}) {
-    return Files.remove(fileId);
+    try {
+      Files.remove(fileId);
+    } catch (e) {
+      console.error(e);
+    }
   },
 });
 
@@ -36,6 +40,10 @@ export const deleteSessionFiles = new ValidatedMethod({
     sessionId: {type: String},
   }).validator(),
   run({sessionId}) {
-    return Files.remove({'meta.sessionId': sessionId});
+    try {
+      Files.remove({'meta.sessionId': sessionId});
+    } catch (e) {
+      console.error(e);
+    }
   },
 });
