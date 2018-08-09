@@ -40,6 +40,8 @@ class UploadPage extends BaseComponent {
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
   }
 
+  // TODO merge the progress for all uploads, creating single number percent.
+
   uploadIt(e) {
     e.preventDefault();
     let self = this;

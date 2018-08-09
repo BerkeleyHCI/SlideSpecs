@@ -13,3 +13,6 @@ export const Files = new FilesCollection({
     }
   },
 });
+
+// TODO - attach a schema
+// simpleschema reference

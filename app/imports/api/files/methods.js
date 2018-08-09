@@ -1,39 +1,40 @@
 import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+
 import {Files} from './files.js';
 
-//export const rename = new ValidatedMethod({
-//name: 'files.rename',
-//validate: new SimpleSchema({
-//fileId: {type: String},
-//newName: {type: String},
-//}).validator(),
-//run({fileId, newName}) {
-//const file = Files.findOne(fileId);
-//Files.update(fileId, {$set: {fileName: newName}});
-//},
-//});
+// TODO - include file creation method
 
-export const rename = new ValidatedMethod({
+export const renameFile = new ValidatedMethod({
   name: 'files.rename',
   validate: new SimpleSchema({
     fileId: {type: String},
     newName: {type: String},
   }).validator(),
   run({fileId, newName}) {
-    const file = Files.findOne(fileId);
-    Files.update(fileId, {$set: {fileName: newName}});
+    console.log(fileId, newName);
+    return Files.update(fileId, {$set: {fileName: newName}});
   },
 });
 
-export const remove = new ValidatedMethod({
-  name: 'files.remove',
+export const deleteFile = new ValidatedMethod({
+  name: 'files.delete',
   validate: new SimpleSchema({
     fileId: {type: String},
   }).validator(),
   run({fileId}) {
-    const file = Files.findOne(fileId);
-    Files.remove(fileId);
+    return Files.remove(fileId);
+  },
+});
+
+export const deleteSessionFiles = new ValidatedMethod({
+  name: 'files.deleteSessionFiles',
+  validate: new SimpleSchema({
+    sessionId: {type: String},
+  }).validator(),
+  run({sessionId}) {
+    const query = {meta: {sessionId}};
+    return Files.remove(query);
   },
 });

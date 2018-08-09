@@ -1,56 +1,42 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+import BaseComponent from '../components/BaseComponent.jsx';
+import {
+  //createFile,
+  renameFile,
+  deleteFile,
+} from '../../api/files/methods.js';
+
+// TODO - use CREATE validatedMethod
 
 class IndividualFile extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-    this.removeFile = this.removeFile.bind(this);
-    this.renameFile = this.renameFile.bind(this);
-  }
+  removeFile = () => {
+    const {fileId} = this.props;
+    deleteFile.call({fileId});
+  };
 
-  removeFile() {
-    Meteor.call('files.remove', {fileId: this.props.fileId}, function(
-      err,
-      res,
-    ) {
-      if (err) console.log(err);
-    });
-  }
-
-  renameFile() {
+  editFile = () => {
+    const {fileId, fileName} = this.props;
     let validName = /[^a-zA-Z0-9 \.:\+()\-_%!&]/gi;
-    let prompt = window.prompt('New file name?', this.props.fileName);
-
-    // Replace any non valid characters, also do this on the server
-    if (prompt) {
-      prompt = prompt.replace(validName, '-');
-      prompt.trim();
+    let newName = window.prompt('New file name?', fileName) || '';
+    let trimmed = newName.replace(validName, '-').trim();
+    if (trimmed != '') {
+      renameFile.call({fileId, newName: trimmed});
+    } else {
+      console.error('bad/empty file name');
     }
-
-    if (!_.isEmpty(prompt)) {
-      Meteor.call(
-        'files.rename',
-        {fileId: this.props.fileId, newName: prompt},
-        function(err, res) {
-          if (err) console.log(err);
-        },
-      );
-    }
-  }
+  };
 
   render() {
+    const {fileName, fileSize, fileUrl, handleLoad} = this.props;
     return (
       <div className="file-item">
         <h4>
-          {this.props.fileName} <small> {this.props.fileSize}</small>
+          {fileName} <small> {fileSize}</small>
         </h4>
-        <img
-          className="slide"
-          onLoad={this.props.handleLoad}
-          src={this.props.fileUrl}
-        />
+        <img className="slide" onLoad={handleLoad} src={fileUrl} />
         <div className="btns-group">
-          <button onClick={this.renameFile} className="btn btn-sm">
+          <button onClick={this.editFile} className="btn btn-sm">
             rename
           </button>
           <button onClick={this.removeFile} className="btn btn-sm">
