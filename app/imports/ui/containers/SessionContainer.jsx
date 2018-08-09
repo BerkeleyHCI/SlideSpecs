@@ -32,7 +32,8 @@ export default class SessionContainer extends BaseComponent {
 
     // TODO - update this based on local or production
     //const shareLink = 'localhost:3000/share/' + _id;
-    const shareLink = 'https://feedbacks.meteorapp.com/share/' + _id;
+    //const shareLink = 'https://feedbacks.meteorapp.com/share/' + _id;
+    const shareLink = 'https://bayscope2.eecs.berkeley.edu/share/' + _id;
 
     return (
       this.renderRedirect() || (
