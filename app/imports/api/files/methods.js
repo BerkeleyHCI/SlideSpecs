@@ -5,6 +5,7 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Files} from './files.js';
 
 // TODO - include file creation method
+// TODO - restrict these operations to file owner
 
 export const renameFile = new ValidatedMethod({
   name: 'files.rename',
@@ -13,8 +14,9 @@ export const renameFile = new ValidatedMethod({
     newName: {type: String},
   }).validator(),
   run({fileId, newName}) {
-    console.log(fileId, newName);
-    return Files.update(fileId, {$set: {fileName: newName}});
+    this.unblock(); // <-- Use to make this method asynchronous
+    const good = Files.collection.update(fileId, {$set: {name: newName}});
+    return good;
   },
 });
 
