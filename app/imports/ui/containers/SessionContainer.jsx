@@ -27,13 +27,9 @@ export default class SessionContainer extends BaseComponent {
 
   render() {
     const {_id, name, files, comments} = this.props;
+    const shareLink = window.location.host + '/share/' + _id;
     const uLink = `/slides/${_id}`;
     const fLink = `/feedback/${_id}`;
-
-    // TODO - update this based on local or production
-    //const shareLink = 'localhost:3000/share/' + _id;
-    //const shareLink = 'https://feedbacks.meteorapp.com/share/' + _id;
-    const shareLink = 'https://bayscope2.eecs.berkeley.edu/share/' + _id;
 
     return (
       this.renderRedirect() || (
