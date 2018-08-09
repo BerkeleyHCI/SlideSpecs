@@ -72,7 +72,7 @@ class FeedbackPage extends BaseComponent {
   renderFiles = () => {
     const {_id, files} = this.props;
     return files.map((aFile, key) => {
-      const link = Files.findOne({_id: aFile._id}).link();
+      let link = Files.findOne({_id: aFile._id}).link('original', '//');
       return (
         <FileReview
           key={'file-' + key}
