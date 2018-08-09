@@ -68,3 +68,4 @@ reactive-var@1.0.11
 ostrio:files
 twbs:bootstrap
 session@1.1.7
+u2622:persistent-session

@@ -6,6 +6,7 @@ aldeed:schema-deny@1.1.0
 aldeed:schema-index@1.1.1
 aldeed:simple-schema@1.5.4
 allow-deny@1.1.0
+amplify@1.0.0
 app-prod-security@0.0.0
 audit-argument-checks@1.0.7
 autoupdate@1.4.1
@@ -124,6 +125,7 @@ tmeasday:check-npm-versions@0.3.2
 tmeasday:test-reporter-helpers@0.2.1
 tracker@1.2.0
 twbs:bootstrap@3.3.6
+u2622:persistent-session@0.4.4
 underscore@1.0.10
 universe:i18n@1.16.1
 url@1.2.0
