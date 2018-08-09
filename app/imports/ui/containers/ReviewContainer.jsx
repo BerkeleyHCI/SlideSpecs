@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Session} from 'meteor/session';
 import {Link} from 'react-router-dom';
+import {Session} from 'meteor/session.js';
 
 import Message from '../components/Message.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -17,9 +17,15 @@ export default class ReviewContainer extends BaseComponent {
     }
   };
 
+  componentDidMount = () => {
+    const saved = localStorage.getItem('feedbacks.reviewer');
+    Session.set('reviewer', saved);
+  };
+
   setName = () => {
     const name = this.getText();
-    Session.setPersistent('name', name);
+    localStorage.setItem('feedbacks.reviewer', name);
+    Session.set('reviewer', name);
   };
 
   renderName = () => {

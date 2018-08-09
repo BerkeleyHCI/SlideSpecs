@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import BaseComponent from './BaseComponent.jsx';
+import {Session} from 'meteor/session.js';
 
 export default class UserMenu extends BaseComponent {
   constructor(props) {
@@ -9,6 +10,11 @@ export default class UserMenu extends BaseComponent {
     this.state = Object.assign(this.state, {open: false});
     this.toggle = this.toggle.bind(this);
   }
+
+  unsetName = () => {
+    localStorage.removeItem('feedbacks.reviewer');
+    Session.set('reviewer', undefined);
+  };
 
   toggle(e) {
     e.preventDefault();
@@ -78,6 +84,9 @@ export default class UserMenu extends BaseComponent {
         <div className="user-menu vertical">
           <a className="btn-secondary" onClick={this.toggle}>
             {reviewer}
+          </a>
+          <a className="btn-secondary" onClick={this.unsetName}>
+            clear name
           </a>
         </div>
       );

@@ -30,7 +30,6 @@ mdg:validated-method
 mdg:validation-error
 
 # i18n
-universe:i18n
 
 # accounts
 accounts-password@1.5.1
@@ -67,5 +66,4 @@ dynamic-import@0.4.0
 reactive-var@1.0.11
 ostrio:files
 twbs:bootstrap
-session@1.1.7
-u2622:persistent-session
+session
