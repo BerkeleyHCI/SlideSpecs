@@ -16,7 +16,7 @@ class BaseComponent extends Component {
   redirectTo(path) {
     setTimeout(() => {
       this.setState({redirectTo: path});
-    }, 100);
+    }, 10);
   }
 
   renderRedirect() {

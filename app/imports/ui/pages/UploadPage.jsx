@@ -17,7 +17,6 @@ class UploadPage extends BaseComponent {
     this.state = {
       uploading: [],
       progress: 0,
-      inProgress: false,
     };
 
     this.uploadIt = this.uploadIt.bind(this);
@@ -29,6 +28,11 @@ class UploadPage extends BaseComponent {
 
   componentDidUpdate() {
     new Masonry('.grid', {itemSelector: '.file-item'});
+  }
+
+  componentWillUnmount() {
+    const mason = new Masonry('.grid', {itemSelector: '.file-item'});
+    mason.destroy();
   }
 
   humanFileSize(bytes) {
@@ -49,25 +53,25 @@ class UploadPage extends BaseComponent {
 
   // TODO merge the progress for all uploads, creating single number percent.
 
-  uploadIt(e) {
+  uploadIt = e => {
     e.preventDefault();
-    let self = this;
-    let {_id} = self.props;
+    let {_id, fileLocator} = self.props;
     let files = e.currentTarget.files;
     if (files) {
       let uploadCount = files.length;
+      let uploadMaxProg = files.length * 100;
       _.each(e.currentTarget.files, file => {
         let uploadInstance = Files.insert(
           {
-            file: file,
+            file,
             meta: {
-              locator: self.props.fileLocator,
+              locator: fileLocator,
               sessionId: _id,
-              userId: Meteor.userId(), // Optional, used to check on server for file tampering
+              userId: Meteor.userId(),
             },
             streams: 'dynamic',
             chunkSize: 'dynamic',
-            allowWebWorkers: true, // If you see issues with uploads, change this to false
+            allowWebWorkers: true,
           },
           false,
         );
@@ -77,39 +81,19 @@ class UploadPage extends BaseComponent {
           inProgress: true, // Show the progress bar now
         });
 
-        // These are the event functions, don't need most of them, it shows where we are in the process
-        uploadInstance.on('start', function() {
-          //console.log('Starting');
-        });
-
+        uploadInstance.on('start', function() {});
+        uploadInstance.on('uploaded', function(error, fileObj) {});
         uploadInstance.on('end', function(error, fileObj) {
           uploadCount -= 1;
         });
 
-        uploadInstance.on('uploaded', function(error, fileObj) {
-          //console.log('uploaded: ', fileObj);
-
-          // Remove the filename from the upload box
-          self.refs['fileinput'].value = '';
-
-          // Reset our state for the next file
-          self.setState({
-            uploading: [],
-            progress: 0,
-            inProgress: false,
-          });
-        });
-
         uploadInstance.on('error', function(error, fileObj) {
-          console.log('Error during upload: ' + error);
+          console.log(`Error during upload: ${error}`);
         });
 
         uploadInstance.on('progress', function(progress, fileObj) {
           //console.log('Upload Percentage: ' + progress);
-          // Update our progress bar
-          self.setState({
-            progress: progress,
-          });
+          self.setState({progress}); // Update our progress bar
         });
 
         uploadInstance.start(); // Must manually start the upload
@@ -118,13 +102,18 @@ class UploadPage extends BaseComponent {
       let uploadInterval = setInterval(() => {
         if (uploadCount === 0) {
           clearInterval(uploadInterval);
+          self.setState({
+            uploading: [],
+            progress: 0,
+            inProgress: false,
+          });
           setTimeout(() => {
             this.redirectTo(`/sessions/${_id}`);
           }, 1000);
         }
       }, 100);
     }
-  }
+  };
 
   // This is our progress bar, bootstrap styled
   // Remove this function if not needed
