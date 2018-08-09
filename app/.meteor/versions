@@ -10,7 +10,7 @@ app-prod-security@0.0.0
 audit-argument-checks@1.0.7
 autoupdate@1.4.1
 babel-compiler@7.1.1
-babel-runtime@1.2.2
+babel-runtime@1.2.4
 base64@1.0.11
 binary-heap@1.0.10
 blaze@2.3.2
