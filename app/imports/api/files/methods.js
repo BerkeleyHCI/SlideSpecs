@@ -36,7 +36,6 @@ export const deleteSessionFiles = new ValidatedMethod({
     sessionId: {type: String},
   }).validator(),
   run({sessionId}) {
-    const query = {meta: {sessionId}};
-    return Files.remove(query);
+    return Files.remove({'meta.sessionId': sessionId});
   },
 });

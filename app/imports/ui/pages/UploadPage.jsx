@@ -9,6 +9,8 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import IndividualFile from '../components/FileIndividualFile.jsx';
 import Message from '../components/Message.jsx';
 
+import {deleteSessionFiles} from '../../api/files/methods.js';
+
 class UploadPage extends BaseComponent {
   constructor(props) {
     super(props);
@@ -39,6 +41,11 @@ class UploadPage extends BaseComponent {
     } while (fileSizeInBytes > 1024);
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
   }
+
+  deleteFiles = () => {
+    const {_id} = this.props;
+    deleteSessionFiles.call({sessionId: _id});
+  };
 
   // TODO merge the progress for all uploads, creating single number percent.
 
@@ -181,7 +188,9 @@ class UploadPage extends BaseComponent {
                   multiple
                 />
               </label>
-              <button className="btn btn-danger">delete all</button>
+              <button onClick={this.deleteFiles} className="btn btn-danger">
+                delete all
+              </button>
               {this.state.uploading.length === 0 &&
                 display.length === 0 && (
                   <Message title="no slides yet" subtitle="add above" />
