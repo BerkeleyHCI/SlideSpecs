@@ -15,7 +15,7 @@ class UploadPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      uploading: [],
+      uploading: false,
       progress: 0,
     };
 
@@ -54,15 +54,16 @@ class UploadPage extends BaseComponent {
   // TODO merge the progress for all uploads, creating single number percent.
 
   uploadIt = e => {
+    let uploadCount;
+    let uploadGroup;
     const startProg = () => this.setState({uploading: true});
-    const updateProg = progress => this.setState({progress});
     e.preventDefault();
     let {_id, fileLocator} = this.props;
     const files = [...e.currentTarget.files];
     if (files) {
       startProg();
-      let uploadCount = files.length;
-      let uploadMaxProg = files.length * 100;
+      uploadCount = files.length;
+      uploadGroup = files.length;
       files.map(file => {
         let uploadInstance = Files.insert(
           {
@@ -81,6 +82,7 @@ class UploadPage extends BaseComponent {
 
         //uploadInstance.on('start', function() {});
         //uploadInstance.on('uploaded', function(error, fileObj) {});
+        //uploadInstance.on('progress', function(progress, fileObj) {});
 
         uploadInstance.on('end', function(error, fileObj) {
           uploadCount -= 1;
@@ -88,10 +90,6 @@ class UploadPage extends BaseComponent {
 
         uploadInstance.on('error', function(error, fileObj) {
           console.log(`Error during upload: ${error}`);
-        });
-
-        uploadInstance.on('progress', function(progress, fileObj) {
-          updateProg(fileObj.name, progress);
         });
 
         uploadInstance.start();
@@ -102,13 +100,18 @@ class UploadPage extends BaseComponent {
           // DONE WITH ALL UPLOADS
           clearInterval(uploadInterval);
           this.setState({
-            uploading: [],
-            progress: 0,
             uploading: false,
+            progress: 0,
           });
           setTimeout(() => {
             this.redirectTo(`/sessions/${_id}`);
           }, 1000);
+        } else {
+          this.setState({
+            progress: Math.round(
+              100 * (files.length - uploadCount) / files.length,
+            ),
+          });
         }
       }, 100);
     }
@@ -118,9 +121,12 @@ class UploadPage extends BaseComponent {
   // Remove this function if not needed
 
   showUploads() {
-    if (!_.isEmpty(this.state.uploading)) {
+    if (this.state.uploading) {
       return (
-        <Message title="uploading now" subtitle={this.state.progress + '%'} />
+        <Message
+          title="uploading now..."
+          subtitle={this.state.progress + '%'}
+        />
       );
     }
   }
@@ -134,19 +140,22 @@ class UploadPage extends BaseComponent {
     if (files) {
       let fileCursors = files;
       let uploads = this.showUploads();
-      let display = fileCursors.map((aFile, key) => {
-        let link = Files.findOne({_id: aFile._id}).link('original', '//');
-        return (
-          <IndividualFile
-            key={'file' + key}
-            fileId={aFile._id}
-            fileName={aFile.name}
-            fileUrl={link}
-            fileSize={this.humanFileSize(aFile.size)}
-            handleLoad={this.handleLoad}
-          />
-        );
-      });
+      let display =
+        (!this.state.uploading &&
+          fileCursors.map((aFile, key) => {
+            let link = Files.findOne({_id: aFile._id}).link('original', '//');
+            return (
+              <IndividualFile
+                key={'file' + key}
+                fileId={aFile._id}
+                fileName={aFile.name}
+                fileUrl={link}
+                fileSize={this.humanFileSize(aFile.size)}
+                handleLoad={this.handleLoad}
+              />
+            );
+          })) ||
+        null;
 
       return (
         this.renderRedirect() || (
@@ -175,7 +184,7 @@ class UploadPage extends BaseComponent {
               <button onClick={this.deleteFiles} className="btn btn-danger">
                 delete all
               </button>
-              {this.state.uploading.length === 0 &&
+              {!this.state.uploading &&
                 display.length === 0 && (
                   <Message title="no slides yet" subtitle="add above" />
                 )}
