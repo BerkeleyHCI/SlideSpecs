@@ -31,8 +31,8 @@ class UploadPage extends BaseComponent {
   }
 
   componentWillUnmount() {
-    const mason = new Masonry('.grid', {itemSelector: '.file-item'});
-    mason.destroy();
+    //const mason = new Masonry('.grid', {itemSelector: '.file-item'});
+    //mason.destroy();
   }
 
   humanFileSize(bytes) {
@@ -54,13 +54,16 @@ class UploadPage extends BaseComponent {
   // TODO merge the progress for all uploads, creating single number percent.
 
   uploadIt = e => {
+    const startProg = () => this.setState({uploading: true});
+    const updateProg = progress => this.setState({progress});
     e.preventDefault();
     let {_id, fileLocator} = this.props;
-    let files = e.currentTarget.files;
+    const files = [...e.currentTarget.files];
     if (files) {
+      startProg();
       let uploadCount = files.length;
       let uploadMaxProg = files.length * 100;
-      _.each(e.currentTarget.files, file => {
+      files.map(file => {
         let uploadInstance = Files.insert(
           {
             file,
@@ -76,13 +79,9 @@ class UploadPage extends BaseComponent {
           false,
         );
 
-        this.setState({
-          uploading: uploadInstance, // Keep track of this instance to use below
-          inProgress: true, // Show the progress bar now
-        });
+        //uploadInstance.on('start', function() {});
+        //uploadInstance.on('uploaded', function(error, fileObj) {});
 
-        uploadInstance.on('start', function() {});
-        uploadInstance.on('uploaded', function(error, fileObj) {});
         uploadInstance.on('end', function(error, fileObj) {
           uploadCount -= 1;
         });
@@ -92,20 +91,20 @@ class UploadPage extends BaseComponent {
         });
 
         uploadInstance.on('progress', function(progress, fileObj) {
-          //console.log('Upload Percentage: ' + progress);
-          this.setState({progress}); // Update our progress bar
+          updateProg(fileObj.name, progress);
         });
 
-        uploadInstance.start(); // Must manually start the upload
+        uploadInstance.start();
       });
 
       let uploadInterval = setInterval(() => {
         if (uploadCount === 0) {
+          // DONE WITH ALL UPLOADS
           clearInterval(uploadInterval);
           this.setState({
             uploading: [],
             progress: 0,
-            inProgress: false,
+            uploading: false,
           });
           setTimeout(() => {
             this.redirectTo(`/sessions/${_id}`);

@@ -12,6 +12,15 @@ class SignInPage extends BaseComponent {
     this.state = {errors: {}};
   }
 
+  redirectHomeIfUser = () => {
+    if (Meteor.user()) {
+      this.redirectTo('/');
+    }
+  };
+
+  componentDidMount = this.redirectHomeIfUser;
+  componentDidUpdate = this.redirectHomeIfUser;
+
   onSubmit = event => {
     event.preventDefault();
     const username = this.username.value;
@@ -33,8 +42,6 @@ class SignInPage extends BaseComponent {
     Meteor.loginWithPassword(username, password, err => {
       if (err) {
         this.setState({errors: {none: err.reason}});
-      } else {
-        this.redirectTo('/'); // special wait for auth
       }
     });
   };

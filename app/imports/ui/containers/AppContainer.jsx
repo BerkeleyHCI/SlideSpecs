@@ -13,7 +13,7 @@ export default withTracker(() => {
   return {
     user: Meteor.user(),
     reviewer: Session.get('reviewer'),
-    loading: ![sessions, files].every(x => x.ready()) && !Meteor.loggingIn(),
+    loading: ![sessions, files].every(x => x.ready()) || Meteor.loggingIn(),
     connected: Meteor.status().connected,
     sessions: Sessions.find(
       {userId: Meteor.userId()},
