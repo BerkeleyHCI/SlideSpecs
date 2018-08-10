@@ -6,21 +6,24 @@ import {Redirect} from 'react-router-dom';
 class BaseComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {redirectTo: null};
+    this.state = {path: null};
   }
 
-  static getDerivedStateFromProps() {
-    return {redirectTo: null};
-  }
+  componentDidUpdate = () => {
+    if (this.state.path) this.setState({path: null});
+  };
 
   redirectTo = path => {
-    this.setState({redirectTo: path});
+    setTimeout(this.setState({path}), 500);
   };
 
   renderRedirect = () => {
-    const redir = this.state.redirectTo;
-    console.log(redir, this.state);
-    return redir ? <Redirect to={redir} /> : null;
+    const {path} = this.state;
+    if (path) {
+      return <Redirect to={path} />;
+    } else {
+      return null;
+    }
   };
 }
 

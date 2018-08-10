@@ -8,7 +8,6 @@ export default class UserMenu extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = Object.assign(this.state, {open: false});
-    this.toggle = this.toggle.bind(this);
   }
 
   unsetName = () => {
@@ -16,15 +15,20 @@ export default class UserMenu extends BaseComponent {
     Session.set('reviewer', undefined);
   };
 
-  toggle(e) {
+  goHome = e => {
+    e.preventDefault();
+    this.redirectTo('/');
+  };
+
+  toggle = e => {
     e.preventDefault();
     e.stopPropagation();
     this.setState({
       open: !this.state.open,
     });
-  }
+  };
 
-  renderOpen() {
+  renderOpen = () => {
     const {user, logout} = this.props;
     const username = user.username;
     return (
@@ -33,7 +37,7 @@ export default class UserMenu extends BaseComponent {
           {username}
           <span className="icon-arrow-up" />
         </a>
-        <a className="btn-secondary" href="/">
+        <a className="btn-secondary" onClick={this.goHome}>
           sessions
         </a>
         <a className="btn-secondary" onClick={logout}>
@@ -41,7 +45,7 @@ export default class UserMenu extends BaseComponent {
         </a>
       </div>
     );
-  }
+  };
 
   renderClosed() {
     const {user, logout} = this.props;
@@ -98,10 +102,14 @@ export default class UserMenu extends BaseComponent {
     let content = user ? this.renderLoggedIn() : this.renderLoggedOut();
     if (guest) content = this.renderGuest();
     return (
-      <section id="menu">
-        <h1>{guest ? <span>feedback</span> : <Link to="/">feedback</Link>}</h1>
-        {content}
-      </section>
+      this.renderRedirect() || (
+        <section id="menu">
+          <h1>
+            {guest ? <span>feedback</span> : <Link to="/">feedback</Link>}
+          </h1>
+          {content}
+        </section>
+      )
     );
   }
 }

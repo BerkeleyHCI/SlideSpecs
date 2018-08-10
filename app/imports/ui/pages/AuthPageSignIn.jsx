@@ -2,11 +2,16 @@ import {Meteor} from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import BaseComponent from '../components/BaseComponent.jsx';
 
+import BaseComponent from '../components/BaseComponent.jsx';
 import AuthPage from './AuthPage.jsx';
 
 class SignInPage extends BaseComponent {
+  constructor(props) {
+    super(props);
+    this.state = {errors: {}};
+  }
+
   onSubmit = event => {
     event.preventDefault();
     const username = this.username.value;
@@ -35,7 +40,7 @@ class SignInPage extends BaseComponent {
   };
 
   render() {
-    const {errors} = this.state || {};
+    const {errors} = this.state;
     const errorMessages = Object.keys(errors).map(key => errors[key]);
     const errorClass = key => errors[key] && 'error';
 
