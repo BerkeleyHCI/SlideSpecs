@@ -1,20 +1,24 @@
 /* eslint-disable react/no-unused-state */
 
+import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 
 class BaseComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {path: null};
+    this.state = {path: null, rAuth: null};
   }
 
   componentDidUpdate = () => {
-    if (this.state.path) this.setState({path: null});
+    const {path, rAuth} = this.state;
+    if (path) {
+      this.setState({path: null});
+    }
   };
 
   redirectTo = path => {
-    setTimeout(this.setState({path}), 500);
+    this.setState({path});
   };
 
   renderRedirect = () => {

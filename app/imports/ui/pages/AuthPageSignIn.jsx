@@ -34,7 +34,7 @@ class SignInPage extends BaseComponent {
       if (err) {
         this.setState({errors: {none: err.reason}});
       } else {
-        this.redirectTo('/');
+        this.redirectTo('/'); // special wait for auth
       }
     });
   };
@@ -90,7 +90,11 @@ class SignInPage extends BaseComponent {
       </Link>
     );
 
-    return this.renderRedirect() || <AuthPage content={content} link={link} />;
+    return (
+      this.renderRedirect() || (
+        <AuthPage {...this.props} content={content} link={link} />
+      )
+    );
   }
 }
 

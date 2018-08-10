@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
 import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
-import {TransitionGroup, CSSTransition} from 'react-transition-group';
 
 import UserMenu from '../components/UserMenu.jsx';
 import Loading from '../components/Loading.jsx';
@@ -115,42 +114,38 @@ export default class App extends Component {
           {loading ? (
             <Loading key="loading" />
           ) : (
-            <TransitionGroup>
-              <CSSTransition key={location.key} classNames="fade" timeout={200}>
-                <Switch location={location}>
-                  <Route path="/signin" component={AuthPageSignIn} />
-                  <Route path="/join" component={AuthPageJoin} />
-                  <Route path="/share/:id" render={this.renderReview} />
+            <Switch location={location}>
+              <Route path="/signin" component={AuthPageSignIn} />
+              <Route path="/join" component={AuthPageJoin} />
+              <Route path="/share/:id" render={this.renderReview} />
 
-                  <PrivateRoute
-                    exact
-                    path="/"
-                    user={user}
-                    render={() => <SessionListPage sessions={sessions} />}
-                  />
+              <PrivateRoute
+                exact
+                path="/"
+                user={user}
+                render={() => <SessionListPage sessions={sessions} />}
+              />
 
-                  <PrivateRoute
-                    path="/sessions/:id"
-                    render={this.renderSession}
-                    user={user}
-                  />
+              <PrivateRoute
+                path="/sessions/:id"
+                render={this.renderSession}
+                user={user}
+              />
 
-                  <PrivateRoute
-                    path="/slides/:id"
-                    render={this.renderUpload}
-                    user={user}
-                  />
+              <PrivateRoute
+                path="/slides/:id"
+                render={this.renderUpload}
+                user={user}
+              />
 
-                  <PrivateRoute
-                    path="/feedback/:id"
-                    render={this.renderFeedback}
-                    user={user}
-                  />
+              <PrivateRoute
+                path="/feedback/:id"
+                render={this.renderFeedback}
+                user={user}
+              />
 
-                  <Route path="/*" component={NotFoundPage} />
-                </Switch>
-              </CSSTransition>
-            </TransitionGroup>
+              <PrivateRoute user={user} render={NotFoundPage} />
+            </Switch>
           )}
         </div>
       </div>

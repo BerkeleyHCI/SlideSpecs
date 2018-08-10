@@ -33,6 +33,7 @@ export default class UserMenu extends BaseComponent {
     const username = user.username;
     return (
       <div className="user-menu vertical">
+        <LoggedInMenu />
         <a href="#toggle" className="btn-secondary" onClick={this.toggle}>
           {username}
           <span className="icon-arrow-up" />
@@ -112,6 +113,14 @@ export default class UserMenu extends BaseComponent {
       )
     );
   }
+}
+
+class LoggedInMenu extends BaseComponent {
+  componentDidMount = () => {
+    this.redirectTo('/');
+  };
+
+  render = this.renderRedirect;
 }
 
 UserMenu.propTypes = {
