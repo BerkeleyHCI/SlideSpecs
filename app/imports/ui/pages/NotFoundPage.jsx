@@ -7,7 +7,7 @@ class NotFoundPage extends BaseComponent {
   render() {
     return (
       <div className="page not-found">
-        <div className="content-scrollable">
+        <div className="main-content">
           <Message title="page not found" />
         </div>
       </div>

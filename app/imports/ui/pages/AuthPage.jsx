@@ -1,13 +1,12 @@
 import React from 'react';
+import UserMenu from '../components/UserMenu.jsx';
 import PropTypes from 'prop-types';
 
 // a common layout wrapper for auth pages
 const AuthPage = ({content, link}) => (
-  <div className="page auth">
-    <div className="content-scrollable">
-      {content}
-      {link}
-    </div>
+  <div className="page auth main-content">
+    {content}
+    {link}
   </div>
 );
 

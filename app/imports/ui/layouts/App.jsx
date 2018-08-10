@@ -101,7 +101,7 @@ export default class App extends Component {
     }
   };
 
-  renderContent(location) {
+  renderContent = ({location}) => {
     const {user, connected, reviewer, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
     const guest = location.pathname.match(/share/);
@@ -119,7 +119,7 @@ export default class App extends Component {
             <Loading key="loading" />
           ) : (
             <TransitionGroup>
-              <CSSTransition key={location.key} classNames="fade" timeout={300}>
+              <CSSTransition key={location.key} classNames="fade" timeout={200}>
                 <Switch location={location}>
                   <Route path="/signin" component={AuthPageSignIn} />
                   <Route path="/join" component={AuthPageJoin} />
@@ -158,12 +158,12 @@ export default class App extends Component {
         </div>
       </div>
     );
-  }
+  };
 
   render() {
     return (
       <BrowserRouter>
-        <Route render={({location}) => this.renderContent(location)} />
+        <Route render={this.renderContent} />
       </BrowserRouter>
     );
   }

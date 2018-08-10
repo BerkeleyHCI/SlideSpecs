@@ -10,10 +10,9 @@ class JoinPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = Object.assign(this.state, {errors: {}});
-    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onSubmit(event) {
+  onSubmit = event => {
     event.preventDefault();
     const username = this.username.value;
     const password = this.password.value;
@@ -46,7 +45,7 @@ class JoinPage extends BaseComponent {
         this.redirectTo('/');
       },
     );
-  }
+  };
 
   render() {
     const {errors} = this.state;
