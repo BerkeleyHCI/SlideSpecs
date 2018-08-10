@@ -27,7 +27,7 @@ export default class SessionContainer extends BaseComponent {
 
   render() {
     const {_id, name, files, comments} = this.props;
-    const shareLink = window.location.host + '/share/' + _id;
+    const shareLink = window.location.origin + '/share/' + _id;
     const uLink = `/slides/${_id}`;
     const fLink = `/feedback/${_id}`;
 
