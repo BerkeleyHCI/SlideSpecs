@@ -55,7 +55,7 @@ class UploadPage extends BaseComponent {
 
   uploadIt = e => {
     e.preventDefault();
-    let {_id, fileLocator} = self.props;
+    let {_id, fileLocator} = this.props;
     let files = e.currentTarget.files;
     if (files) {
       let uploadCount = files.length;
@@ -76,7 +76,7 @@ class UploadPage extends BaseComponent {
           false,
         );
 
-        self.setState({
+        this.setState({
           uploading: uploadInstance, // Keep track of this instance to use below
           inProgress: true, // Show the progress bar now
         });
@@ -93,7 +93,7 @@ class UploadPage extends BaseComponent {
 
         uploadInstance.on('progress', function(progress, fileObj) {
           //console.log('Upload Percentage: ' + progress);
-          self.setState({progress}); // Update our progress bar
+          this.setState({progress}); // Update our progress bar
         });
 
         uploadInstance.start(); // Must manually start the upload
@@ -102,7 +102,7 @@ class UploadPage extends BaseComponent {
       let uploadInterval = setInterval(() => {
         if (uploadCount === 0) {
           clearInterval(uploadInterval);
-          self.setState({
+          this.setState({
             uploading: [],
             progress: 0,
             inProgress: false,
