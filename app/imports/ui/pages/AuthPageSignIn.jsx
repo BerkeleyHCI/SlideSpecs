@@ -7,13 +7,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import AuthPage from './AuthPage.jsx';
 
 class SignInPage extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.state = Object.assign(this.state, {errors: {}});
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  onSubmit(event) {
+  onSubmit = event => {
     event.preventDefault();
     const username = this.username.value;
     const password = this.password.value;
@@ -38,10 +32,10 @@ class SignInPage extends BaseComponent {
         this.redirectTo('/');
       }
     });
-  }
+  };
 
   render() {
-    const {errors} = this.state;
+    const {errors} = this.state || {};
     const errorMessages = Object.keys(errors).map(key => errors[key]);
     const errorClass = key => errors[key] && 'error';
 

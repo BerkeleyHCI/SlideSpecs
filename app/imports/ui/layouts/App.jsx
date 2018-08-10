@@ -22,11 +22,7 @@ const CONNECTION_ISSUE_TIMEOUT = 5000;
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showConnectionIssue: false,
-      redirectTo: null,
-    };
-    this.logout = this.logout.bind(this);
+    this.state = {showConnectionIssue: false};
   }
 
   componentDidMount() {
@@ -36,9 +32,9 @@ export default class App extends Component {
     }, CONNECTION_ISSUE_TIMEOUT);
   }
 
-  logout() {
+  logout = () => {
     Meteor.logout();
-  }
+  };
 
   renderSession = ({match}) => {
     if (!match) {
@@ -102,9 +98,10 @@ export default class App extends Component {
   };
 
   renderContent = ({location}) => {
-    const {user, connected, reviewer, sessions, files, loading} = this.props;
     const {showConnectionIssue} = this.state;
+    const {user, connected, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
+
     return (
       <div id="container">
         <UserMenu

@@ -9,14 +9,19 @@ class BaseComponent extends Component {
     this.state = {redirectTo: null};
   }
 
-  redirectTo(path) {
-    this.setState({redirectTo: path});
+  static getDerivedStateFromProps() {
+    return {redirectTo: null};
   }
 
-  renderRedirect() {
-    const {redir} = this.state;
+  redirectTo = path => {
+    this.setState({redirectTo: path});
+  };
+
+  renderRedirect = () => {
+    const redir = this.state.redirectTo;
+    console.log(redir, this.state);
     return redir ? <Redirect to={redir} /> : null;
-  }
+  };
 }
 
 export default BaseComponent;

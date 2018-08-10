@@ -7,11 +7,6 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import AuthPage from './AuthPage.jsx';
 
 class JoinPage extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.state = Object.assign(this.state, {errors: {}});
-  }
-
   onSubmit = event => {
     event.preventDefault();
     const username = this.username.value;
@@ -38,9 +33,7 @@ class JoinPage extends BaseComponent {
       },
       err => {
         if (err) {
-          this.setState({
-            errors: {none: err.reason},
-          });
+          this.setState({errors: {none: err.reason}});
         }
         this.redirectTo('/');
       },
@@ -48,7 +41,7 @@ class JoinPage extends BaseComponent {
   };
 
   render() {
-    const {errors} = this.state;
+    const {errors} = this.state || {};
     const errorMessages = Object.keys(errors).map(key => errors[key]);
     const errorClass = key => errors[key] && 'error';
 
