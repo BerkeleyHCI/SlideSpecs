@@ -19,9 +19,3 @@ To lint:
 meteor npm run lint
 ```
 
-### deploy
-
-on meteor galaxy:
-
-    DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com meteor deploy feedbacks.meteorapp.com  --settings settings.json
-

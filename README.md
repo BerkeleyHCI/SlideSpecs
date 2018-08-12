@@ -9,8 +9,7 @@ presentation feedback project. summer 2018
 
 cloning:
 
-    git clone https://github.com/berkeleyhci/peer-feedback
-    cd app
+    git clone https://github.com/berkeleyhci/peer-feedback && cd app
     meteor npm install
     brew install tesseract
 
@@ -18,6 +17,12 @@ running:
 
     open http://localhost:3000
     meteor
+
+deploying
+
+    ssh bayscope # bayscope2.eecs
+    cd Desktop/peer-feedback
+    git pull
 
 ### reference
 
