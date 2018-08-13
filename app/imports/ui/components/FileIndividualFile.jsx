@@ -27,6 +27,10 @@ class IndividualFile extends Component {
     }
   };
 
+  //<button onClick={this.editFile} className="btn btn-sm">
+  //rename
+  //</button>
+
   render() {
     const {fileName, fileSize, fileUrl, handleLoad} = this.props;
     return (
@@ -36,9 +40,6 @@ class IndividualFile extends Component {
         </h4>
         <img className="slide" onLoad={handleLoad} src={fileUrl} />
         <div className="btns-group">
-          <button onClick={this.editFile} className="btn btn-sm">
-            rename
-          </button>
           <button onClick={this.removeFile} className="btn btn-sm">
             delete
           </button>

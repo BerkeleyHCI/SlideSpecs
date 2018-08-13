@@ -53,9 +53,7 @@ export default class ReviewContainer extends BaseComponent {
     let content;
     const {files, reviewer} = this.props;
     if (!files || files.length <= 0) {
-      content = (
-        <Message title="no slides here yet" subtitle="wait for presenter" />
-      );
+      content = <Message title="no slides yet" subtitle="wait for presenter" />;
     } else {
       content = reviewer ? (
         <SlideReviewPage {...this.props} />

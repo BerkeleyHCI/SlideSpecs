@@ -1,14 +1,11 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
-import {_} from 'meteor/underscore';
-import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import IndividualFile from '../components/FileIndividualFile.jsx';
 import Message from '../components/Message.jsx';
-
 import {deleteSessionFiles} from '../../api/files/methods.js';
 
 class UploadPage extends BaseComponent {
@@ -167,26 +164,57 @@ class UploadPage extends BaseComponent {
                 <span>{name}</span>
               )}
             </h1>
-            <h2>manage slides</h2>
 
             <div className="custom-upload">
-              <label className="btn btn-primary">
-                + upload slides
-                <input
-                  type="file"
-                  id="fileinput"
-                  disabled={this.state.inProgress}
-                  ref="fileinput"
-                  onChange={this.uploadIt}
-                  multiple
-                />
-              </label>
-              <button onClick={this.deleteFiles} className="btn btn-danger">
-                delete all
-              </button>
+              {!this.state.uploading &&
+                display.length > 0 && (
+                  <div>
+                    <h2>manage slides</h2>
+                    <button
+                      onClick={this.deleteFiles}
+                      className="btn btn-danger">
+                      delete all
+                    </button>
+                  </div>
+                )}
               {!this.state.uploading &&
                 display.length === 0 && (
-                  <Message title="no slides yet" subtitle="add above" />
+                  <div className="alert">
+                    <h3>slide upload</h3>
+                    first, export your presentation to a set of images. image
+                    export guides:
+                    <ul>
+                      <li>
+                        <a href="" target="_blank">
+                          keynote (osx)
+                        </a>
+                      </li>
+                      <li>
+                        <a href="" target="_blank">
+                          powerpoint
+                        </a>
+                      </li>
+                      <li>
+                        <a href="" target="_blank">
+                          general pdf
+                        </a>
+                      </li>
+                    </ul>
+                    <hr />
+                    then, select and upload all below.
+                    <hr />
+                    <label className="btn btn-primary">
+                      + upload slides
+                      <input
+                        type="file"
+                        id="fileinput"
+                        disabled={this.state.inProgress}
+                        ref="fileinput"
+                        onChange={this.uploadIt}
+                        multiple
+                      />
+                    </label>
+                  </div>
                 )}
               {uploads}
             </div>
