@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {Accounts} from 'meteor/accounts-base';
-import BaseComponent from '../components/BaseComponent.jsx';
 
+import BaseComponent from '../components/BaseComponent.jsx';
 import AuthPage from './AuthPage.jsx';
 
 class JoinPage extends BaseComponent {
@@ -11,6 +11,15 @@ class JoinPage extends BaseComponent {
     super(props);
     this.state = {errors: {}};
   }
+
+  redirectHomeIfUser = () => {
+    if (Meteor.user() && !Meteor.loggingIn()) {
+      this.redirectTo('/');
+    }
+  };
+
+  componentDidMount = this.redirectHomeIfUser;
+  componentDidUpdate = this.redirectHomeIfUser;
 
   onSubmit = event => {
     event.preventDefault();
@@ -20,10 +29,10 @@ class JoinPage extends BaseComponent {
     const errors = {};
 
     if (!password) {
-      errors.password = 'passwordRequired';
+      errors.password = 'password required';
     }
     if (confirm !== password) {
-      errors.confirm = 'passwordConfirm';
+      errors.confirm = 'wrong password confirmation';
     }
 
     this.setState({errors});
@@ -39,8 +48,6 @@ class JoinPage extends BaseComponent {
       err => {
         if (err) {
           this.setState({errors: {none: err.reason}});
-        } else {
-          this.redirectTo('/');
         }
       },
     );

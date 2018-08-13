@@ -7,11 +7,11 @@ import {Redirect} from 'react-router-dom';
 class BaseComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {path: null, rAuth: null};
+    this.state = {path: null};
   }
 
   componentDidUpdate = () => {
-    const {path, rAuth} = this.state;
+    const {path} = this.state;
     if (path) {
       this.setState({path: null});
     }
