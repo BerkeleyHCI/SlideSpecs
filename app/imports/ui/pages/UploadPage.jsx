@@ -129,6 +129,11 @@ class UploadPage extends BaseComponent {
     new Masonry('.grid', {itemSelector: '.file-item'});
   };
 
+  goHome = e => {
+    e.preventDefault();
+    this.redirectTo('/');
+  };
+
   render() {
     const {sessionId, name, files} = this.props;
     if (files) {
@@ -213,6 +218,9 @@ class UploadPage extends BaseComponent {
                         multiple
                       />
                     </label>
+                    <button onClick={this.goHome} className="btn btn-danger">
+                      cancel
+                    </button>
                   </div>
                 )}
               {uploads}
