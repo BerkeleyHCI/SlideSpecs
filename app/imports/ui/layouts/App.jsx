@@ -5,6 +5,7 @@ import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 
 import Loading from '../components/Loading.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
+import BaseComponent from '../components/BaseComponent.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
 
@@ -17,7 +18,7 @@ import UploadPage from '../pages/UploadPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
-export default class App extends Component {
+export default class App extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {showConnectionIssue: false};
@@ -41,7 +42,6 @@ export default class App extends Component {
     session.comments = comments.filter(c => c.session === sid);
     session.reviewer = reviewer;
     session.sessionId = sid;
-    console.log(session);
     return session;
   };
 
@@ -71,7 +71,16 @@ export default class App extends Component {
     return this.preRender(match, ReviewContainer);
   };
 
+  // TODO - NEED TO TEST ON BAYSCOPE.
+
+  renderSecure = loc => {
+    if (location.protocol === 'http:' && location.hostname !== 'localhost') {
+      this.redirectTo('https:' + window.location.href.substring(5));
+    }
+  };
+
   renderContent = ({location}) => {
+    this.renderSecure(location); // http -> https
     const {showConnectionIssue} = this.state;
     const {user, connected, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
