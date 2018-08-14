@@ -30,74 +30,52 @@ export default class App extends Component {
     }, CONNECTION_ISSUE_TIMEOUT);
   }
 
-  renderSession = ({match}) => {
+  getSharedProps = () => {
+    return this.props;
+  };
+
+  getSessionProps = sid => {
+    const {sessions, files, comments, reviewer} = this.props;
+    let session = sessions.find(s => s._id === sid) || {};
+    session.files = files.filter(f => f.meta.sessionId === sid);
+    session.comments = comments.filter(c => c.session === sid);
+    session.reviewer = reviewer;
+    session.sessionId = sid;
+    console.log(session);
+    return session;
+  };
+
+  preRender = (match, Comp) => {
     if (!match) {
       return <Loading key="loading" />;
     } else {
-      const sessionId = match.params.id;
-      const {sessions, files, comments} = this.props;
-      const session = sessions.find(s => s._id === sessionId);
-      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
-      const sComments = comments.filter(c => c.session === sessionId);
-      return (
-        <SessionContainer {...session} files={sFiles} comments={sComments} />
-      );
+      const shared = this.getSharedProps();
+      const sProps = this.getSessionProps(match.params.id);
+      return <Comp {...shared} {...sProps} />;
     }
+  };
+
+  renderSession = ({match}) => {
+    return this.preRender(match, SessionContainer);
   };
 
   renderUpload = ({match}) => {
-    if (!match) {
-      return <Loading key="loading" />;
-    } else {
-      const sessionId = match.params.id;
-      const {sessions, files} = this.props;
-      const session = sessions.find(s => s._id === sessionId);
-      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
-      return <UploadPage {...session} files={sFiles} />;
-    }
+    return this.preRender(match, UploadPage);
   };
 
   renderFeedback = ({match}) => {
-    if (!match) {
-      return <Loading key="loading" />;
-    } else {
-      const sessionId = match.params.id;
-      const {sessions, files, comments} = this.props;
-      const session = sessions.find(s => s._id === sessionId);
-      const sComments = comments.filter(c => c.session === sessionId);
-      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
-      return <FeedbackPage {...session} files={sFiles} comments={sComments} />;
-    }
+    return this.preRender(match, FeedbackPage);
   };
 
   renderReview = ({match}) => {
-    if (!match) {
-      return <Loading key="loading" />;
-    } else {
-      const {sessions, files, reviewer, comments} = this.props;
-      const sessionId = match.params.id;
-      const session = sessions.find(s => s._id === sessionId);
-      const sComments = comments.filter(c => c.session === sessionId);
-      const sFiles = files.filter(f => f.meta.sessionId === sessionId);
-      return (
-        <ReviewContainer
-          {...session}
-          {...this.props}
-          files={sFiles}
-          reviewer={reviewer}
-          comments={sComments}
-          sessionId={sessionId}
-        />
-      );
-    }
+    return this.preRender(match, ReviewContainer);
   };
 
   renderContent = ({location}) => {
     const {showConnectionIssue} = this.state;
     const {user, connected, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
-
-    const shared = this.props;
+    const shared = this.getSharedProps();
 
     return (
       <div id="container">

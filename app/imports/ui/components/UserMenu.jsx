@@ -5,11 +5,6 @@ import BaseComponent from './BaseComponent.jsx';
 import {Session} from 'meteor/session.js';
 
 export default class UserMenu extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.state = Object.assign(this.state, {open: false});
-  }
-
   unsetName = () => {
     localStorage.removeItem('feedbacks.reviewer');
     Session.set('reviewer', undefined);
@@ -20,16 +15,14 @@ export default class UserMenu extends BaseComponent {
     this.redirectTo('/');
   };
 
-  logout = () => {
+  logout = e => {
+    e.preventDefault();
     Meteor.logout();
   };
 
   toggle = e => {
     e.preventDefault();
     e.stopPropagation();
-    this.setState({
-      open: !this.state.open,
-    });
   };
 
   renderOpen = () => {
@@ -37,12 +30,8 @@ export default class UserMenu extends BaseComponent {
     const username = user.username;
     return (
       <div className="user-menu vertical">
-        <a href="#toggle" className="btn-secondary" onClick={this.toggle}>
-          {username}
-          <span className="icon-arrow-up" />
-        </a>
         <a className="btn-secondary" onClick={this.goHome}>
-          sessions
+          {username}
         </a>
         <a className="btn-secondary" onClick={this.logout}>
           log out
@@ -50,27 +39,6 @@ export default class UserMenu extends BaseComponent {
       </div>
     );
   };
-
-  renderClosed() {
-    const {user, logout} = this.props;
-    const username = user.username;
-    return (
-      <div className="user-menu vertical">
-        <a href="#toggle" className="btn-secondary" onClick={this.toggle}>
-          {username}
-          <span className="icon-arrow-down" />
-        </a>
-      </div>
-    );
-  }
-
-  renderLoggedIn() {
-    if (this.state.open) {
-      return this.renderOpen();
-    } else {
-      return this.renderClosed();
-    }
-  }
 
   renderLoggedOut() {
     return (
@@ -103,7 +71,7 @@ export default class UserMenu extends BaseComponent {
 
   render() {
     const {user, guest, reviewer} = this.props;
-    let content = user ? this.renderLoggedIn() : this.renderLoggedOut();
+    let content = user ? this.renderOpen() : this.renderLoggedOut();
     if (guest) content = this.renderGuest();
     return (
       this.renderRedirect() || (
@@ -120,5 +88,4 @@ export default class UserMenu extends BaseComponent {
 
 UserMenu.propTypes = {
   user: PropTypes.object,
-  logout: PropTypes.func,
 };

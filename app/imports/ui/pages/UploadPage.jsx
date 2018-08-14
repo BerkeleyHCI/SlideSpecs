@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import {_} from 'lodash';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -15,8 +16,6 @@ class UploadPage extends BaseComponent {
       uploading: false,
       progress: 0,
     };
-
-    this.uploadIt = this.uploadIt.bind(this);
   }
 
   componentDidMount() {
@@ -44,8 +43,8 @@ class UploadPage extends BaseComponent {
   }
 
   deleteFiles = () => {
-    const {_id} = this.props;
-    deleteSessionFiles.call({sessionId: _id});
+    const {sessionId} = this.props;
+    deleteSessionFiles.call({sessionId});
   };
 
   // TODO merge the progress for all uploads, creating single number percent.
@@ -55,7 +54,7 @@ class UploadPage extends BaseComponent {
     let uploadGroup;
     const startProg = () => this.setState({uploading: true});
     e.preventDefault();
-    let {_id, fileLocator} = this.props;
+    let {sessionId, fileLocator} = this.props;
     const files = [...e.currentTarget.files];
     if (files) {
       startProg();
@@ -67,8 +66,8 @@ class UploadPage extends BaseComponent {
             file,
             meta: {
               locator: fileLocator,
-              sessionId: _id,
               userId: Meteor.userId(),
+              sessionId,
             },
             streams: 'dynamic',
             chunkSize: 'dynamic',
@@ -101,7 +100,7 @@ class UploadPage extends BaseComponent {
             progress: 0,
           });
           setTimeout(() => {
-            this.redirectTo(`/sessions/${_id}`);
+            this.redirectTo(`/sessions/${sessionId}`);
           }, 1000);
         } else {
           // UPLOADING NOW
@@ -121,10 +120,7 @@ class UploadPage extends BaseComponent {
   showUploads() {
     if (this.state.uploading) {
       return (
-        <Message
-          title="uploading now..."
-          subtitle={this.state.progress + '%'}
-        />
+        <Message title="uploading..." subtitle={this.state.progress + '%'} />
       );
     }
   }
@@ -134,7 +130,7 @@ class UploadPage extends BaseComponent {
   };
 
   render() {
-    const {_id, name, files} = this.props;
+    const {sessionId, name, files} = this.props;
     if (files) {
       let fileCursors = files;
       let uploads = this.showUploads();
@@ -160,7 +156,9 @@ class UploadPage extends BaseComponent {
           <div className="main-content">
             <h1>
               {files.length > 0 ? (
-                <Link to={`/sessions/${_id}`}>{name}</Link>
+                <span>
+                  ‹ <Link to={`/sessions/${sessionId}`}>{name}</Link>
+                </span>
               ) : (
                 <span>{name}</span>
               )}

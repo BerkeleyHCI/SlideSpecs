@@ -6,13 +6,9 @@ import Message from '../components/Message.jsx';
 import {Link} from 'react-router-dom';
 
 export default class SessionContainer extends BaseComponent {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount = () => {
-    const {_id, files} = this.props;
-    const uLink = `/slides/${_id}`;
+    const {sessionId, files} = this.props;
+    const uLink = `/slides/${sessionId}`;
     if (files.length === 0) {
       this.redirectTo(uLink);
     }
@@ -23,14 +19,23 @@ export default class SessionContainer extends BaseComponent {
     if (copyText) {
       copyText.select();
       document.execCommand('copy');
+      this.clearSelection();
+    }
+  };
+
+  clearSelection = () => {
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    } else if (document.selection) {
+      document.selection.empty();
     }
   };
 
   render() {
-    const {_id, name, files, comments} = this.props;
-    const shareLink = window.location.origin + '/share/' + _id;
-    const uLink = `/slides/${_id}`;
-    const fLink = `/feedback/${_id}`;
+    const {sessionId, name, files, comments} = this.props;
+    const shareLink = window.location.origin + '/share/' + sessionId;
+    const uLink = `/slides/${sessionId}`;
+    const fLink = `/feedback/${sessionId}`;
     const content = (
       <div className="main-content">
         <h1> {name} </h1>
@@ -82,7 +87,7 @@ export default class SessionContainer extends BaseComponent {
 
 SessionContainer.propTypes = {
   user: PropTypes.object, // current meteor user
-  _id: PropTypes.string, // current session
+  sessionId: PropTypes.string, // current session
   files: PropTypes.array, // current session files
 };
 

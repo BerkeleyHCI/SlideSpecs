@@ -6,15 +6,10 @@ import UserMenu from '../components/UserMenu.jsx';
 class MenuContainer extends BaseComponent {
   render = () => {
     console.log(this.props);
-    const {user, guest, reviewer, logout, content} = this.props;
+    const {user, guest, reviewer, content} = this.props;
     return (
       <div>
-        <UserMenu
-          user={user}
-          guest={guest}
-          reviewer={reviewer}
-          logout={logout}
-        />
+        <UserMenu user={user} guest={guest} reviewer={reviewer} />
         <div id="content-container">{content}</div>
       </div>
     );
@@ -24,7 +19,5 @@ class MenuContainer extends BaseComponent {
 MenuContainer.propTypes = {
   content: PropTypes.element.isRequired,
 };
-
-//logout: PropTypes.fn.isRequired,
 
 export default MenuContainer;
