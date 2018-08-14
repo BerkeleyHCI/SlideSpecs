@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
+import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
 import {_} from 'meteor/underscore';
 import Message from '../components/Message.jsx';
@@ -54,12 +55,7 @@ class SessionItem extends BaseComponent {
 SessionItem.propTypes = {id: PropTypes.string};
 
 export default class SessionListPage extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.addSession = this.addSession.bind(this);
-  }
-
-  addSession() {
+  addSession = () => {
     createSession.call({}, (err, res) => {
       if (err) {
         console.error(err);
@@ -67,7 +63,7 @@ export default class SessionListPage extends BaseComponent {
         this.redirectTo(`/sessions/${res}`);
       }
     });
-  }
+  };
 
   render() {
     const {sessions} = this.props;
@@ -79,15 +75,18 @@ export default class SessionListPage extends BaseComponent {
       Sessions = sessions.map(sess => <SessionItem key={sess._id} {...sess} />);
     }
 
+    const content = (
+      <div className="main-content">
+        <h1>sessions</h1>
+        <button onClick={this.addSession} className="btn btn-primary">
+          + new session
+        </button>
+        <ul className="padded list-group">{Sessions}</ul>
+      </div>
+    );
     return (
       this.renderRedirect() || (
-        <div className="main-content">
-          <h1>sessions</h1>
-          <button onClick={this.addSession} className="btn btn-primary">
-            + new session
-          </button>
-          <ul className="padded list-group">{Sessions}</ul>
-        </div>
+        <MenuContainer {...this.props} content={content} />
       )
     );
   }

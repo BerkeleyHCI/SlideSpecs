@@ -115,7 +115,7 @@ class JoinPage extends BaseComponent {
       </Link>
     );
 
-    return this.renderRedirect() || <AuthPage content={content} link={link} />;
+    return this.renderRedirect() || <AuthPage {...this.props} content={content} link={link} />;
   }
 }
 

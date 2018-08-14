@@ -20,6 +20,10 @@ export default class UserMenu extends BaseComponent {
     this.redirectTo('/');
   };
 
+  logout = () => {
+    Meteor.logout();
+  };
+
   toggle = e => {
     e.preventDefault();
     e.stopPropagation();
@@ -29,7 +33,7 @@ export default class UserMenu extends BaseComponent {
   };
 
   renderOpen = () => {
-    const {user, logout} = this.props;
+    const {user} = this.props;
     const username = user.username;
     return (
       <div className="user-menu vertical">
@@ -40,7 +44,7 @@ export default class UserMenu extends BaseComponent {
         <a className="btn-secondary" onClick={this.goHome}>
           sessions
         </a>
-        <a className="btn-secondary" onClick={logout}>
+        <a className="btn-secondary" onClick={this.logout}>
           log out
         </a>
       </div>

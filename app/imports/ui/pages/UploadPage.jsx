@@ -104,13 +104,14 @@ class UploadPage extends BaseComponent {
             this.redirectTo(`/sessions/${_id}`);
           }, 1000);
         } else {
+          // UPLOADING NOW
           this.setState({
             progress: Math.round(
               100 * (files.length - uploadCount) / files.length,
             ),
           });
         }
-      }, 100);
+      }, 50);
     }
   };
 

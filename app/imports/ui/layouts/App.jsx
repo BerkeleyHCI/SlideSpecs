@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
 import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 
-import UserMenu from '../components/UserMenu.jsx';
 import Loading from '../components/Loading.jsx';
 import ConnectionNotification from '../components/ConnectionNotification.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
@@ -30,10 +29,6 @@ export default class App extends Component {
       this.setState({showConnectionIssue: true});
     }, CONNECTION_ISSUE_TIMEOUT);
   }
-
-  logout = () => {
-    Meteor.logout();
-  };
 
   renderSession = ({match}) => {
     if (!match) {
@@ -87,6 +82,7 @@ export default class App extends Component {
       return (
         <ReviewContainer
           {...session}
+          {...this.props}
           files={sFiles}
           reviewer={reviewer}
           comments={sComments}
@@ -101,53 +97,47 @@ export default class App extends Component {
     const {user, connected, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
 
+    const shared = this.props;
+
     return (
       <div id="container">
-        <UserMenu
-          user={user}
-          guest={guest}
-          reviewer={reviewer}
-          logout={this.logout}
-        />
         {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
-        <div id="content-container">
-          {loading ? (
-            <Loading key="loading" />
-          ) : (
-            <Switch location={location}>
-              <Route path="/signin" component={AuthPageSignIn} />
-              <Route path="/join" component={AuthPageJoin} />
-              <Route path="/share/:id" render={this.renderReview} />
+        {loading ? (
+          <Loading key="loading" />
+        ) : (
+          <Switch location={location}>
+            <Route path="/signin" component={AuthPageSignIn} {...shared} />
+            <Route path="/join" component={AuthPageJoin} {...shared} />
+            <Route path="/share/:id" render={this.renderReview} />
 
-              <PrivateRoute
-                exact
-                path="/"
-                user={user}
-                render={() => <SessionListPage sessions={sessions} />}
-              />
+            <PrivateRoute
+              exact
+              path="/"
+              user={user}
+              render={() => <SessionListPage sessions={sessions} {...shared} />}
+            />
 
-              <PrivateRoute
-                path="/sessions/:id"
-                render={this.renderSession}
-                user={user}
-              />
+            <PrivateRoute
+              path="/sessions/:id"
+              render={this.renderSession}
+              user={user}
+            />
 
-              <PrivateRoute
-                path="/slides/:id"
-                render={this.renderUpload}
-                user={user}
-              />
+            <PrivateRoute
+              path="/slides/:id"
+              render={this.renderUpload}
+              user={user}
+            />
 
-              <PrivateRoute
-                path="/feedback/:id"
-                render={this.renderFeedback}
-                user={user}
-              />
+            <PrivateRoute
+              path="/feedback/:id"
+              render={this.renderFeedback}
+              user={user}
+            />
 
-              <PrivateRoute user={user} render={NotFoundPage} />
-            </Switch>
-          )}
-        </div>
+            <PrivateRoute user={user} render={NotFoundPage} />
+          </Switch>
+        )}
       </div>
     );
   };
