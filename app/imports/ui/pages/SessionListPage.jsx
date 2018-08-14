@@ -84,6 +84,7 @@ export default class SessionListPage extends BaseComponent {
         <ul className="padded list-group">{Sessions}</ul>
       </div>
     );
+
     return (
       this.renderRedirect() || (
         <MenuContainer {...this.props} content={content} />
