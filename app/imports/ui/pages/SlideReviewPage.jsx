@@ -25,33 +25,49 @@ class SlideReviewPage extends BaseComponent {
 
   handleLoad = () => {
     const items = document.querySelectorAll('.file-item');
-    const mason = new Masonry('.grid', items);
+    const grid = document.getElementById('grid');
+    const mason = new Masonry(grid, items);
     mason.on('layoutComplete', this.handleSelectable);
   };
 
   handleSelectable = items => {
+    const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
-    let ds = this.state.ds;
+    let {ds} = this.state;
     if (ds) {
       ds.selectables = elements;
     } else {
-      const ds = new DragSelect({selectables: elements});
-      ds.callback = () => {
-        const selected = ds.getSelection();
-        const filtered = selected.map(x => {
-          return {
-            slideId: x.getAttribute('data-file-id'),
-            slideNo: x.getAttribute('data-iter'),
-          };
-        });
-        this.setState({filtered});
+      ds = new DragSelect({
+        selectables: elements,
+      });
+      ds.callback = selected => {
+        if (selected.length > 0) {
+          const filtered = selected.map(x => {
+            return {
+              slideId: x.getAttribute('data-file-id'),
+              slideNo: x.getAttribute('data-iter'),
+            };
+          });
+          this.setState({filtered});
+        }
       };
       this.setState({ds});
     }
   };
 
-  componentDidMount = this.handleLoad;
+  elementize = x => {
+    return {element: x};
+  };
+
   componentDidUpdate = this.handleLoad;
+  componentDidMount = () => {
+    this.handleLoad();
+    setTimeout(() => {
+      const items = document.querySelectorAll('.file-item');
+      const nodes = Array.prototype.slice.call(items).map(this.elementize);
+      this.handleSelectable(nodes);
+    }, 500);
+  };
 
   getText = () => {
     var copyText = document.getElementsByClassName('code')[0];
@@ -67,10 +83,17 @@ class SlideReviewPage extends BaseComponent {
     copyText.value = '';
   };
 
+  clearSelection = e => {
+    const id = e.target.id;
+    if (id === 'grid') {
+      this.setState({filtered: []});
+    }
+  };
+
   addComment = () => {
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
-    const cText = this.getText();
+    const cText = this.getText().trim();
     const commentFields = {
       author: reviewer,
       content: cText,
@@ -79,13 +102,15 @@ class SlideReviewPage extends BaseComponent {
     };
 
     console.log(commentFields);
-    createComment.call(commentFields, (err, res) => {
-      if (err) {
-        console.error(err);
-      } else {
-        this.clearText();
-      }
-    });
+    if (cText) {
+      createComment.call(commentFields, (err, res) => {
+        if (err) {
+          console.error(err);
+        } else {
+          this.clearText();
+        }
+      });
+    }
   };
 
   renderSlideTags = (filter, done: false) => {
@@ -179,7 +204,10 @@ class SlideReviewPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h1>share feedback</h1>
-          <div id="grid" className="padded grid">
+          <div
+            id="grid"
+            className="padded clearfix"
+            onClick={this.clearSelection}>
             {fileList}
           </div>
           {submitter}
