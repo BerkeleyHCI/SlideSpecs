@@ -30,7 +30,7 @@ class FeedbackPage extends BaseComponent {
     this.handleLoad();
     const grid = document.getElementById('grid');
     const items = document.querySelectorAll('.file-item');
-    const ds = new DragSelect({selectables: items, area: grid});
+    const ds = new DragSelect({selectables: items});
     ds.callback = () => {
       const selected = ds.getSelection();
       const filtered = selected.map(el => {
@@ -113,7 +113,7 @@ class FeedbackPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="main-content reviewView">
           <h1>
-            <Link to={`/sessions/${_id}`}>{name}</Link>
+            ‹ <Link to={`/sessions/${_id}`}>{name}</Link>
           </h1>
           <h2>review feedback</h2>
           <div id="grid" className="padded grid">

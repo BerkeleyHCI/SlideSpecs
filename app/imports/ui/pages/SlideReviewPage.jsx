@@ -20,6 +20,7 @@ class SlideReviewPage extends BaseComponent {
     this.state = {
       redirectTo: null,
       filtered: [],
+      selected: [],
     };
   }
 
@@ -33,22 +34,24 @@ class SlideReviewPage extends BaseComponent {
   handleSelectable = items => {
     const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
-    let {ds} = this.state;
+    let {ds, selected} = this.state;
     if (ds) {
       ds.selectables = elements;
     } else {
-      ds = new DragSelect({
-        selectables: elements,
-      });
-      ds.callback = selected => {
-        if (selected.length > 0) {
-          const filtered = selected.map(x => {
+      ds = new DragSelect({selectables: elements});
+      ds.callback = s => {
+        console.log(s);
+        if (s.length > 0) {
+          const filtered = s.map(x => {
             return {
               slideId: x.getAttribute('data-file-id'),
               slideNo: x.getAttribute('data-iter'),
             };
           });
-          this.setState({filtered});
+          this.setState({selected: s, filtered});
+        } else {
+          // retain selection. broken. TODO: fix
+          ds.addSelection(selected);
         }
       };
       this.setState({ds});
@@ -70,7 +73,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   getText = () => {
-    var copyText = document.getElementsByClassName('code')[0];
+    const copyText = document.getElementsByClassName('code')[0];
     if (copyText) {
       return copyText.value;
     } else {
@@ -79,15 +82,14 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearText = () => {
-    var copyText = document.getElementsByClassName('code')[0];
+    const copyText = document.getElementsByClassName('code')[0];
     copyText.value = '';
+    copyText.focus();
   };
 
   clearSelection = e => {
-    const id = e.target.id;
-    if (id === 'grid') {
-      this.setState({filtered: []});
-    }
+    console.log('clearing slide selection...');
+    this.setState({filtered: [], selected: []});
   };
 
   addComment = () => {
@@ -130,6 +132,11 @@ class SlideReviewPage extends BaseComponent {
         <span>
           {!done && <span>attach comment to slide{plural && 's'}</span>}
           {slideKeys}
+          <button
+            onClick={this.clearSelection}
+            className="btn btn-menu pull-right">
+            clear
+          </button>
         </span>
       );
     }
@@ -146,13 +153,13 @@ class SlideReviewPage extends BaseComponent {
         <input
           type="text"
           placeholder="enter comment here"
+          onSubmit={this.addComment}
           className="code"
-          onSubmit={this.setName}
         />
         <hr />
         <div className="btns-group">
-          <button onClick={this.addComment} className="btn btn-menu">
-            share
+          <button onClick={this.addComment} className="btn btn-primary">
+            + add feedback
           </button>
         </div>
       </div>
@@ -160,7 +167,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderFiles = () => {
-    const {_id, files} = this.props;
+    const {files} = this.props;
     return files.map((aFile, key) => {
       let link = Files.findOne({_id: aFile._id}).link('original', '//');
       return (
@@ -204,10 +211,7 @@ class SlideReviewPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h1>share feedback</h1>
-          <div
-            id="grid"
-            className="padded clearfix"
-            onClick={this.clearSelection}>
+          <div id="grid" className="padded clearfix">
             {fileList}
           </div>
           {submitter}

@@ -5,7 +5,6 @@ import UserMenu from '../components/UserMenu.jsx';
 
 class MenuContainer extends BaseComponent {
   render = () => {
-    console.log(this.props);
     const {user, guest, reviewer, content} = this.props;
     return (
       <div>

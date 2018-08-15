@@ -26,6 +26,7 @@ div.file-item.file-item-review {
   width: 200px;
   margin-bottom: 0.5em;
   margin-right: 0.5em;
+  outline: 1px solid @color-medium-rare;
   &:hover img {
     opacity: 0.4;
   }
@@ -45,9 +46,7 @@ div.reviewView {
   }
 
   #grid {
-    text-align: center;
-    margin: auto;
-    background-color: @color-raw;
-    padding: 2em;
+    background: darken(@color-empty, 2%);
+    padding: 1em;
   }
 }
