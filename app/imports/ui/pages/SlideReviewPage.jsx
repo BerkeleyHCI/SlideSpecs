@@ -19,6 +19,7 @@ class SlideReviewPage extends BaseComponent {
     super(props);
     this.state = {
       redirectTo: null,
+      sort: (x, y) => x,
       filtered: [],
       selected: [],
     };
@@ -40,7 +41,6 @@ class SlideReviewPage extends BaseComponent {
     } else {
       ds = new DragSelect({selectables: elements});
       ds.callback = s => {
-        console.log(s);
         if (s.length > 0) {
           const filtered = s.map(x => {
             return {
@@ -132,11 +132,13 @@ class SlideReviewPage extends BaseComponent {
         <span>
           {!done && <span>attach comment to slide{plural && 's'}</span>}
           {slideKeys}
-          <button
-            onClick={this.clearSelection}
-            className="btn btn-menu pull-right">
-            clear
-          </button>
+          {!done && (
+            <button
+              onClick={this.clearSelection}
+              className="btn btn-menu pull-right">
+              clear
+            </button>
+          )}
         </span>
       );
     }
@@ -159,7 +161,7 @@ class SlideReviewPage extends BaseComponent {
         <hr />
         <div className="btns-group">
           <button onClick={this.addComment} className="btn btn-primary">
-            + add feedback
+            + submit
           </button>
         </div>
       </div>
@@ -184,14 +186,15 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
+    const {sorter} = this.state;
     const {comments} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      return comments.map(c => {
+      return comments.sort(sorter).map(c => {
         const context = this.renderSlideTags(c.slides, true);
         return (
-          <div className="clearfix" key={c._id}>
+          <div className="clearfix alert" key={c._id}>
             <strong>{c.author} </strong>
             {c.content}
             <div className="pull-right"> {context} </div>
@@ -201,11 +204,28 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
+  //<div className="pull-right">
+  //sort:
+  //<button
+  //onClick={() => this.setState({sorter: author})}
+  //className="btn btn-menu pull-right">
+  //author
+  //</button>
+  //<button
+  //onClick={() => this.setState({sorter: slides})}
+  //className="btn btn-menu pull-right">
+  //slides
+  //</button>
+  //</div>
   render() {
     const {files} = this.props;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
     const comments = this.renderComments();
+
+    // Comment sorting
+    const author = (x, y) => x.author - y.author;
+    const slides = (x, y) => x.slides.first - y.slides.first;
 
     return files ? (
       this.renderRedirect() || (
