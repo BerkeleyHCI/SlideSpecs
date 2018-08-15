@@ -25,28 +25,32 @@ class SlideReviewPage extends BaseComponent {
 
   handleLoad = () => {
     const items = document.querySelectorAll('.file-item');
-    new Masonry('.grid', items);
+    const mason = new Masonry('.grid', items);
+    mason.on('layoutComplete', this.handleSelectable);
   };
 
-  componentDidMount = () => {
-    this.handleLoad();
-    const grid = document.getElementById('grid');
-    const items = document.querySelectorAll('.file-item');
-    const ds = new DragSelect({selectables: items, area: grid});
-    ds.callback = () => {
-      const selected = ds.getSelection();
-      const filtered = selected.map(el => {
-        return {
-          slideId: el.getAttribute('data-file-id'),
-          slideNo: el.getAttribute('data-iter'),
-        };
-      });
-      const newState = {...this.state, filtered};
-      this.setState(newState);
-    };
-    this.setState({ds});
+  handleSelectable = items => {
+    const elements = items.map(i => i.element);
+    let ds = this.state.ds;
+    if (ds) {
+      ds.selectables = elements;
+    } else {
+      const ds = new DragSelect({selectables: elements});
+      ds.callback = () => {
+        const selected = ds.getSelection();
+        const filtered = selected.map(x => {
+          return {
+            slideId: x.getAttribute('data-file-id'),
+            slideNo: x.getAttribute('data-iter'),
+          };
+        });
+        this.setState({filtered});
+      };
+      this.setState({ds});
+    }
   };
 
+  componentDidMount = this.handleLoad;
   componentDidUpdate = this.handleLoad;
 
   getText = () => {
@@ -73,6 +77,7 @@ class SlideReviewPage extends BaseComponent {
       session: sessionId,
       slides,
     };
+
     console.log(commentFields);
     createComment.call(commentFields, (err, res) => {
       if (err) {
@@ -174,10 +179,10 @@ class SlideReviewPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h1>share feedback</h1>
-          {submitter}
           <div id="grid" className="padded grid">
             {fileList}
           </div>
+          {submitter}
           <h2>comments</h2>
           {comments}
         </div>

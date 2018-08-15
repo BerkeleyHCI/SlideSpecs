@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
+import {ToastContainer, toast, cssTransition} from 'react-toastify';
 import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 
 import Loading from '../components/Loading.jsx';
-import ConnectionNotification from '../components/ConnectionNotification.jsx';
+import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
@@ -17,6 +18,12 @@ import NotFoundPage from '../pages/NotFoundPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
+
+const Fade = cssTransition({
+  enter: 'fadeIn',
+  exit: 'fadeOut',
+  duration: [200, 0],
+});
 
 export default class App extends BaseComponent {
   constructor(props) {
@@ -81,14 +88,24 @@ export default class App extends BaseComponent {
 
   renderContent = ({location}) => {
     this.renderSecure(location); // http -> https
-    const {showConnectionIssue} = this.state;
-    const {user, connected, reviewer, sessions, files, loading} = this.props;
+    const {user, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
     const shared = this.getSharedProps();
+    this.showConnection();
 
+import {ToastContainer, toast, cssTransition} from 'react-toastify';
     return (
       <div id="container">
-        {showConnectionIssue && !connected ? <ConnectionNotification /> : null}
+        <ToastContainer
+          type="info"
+          transition={Fade}
+          closeButton={false}
+          hideProgressBar={true}
+          toastClassName="dark-toast"
+          position="top-right"
+          autoClose={2000}
+          pauseOnHover={false}
+        />
         {loading ? (
           <Loading key="loading" />
         ) : (
@@ -136,6 +153,20 @@ export default class App extends BaseComponent {
       </BrowserRouter>
     );
   }
+
+  showConnection = () => {
+    const {showConnectionIssue} = this.state;
+    const {connected} = this.props;
+    if (showConnectionIssue && !connected) {
+      toast(() => (
+        <AppNotification
+          icon="sync"
+          msg="connection issue"
+          desc="trying to reconnect..."
+        />
+      ));
+    }
+  };
 }
 
 const PrivateRoute = ({user, render, ...other}) => {

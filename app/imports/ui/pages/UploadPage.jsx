@@ -3,7 +3,9 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {_} from 'lodash';
 
+import {toast} from 'react-toastify';
 import {Files} from '../../api/files/files.js';
+import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import IndividualFile from '../components/FileIndividualFile.jsx';
 import Message from '../components/Message.jsx';
@@ -95,13 +97,25 @@ class UploadPage extends BaseComponent {
         if (uploadCount === 0) {
           // DONE WITH ALL UPLOADS
           clearInterval(uploadInterval);
+          const timeout = 3000;
+          toast(
+            () => (
+              <AppNotification
+                msg="success"
+                desc="upload complete"
+                icon="good"
+              />
+            ),
+            {autoClose: timeout},
+          );
+
           this.setState({
             uploading: false,
             progress: 0,
           });
           setTimeout(() => {
             this.redirectTo(`/sessions/${sessionId}`);
-          }, 1000);
+          }, timeout);
         } else {
           // UPLOADING NOW
           this.setState({
@@ -189,23 +203,29 @@ class UploadPage extends BaseComponent {
                     export guides:
                     <ul>
                       <li>
-                        <a href="" target="_blank">
+                        <a
+                          href="https://hislide.io/2017/06/22/keynote-exporting-slides-png-jpg-tiff/"
+                          target="_blank">
                           keynote (osx)
                         </a>
                       </li>
                       <li>
-                        <a href="" target="_blank">
+                        <a
+                          href="https://www.lifewire.com/create-pictures-from-powerpoint-slides-2767362"
+                          target="_blank">
                           powerpoint
                         </a>
                       </li>
                       <li>
-                        <a href="" target="_blank">
+                        <a
+                          href="https://www.wikihow.com/Convert-PDF-to-Image-Files#Using_Adobe_Acrobat_Pro"
+                          target="_blank">
                           general pdf
                         </a>
                       </li>
                     </ul>
                     <hr />
-                    then, select and upload all below.
+                    then, select and upload all the images at once.
                     <hr />
                     <label className="btn btn-primary">
                       + upload slides

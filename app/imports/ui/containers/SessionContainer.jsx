@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
+import AppNotification from '../components/AppNotification.jsx';
 import Message from '../components/Message.jsx';
+import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
 
 export default class SessionContainer extends BaseComponent {
@@ -20,6 +22,13 @@ export default class SessionContainer extends BaseComponent {
       copyText.select();
       document.execCommand('copy');
       this.clearSelection();
+      toast(() => (
+        <AppNotification
+          msg="link copied"
+          desc="copied to clipboard"
+          icon="good"
+        />
+      ));
     }
   };
 
