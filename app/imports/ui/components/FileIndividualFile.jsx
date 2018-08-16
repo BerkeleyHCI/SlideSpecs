@@ -38,7 +38,12 @@ class IndividualFile extends Component {
         <h4>
           {fileName} <small> {fileSize}</small>
         </h4>
-        <img className="slide" onLoad={handleLoad} src={fileUrl} />
+        <img
+          className="slide"
+          onLoad={handleLoad}
+          src={fileUrl}
+          onerror="this.src='/default.png'"
+        />
         <div className="btns-group">
           <button onClick={this.removeFile} className="btn btn-sm">
             delete

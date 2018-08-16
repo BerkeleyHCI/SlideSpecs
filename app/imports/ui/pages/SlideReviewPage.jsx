@@ -88,8 +88,15 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearSelection = e => {
-    console.log('clearing slide selection...');
+    //console.log('clearing slide selection...');
     this.setState({filtered: [], selected: []});
+  };
+
+  clearGrid = e => {
+    event.preventDefault();
+    if (event.target === event.currentTarget) {
+      this.clearSelection();
+    }
   };
 
   addComment = () => {
@@ -217,6 +224,7 @@ class SlideReviewPage extends BaseComponent {
   //slides
   //</button>
   //</div>
+
   render() {
     const {files} = this.props;
     const submitter = this.renderSubmit();
@@ -231,7 +239,10 @@ class SlideReviewPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h1>share feedback</h1>
-          <div id="grid" className="padded clearfix">
+          <div
+            id="grid"
+            onMouseDown={this.clearGrid}
+            className="padded clearfix">
             {fileList}
           </div>
           {submitter}
