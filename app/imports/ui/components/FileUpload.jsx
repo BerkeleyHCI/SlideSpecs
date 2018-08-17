@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import {deleteFile} from '../../api/files/methods.js';
 
-class FileUpload extends Component {
+class FileUpload extends BaseComponent {
   removeFile = () => {
     const {fileId} = this.props;
     deleteFile.call({fileId});
