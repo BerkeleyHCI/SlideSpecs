@@ -92,7 +92,7 @@ i {
 }
 
 kbd {
-  /*background-color: @color-danger;*/
+    background-color: @color-danger;
   margin-left: 0.3em;
 }
 

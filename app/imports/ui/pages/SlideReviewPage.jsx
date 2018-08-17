@@ -17,9 +17,11 @@ class SlideReviewPage extends BaseComponent {
     this.state = {
       redirectTo: null,
       sorter: 'created',
+      filter: 'time',
       invert: false,
       filtered: [],
       selected: [],
+      ds: {},
     };
   }
 
@@ -34,28 +36,44 @@ class SlideReviewPage extends BaseComponent {
     const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
     let {ds, selected} = this.state;
-    if (ds) {
-      ds.selectables = elements;
-    } else {
-      ds = new DragSelect({selectables: elements});
-      const updateSelection = () => {
-        const s = ds.getSelection();
-        if (s.length > 0) {
-          const filtered = s.map(x => {
-            return {
-              slideId: x.getAttribute('data-file-id'),
-              slideNo: x.getAttribute('data-iter'),
-            };
-          });
-          this.setState({selected: s, filtered});
-        } else {
-          ds.addSelection(selected);
-        }
-      };
-      ds.callback = updateSelection;
-      ds.onDragOver = console.log;
-      this.setState({ds});
+
+    const updateSelection = () => {
+      const s = ds.getSelection();
+      if (s.length > 0) {
+        const filtered = s.map(x => {
+          return {
+            slideId: x.getAttribute('data-file-id'),
+            slideNo: x.getAttribute('data-iter'),
+          };
+        });
+        //console.log('ds:', s);
+        this.setState({selected: s, filtered}, () => {
+          console.log(this.state.selected);
+        });
+      }
+    };
+
+    if (!_.isEmpty(ds)) {
+      ds.stop();
+      //ds.selectables = elements;
+      //ds.area = area;
     }
+    //else {
+    ds = new DragSelect({
+      selectables: elements,
+      autoScrollSpeed: 0.0001,
+      onDragMove: updateSelection,
+      area: area,
+      //onElementSelect: updateSelection,
+      //onElementUnselect: updateSelection,
+    });
+
+    ds.callback = s => {
+      console.log(this.state.selected, s);
+    };
+
+    this.setState({ds});
+    //}
   };
 
   elementize = x => {
@@ -170,19 +188,55 @@ class SlideReviewPage extends BaseComponent {
 
   renderFiles = () => {
     const {files} = this.props;
-    return files.map((aFile, key) => {
-      let link = Files.findOne({_id: aFile._id}).link('original', '//');
+    return files.map((f, key) => {
+      let link = Files.findOne({_id: f._id}).link('original', '//');
       return (
         <FileReview
           key={'file-' + key}
           iter={key}
           fileUrl={link}
-          fileId={aFile._id}
-          fileName={aFile.name}
+          fileId={f._id}
+          fileName={f.name}
           handleLoad={this.handleLoad}
         />
       );
     });
+  };
+
+  renderCommentFilter = () => {
+    const {files} = this.props;
+    const {invert, filter} = this.state;
+    const invFn = () => this.setState({invert: !invert});
+    const setSort = (s, f) => {
+      return () => this.setState({sorter: s, filter: f});
+    };
+
+    const timeSort = setSort('created', 'time');
+    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
+    const slideSort = setSort(
+      x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
+      'slide',
+    );
+
+    return (
+      <h2 className="clearfix">
+        comments
+        <div className="pull-right">
+          <button onClick={timeSort} className="btn btn-menu">
+            time {filter === 'time' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={authSort}>
+            author {filter === 'auth' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={slideSort}>
+            slide {filter === 'slide' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={invFn}>
+            order {invert ? '▼' : '▲'}
+          </button>
+        </div>
+      </h2>
+    );
   };
 
   renderComments = () => {
@@ -207,53 +261,21 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
-  //setsSort = s => {s};
-
   render() {
     const {files} = this.props;
-    const {invert, ds} = this.state;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
+    const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
-    const invFn = () => this.setState({invert: !invert});
-    const setSort = s => {
-      return () => this.setState({sorter: s});
-    };
-
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
           <h1>share feedback</h1>
-          <div
-            id="grid"
-            onMouseDown={this.clearGrid}
-            className="padded clearfix">
+          <div id="grid" onMouseDown={this.clearGrid}>
             {fileList}
           </div>
           {submitter}
-          <h2 className="clearfix">
-            comments
-            <div className="pull-right">
-              <button onClick={setSort('created')} className="btn btn-menu">
-                by time
-              </button>
-              <button
-                className="btn btn-menu"
-                onClick={setSort(x => x.author.toLowerCase())}>
-                by author
-              </button>
-              <button
-                className="btn btn-menu"
-                onClick={setSort(x => {
-                  return x.slides[0] ? Number(x.slides[0].slideNo) : Infinity;
-                })}>
-                by slide
-              </button>
-              <button className="btn btn-menu" onClick={invFn}>
-                order {invert ? '▼' : '▲'}
-              </button>
-            </div>
-          </h2>
+          {cmtHead}
           {comments}
         </div>
       )
