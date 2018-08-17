@@ -99,7 +99,7 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
-  addComment = () => {
+  addComment = e => {
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.getText().trim();
@@ -111,7 +111,7 @@ class SlideReviewPage extends BaseComponent {
     };
 
     console.log(commentFields);
-    if (cText) {
+    if (cText && e.keyCode === 13 && !e.shiftKey) {
       createComment.call(commentFields, (err, res) => {
         if (err) {
           console.error(err);
@@ -159,18 +159,12 @@ class SlideReviewPage extends BaseComponent {
       <div className="alert">
         {context}
         <hr />
-        <input
+        <textarea
           type="text"
-          placeholder="enter comment here"
-          onSubmit={this.addComment}
+          placeholder="write comment here, press enter to submit."
+          onKeyDown={this.addComment}
           className="code"
         />
-        <hr />
-        <div className="btns-group">
-          <button onClick={this.addComment} className="btn btn-primary">
-            + submit
-          </button>
-        </div>
       </div>
     );
   };

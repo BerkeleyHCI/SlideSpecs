@@ -80,20 +80,21 @@ export default class App extends BaseComponent {
 
   // TODO - NEED TO TEST ON BAYSCOPE.
 
-  renderSecure = loc => {
+  renderSecure = () => {
     if (location.protocol === 'http:' && location.hostname !== 'localhost') {
-      this.redirectTo('https:' + window.location.href.substring(5));
+      console.log('moving to https...');
+      const secure = 'https:' + window.location.href.substring(5);
+      window.location.replace(secure);
     }
   };
 
   renderContent = ({location}) => {
-    this.renderSecure(location); // http -> https
+    this.renderSecure(); // http -> https
     const {user, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
     const shared = this.getSharedProps();
     this.showConnection();
 
-import {ToastContainer, toast, cssTransition} from 'react-toastify';
     return (
       <div id="container">
         <ToastContainer
