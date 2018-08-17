@@ -46,34 +46,25 @@ class SlideReviewPage extends BaseComponent {
             slideNo: x.getAttribute('data-iter'),
           };
         });
-        //console.log('ds:', s);
-        this.setState({selected: s, filtered}, () => {
-          console.log(this.state.selected);
-        });
+        this.setState({selected: s, filtered});
       }
     };
 
     if (!_.isEmpty(ds)) {
-      ds.stop();
-      //ds.selectables = elements;
-      //ds.area = area;
+      ds.selectables = elements;
+    } else {
+      ds = new DragSelect({
+        selectables: elements,
+        onDragMove: updateSelection,
+        //area: area,
+        //onElementSelect: updateSelection,
+        //onElementUnselect: updateSelection,
+        //autoScrollSpeed: 0.0001,
+        //callback: s => { console.log(this.state.selected, s); };
+      });
+
+      this.setState({ds});
     }
-    //else {
-    ds = new DragSelect({
-      selectables: elements,
-      autoScrollSpeed: 0.0001,
-      onDragMove: updateSelection,
-      area: area,
-      //onElementSelect: updateSelection,
-      //onElementUnselect: updateSelection,
-    });
-
-    ds.callback = s => {
-      console.log(this.state.selected, s);
-    };
-
-    this.setState({ds});
-    //}
   };
 
   elementize = x => {
