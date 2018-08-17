@@ -18,7 +18,7 @@ class SlideReviewPage extends BaseComponent {
       redirectTo: null,
       sorter: 'created',
       filter: 'time',
-      invert: false,
+      invert: true,
       filtered: [],
       selected: [],
       ds: {},
@@ -26,9 +26,10 @@ class SlideReviewPage extends BaseComponent {
   }
 
   handleLoad = () => {
-    const items = document.querySelectorAll('.file-item');
     const grid = document.getElementById('grid');
-    const mason = new Masonry(grid, items);
+    const mason = new Masonry(grid, {
+      itemSelector: '.file-item',
+    });
     mason.on('layoutComplete', this.handleSelectable);
   };
 
@@ -56,13 +57,10 @@ class SlideReviewPage extends BaseComponent {
       ds = new DragSelect({
         selectables: elements,
         onDragMove: updateSelection,
-        //area: area,
-        //onElementSelect: updateSelection,
-        //onElementUnselect: updateSelection,
-        //autoScrollSpeed: 0.0001,
-        //callback: s => { console.log(this.state.selected, s); };
+        callback: updateSelection,
+        autoScrollSpeed: 5,
+        area: area,
       });
-
       this.setState({ds});
     }
   };
@@ -79,6 +77,14 @@ class SlideReviewPage extends BaseComponent {
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
     }, 500);
+
+    // set image to link of the first slide
+    const {files} = this.props;
+    if (files.length > 0) {
+      let f = files[0];
+      let link = Files.findOne({_id: f._id}).link('original', '//');
+      this.setState({image: link});
+    }
   };
 
   getText = () => {
@@ -98,6 +104,16 @@ class SlideReviewPage extends BaseComponent {
 
   clearSelection = e => {
     this.setState({filtered: [], selected: []});
+  };
+
+  clearButton = e => {
+    this.clearSelection();
+    const {ds} = this.state;
+    if (ds) {
+      // clearing internal grid
+      const sel = ds.getSelection();
+      ds.removeSelection(sel);
+    }
   };
 
   clearGrid = e => {
@@ -149,7 +165,7 @@ class SlideReviewPage extends BaseComponent {
           {slideKeys}
           {!done && (
             <button
-              onClick={this.clearSelection}
+              onClick={this.clearButton}
               className="btn btn-menu pull-right">
               clear
             </button>
@@ -184,7 +200,7 @@ class SlideReviewPage extends BaseComponent {
       return (
         <FileReview
           key={'file-' + key}
-          iter={key}
+          iter={key + 1}
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
@@ -253,6 +269,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   render() {
+    const {image} = this.state;
     const {files} = this.props;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
@@ -262,10 +279,19 @@ class SlideReviewPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h1>share feedback</h1>
-          <div id="grid" onMouseDown={this.clearGrid}>
-            {fileList}
+          <div className="row">
+            <div className="col-md-4">
+              <img id="big-slide" src={image} />
+              <div className="alert center">hello</div>
+            </div>
+            <div className="col-md-8">
+              <div id="grid" onMouseDown={this.clearGrid}>
+                {fileList}
+              </div>
+              {submitter}
+            </div>
           </div>
-          {submitter}
+          <hr />
           {cmtHead}
           {comments}
         </div>

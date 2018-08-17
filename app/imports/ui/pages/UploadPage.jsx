@@ -159,7 +159,7 @@ class UploadPage extends BaseComponent {
             let link = Files.findOne({_id: aFile._id}).link('original', '//');
             return (
               <FileUpload
-                iter={key}
+                iter={key + 1}
                 key={'file' + key}
                 fileId={aFile._id}
                 fileName={aFile.name}

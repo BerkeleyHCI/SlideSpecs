@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import {deleteFile} from '../../api/files/methods.js';
 
@@ -12,18 +11,19 @@ class FileUpload extends BaseComponent {
   render() {
     const {src} = this.state;
     const {iter, fileName, fileSize, fileUrl, handleLoad} = this.props;
+    const err = () => this.setState({src: '/default.png'});
+    const i = src ? src : fileUrl;
     return (
       <div className="file-item">
         <h4>
           {fileName} <small> {fileSize}</small>
         </h4>
-        <div className="overlay">{iter}</div>
-        <img
-          className="slide"
-          src={src ? src : fileUrl}
-          onLoad={handleLoad}
-          onError={() => this.setState({src: '/default.png'})}
-        />
+        <div className="slide-container">
+          <div className="overlay">
+            <p>{iter}</p>
+          </div>
+          <img className="slide" src={i} onLoad={handleLoad} onError={err} />
+        </div>
         <div className="btns-group">
           <button onClick={this.removeFile} className="btn btn-sm">
             delete
