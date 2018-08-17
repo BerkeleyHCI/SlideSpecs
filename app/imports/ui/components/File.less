@@ -21,6 +21,26 @@ div.file-item {
       background: darken(@color-empty, 3%);
     }
   }
+
+  .overlay {
+    position: absolute;
+    bottom: 0;
+    background: rgb(0, 0, 0);
+    background: rgba(0, 0, 0, 0.5);
+    color: #f1f1f1;
+    height: 100%;
+    width: 100%;
+    transition: 0.1s ease;
+    opacity: 0;
+    color: white;
+    font-size: 20px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  &:hover .overlay {
+    opacity: 1;
+  }
 }
 
 div.file-item.file-item-review {

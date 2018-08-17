@@ -7,7 +7,7 @@ import {toast} from 'react-toastify';
 import {Files} from '../../api/files/files.js';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
-import IndividualFile from '../components/FileIndividualFile.jsx';
+import FileUpload from '../components/FileUpload.jsx';
 import Message from '../components/Message.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
 
@@ -158,7 +158,8 @@ class UploadPage extends BaseComponent {
           fileCursors.map((aFile, key) => {
             let link = Files.findOne({_id: aFile._id}).link('original', '//');
             return (
-              <IndividualFile
+              <FileUpload
+                iter={key}
                 key={'file' + key}
                 fileId={aFile._id}
                 fileName={aFile.name}
