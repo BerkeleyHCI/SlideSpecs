@@ -2,12 +2,12 @@ Package.describe({
   name: 'publication-collector',
   version: '0.0.1',
   summary: "Test a publication by collecting it's output",
-  documentation: 'README.md'
+  documentation: 'README.md',
 });
 
 Package.onUse(function(api) {
   api.versionsFrom('1.2.1');
-  api.use(['ecmascript', 'underscore', 'check']);
+  api.use(['ecmascript', 'lodash', 'check']);
   api.addFiles('publication-collector.js', 'server');
   api.export('PublicationCollector', 'server');
 });

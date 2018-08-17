@@ -4,7 +4,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
-import {_} from 'meteor/underscore';
+import _ from 'lodash';
 import {toast} from 'react-toastify';
 import Message from '../components/Message.jsx';
 import {

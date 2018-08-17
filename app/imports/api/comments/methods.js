@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
-import {_} from 'meteor/underscore';
+import _ from 'lodash';
 
 import {Comments} from './comments.js';
 

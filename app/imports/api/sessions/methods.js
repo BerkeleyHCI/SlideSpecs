@@ -1,7 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
-import {_} from 'meteor/underscore';
+import _ from 'lodash';
 
 import {Sessions} from './sessions.js';
 

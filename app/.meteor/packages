@@ -13,7 +13,6 @@ tracker@1.2.0
 
 # standard libraries
 jquery
-underscore@1.0.10
 less@2.7.12
 
 # ui

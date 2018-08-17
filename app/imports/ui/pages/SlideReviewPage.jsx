@@ -1,19 +1,15 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
-import {_} from 'meteor/underscore';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
+import _ from 'lodash';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
-import Comment from '../components/Comment.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Message from '../components/Message.jsx';
-import {
-  createComment,
-  renameComment,
-  deleteComment,
-} from '../../api/comments/methods.js';
+import Comment from '../components/Comment.jsx';
+import {createComment} from '../../api/comments/methods.js';
 
 class SlideReviewPage extends BaseComponent {
   constructor(props) {
@@ -113,7 +109,6 @@ class SlideReviewPage extends BaseComponent {
       slides,
     };
 
-    console.log(commentFields);
     if (cText && e.keyCode === 13 && !e.shiftKey) {
       createComment.call(commentFields, (err, res) => {
         if (err) {
@@ -196,7 +191,7 @@ class SlideReviewPage extends BaseComponent {
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      let ssort = _.sortBy(comments, 'slides'); // default
+      let ssort = _.sortBy(comments, 'created'); // default
       let csort = _.sortBy(comments, sorter);
       if (invert) {
         csort = csort.reverse();
@@ -233,7 +228,7 @@ class SlideReviewPage extends BaseComponent {
             {fileList}
           </div>
           {submitter}
-          <h2>
+          <h2 className="clearfix">
             comments
             <div className="pull-right">
               <button onClick={setSort('created')} className="btn btn-menu">
@@ -246,11 +241,13 @@ class SlideReviewPage extends BaseComponent {
               </button>
               <button
                 className="btn btn-menu"
-                onClick={setSort(x => _.min(x.slides))}>
+                onClick={setSort(x => {
+                  return x.slides[0] ? Number(x.slides[0].slideNo) : Infinity;
+                })}>
                 by slide
               </button>
               <button className="btn btn-menu" onClick={invFn}>
-                invert
+                order {invert ? '▼' : '▲'}
               </button>
             </div>
           </h2>

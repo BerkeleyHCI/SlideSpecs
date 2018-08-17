@@ -26,12 +26,15 @@ class Comment extends BaseComponent {
   };
 
   render() {
-    const {author, content, context, key} = this.props;
+    const {author, content, created, context} = this.props;
     return (
-      <div className="clearfix alert" key={key}>
+      <div className="clearfix alert">
+        <div className="pull-right">
+          {context}
+          <span> {created.toLocaleTimeString()} </span>
+        </div>
         <strong>{author} </strong>
         {content}
-        <div className="pull-right"> {context} </div>
       </div>
     );
   }

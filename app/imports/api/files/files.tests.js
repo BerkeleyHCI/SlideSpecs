@@ -5,7 +5,7 @@ import { PublicationCollector } from 'meteor/publication-collector';
 import { chai, assert } from 'meteor/practicalmeteor:chai';
 import { Random } from 'meteor/random';
 import { Meteor } from 'meteor/meteor';
-import { _ } from 'meteor/underscore';
+import _ from 'lodash';
 import { DDP } from 'meteor/ddp-client';
 
 import { Files } from './lists.js';
