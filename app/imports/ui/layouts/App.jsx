@@ -140,7 +140,7 @@ export default class App extends BaseComponent {
               user={user}
             />
 
-            <PrivateRoute user={user} render={NotFoundPage} />
+            <PrivateRoute user={user} render={() => <NotFoundPage />} />
           </Switch>
         )}
       </div>

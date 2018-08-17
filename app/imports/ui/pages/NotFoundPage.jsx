@@ -1,9 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import BaseComponent from '../components/BaseComponent.jsx';
+import React, {Component} from 'react';
 import Message from '../components/Message.jsx';
 
-class NotFoundPage extends BaseComponent {
+class NotFoundPage extends Component {
   render() {
     return (
       <div className="page not-found">
