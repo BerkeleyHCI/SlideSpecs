@@ -51,6 +51,12 @@ div.file-item.file-item-review {
     width: calc(31%);
   }
 
+  /*disable to allow for hover event trigger on parent item*/
+
+  * {
+    pointer-events: none;
+  }
+
   margin-bottom: 0.5em;
   margin-right: 0.5em;
   outline: 1px solid @color-medium-rare;

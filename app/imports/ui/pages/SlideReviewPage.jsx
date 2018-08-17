@@ -7,6 +7,7 @@ import _ from 'lodash';
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileReview from '../components/FileReview.jsx';
+import Clock from '../components/Clock.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
@@ -41,12 +42,7 @@ class SlideReviewPage extends BaseComponent {
     const updateSelection = () => {
       const s = ds.getSelection();
       if (s.length > 0) {
-        const filtered = s.map(x => {
-          return {
-            slideId: x.getAttribute('data-file-id'),
-            slideNo: x.getAttribute('data-iter'),
-          };
-        });
+        const filtered = s.map(this.extractFileData);
         this.setState({selected: s, filtered});
       }
     };
@@ -69,6 +65,13 @@ class SlideReviewPage extends BaseComponent {
     return {element: x};
   };
 
+  extractFileData = x => {
+    return {
+      slideId: x.getAttribute('data-file-id'),
+      slideNo: x.getAttribute('data-iter'),
+    };
+  };
+
   componentDidUpdate = this.handleLoad;
   componentDidMount = () => {
     this.handleLoad();
@@ -81,9 +84,19 @@ class SlideReviewPage extends BaseComponent {
     // set image to link of the first slide
     const {files} = this.props;
     if (files.length > 0) {
-      let f = files[0];
-      let link = Files.findOne({_id: f._id}).link('original', '//');
-      this.setState({image: link});
+      this.updateSlideFile(files[0]._id);
+    }
+  };
+
+  updateSlideFile = fid => {
+    const link = Files.findOne({_id: fid}).link('original', '//');
+    this.setState({image: link});
+  };
+
+  handleSlide = e => {
+    if (e.target === e.currentTarget) {
+      const data = this.extractFileData(e.target);
+      this.updateSlideFile(data.slideId);
     }
   };
 
@@ -117,8 +130,8 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearGrid = e => {
-    event.preventDefault();
-    if (event.target === event.currentTarget) {
+    e.preventDefault();
+    if (e.target === e.currentTarget) {
       this.clearSelection();
     }
   };
@@ -204,6 +217,7 @@ class SlideReviewPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
+          handleMouse={this.handleSlide}
           handleLoad={this.handleLoad}
         />
       );
@@ -282,7 +296,9 @@ class SlideReviewPage extends BaseComponent {
           <div className="row">
             <div className="col-md-4">
               <img id="big-slide" src={image} />
-              <div className="alert center">hello</div>
+              <div className="alert center">
+                <Clock />
+              </div>
             </div>
             <div className="col-md-8">
               <div id="grid" onMouseDown={this.clearGrid}>
