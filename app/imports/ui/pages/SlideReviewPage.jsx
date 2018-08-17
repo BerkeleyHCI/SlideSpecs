@@ -295,7 +295,7 @@ class SlideReviewPage extends BaseComponent {
           <h1>share feedback</h1>
           <div className="row">
             <div className="col-md-4">
-              <img id="big-slide" src={image} />
+              <img id="big-slide" src={image ? image : '/default.png'} />
               <div className="alert center">
                 <Clock />
               </div>

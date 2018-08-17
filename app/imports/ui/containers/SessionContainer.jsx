@@ -66,8 +66,11 @@ export default class SessionContainer extends BaseComponent {
             <hr />
             <div className="btns-group">
               <button className="btn btn-menu" onClick={this.copyUrl}>
-                copy url
+                copy link
               </button>
+              <a className="btn btn-menu" href={shareLink} target="_blank">
+                open link
+              </a>
             </div>
             <hr />
             once ready, give your presentation. feedback can be accessed below.
