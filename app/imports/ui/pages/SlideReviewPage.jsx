@@ -8,6 +8,7 @@ import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
+import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
@@ -22,6 +23,7 @@ class SlideReviewPage extends BaseComponent {
       invert: true,
       filtered: [],
       selected: [],
+      image: '',
       ds: {},
     };
   }
@@ -168,10 +170,16 @@ class SlideReviewPage extends BaseComponent {
       );
     } else {
       const plural = filter.length > 1;
-      const slideNos = filter
-        .map(x => parseInt(x.slideNo))
-        .sort((a, b) => a - b);
-      const slideKeys = slideNos.map(sn => <kbd key={`key-${sn}`}>{sn}</kbd>);
+      const slideNos = _.sortBy(filter, x => Number(x.slideNo));
+      const slideKeys = slideNos.map(s => (
+        <kbd
+          key={`key-${s.slideNo}`}
+          iter={s.slideNo}
+          data-file-id={s.slideId}
+          onMouseOver={this.handleSlide}>
+          {s.slideNo}
+        </kbd>
+      ));
       return (
         <span>
           {!done && <span>attach comment to slide{plural && 's'}</span>}
@@ -282,6 +290,21 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
+  scrollTop = () => {
+    var a = function() {
+      var b = $(window).scrollTop();
+      var d = $('#scroller-anchor').offset({scroll: false}).top;
+      var c = $('#scroller');
+      if (b > d) {
+        c.css({position: 'fixed', top: '0px'});
+      } else {
+        c.css({position: 'relative', top: ''});
+      }
+    };
+    $(window).scroll(a);
+    a();
+  };
+
   render() {
     const {image} = this.state;
     const {files} = this.props;
@@ -295,7 +318,7 @@ class SlideReviewPage extends BaseComponent {
           <h1>share feedback</h1>
           <div className="row">
             <div className="col-md-4">
-              <img id="big-slide" src={image ? image : '/default.png'} />
+              <Img className="big-slide" source={image} />
               <div className="alert center">
                 <Clock />
               </div>
@@ -307,9 +330,17 @@ class SlideReviewPage extends BaseComponent {
               {submitter}
             </div>
           </div>
-          <hr />
+
           {cmtHead}
-          {comments}
+          <div className="row">
+            <div className="col-md-4 hide-md-4">
+              <Img className="big-slide" source={image} />
+              <div className="alert center">
+                <Clock />
+              </div>
+            </div>
+            <div className="col-md-8">{comments}</div>
+          </div>
         </div>
       )
     ) : (

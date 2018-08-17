@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
 import BaseComponent from '../components/BaseComponent.jsx';
+import Img from '../components/Image.jsx';
 
 class FileReview extends BaseComponent {
   render() {
-    const {i} = this.state;
     const {iter, fileId, fileUrl, handleLoad, handleMouse} = this.props;
-    const err = () => this.setState({i: '/default.png'});
-    const img = i ? i : fileUrl;
     return (
       <div
         className="file-item file-item-review"
@@ -15,7 +13,7 @@ class FileReview extends BaseComponent {
         data-file-id={fileId}>
         <div className="slide-container">
           <div className="overlay">{iter}</div>
-          <img className="slide" src={img} onLoad={handleLoad} onError={err} />
+          <Img className="slide" source={fileUrl} onLoad={handleLoad} />
         </div>
       </div>
     );
