@@ -55,7 +55,14 @@ export const deleteSession = new ValidatedMethod({
         "You don't have permission to edit this session.",
       );
     } else {
-      Sessions.remove(sessionId);
+      try {
+        // deleting related files
+        Files.remove({'meta.sessionId': sessionId});
+        Comments.remove({session: sessionId});
+        Sessions.remove(sessionId);
+      } catch (e) {
+        console.error(e);
+      }
     }
   },
 });
