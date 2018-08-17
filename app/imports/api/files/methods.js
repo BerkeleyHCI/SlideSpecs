@@ -1,10 +1,9 @@
 import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
-
 import {Files} from './files.js';
 
-// TODO - include file creation method
+// TODO - include file creation method here
 // TODO - restrict these operations to file owner
 
 export const renameFile = new ValidatedMethod({

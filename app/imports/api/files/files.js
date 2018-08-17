@@ -3,6 +3,7 @@ import {FilesCollection} from 'meteor/ostrio:files';
 
 export const Files = new FilesCollection({
   collectionName: 'files',
+  storagePath: '/Users/jwrnr/Downloads/peer-feedback/', // persist in this spot
   allowClientCode: false, // Disallow remove files from Client
   onBeforeUpload(file) {
     // Allow upload files under 10MB, and only in png/jpg/jpeg formats
