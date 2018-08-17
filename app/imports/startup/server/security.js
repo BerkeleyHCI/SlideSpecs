@@ -32,7 +32,7 @@ if (Meteor.isServer) {
   DDPRateLimiter.addRule(
     {
       name(name) {
-        return _.contains(AUTH_METHODS, name);
+        return _.includes(AUTH_METHODS, name);
       },
 
       // Rate limit per connection ID

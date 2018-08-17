@@ -53,7 +53,7 @@ class SlideReviewPage extends BaseComponent {
         }
       };
       ds.callback = updateSelection;
-      ds.onDragMove = updateSelection;
+      ds.onDragOver = console.log;
       this.setState({ds});
     }
   };
@@ -191,15 +191,19 @@ class SlideReviewPage extends BaseComponent {
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      let csort = _.sortByOrder(comments, ['created', sorter], [true, invert]);
-      if (invert) {
-        csort = csort.reverse();
-      }
+      const csort = _.orderBy(
+        comments,
+        [sorter, 'created'],
+        [invert ? 'desc' : 'asc', 'asc'],
+      );
 
-      return csort.map(c => {
+      const commentElements = csort.map((c, i) => {
+        c.last = i === csort.length - 1; // no hr
         const context = this.renderSlideTags(c.slides, true);
         return <Comment key={c._id} {...c} context={context} />;
       });
+
+      return <div className="alert">{commentElements}</div>;
     }
   };
 
@@ -207,7 +211,7 @@ class SlideReviewPage extends BaseComponent {
 
   render() {
     const {files} = this.props;
-    const {invert} = this.state;
+    const {invert, ds} = this.state;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
     const comments = this.renderComments();
