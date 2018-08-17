@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
+import Comment from '../components/Comment.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Message from '../components/Message.jsx';
 import {
@@ -19,7 +20,8 @@ class SlideReviewPage extends BaseComponent {
     super(props);
     this.state = {
       redirectTo: null,
-      sort: (x, y) => x,
+      sorter: 'created',
+      invert: false,
       filtered: [],
       selected: [],
     };
@@ -40,7 +42,8 @@ class SlideReviewPage extends BaseComponent {
       ds.selectables = elements;
     } else {
       ds = new DragSelect({selectables: elements});
-      ds.callback = s => {
+      const updateSelection = () => {
+        const s = ds.getSelection();
         if (s.length > 0) {
           const filtered = s.map(x => {
             return {
@@ -50,10 +53,11 @@ class SlideReviewPage extends BaseComponent {
           });
           this.setState({selected: s, filtered});
         } else {
-          // retain selection. broken. TODO: fix
           ds.addSelection(selected);
         }
       };
+      ds.callback = updateSelection;
+      ds.onDragMove = updateSelection;
       this.setState({ds});
     }
   };
@@ -88,7 +92,6 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearSelection = e => {
-    //console.log('clearing slide selection...');
     this.setState({filtered: [], selected: []});
   };
 
@@ -116,6 +119,7 @@ class SlideReviewPage extends BaseComponent {
         if (err) {
           console.error(err);
         } else {
+          this.clearSelection();
           this.clearText();
         }
       });
@@ -187,47 +191,36 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter} = this.state;
+    const {sorter, invert} = this.state;
     const {comments} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      return comments.sort(sorter).map(c => {
+      let ssort = _.sortBy(comments, 'slides'); // default
+      let csort = _.sortBy(comments, sorter);
+      if (invert) {
+        csort = csort.reverse();
+      }
+
+      return csort.map(c => {
         const context = this.renderSlideTags(c.slides, true);
-        return (
-          <div className="clearfix alert" key={c._id}>
-            <strong>{c.author} </strong>
-            {c.content}
-            <div className="pull-right"> {context} </div>
-          </div>
-        );
+        return <Comment key={c._id} {...c} context={context} />;
       });
     }
   };
 
-  //<div className="pull-right">
-  //sort:
-  //<button
-  //onClick={() => this.setState({sorter: author})}
-  //className="btn btn-menu pull-right">
-  //author
-  //</button>
-  //<button
-  //onClick={() => this.setState({sorter: slides})}
-  //className="btn btn-menu pull-right">
-  //slides
-  //</button>
-  //</div>
+  //setsSort = s => {s};
 
   render() {
     const {files} = this.props;
+    const {invert} = this.state;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
     const comments = this.renderComments();
-
-    // Comment sorting
-    const author = (x, y) => x.author - y.author;
-    const slides = (x, y) => x.slides.first - y.slides.first;
+    const invFn = () => this.setState({invert: !invert});
+    const setSort = s => {
+      return () => this.setState({sorter: s});
+    };
 
     return files ? (
       this.renderRedirect() || (
@@ -240,7 +233,27 @@ class SlideReviewPage extends BaseComponent {
             {fileList}
           </div>
           {submitter}
-          <h2>comments</h2>
+          <h2>
+            comments
+            <div className="pull-right">
+              <button onClick={setSort('created')} className="btn btn-menu">
+                by time
+              </button>
+              <button
+                className="btn btn-menu"
+                onClick={setSort(x => x.author.toLowerCase())}>
+                by author
+              </button>
+              <button
+                className="btn btn-menu"
+                onClick={setSort(x => _.min(x.slides))}>
+                by slide
+              </button>
+              <button className="btn btn-menu" onClick={invFn}>
+                invert
+              </button>
+            </div>
+          </h2>
           {comments}
         </div>
       )

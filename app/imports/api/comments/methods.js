@@ -16,7 +16,7 @@ export const createComment = new ValidatedMethod({
   validate: new SimpleSchema({
     session: {type: String},
     author: {type: String},
-    content: {type: String},
+    content: {type: String, min: 1},
     slides: {type: [SlideSchema]},
   }).validator(),
   run({author, content, session, slides}) {
@@ -31,24 +31,29 @@ export const createComment = new ValidatedMethod({
 });
 
 export const renameComment = new ValidatedMethod({
-  name: 'comments.rename',
+  name: 'comments.update',
   validate: new SimpleSchema({
+    author: {type: String},
     commentId: {type: String},
-    newName: {type: String},
+    newContent: {type: String, min: 1},
   }).validator(),
-  run({commentId, newName}) {
-    // TODO - have SOME type of auth in here... yikes
-    Comments.update(commentId, {$set: {content: newName}});
+  run({author, commentId, newContent}) {
+    const comment = Comments.findOne(commentId);
+    if (comment.author == author) {
+      Comments.update(commentId, {$set: {content: newContent}});
+    }
   },
 });
 
 export const deleteComment = new ValidatedMethod({
   name: 'comments.delete',
   validate: new SimpleSchema({
+    author: {type: String},
     commentId: {type: String},
   }).validator(),
-  run({commentId}) {
-    // TODO - have SOME type of auth in here... yikes
-    Comments.remove(commentId);
+  run({author, commentId}) {
+    if (comment.author == author) {
+      Comments.remove(commentId);
+    }
   },
 });

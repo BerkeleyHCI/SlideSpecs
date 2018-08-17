@@ -10,7 +10,7 @@ class FileReview extends Component {
     return (
       <div
         className="file-item file-item-review"
-        data-iter={iter}
+        data-iter={iter+1}
         data-file-id={fileId}>
         <img className="slide" onLoad={handleLoad} src={fileUrl} />
       </div>
