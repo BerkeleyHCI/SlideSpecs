@@ -4,6 +4,8 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import _ from 'lodash';
 
 import {Sessions} from './sessions.js';
+import {Comments} from '../comments/comments.js';
+import {Files} from '../files/files.js';
 
 export const createSession = new ValidatedMethod({
   name: 'sessions.create',

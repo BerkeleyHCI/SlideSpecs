@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {deleteFile} from '../../api/files/methods.js';
+import Img from '../components/Image.jsx';
 
 class FileUpload extends Component {
   removeFile = () => {

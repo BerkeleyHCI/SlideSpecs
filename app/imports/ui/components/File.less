@@ -4,9 +4,17 @@ div.file-item {
   position: absolute;
   margin-bottom: 2em;
   margin-right: 2em;
-  max-width: 100%;
   min-height: 60px;
-  width: 280px;
+
+  max-width: 320px;
+  @media only screen and (min-width: 992px) {
+    width: calc(21%);
+  }
+  @media only screen and (max-width: 992px) {
+    margin-bottom: 1em;
+    margin-right: 1em;
+    width: calc(29%);
+  }
 
   img.slide {
     .no-drag();
