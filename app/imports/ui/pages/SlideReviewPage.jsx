@@ -191,8 +191,7 @@ class SlideReviewPage extends BaseComponent {
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      let ssort = _.sortBy(comments, 'created'); // default
-      let csort = _.sortBy(comments, sorter);
+      let csort = _.sortBy(comments, ['created', sorter], [true, invert]);
       if (invert) {
         csort = csort.reverse();
       }
