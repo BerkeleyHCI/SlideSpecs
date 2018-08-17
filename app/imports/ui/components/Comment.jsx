@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
+import Markdown from 'react-markdown';
 import {
   createComment,
   updateComment,
@@ -33,7 +34,7 @@ class Comment extends BaseComponent {
         <strong>{author} </strong>
         <small> {created.toLocaleTimeString()} </small>
         <br />
-        {content}
+        <Markdown source={content} />
         {!last && <hr />}
       </div>
     );

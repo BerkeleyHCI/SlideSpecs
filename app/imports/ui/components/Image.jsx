@@ -14,7 +14,7 @@ class Img extends Component {
   render() {
     const {fail} = this.state;
     const {source, err, ...o} = this.props;
-    const file = fail ? source : err;
+    const file = fail ? err : source;
     return <img src={file} {...o} onError={this.handleError} />;
   }
 }
