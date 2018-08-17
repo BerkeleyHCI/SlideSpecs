@@ -27,10 +27,7 @@
         "jsx": true
       }
     },
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended"
-    ]
+    "extends": ["eslint:recommended", "plugin:react/recommended"]
   },
   "devDependencies": {
     "eslint": "^5.3.0",
@@ -42,9 +39,7 @@
   "postcss": {
     "plugins": {
       "autoprefixer": {
-        "browsers": [
-          "last 2 versions"
-        ]
+        "browsers": ["last 2 versions"]
       }
     }
   }
