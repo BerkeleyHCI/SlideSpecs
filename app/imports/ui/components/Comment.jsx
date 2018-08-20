@@ -7,8 +7,40 @@ import {
   updateComment,
   deleteComment,
 } from '../../api/comments/methods.js';
+function CommentButton({icon, txt, handleClick, master}) {
+  return (
+    <button
+      title={txt}
+      data-toggle="tooltip"
+      data-placement="top"
+      onClick={handleClick}
+      className={`btn btn-empty ${master && 'btn-user'}`}>
+      <span className={'icon-' + icon} />
+    </button>
+  );
+}
 
 class Comment extends BaseComponent {
+  constructor(props) {
+    super(props);
+    this.hover = '';
+  }
+
+  clearHover = event => {
+    this.setState({hover: ''});
+  };
+
+  componentDidMount = () => {
+    $('[data-toggle="tooltip"]').tooltip();
+  };
+
+  handleMouse = e => {
+    const hover = e.target.getAttribute('data-hv');
+    if (hover) {
+      this.setState({hover});
+    }
+  };
+
   removeComment = () => {
     const {commentId, author} = this.props;
     deleteComment.call({commentId, author});
@@ -26,23 +58,69 @@ class Comment extends BaseComponent {
     }
   };
 
+  pubButtons = [
+    {
+      handleClick: console.log,
+      icon: 'reply',
+      txt: 'reply',
+    },
+    {
+      handleClick: console.log,
+      icon: 'good',
+      txt: 'agree',
+    },
+    {
+      handleClick: console.log,
+      icon: 'flag',
+      txt: 'discuss',
+    },
+  ];
+
+  privButtons = [
+    {
+      handleClick: console.log,
+      master: true,
+      icon: 'edit',
+      txt: 'edit',
+    },
+    {
+      handleClick: console.log,
+      master: true,
+      icon: 'trash',
+      txt: 'delete',
+    },
+  ];
+
   render() {
-    const {author, content, created, context, last, handleAuthor} = this.props;
+    const {hover} = this.state;
+    const {
+      author,
+      content,
+      created,
+      context,
+      last,
+      reviewer,
+      handleAuthor,
+    } = this.props;
+    const master = author === reviewer;
+
+    let bData;
+    if (master) {
+      bData = [...this.pubButtons, ...this.privButtons];
+    } else {
+      bData = this.pubButtons;
+    }
+
     return (
       <div className="clearfix comment">
         <div className="hover-menu">
           <div className="btn-group btns-empty">
-            <button className="btn btn-empty">
-              <span className="icon-add" />
-            </button>
-            <button className="btn btn-empty">
-              <span className="icon-add" />
-            </button>
-            <button className="btn btn-empty">
-              <span className="icon-add" />
-            </button>
+            {bData.map((button, i) => {
+              return <CommentButton {...button} key={'key-' + i} />;
+            })}
           </div>
         </div>
+
         <div className="pull-right">{context}</div>
         <strong data-auth={author} className="author" onClick={handleAuthor}>
           {author}
@@ -55,4 +133,5 @@ class Comment extends BaseComponent {
     );
   }
 }
+
 export default Comment;

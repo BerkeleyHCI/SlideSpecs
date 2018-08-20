@@ -57,6 +57,8 @@ class SlideReviewPage extends BaseComponent {
       ds = new DragSelect({
         selectables: elements,
         onDragMove: updateSelection,
+        //onElementSelect: updateSelection,
+        //onElementUnselect: updateSelection,
         callback: updateSelection,
         autoScrollSpeed: 5,
         area: area,
@@ -300,7 +302,7 @@ class SlideReviewPage extends BaseComponent {
 
   renderComments = () => {
     const {sorter, invert, byAuth} = this.state;
-    const {comments} = this.props;
+    const {comments, reviewer} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
@@ -321,6 +323,7 @@ class SlideReviewPage extends BaseComponent {
           <Comment
             {...c}
             key={c._id}
+            reviewer={reviewer}
             handleAuthor={this.setByAuth}
             context={context}
           />

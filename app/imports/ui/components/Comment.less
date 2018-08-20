@@ -1,18 +1,29 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
+#comments-list {
+  margin-top: 2em;
+  padding: 0px;
+  border: 0px;
+}
+
 div.comment {
-  &:hover {
-    .author {
-      background-color: @color-rare;
-    }
-    .btns-empty {
-      z-index: 3;
-      display: inline-block;
-    }
+  padding: 20px 15px 0px 15px;
+  &:last-child {
+    padding-bottom: 20px;
   }
 
-  .btns-empty {
-    display: none;
+  transition: all 1ms ease-in;
+
+  hr {
+    margin-bottom: 0px;
+  }
+
+  &:hover {
+    background-color: lighten(@color-raw, 4%);
+    .btns-empty {
+      visibility: visible;
+      .no-transition();
+    }
   }
 
   .author {
@@ -23,11 +34,25 @@ div.comment {
     }
   }
 
+  .btns-empty {
+    visibility: hidden;
+    .no-transition();
+  }
+
   .hover-menu {
-    position: absolute;
-    text-align: center;
-    margin: -1.5em auto 0 auto;
-    left: 48%;
+    display: block;
+    margin-top: -2.15em;
+    position: relative;
+    text-align: right;
+    .btn {
+      min-width: 35px;
+      &:hover {
+        color: black !important;
+      }
+    }
+    .btn-user:hover {
+      color: dark-green !important;
+    }
   }
 
   p {
