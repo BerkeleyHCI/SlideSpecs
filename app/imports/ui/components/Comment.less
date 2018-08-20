@@ -35,8 +35,11 @@ div.comment {
   }
 
   .btns-empty {
-    visibility: hidden;
+    /*visibility: hidden;*/
     .no-transition();
+    * {
+      .no-transition();
+    }
   }
 
   .hover-menu {
@@ -45,6 +48,7 @@ div.comment {
     position: relative;
     text-align: right;
     .btn {
+      margin-left: 0px !important;
       min-width: 35px;
       &:hover {
         color: black !important;

@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
+import {Modal, ModalButton} from '../components/Modal.jsx';
 import Markdown from 'react-markdown';
 import {
   createComment,
   updateComment,
   deleteComment,
 } from '../../api/comments/methods.js';
+
 function CommentButton({icon, txt, handleClick, master}) {
   return (
     <button
       title={txt}
       data-toggle="tooltip"
       data-placement="top"
+      data-target="#appModal"
+      data-toggle="modal"
       onClick={handleClick}
       className={`btn btn-empty ${master && 'btn-user'}`}>
       <span className={'icon-' + icon} />
@@ -22,7 +26,22 @@ function CommentButton({icon, txt, handleClick, master}) {
 
 class Comment extends BaseComponent {
   componentDidMount = () => {
-    $('[data-toggle="tooltip"]').tooltip();
+    const togs = $('[data-toggle="tooltip"]');
+    togs.tooltip({
+      trigger: 'hover',
+      template: '<div class="tooltip"><div class="tooltip-inner"></div></div>',
+    });
+    //togs.tooltip('show'); // for visual debugging
+  };
+
+  confirmRemoveComment = () => {
+    const {updateModal, content} = this.props;
+    updateModal({
+      accept: this.removeComment,
+      mtitle: 'delete comment?',
+      mtext: content,
+      act: 'delete',
+    });
   };
 
   removeComment = () => {
@@ -69,7 +88,7 @@ class Comment extends BaseComponent {
       txt: 'edit',
     },
     {
-      handleClick: this.removeComment,
+      handleClick: this.confirmRemoveComment,
       master: true,
       icon: 'trash',
       txt: 'delete',

@@ -10,6 +10,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
+import {Modal} from '../components/Modal.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
@@ -26,6 +27,7 @@ class SlideReviewPage extends BaseComponent {
       selected: [],
       byAuth: '',
       image: '',
+      modal: {},
       ds: {},
     };
   }
@@ -92,6 +94,10 @@ class SlideReviewPage extends BaseComponent {
     if (files.length > 0) {
       this.updateSlideFile(files[0]._id);
     }
+  };
+
+  setModal = m => {
+    this.setState({modal: m});
   };
 
   setByAuth = e => {
@@ -324,6 +330,7 @@ class SlideReviewPage extends BaseComponent {
             {...c}
             key={c._id}
             reviewer={reviewer}
+            updateModal={this.setModal}
             handleAuthor={this.setByAuth}
             context={context}
           />
@@ -371,6 +378,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   render() {
+    const {modal} = this.state;
     const {files, reviewer} = this.props;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
@@ -381,6 +389,8 @@ class SlideReviewPage extends BaseComponent {
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
+          <Modal {...modal} />
+
           <h1 className="clearfix">
             share feedback
             <small
