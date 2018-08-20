@@ -160,7 +160,7 @@ class SlideReviewPage extends BaseComponent {
         if (err) {
           console.error(err);
         } else {
-          this.clearSelection();
+          this.clearButton();
           this.clearText();
         }
       });
