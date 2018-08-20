@@ -62,7 +62,9 @@ export default class ReviewContainer extends BaseComponent {
       );
     }
     return (
-      this.renderRedirect() || <div className="main-content">{content}</div>
+      this.renderRedirect() || (
+        <div className="main-content no-v-pad">{content}</div>
+      )
     );
   }
 }

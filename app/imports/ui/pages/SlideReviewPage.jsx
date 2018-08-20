@@ -76,9 +76,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   componentDidUpdate = this.handleLoad;
-
   componentDidMount = () => {
-    // Handling image load
     this.handleLoad();
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -256,23 +254,25 @@ class SlideReviewPage extends BaseComponent {
     );
 
     return (
-      <h2 className="clearfix">
-        comments
-        <div className="pull-right">
-          <button onClick={timeSort} className="btn btn-menu">
-            time {filter === 'time' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={authSort}>
-            author {filter === 'auth' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={slideSort}>
-            slide {filter === 'slide' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={invFn}>
-            order {invert ? '▼' : '▲'}
-          </button>
-        </div>
-      </h2>
+      <div className="blue float-at-top">
+        <h2 className="clearfix">
+          comments
+          <div className="pull-right">
+            <button onClick={timeSort} className="btn btn-menu">
+              time {filter === 'time' ? '✔' : ''}
+            </button>
+            <button className="btn btn-menu" onClick={authSort}>
+              author {filter === 'auth' ? '✔' : ''}
+            </button>
+            <button className="btn btn-menu" onClick={slideSort}>
+              slide {filter === 'slide' ? '✔' : ''}
+            </button>
+            <button className="btn btn-menu" onClick={invFn}>
+              order {invert ? '▼' : '▲'}
+            </button>
+          </div>
+        </h2>
+      </div>
     );
   };
 
@@ -318,22 +318,6 @@ class SlideReviewPage extends BaseComponent {
             </small>
           </h1>
 
-          <div className="row">
-            <div className="col-md-4">
-              <Img className="big-slide" source={image} />
-              <div className="alert center">
-                <Clock />
-              </div>
-            </div>
-            <div className="col-md-8">
-              <div id="grid" onMouseDown={this.clearGrid}>
-                {fileList}
-              </div>
-              {submitter}
-            </div>
-          </div>
-
-          {cmtHead}
           <div className="table">
             <div className="row">
               <div className="col-md-4 hide-md-4 no-float full-height">
@@ -344,7 +328,14 @@ class SlideReviewPage extends BaseComponent {
                   </div>
                 </div>
               </div>
-              <div className="col-md-8">{comments}</div>
+              <div className="col-md-8">
+                <div id="grid" onMouseDown={this.clearGrid}>
+                  {fileList}
+                </div>
+                {submitter}
+                {cmtHead}
+                {comments}
+              </div>
             </div>
           </div>
         </div>

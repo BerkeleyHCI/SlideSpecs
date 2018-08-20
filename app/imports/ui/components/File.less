@@ -86,13 +86,20 @@ div.reviewView {
   .table {
     display: table;
     width: 100%;
-    margin-top: -50px;
-    padding: 50px 0 0 0; /*set left/right padding according to needs*/
+    margin-top: -10px;
+    padding: 10px 0 0 0; /*set left/right padding according to needs*/
     box-sizing: border-box;
     height: 100%;
     .row {
-      height: 100%;
       display: table-row;
+      height: 100%;
+    }
+  }
+
+  [class*='col-'] {
+    padding: 0px;
+    &:last-child {
+      padding-left: 1em;
     }
   }
 
@@ -114,11 +121,29 @@ div.reviewView {
     content: 'click to clear - ';
   }
 
+  kbd {
+    background-color: @color-danger;
+    &:hover {
+      background: black;
+    }
+  }
+
+  h1 {
+    padding-top: 1em;
+  }
+
+  h2 {
+    padding-top: 10px;
+  }
+
+  .blue {
+    background: @color-tertiary;
+  }
+
   .full-height {
     height: 100%;
   }
   .float-at-top {
-    display: inline-block;
     position: sticky;
     z-index: 1;
     top: 0px;
@@ -135,7 +160,7 @@ div.reviewView {
     padding: 1em;
   }
 
-  .btn-menu {
-    margin-left: 1em;
+  .btn-menu:not(:last-child) {
+    border-right: 1em solid @color-danger;
   }
 }
