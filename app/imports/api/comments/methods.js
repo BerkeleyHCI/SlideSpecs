@@ -52,6 +52,7 @@ export const deleteComment = new ValidatedMethod({
     commentId: {type: String},
   }).validator(),
   run({author, commentId}) {
+    const comment = Comments.findOne(commentId);
     if (comment.author == author) {
       Comments.remove(commentId);
     }

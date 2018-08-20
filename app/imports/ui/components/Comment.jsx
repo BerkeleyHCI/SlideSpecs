@@ -21,32 +21,17 @@ function CommentButton({icon, txt, handleClick, master}) {
 }
 
 class Comment extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.hover = '';
-  }
-
-  clearHover = event => {
-    this.setState({hover: ''});
-  };
-
   componentDidMount = () => {
     $('[data-toggle="tooltip"]').tooltip();
   };
 
-  handleMouse = e => {
-    const hover = e.target.getAttribute('data-hv');
-    if (hover) {
-      this.setState({hover});
-    }
-  };
-
   removeComment = () => {
-    const {commentId, author} = this.props;
-    deleteComment.call({commentId, author});
+    const {_id, author} = this.props;
+    deleteComment.call({commentId: _id, author});
   };
 
   editComment = () => {
+    // TODO - update for comments from files
     const {fileId, fileName} = this.props;
     let validName = /[^a-zA-Z0-9 \.:\+()\-_%!&]/gi;
     let newName = window.prompt('New file name?', fileName) || '';
@@ -84,7 +69,7 @@ class Comment extends BaseComponent {
       txt: 'edit',
     },
     {
-      handleClick: console.log,
+      handleClick: this.removeComment,
       master: true,
       icon: 'trash',
       txt: 'delete',
