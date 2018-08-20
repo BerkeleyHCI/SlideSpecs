@@ -1,5 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
+import {Session} from 'meteor/session.js';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
@@ -75,7 +76,9 @@ class SlideReviewPage extends BaseComponent {
   };
 
   componentDidUpdate = this.handleLoad;
+
   componentDidMount = () => {
+    // Handling image load
     this.handleLoad();
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -88,6 +91,11 @@ class SlideReviewPage extends BaseComponent {
     if (files.length > 0) {
       this.updateSlideFile(files[0]._id);
     }
+  };
+
+  clearReviewer = () => {
+    localStorage.setItem('feedbacks.reviewer', null);
+    Session.set('reviewer', null);
   };
 
   updateSlideFile = fid => {
@@ -206,7 +214,7 @@ class SlideReviewPage extends BaseComponent {
         <hr />
         <textarea
           type="text"
-          placeholder="write comment here, press enter to submit."
+          placeholder="write your feedback here. press enter to submit."
           onKeyDown={this.addComment}
           className="code"
         />
@@ -290,32 +298,26 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
-  scrollTop = () => {
-    var a = function() {
-      var b = $(window).scrollTop();
-      var d = $('#scroller-anchor').offset({scroll: false}).top;
-      var c = $('#scroller');
-      if (b > d) {
-        c.css({position: 'fixed', top: '0px'});
-      } else {
-        c.css({position: 'relative', top: ''});
-      }
-    };
-    $(window).scroll(a);
-    a();
-  };
-
   render() {
     const {image} = this.state;
-    const {files} = this.props;
+    const {files, reviewer} = this.props;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
+
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
-          <h1>share feedback</h1>
+          <h1 className="clearfix">
+            share feedback
+            <small
+              onClick={this.clearReviewer}
+              className="pull-right clear-icon">
+              {reviewer}
+            </small>
+          </h1>
+
           <div className="row">
             <div className="col-md-4">
               <Img className="big-slide" source={image} />
@@ -332,14 +334,18 @@ class SlideReviewPage extends BaseComponent {
           </div>
 
           {cmtHead}
-          <div className="row">
-            <div className="col-md-4 hide-md-4">
-              <Img className="big-slide" source={image} />
-              <div className="alert center">
-                <Clock />
+          <div className="table">
+            <div className="row">
+              <div className="col-md-4 hide-md-4 no-float full-height">
+                <div className="float-at-top">
+                  <Img className="big-slide" source={image} />
+                  <div className="alert center">
+                    <Clock />
+                  </div>
+                </div>
               </div>
+              <div className="col-md-8">{comments}</div>
             </div>
-            <div className="col-md-8">{comments}</div>
           </div>
         </div>
       )

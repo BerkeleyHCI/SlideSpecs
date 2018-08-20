@@ -83,6 +83,19 @@ div.reviewView {
     background: rgba(0, 0, 0, 0.7);
   }
 
+  .table {
+    display: table;
+    width: 100%;
+    margin-top: -50px;
+    padding: 50px 0 0 0; /*set left/right padding according to needs*/
+    box-sizing: border-box;
+    height: 100%;
+    .row {
+      height: 100%;
+      display: table-row;
+    }
+  }
+
   .ds-selected {
     outline: 2px double @color-primary;
     img {
@@ -91,6 +104,24 @@ div.reviewView {
     .overlay {
       opacity: 1;
     }
+  }
+
+  .clear-icon:hover {
+    color: darken(@color-primary, 10%);
+  }
+
+  .clear-icon:hover:before {
+    content: 'click to clear - ';
+  }
+
+  .full-height {
+    height: 100%;
+  }
+  .float-at-top {
+    display: inline-block;
+    position: sticky;
+    z-index: 1;
+    top: 0px;
   }
 
   #big-slide {
