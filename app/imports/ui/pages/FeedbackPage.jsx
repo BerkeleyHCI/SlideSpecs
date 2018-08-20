@@ -111,7 +111,7 @@ class FeedbackPage extends BaseComponent {
 
     return files ? (
       this.renderRedirect() || (
-        <div className="main-content reviewView">
+        <div className="main-content reviewView no-v-pad">
           <h1>
             ‹ <Link to={`/sessions/${_id}`}>{name}</Link>
           </h1>

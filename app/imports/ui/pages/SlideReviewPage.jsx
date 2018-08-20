@@ -24,6 +24,7 @@ class SlideReviewPage extends BaseComponent {
       invert: true,
       filtered: [],
       selected: [],
+      byAuth: '',
       image: '',
       ds: {},
     };
@@ -89,6 +90,20 @@ class SlideReviewPage extends BaseComponent {
     if (files.length > 0) {
       this.updateSlideFile(files[0]._id);
     }
+  };
+
+  setByAuth = e => {
+    const {byAuth} = this.state;
+    const newAuth = e.target.getAttribute('data-auth');
+    if (newAuth && byAuth === newAuth) {
+      this.setState({byAuth: ''});
+    } else if (newAuth) {
+      this.setState({byAuth: newAuth});
+    }
+  };
+
+  clearByAuth = () => {
+    this.setState({byAuth: ''});
   };
 
   clearReviewer = () => {
@@ -187,7 +202,7 @@ class SlideReviewPage extends BaseComponent {
         </kbd>
       ));
       return (
-        <span>
+        <span className="slide-tags">
           {!done && <span>attach comment to slide{plural && 's'}</span>}
           {slideKeys}
           {!done && (
@@ -276,35 +291,89 @@ class SlideReviewPage extends BaseComponent {
     );
   };
 
+  goToTop = () => {
+    const view = document.getElementById('review-view');
+    if (view) {
+      view.scrollIntoView();
+    }
+  };
+
   renderComments = () => {
-    const {sorter, invert} = this.state;
+    const {sorter, invert, byAuth} = this.state;
     const {comments} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      const csort = _.orderBy(
+      let csort = _.orderBy(
         comments,
         [sorter, 'created'],
         [invert ? 'desc' : 'asc', 'asc'],
       );
 
+      if (byAuth) {
+        csort = csort.filter(c => c.author === byAuth);
+      }
+
       const commentElements = csort.map((c, i) => {
         c.last = i === csort.length - 1; // no hr
         const context = this.renderSlideTags(c.slides, true);
-        return <Comment key={c._id} {...c} context={context} />;
+        return (
+          <Comment
+            {...c}
+            key={c._id}
+            handleAuthor={this.setByAuth}
+            context={context}
+          />
+        );
       });
 
-      return <div className="alert">{commentElements}</div>;
+      return (
+        <div id="comments-list" className="alert">
+          {commentElements}
+        </div>
+      );
     }
   };
 
+  renderContext = () => {
+    const {image, byAuth} = this.state;
+    return (
+      <div className="float-at-top">
+        <Img className="big-slide" source={image} />
+        <div className="alert center">
+          <Clock />
+          {byAuth && (
+            <div>
+              <hr />
+              <p>
+                <strong>author </strong>
+                {byAuth}
+                <button
+                  onClick={this.clearByAuth}
+                  className="btn btn-menu pull-right">
+                  clear
+                </button>
+              </p>
+            </div>
+          )}
+          <hr />
+          <div className="btns-group">
+            <button onClick={this.goToTop} className="btn btn-empty">
+              to top
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   render() {
-    const {image} = this.state;
     const {files, reviewer} = this.props;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
+    const context = this.renderContext();
 
     return files ? (
       this.renderRedirect() || (
@@ -318,15 +387,10 @@ class SlideReviewPage extends BaseComponent {
             </small>
           </h1>
 
-          <div className="table">
+          <div id="review-view" className="table">
             <div className="row">
               <div className="col-md-4 hide-md-4 no-float full-height">
-                <div className="float-at-top">
-                  <Img className="big-slide" source={image} />
-                  <div className="alert center">
-                    <Clock />
-                  </div>
-                </div>
+                {context}
               </div>
               <div className="col-md-8">
                 <div id="grid" onMouseDown={this.clearGrid}>

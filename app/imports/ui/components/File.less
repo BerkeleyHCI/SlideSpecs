@@ -83,6 +83,10 @@ div.reviewView {
     background: rgba(0, 0, 0, 0.7);
   }
 
+  .slide-tags {
+    max-width: 25;
+  }
+
   .table {
     display: table;
     width: 100%;
@@ -99,7 +103,7 @@ div.reviewView {
   [class*='col-'] {
     padding: 0px;
     &:last-child {
-      padding-left: 1em;
+      padding-left: 2em;
     }
   }
 
@@ -149,7 +153,12 @@ div.reviewView {
     top: 0px;
   }
 
-  #big-slide {
+  .big-slide {
+    border-bottom: 1px solid @color-rare;
+  }
+
+  #comments-list {
+    margin-top: 2em;
   }
 
   #grid {
@@ -157,6 +166,7 @@ div.reviewView {
     max-height: 60vh;
     width: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding: 1em;
   }
 

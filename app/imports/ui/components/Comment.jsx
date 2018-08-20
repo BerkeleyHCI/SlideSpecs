@@ -27,11 +27,26 @@ class Comment extends BaseComponent {
   };
 
   render() {
-    const {author, content, created, context, last} = this.props;
+    const {author, content, created, context, last, handleAuthor} = this.props;
     return (
-      <div className="clearfix">
+      <div className="clearfix comment">
+        <div className="hover-menu">
+          <div className="btn-group btns-empty">
+            <button className="btn btn-empty">
+              <span className="icon-add" />
+            </button>
+            <button className="btn btn-empty">
+              <span className="icon-add" />
+            </button>
+            <button className="btn btn-empty">
+              <span className="icon-add" />
+            </button>
+          </div>
+        </div>
         <div className="pull-right">{context}</div>
-        <strong>{author} </strong>
+        <strong data-auth={author} className="author" onClick={handleAuthor}>
+          {author}
+        </strong>
         <small> {created.toLocaleTimeString()} </small>
         <br />
         <Markdown source={content} />

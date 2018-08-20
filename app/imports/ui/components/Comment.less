@@ -1,0 +1,36 @@
+@import '{}/imports/ui/stylesheets/utils.less';
+
+div.comment {
+  &:hover {
+    .author {
+      background-color: @color-rare;
+    }
+    .btns-empty {
+      z-index: 3;
+      display: inline-block;
+    }
+  }
+
+  .btns-empty {
+    display: none;
+  }
+
+  .author {
+    padding: 0 4px;
+    border-radius: 4px;
+    &:hover {
+      background-color: @color-medium-rare;
+    }
+  }
+
+  .hover-menu {
+    position: absolute;
+    text-align: center;
+    margin: -1.5em auto 0 auto;
+    left: 48%;
+  }
+
+  p {
+    padding-left: 4px;
+  }
+}

@@ -31,6 +31,7 @@
     &:hover {
       background-color: darken(@color-primary, 5%);
     }
+
     &:active {
       box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
     }
@@ -75,9 +76,24 @@
     }
   }
 
+  &[class*='empty'] {
+    background-color: @color-empty;
+    color: @color-danger !important;
+    padding: 0.3em;
+    &:hover {
+      background-color: darken(@color-empty, 5%);
+    }
+  }
+
   &[disabled] {
     opacity: 0.5;
   }
+}
+
+.btns-empty {
+  padding: 0px !important;
+  border: 1px solid @color-rare;
+  border-radius: 4px;
 }
 
 .btns-group {
