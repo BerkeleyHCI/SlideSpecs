@@ -1,55 +1,25 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import ReactModal from 'react-modal';
 
-export class ModalButton extends Component {
+class Modal extends Component {
   render() {
+    const {mtitle, mtext, accept, deny, isOpen, act} = this.props;
     return (
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-target="#appModal"
-        data-toggle="modal">
-        Launch demo modal
-      </button>
-    );
-  }
-}
-
-export class Modal extends Component {
-  render() {
-    const {mtitle, mtext, accept, deny, act} = this.props;
-    return (
-      <div id="appModal" class="modal fade">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">{mtitle}</h5>
-            </div>
-            <div class="modal-body">{mtext}</div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary"
-                onClick={accept}
-                data-dismiss="modal">
-                confirm {act}
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger"
-                onClick={deny}
-                data-dismiss="modal">
-                cancel
-              </button>
-            </div>
-          </div>
+      <ReactModal isOpen={open} className="modal">
+        <h1>{mtitle}</h1>
+        <div className="modal-body">{mtext}</div>
+        <div className="modal-footer">
+          <button onClick={accept}>confirm {act}</button>
+          <button onClick={this.deny}>cancel</button>
         </div>
-      </div>
+      </ReactModal>
     );
   }
 }
 
 Modal.propTypes = {
+  isOpen: PropTypes.boolean.isRequired,
   mtitle: PropTypes.string,
   mtext: PropTypes.string,
   accept: PropTypes.func,
@@ -63,3 +33,5 @@ Modal.defaultProps = {
   deny: console.log,
   act: '',
 };
+
+export default Modal;
