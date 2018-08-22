@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
-import {Modal, ModalButton} from '../components/Modal.jsx';
 import Markdown from 'react-markdown';
 import {
   createComment,
@@ -40,6 +39,7 @@ class Comment extends BaseComponent {
       mtitle: 'delete comment?',
       mtext: content,
       act: 'delete',
+      isOpen: true,
     });
   };
 
