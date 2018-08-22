@@ -4,9 +4,10 @@ import ReactModal from 'react-modal';
 
 class Modal extends Component {
   render() {
+    //console.log(this.props);
     const {mtitle, mtext, accept, deny, isOpen, act} = this.props;
     return (
-      <ReactModal isOpen={open} className="modal">
+      <ReactModal isOpen={isOpen} className="modal">
         <h1>{mtitle}</h1>
         <div className="modal-body">{mtext}</div>
         <div className="modal-footer">
@@ -19,7 +20,7 @@ class Modal extends Component {
 }
 
 Modal.propTypes = {
-  isOpen: PropTypes.boolean.isRequired,
+  isOpen: PropTypes.bool,
   mtitle: PropTypes.string,
   mtext: PropTypes.string,
   accept: PropTypes.func,

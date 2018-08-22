@@ -15,8 +15,6 @@ function CommentButton({icon, txt, handleClick, master}) {
       title={txt}
       data-toggle="tooltip"
       data-placement="top"
-      data-target="#appModal"
-      data-toggle="modal"
       onClick={handleClick}
       className={`btn btn-empty ${master && 'btn-user'}`}>
       <span className={'icon-' + icon} />
@@ -27,12 +25,12 @@ function CommentButton({icon, txt, handleClick, master}) {
 class Comment extends BaseComponent {
   componentDidMount = () => {
     const togs = $('[data-toggle="tooltip"]');
-    //togs.tooltip({
-    //trigger: 'hover',
-    //template: '<div class="tooltip"><div class="tooltip-inner"></div></div>',
-    //});
-    togs.tooltip(); // enable
-    togs.tooltip('show'); // for visual debugging
+    //togs.tooltip(); // enable
+    //togs.tooltip('show'); // for visual debugging
+    togs.tooltip({
+      trigger: 'hover',
+      template: '<div class="tooltip"><div class="tooltip-inner"></div></div>',
+    });
   };
 
   confirmRemoveComment = () => {

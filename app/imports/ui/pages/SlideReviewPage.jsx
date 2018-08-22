@@ -10,7 +10,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
-import {Modal} from '../components/Modal.jsx';
+import Modal from '../components/Modal.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
@@ -25,9 +25,10 @@ class SlideReviewPage extends BaseComponent {
       invert: true,
       filtered: [],
       selected: [],
+      bySlide: '',
       byAuth: '',
       image: '',
-      modal: {},
+      modal: {isOpen: false},
       ds: {},
     };
   }
@@ -100,6 +101,10 @@ class SlideReviewPage extends BaseComponent {
     this.setState({modal: m});
   };
 
+  clearModal = () => {
+    this.setState({modal: {isOpen: false}});
+  };
+
   setByAuth = e => {
     const {byAuth} = this.state;
     const newAuth = e.target.getAttribute('data-auth');
@@ -112,6 +117,20 @@ class SlideReviewPage extends BaseComponent {
 
   clearByAuth = () => {
     this.setState({byAuth: ''});
+  };
+
+  setBySlide = e => {
+    const {bySlide} = this.state;
+    const newSlide = e.target.innerText.trim();
+    if (newSlide && bySlide === newSlide) {
+      this.setState({bySlide: ''});
+    } else if (newSlide) {
+      this.setState({bySlide: newSlide});
+    }
+  };
+
+  clearBySlide = () => {
+    this.setState({bySlide: ''});
   };
 
   clearReviewer = () => {
@@ -191,9 +210,13 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderSlideTags = (filter, done: false) => {
+    const {bySlide} = this.state;
+    const active = sn => (sn === bySlide ? 'active' : '');
     if (filter.length === 0) {
       return done ? (
-        <kbd>general</kbd>
+        <kbd className={active({slideNo: 'general'})} onClick={this.setBySlide}>
+          general
+        </kbd>
       ) : (
         'no slides selected, attach as general feedback'
       );
@@ -202,10 +225,12 @@ class SlideReviewPage extends BaseComponent {
       const slideNos = _.sortBy(filter, x => Number(x.slideNo));
       const slideKeys = slideNos.map(s => (
         <kbd
+          className={active(s.slideNo)}
           key={`key-${s.slideNo}`}
           iter={s.slideNo}
           data-file-id={s.slideId}
-          onMouseOver={this.handleSlide}>
+          onMouseOver={this.handleSlide}
+          onClick={this.setBySlide}>
           {s.slideNo}
         </kbd>
       ));
@@ -307,7 +332,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter, invert, byAuth} = this.state;
+    const {sorter, invert, byAuth, bySlide} = this.state;
     const {comments, reviewer} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
@@ -322,8 +347,17 @@ class SlideReviewPage extends BaseComponent {
         csort = csort.filter(c => c.author === byAuth);
       }
 
+      if (bySlide) {
+        csort = csort.filter(c => {
+          const general = [{slideNo: 'general'}];
+          const slides = c.slides.length > 0 ? c.slides : general;
+          const slideNos = slides.map(x => x.slideNo);
+          return slideNos.includes(bySlide);
+        });
+      }
+
       const commentElements = csort.map((c, i) => {
-        c.last = i === csort.length - 1; // no hr
+        c.last = i === csort.length - 1; // no final hr
         const context = this.renderSlideTags(c.slides, true);
         return (
           <Comment
@@ -346,29 +380,36 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderContext = () => {
-    const {image, byAuth} = this.state;
+    let {image, byAuth, bySlide} = this.state;
+    const sType = bySlide === 'general' ? 'scope' : 'slide';
+    if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
+    const ClearingDiv = ({set, pre, clear}) => {
+      return (
+        set && (
+          <div>
+            <hr />
+            <p>
+              <strong>{pre} </strong>
+              {set}
+              <button onClick={clear} className="btn btn-menu pull-right">
+                clear
+              </button>
+            </p>
+          </div>
+        )
+      );
+    };
+
     return (
       <div className="float-at-top">
         <Img className="big-slide" source={image} />
         <div className="alert center">
           <Clock />
-          {byAuth && (
-            <div>
-              <hr />
-              <p>
-                <strong>author </strong>
-                {byAuth}
-                <button
-                  onClick={this.clearByAuth}
-                  className="btn btn-menu pull-right">
-                  clear
-                </button>
-              </p>
-            </div>
-          )}
+          <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
+          <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
           <hr />
           <div className="btns-group">
-            <button onClick={this.goToTop} className="btn btn-empty">
+            <button onClick={this.goToTop} className="padded btn btn-empty">
               to top
             </button>
           </div>
