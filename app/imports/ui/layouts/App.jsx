@@ -88,8 +88,6 @@ export default class App extends BaseComponent {
     return this.preRender(match, ReviewContainer);
   };
 
-  // TODO - NEED TO TEST ON BAYSCOPE.
-
   renderSecure = () => {
     if (location.protocol === 'http:' && location.hostname !== 'localhost') {
       console.log('moving to https...');
@@ -113,7 +111,6 @@ export default class App extends BaseComponent {
     return (
       <div id="container">
         <AppModal {...modal} />
-
         <ToastContainer
           type="info"
           transition={Fade}
