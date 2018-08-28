@@ -221,7 +221,14 @@ class UploadPage extends BaseComponent {
                         <a
                           href="https://www.wikihow.com/Convert-PDF-to-Image-Files#Using_Adobe_Acrobat_Pro"
                           target="_blank">
-                          general pdf
+                          general pdf (adobe acrobat)
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://superuser.com/questions/633698/"
+                          target="_blank">
+                          general pdf (image magick)
                         </a>
                       </li>
                     </ul>
