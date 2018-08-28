@@ -37,7 +37,7 @@ deps@1.0.12
 diff-sequence@1.1.0
 dispatch:mocha-phantomjs@0.1.9
 dispatch:phantomjs-tests@0.0.7
-dynamic-import@0.4.1
+dynamic-import@0.4.2
 ecmascript@0.11.1
 ecmascript-runtime@0.7.0
 ecmascript-runtime-client@0.7.1
