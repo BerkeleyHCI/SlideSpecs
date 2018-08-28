@@ -52,11 +52,20 @@ div.file-item {
 }
 
 div.file-item.file-item-review {
-  @media only screen and (min-width: 992px) {
-    width: calc(23%);
+  margin-bottom: 4px;
+  margin-right: 4px;
+
+  @media only screen and (min-width: 1524px) {
+    width: calc(19%);
   }
-  @media only screen and (max-width: 992px) {
-    width: calc(30%);
+  @media only screen and (min-width: 992px) and (max-width: 1524px) {
+    width: calc(23.5%);
+  }
+  @media only screen and (min-width: 592px) and (max-width: 992px) {
+    width: calc(31.5%);
+  }
+  @media only screen and (max-width: 592px) {
+    width: calc(29%);
   }
 
   /*disable to allow for hover event trigger on parent item*/
@@ -65,8 +74,9 @@ div.file-item.file-item-review {
     pointer-events: none;
   }
 
-  margin-bottom: 0.5em;
-  margin-right: 0.5em;
+  /*margin-bottom: 0.5em;*/
+  /*margin-right: 0.5em;*/
+
   outline: 1px solid @color-medium-rare;
   &:hover img {
     opacity: 0.4;
