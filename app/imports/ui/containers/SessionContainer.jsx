@@ -48,7 +48,7 @@ export default class SessionContainer extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1> {name} </h1>
-        <div className="padded">
+        <div className="v-pad">
           <div className="alert">
             <h3>
               1. review slides <small>{files.length} slides</small>

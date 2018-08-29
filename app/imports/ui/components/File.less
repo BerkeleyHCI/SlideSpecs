@@ -69,13 +69,9 @@ div.file-item.file-item-review {
   }
 
   /*disable to allow for hover event trigger on parent item*/
-
   * {
     pointer-events: none;
   }
-
-  /*margin-bottom: 0.5em;*/
-  /*margin-right: 0.5em;*/
 
   outline: 1px solid @color-medium-rare;
   &:hover img {
@@ -88,7 +84,15 @@ div.file-item.file-item-review {
   background: transparent !important;
 }
 
+@media (min-width: 992px) {
+  .full-height-md {
+    height: 100%;
+  }
+}
+
 div.reviewView {
+  margin: 0px;
+
   .overlay {
     background: rgba(0, 0, 0, 0.7);
   }
@@ -111,10 +115,7 @@ div.reviewView {
   }
 
   [class*='col-'] {
-    padding: 0px;
-    &:not(:last-child) {
-      padding-right: 2em;
-    }
+    padding: 0px 15px;
   }
 
   .ds-selected {
@@ -151,11 +152,14 @@ div.reviewView {
   }
 
   h1 {
-    padding-top: 1em;
+    padding: 0.7em;
+    small {
+      line-height: 2;
+    }
   }
 
   h2 {
-    padding-top: 10px;
+    padding: 10px 0px 10px 0px;
   }
 
   .blue {
@@ -173,11 +177,16 @@ div.reviewView {
 
   .big-slide {
     border-bottom: 1px solid @color-rare;
+    border-radius: 4px 4px 0px 0px;
+  }
+
+  #grid-holder {
+    margin: 0 15px 15px 15px;
   }
 
   #grid {
     background: darken(@color-empty, 2%);
-    max-height: 60vh;
+    max-height: 50vh;
     width: 100%;
     position: fixed;
     overflow-y: scroll;

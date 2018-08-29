@@ -40,11 +40,14 @@ export default class App extends BaseComponent {
   }
 
   getSharedProps = () => {
-    return this.props;
+    return {
+      ...this.props,
+      clearModal: this.clearModal,
+      setModal: this.setModal,
+    };
   };
 
   setModal = m => {
-    console.log(m);
     this.setState({modal: m});
   };
 
@@ -97,16 +100,12 @@ export default class App extends BaseComponent {
   };
 
   renderContent = ({location}) => {
-    const {modal} = this.state;
     this.renderSecure(); // http -> https
     const {user, reviewer, sessions, files, loading} = this.props;
     const guest = location.pathname.match(/share/);
+    const shared = this.getSharedProps();
+    const {modal} = this.state;
     this.showConnection();
-    const shared = {
-      ...this.getSharedProps(),
-      clearModal: this.clearModal,
-      setModal: this.setModal,
-    };
 
     return (
       <div id="container">

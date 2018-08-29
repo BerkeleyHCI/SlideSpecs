@@ -46,6 +46,12 @@ class FeedbackPage extends BaseComponent {
   };
 
   componentDidUpdate = this.handleLoad;
+  componentWillUnmount = () => {
+    let {ds} = this.state;
+    if (ds) {
+      ds.stop(); // no dragging
+    }
+  };
 
   renderSlideTags = (filter, done: false) => {
     if (filter.length === 0) {
@@ -116,7 +122,7 @@ class FeedbackPage extends BaseComponent {
             ‹ <Link to={`/sessions/${_id}`}>{name}</Link>
           </h1>
           <h2>review feedback</h2>
-          <div id="grid" className="padded grid">
+          <div id="grid" className="v-pad grid">
             {fileList}
           </div>
           <h2>comments</h2>

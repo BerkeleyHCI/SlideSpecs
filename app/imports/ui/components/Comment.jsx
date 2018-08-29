@@ -22,6 +22,11 @@ function CommentButton({icon, txt, handleClick, master}) {
 }
 
 class Comment extends BaseComponent {
+  constructor(props) {
+    super(props);
+    this.state = {fading: false};
+  }
+
   componentDidMount = () => {
     const togs = $('[data-toggle="tooltip"]');
     //togs.tooltip(); // enable
@@ -32,10 +37,15 @@ class Comment extends BaseComponent {
     });
   };
 
+  componentWillUnmount = () => {
+    console.log('unmount');
+  };
+
   confirmRemoveComment = () => {
-    const {updateModal, content} = this.props;
-    updateModal({
+    const {setModal, clearModal, content} = this.props;
+    setModal({
       accept: this.removeComment,
+      deny: clearModal,
       mtitle: 'delete comment?',
       mtext: content,
       act: 'delete',
@@ -46,6 +56,7 @@ class Comment extends BaseComponent {
   removeComment = () => {
     const {_id, author} = this.props;
     deleteComment.call({commentId: _id, author});
+    this.props.clearModal();
   };
 
   editComment = () => {
@@ -98,6 +109,7 @@ class Comment extends BaseComponent {
     const {hover} = this.state;
     const {
       author,
+      style,
       content,
       created,
       context,
@@ -115,12 +127,10 @@ class Comment extends BaseComponent {
     }
 
     return (
-      <div className="clearfix comment">
+      <div style={style} className={'clearfix comment'}>
         <div className="hover-menu">
           <div className="btn-group btns-empty">
-            {bData.map((button, i) => {
-              return <CommentButton {...button} key={'key-' + i} />;
-            })}
+            {bData.map((button, i) => <CommentButton {...button} key={i} />)}
           </div>
         </div>
 

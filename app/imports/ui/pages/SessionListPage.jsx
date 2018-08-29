@@ -83,7 +83,7 @@ export default class SessionListPage extends BaseComponent {
         <button onClick={this.addSession} className="btn btn-primary">
           + new session
         </button>
-        <ul className="padded list-group">{Sessions}</ul>
+        <ul className="v-pad list-group">{Sessions}</ul>
       </div>
     );
 

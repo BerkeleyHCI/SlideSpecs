@@ -5,7 +5,6 @@ import {Sessions} from '../../api/sessions/sessions.js';
 import {Comments} from '../../api/comments/comments.js';
 import {Files} from '../../api/files/files.js';
 import App from '../layouts/App.jsx';
-
 import 'react-toastify/dist/ReactToastify.min.css';
 
 export default withTracker(() => {

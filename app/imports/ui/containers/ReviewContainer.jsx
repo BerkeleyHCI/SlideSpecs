@@ -19,7 +19,9 @@ export default class ReviewContainer extends BaseComponent {
 
   componentDidMount = () => {
     const saved = localStorage.getItem('feedbacks.reviewer');
-    Session.set('reviewer', saved);
+    if (saved && saved != 'null') {
+      Session.set('reviewer', saved);
+    }
   };
 
   setName = () => {
@@ -65,7 +67,7 @@ export default class ReviewContainer extends BaseComponent {
     }
     return (
       this.renderRedirect() || (
-        <div className="main-content no-v-pad">{content}</div>
+        <div className="main-content no-pad">{content}</div>
       )
     );
   }

@@ -1,18 +1,32 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
 #comments-list {
-  margin-top: 2em;
   padding: 0px;
   border: 0px;
 }
 
+#comment-image {
+  border: 1px solid @color-medium-rare;
+  border-radius: 0px;
+  * {
+    border-radius: 0px;
+    border: none;
+  }
+  max-width: 60vw;
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  z-index: 5;
+}
+
 div.comment {
+  transition: opacity 100ms ease;
   padding: 20px 15px 0px 15px;
+  opacity: 1;
+
   &:last-child {
     padding-bottom: 20px;
   }
-
-  transition: all 1ms ease-in;
 
   hr {
     margin-bottom: 0px;
@@ -43,6 +57,7 @@ div.comment {
   }
 
   .hover-menu {
+    z-index: 5;
     display: block;
     margin-top: -2.15em;
     position: relative;

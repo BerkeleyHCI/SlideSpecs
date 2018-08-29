@@ -253,7 +253,7 @@ class UploadPage extends BaseComponent {
                 )}
               {uploads}
             </div>
-            <div className="padded grid">{display}</div>
+            <div className="v-pad grid">{display}</div>
           </div>
         )
       );

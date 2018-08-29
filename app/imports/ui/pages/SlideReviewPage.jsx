@@ -26,6 +26,7 @@ class SlideReviewPage extends BaseComponent {
       selected: [],
       bySlide: '',
       byAuth: '',
+      showImage: false,
       image: '',
       ds: {},
     };
@@ -93,6 +94,16 @@ class SlideReviewPage extends BaseComponent {
     if (files.length > 0) {
       this.updateSlideFile(files[0]._id);
     }
+
+    // hide context image
+    this.handleSlideOut();
+  };
+
+  componentWillUnmount = () => {
+    let {ds} = this.state;
+    if (ds) {
+      ds.stop(); // no dragging
+    }
   };
 
   setByAuth = e => {
@@ -130,7 +141,7 @@ class SlideReviewPage extends BaseComponent {
 
   updateSlideFile = fid => {
     const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({image: link});
+    this.setState({image: link, showImage: true});
   };
 
   handleSlide = e => {
@@ -138,6 +149,15 @@ class SlideReviewPage extends BaseComponent {
       const data = this.extractFileData(e.target);
       this.updateSlideFile(data.slideId);
     }
+  };
+
+  handleSlideOut = e => {
+    this.setState({showImage: false});
+  };
+
+  handleSlideFile = e => {
+    this.handleSlide(e);
+    this.handleSlideOut();
   };
 
   getText = () => {
@@ -220,6 +240,7 @@ class SlideReviewPage extends BaseComponent {
           iter={s.slideNo}
           data-file-id={s.slideId}
           onMouseOver={this.handleSlide}
+          onMouseOut={this.handleSlideOut}
           onClick={this.setBySlide}>
           {s.slideNo}
         </kbd>
@@ -268,12 +289,14 @@ class SlideReviewPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          handleMouse={this.handleSlide}
+          handleMouse={this.handleSlideFile}
           handleLoad={this.handleLoad}
         />
       );
     });
   };
+
+  //handleMouseOut={this.handleSlideOut}
 
   renderCommentFilter = () => {
     const {files} = this.props;
@@ -294,7 +317,7 @@ class SlideReviewPage extends BaseComponent {
       <div className="blue float-at-top">
         <h2 className="clearfix">
           comments
-          <div className="pull-right">
+          <div className="btn-m-group pull-right">
             <button onClick={timeSort} className="btn btn-menu">
               time {filter === 'time' ? '✔' : ''}
             </button>
@@ -314,7 +337,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   goToTop = () => {
-    const view = document.getElementById('review-view');
+    const view = document.getElementById('grid');
     if (view) {
       view.scrollIntoView();
     }
@@ -322,7 +345,7 @@ class SlideReviewPage extends BaseComponent {
 
   renderComments = () => {
     const {sorter, invert, byAuth, bySlide} = this.state;
-    const {comments, reviewer, setModal} = this.props;
+    const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
@@ -345,24 +368,23 @@ class SlideReviewPage extends BaseComponent {
         });
       }
 
-      const commentElements = csort.map((c, i) => {
+      const items = csort.map((c, i) => {
         c.last = i === csort.length - 1; // no final hr
         const context = this.renderSlideTags(c.slides, true);
-        return (
-          <Comment
-            {...c}
-            key={c._id}
-            reviewer={reviewer}
-            updateModal={setModal}
-            handleAuthor={this.setByAuth}
-            context={context}
-          />
-        );
+        return {
+          ...c,
+          key: c._id,
+          context,
+          reviewer,
+          setModal,
+          clearModal,
+          handleAuthor: this.setByAuth,
+        };
       });
 
       return (
         <div id="comments-list" className="alert">
-          {commentElements}
+          {items.map(i => <Comment {...i} />)}
         </div>
       );
     }
@@ -398,7 +420,7 @@ class SlideReviewPage extends BaseComponent {
           <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
           <hr />
           <div className="btns-group">
-            <button onClick={this.goToTop} className="padded btn btn-empty">
+            <button onClick={this.goToTop} className="v-pad btn btn-empty">
               to top
             </button>
           </div>
@@ -408,6 +430,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   render() {
+    let {image, showImage, byAuth, bySlide} = this.state;
     const {files, reviewer} = this.props;
     const submitter = this.renderSubmit();
     const fileList = this.renderFiles();
@@ -426,17 +449,27 @@ class SlideReviewPage extends BaseComponent {
               {reviewer}
             </small>
           </h1>
+          <div id="grid-holder">
+            <div id="grid" onMouseDown={this.clearGrid}>
+              {fileList}
+            </div>
+            {submitter}
+          </div>
 
           <div id="review-view" className="table">
             <div className="row">
-              <div className="col-md-4 hide-md-4 no-float full-height">
+              <div className="col-md-5 full-height-md no-float">
+                <h2 className="clearfix">context</h2>
                 {context}
               </div>
-              <div className="col-md-8">
-                <div id="grid" onMouseDown={this.clearGrid}>
-                  {fileList}
+
+              {showImage && (
+                <div id="comment-image">
+                  <Img className="big-slide" source={image} />
                 </div>
-                {submitter}
+              )}
+
+              <div className="col-md-7">
                 {cmtHead}
                 {comments}
               </div>
