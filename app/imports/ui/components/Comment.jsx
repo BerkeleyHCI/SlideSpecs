@@ -48,7 +48,7 @@ class Comment extends BaseComponent {
           this.goToElementId('c' + _id);
         };
         return (
-          <a className="internal info" onClick={scrollView}>
+          <a className="internal reply" onClick={scrollView}>
             {props.children}
           </a>
         );
@@ -122,7 +122,7 @@ class Comment extends BaseComponent {
     const {author, _id} = this.props;
     const commText = document.getElementsByClassName('comment-text')[0];
     if (commText) {
-      commText.scrollIntoView();
+      commText.scrollIntoView(false);
       commText.value += ` [${author}'s comment](#c${_id})`;
       commText.focus();
     }

@@ -474,7 +474,6 @@ class SlideReviewPage extends BaseComponent {
             <div id="grid" onMouseDown={this.clearGrid}>
               {fileList}
             </div>
-            {submitter}
           </div>
 
           <div id="review-view" className="table">
@@ -490,6 +489,7 @@ class SlideReviewPage extends BaseComponent {
               <div className="col-md-5 full-height-md no-float">{context}</div>
               <div className="col-md-7">
                 {cmtHead}
+                {submitter}
                 {comments}
               </div>
             </div>
