@@ -29,6 +29,8 @@ Comments.schema = new SimpleSchema({
   content: {type: String},
   session: {type: String},
   slides: {type: [SlideSchema]},
+  agree: {type: [String], defaultValue: []},
+  discuss: {type: [String], defaultValue: []},
 });
 
 Comments.attachSchema(Comments.schema);

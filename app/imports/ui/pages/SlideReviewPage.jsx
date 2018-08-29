@@ -5,6 +5,8 @@ import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
+//import $ from 'jquery';
+
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileReview from '../components/FileReview.jsx';
@@ -13,12 +15,14 @@ import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
+import {Transition} from 'react-spring';
 
 class SlideReviewPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
       redirectTo: null,
+      activeComment: null,
       sorter: 'created',
       filter: 'time',
       invert: true,
@@ -106,6 +110,14 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
+  setActiveComment = ac => {
+    this.setState({activeComment: ac});
+  };
+
+  clearActiveComment = () => {
+    this.setState({activeComment: ''});
+  };
+
   setByAuth = e => {
     const {byAuth} = this.state;
     const newAuth = e.target.getAttribute('data-auth');
@@ -161,7 +173,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   getText = () => {
-    const copyText = document.getElementsByClassName('code')[0];
+    const copyText = document.getElementsByClassName('comment-text')[0];
     if (copyText) {
       return copyText.value;
     } else {
@@ -170,7 +182,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearText = () => {
-    const copyText = document.getElementsByClassName('code')[0];
+    const copyText = document.getElementsByClassName('comment-text')[0];
     copyText.value = '';
     copyText.focus();
   };
@@ -272,7 +284,7 @@ class SlideReviewPage extends BaseComponent {
           type="text"
           placeholder="write your feedback here. press enter to submit."
           onKeyDown={this.addComment}
-          className="code"
+          className="code comment-text"
         />
       </div>
     );
@@ -308,6 +320,8 @@ class SlideReviewPage extends BaseComponent {
 
     const timeSort = setSort('created', 'time');
     const authSort = setSort(x => x.author.toLowerCase(), 'auth');
+    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
+    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
     const slideSort = setSort(
       x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
       'slide',
@@ -315,36 +329,39 @@ class SlideReviewPage extends BaseComponent {
 
     return (
       <div className="blue float-at-top">
-        <h2 className="clearfix">
-          comments
-          <div className="btn-m-group pull-right">
-            <button onClick={timeSort} className="btn btn-menu">
-              time {filter === 'time' ? '✔' : ''}
-            </button>
-            <button className="btn btn-menu" onClick={authSort}>
-              author {filter === 'auth' ? '✔' : ''}
-            </button>
-            <button className="btn btn-menu" onClick={slideSort}>
-              slide {filter === 'slide' ? '✔' : ''}
-            </button>
-            <button className="btn btn-menu" onClick={invFn}>
-              order {invert ? '▼' : '▲'}
-            </button>
-          </div>
-        </h2>
+        <div className="btn-m-group btns-group">
+          <button onClick={timeSort} className="btn btn-menu">
+            time {filter === 'time' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={authSort}>
+            auth {filter === 'auth' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={slideSort}>
+            slide {filter === 'slide' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={agreeSort}>
+            agree {filter === 'agree' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={flagSort}>
+            flag {filter === 'flag' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={invFn}>
+            order {invert ? '▼' : '▲'}
+          </button>
+        </div>
       </div>
     );
   };
 
   goToTop = () => {
-    const view = document.getElementById('grid');
+    const view = document.getElementById('grid-holder');
     if (view) {
       view.scrollIntoView();
     }
   };
 
   renderComments = () => {
-    const {sorter, invert, byAuth, bySlide} = this.state;
+    const {sorter, invert, activeComment, byAuth, bySlide} = this.state;
     const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
@@ -370,6 +387,7 @@ class SlideReviewPage extends BaseComponent {
 
       const items = csort.map((c, i) => {
         c.last = i === csort.length - 1; // no final hr
+        c.active = c._id === activeComment; // highlight
         const context = this.renderSlideTags(c.slides, true);
         return {
           ...c,
@@ -379,6 +397,8 @@ class SlideReviewPage extends BaseComponent {
           setModal,
           clearModal,
           handleAuthor: this.setByAuth,
+          setActive: this.setActiveComment,
+          unsetActive: this.clearActiveComment,
         };
       });
 
@@ -449,6 +469,7 @@ class SlideReviewPage extends BaseComponent {
               {reviewer}
             </small>
           </h1>
+
           <div id="grid-holder">
             <div id="grid" onMouseDown={this.clearGrid}>
               {fileList}
@@ -458,17 +479,15 @@ class SlideReviewPage extends BaseComponent {
 
           <div id="review-view" className="table">
             <div className="row">
-              <div className="col-md-5 full-height-md no-float">
-                <h2 className="clearfix">context</h2>
-                {context}
-              </div>
-
-              {showImage && (
-                <div id="comment-image">
-                  <Img className="big-slide" source={image} />
-                </div>
-              )}
-
+              <Transition enter={{opacity: 1}} leave={{opacity: 0}}>
+                {showImage &&
+                  (styles => (
+                    <div id="comment-image" style={styles}>
+                      <Img source={image} />
+                    </div>
+                  ))}
+              </Transition>
+              <div className="col-md-5 full-height-md no-float">{context}</div>
               <div className="col-md-7">
                 {cmtHead}
                 {comments}

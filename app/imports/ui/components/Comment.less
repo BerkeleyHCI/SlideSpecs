@@ -38,6 +38,14 @@ div.comment {
       visibility: visible;
       .no-transition();
     }
+    .meta {
+      opacity: 0.8;
+    }
+  }
+
+  .meta {
+    padding-left: 1.5em;
+    opacity: 0.3;
   }
 
   .author {
@@ -57,7 +65,7 @@ div.comment {
   }
 
   .hover-menu {
-    z-index: 5;
+    z-index: 2;
     display: block;
     margin-top: -2.15em;
     position: relative;
@@ -76,5 +84,51 @@ div.comment {
 
   p {
     padding-left: 4px;
+  }
+}
+
+div.comment.editing {
+  background-color: @color-rare;
+  button {
+    border-radius: 0;
+    background-color: @color-rare;
+  }
+  button:hover {
+    background-color: darken(@color-rare, 4%);
+  }
+  textarea {
+    background-color: darken(@color-rare, 4%);
+    margin-bottom: 1em;
+    padding: 1em;
+  }
+}
+
+.active-comment {
+  background-color: @color-rare;
+}
+
+.markdown-comment {
+  padding: 0em;
+  * {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  ul,
+  ol {
+    padding-left: 1em;
+  }
+  ul {
+    list-style: square inside;
+  }
+  ol {
+    list-style: decimal inside;
+  }
+  a {
+    border-bottom: 1px solid @color-rare;
+    color: @color-well;
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
   }
 }

@@ -3,28 +3,17 @@ import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Markdown from 'react-markdown';
 import {
+  agreeComment,
+  discussComment,
   createComment,
   updateComment,
   deleteComment,
 } from '../../api/comments/methods.js';
 
-function CommentButton({icon, txt, handleClick, master}) {
-  return (
-    <button
-      title={txt}
-      data-toggle="tooltip"
-      data-placement="top"
-      onClick={handleClick}
-      className={`btn btn-empty ${master && 'btn-user'}`}>
-      <span className={'icon-' + icon} />
-    </button>
-  );
-}
-
 class Comment extends BaseComponent {
   constructor(props) {
     super(props);
-    this.state = {fading: false};
+    this.state = {editing: false};
   }
 
   componentDidMount = () => {
@@ -37,8 +26,40 @@ class Comment extends BaseComponent {
     });
   };
 
-  componentWillUnmount = () => {
-    console.log('unmount');
+  //componentWillUnmount = () => { };
+
+  goToElementId = id => {
+    const view = document.getElementById(id);
+    if (view) {
+      // Todo add active highligt
+      // Or scrolling to center
+      // Or hover action for preview
+      view.scrollIntoView({block: 'center', inline: 'center'});
+    }
+  };
+
+  renderers = {
+    link: props => {
+      if (props.href[0] == '#') {
+        const scrollView = e => {
+          e.preventDefault();
+          const _id = props.href.substring(2);
+          this.props.setActive(_id);
+          this.goToElementId('c' + _id);
+        };
+        return (
+          <a className="internal info" onClick={scrollView}>
+            {props.children}
+          </a>
+        );
+      } else {
+        return (
+          <a href={props.href} target="_blank">
+            {props.children}
+          </a>
+        );
+      }
+    },
   };
 
   confirmRemoveComment = () => {
@@ -46,7 +67,7 @@ class Comment extends BaseComponent {
     setModal({
       accept: this.removeComment,
       deny: clearModal,
-      mtitle: 'delete comment?',
+      mtitle: 'Delete this comment?',
       mtext: content,
       act: 'delete',
       isOpen: true,
@@ -59,32 +80,98 @@ class Comment extends BaseComponent {
     this.props.clearModal();
   };
 
-  editComment = () => {
-    // TODO - update for comments from files
-    const {fileId, fileName} = this.props;
-    let validName = /[^a-zA-Z0-9 \.:\+()\-_%!&]/gi;
-    let newName = window.prompt('New file name?', fileName) || '';
-    let trimmed = newName.replace(validName, '-').trim();
-    if (trimmed != '') {
-      renameFile.call({fileId, newName: trimmed});
+  getText = () => {
+    const {_id} = this.props;
+    const copyText = document.getElementsByClassName('code' + _id)[0];
+    if (copyText) {
+      return copyText.value;
     } else {
-      console.error('bad/empty file name');
+      return '';
     }
+  };
+
+  setEdit = () => {
+    this.setState({editing: true});
+    const {_id} = this.props;
+    setTimeout(() => {
+      const copyText = document.getElementsByClassName('code' + _id)[0];
+      copyText.focus();
+    }, 70);
+  };
+
+  clearEdit = () => {
+    this.setState({editing: false});
+  };
+
+  handleEdit = e => {
+    const {reviewer, _id} = this.props;
+    const newContent = this.getText().trim();
+    const commentFields = {
+      author: reviewer,
+      commentId: _id,
+      newContent,
+    };
+
+    if (newContent && e.keyCode === 13 && !e.shiftKey) {
+      updateComment.call(commentFields);
+      this.clearEdit();
+    }
+  };
+
+  handleReply = () => {
+    const {author, _id} = this.props;
+    const commText = document.getElementsByClassName('comment-text')[0];
+    if (commText) {
+      commText.scrollIntoView();
+      commText.value += ` [${author}'s comment](#c${_id})`;
+      commText.focus();
+    }
+  };
+
+  handleAgree = () => {
+    const {reviewer, _id} = this.props;
+    const commentFields = {
+      author: reviewer,
+      commentId: _id,
+    };
+
+    if (reviewer && _id) {
+      agreeComment.call(commentFields);
+    }
+  };
+
+  handleDiscuss = () => {
+    const {reviewer, _id} = this.props;
+    const commentFields = {
+      author: reviewer,
+      commentId: _id,
+    };
+
+    if (reviewer && _id) {
+      discussComment.call(commentFields);
+    }
+  };
+
+  extractCommentData = x => {
+    return {
+      _id: x.getAttribute('data-id'),
+      auth: x.getAttribute('data-auth'),
+    };
   };
 
   pubButtons = [
     {
-      handleClick: console.log,
+      handleClick: this.handleReply,
       icon: 'reply',
       txt: 'reply',
     },
     {
-      handleClick: console.log,
+      handleClick: this.handleAgree,
       icon: 'good',
       txt: 'agree',
     },
     {
-      handleClick: console.log,
+      handleClick: this.handleDiscuss,
       icon: 'flag',
       txt: 'discuss',
     },
@@ -92,7 +179,7 @@ class Comment extends BaseComponent {
 
   privButtons = [
     {
-      handleClick: console.log,
+      handleClick: this.setEdit,
       master: true,
       icon: 'edit',
       txt: 'edit',
@@ -105,20 +192,49 @@ class Comment extends BaseComponent {
     },
   ];
 
-  render() {
-    const {hover} = this.state;
+  renderMeta = (tag, users) => {
+    return (
+      users.length > 0 && (
+        <span className="meta">
+          <strong> {tag}: </strong>
+          {users.join(', ')}
+        </span>
+      )
+    );
+  };
+
+  renderCommentButton = ({icon, key, txt, handleClick, master}) => {
+    const {reviewer, _id} = this.props;
+    return (
+      <button
+        key={key}
+        title={txt}
+        data-id={_id}
+        data-auth={reviewer}
+        data-toggle="tooltip"
+        data-placement="top"
+        onClick={handleClick}
+        className={`btn btn-empty ${master && 'btn-user'}`}>
+        <span className={'icon-' + icon} />
+      </button>
+    );
+  };
+
+  renderComment = () => {
     const {
+      _id,
       author,
-      style,
       content,
       created,
+      agree,
+      active,
+      discuss,
       context,
       last,
       reviewer,
       handleAuthor,
     } = this.props;
     const master = author === reviewer;
-
     let bData;
     if (master) {
       bData = [...this.pubButtons, ...this.privButtons];
@@ -127,10 +243,15 @@ class Comment extends BaseComponent {
     }
 
     return (
-      <div style={style} className={'clearfix comment'}>
+      <div
+        id={'c' + _id}
+        onBlur={this.clearEdit}
+        className={'clearfix comment ' + (active ? 'active-comment' : '')}>
         <div className="hover-menu">
           <div className="btn-group btns-empty">
-            {bData.map((button, i) => <CommentButton {...button} key={i} />)}
+            {bData.map((button, i) =>
+              this.renderCommentButton({...button, key: i}),
+            )}
           </div>
         </div>
 
@@ -138,12 +259,48 @@ class Comment extends BaseComponent {
         <strong data-auth={author} className="author" onClick={handleAuthor}>
           {author}
         </strong>
-        <small> {created.toLocaleTimeString()} </small>
+        <small>
+          {created.toLocaleTimeString()}
+          {agree && this.renderMeta('agreed', agree)}
+          {discuss && this.renderMeta('flagged', discuss)}
+        </small>
+
         <br />
-        <Markdown source={content} />
+        <Markdown
+          className="markdown-comment"
+          source={content}
+          renderers={this.renderers}
+        />
+
         {!last && <hr />}
       </div>
     );
+  };
+
+  renderEditor = () => {
+    const {_id, author, content} = this.props;
+    return (
+      <div onBlur={this.clearEdit} className="clearfix comment editing">
+        <strong>{author}</strong>
+        <i> editing... </i>
+        <button onClick={this.clearEdit} className="btn pull-right">
+          cancel
+        </button>
+        <br />
+        <textarea
+          type="text"
+          onBlur={this.clearEdit}
+          onKeyDown={this.handleEdit}
+          defaultValue={content}
+          className={'code' + _id}
+        />
+      </div>
+    );
+  };
+
+  render() {
+    const {editing} = this.state;
+    return editing ? this.renderEditor() : this.renderComment();
   }
 }
 

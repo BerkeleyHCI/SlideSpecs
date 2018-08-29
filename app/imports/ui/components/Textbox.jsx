@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from './BaseComponent.jsx';
 
+// Auto-resize fix
+// https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
+
 class Textbox extends BaseComponent {
   constructor(props) {
     super(props);

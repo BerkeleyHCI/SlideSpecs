@@ -20,6 +20,7 @@ export const createComment = new ValidatedMethod({
     slides: {type: [SlideSchema]},
   }).validator(),
   run({author, content, session, slides}) {
+    // TODO check that the session the slides exists
     return Comments.insert({
       created: Date.now(),
       author,
@@ -30,7 +31,70 @@ export const createComment = new ValidatedMethod({
   },
 });
 
-export const renameComment = new ValidatedMethod({
+export const agreeComment = new ValidatedMethod({
+  name: 'comments.agree',
+  validate: new SimpleSchema({
+    commentId: {type: String},
+    author: {type: String},
+  }).validator(),
+  run({author, commentId}) {
+    author = author.trim();
+    const comment = Comments.findOne(commentId);
+    if (!comment) {
+      return false;
+    }
+
+    let data;
+    if (!comment.agree) {
+      data = [];
+    } else {
+      data = comment.agree;
+    }
+
+    let newAgree;
+    const agreeIdx = data.indexOf(author);
+    if (agreeIdx >= 0) {
+      data.splice(agreeIdx, 1);
+      newAgree = data;
+    } else {
+      newAgree = data.concat([author]);
+    }
+
+    Comments.update(commentId, {$set: {agree: newAgree}});
+  },
+});
+
+export const discussComment = new ValidatedMethod({
+  name: 'comments.discuss',
+  validate: new SimpleSchema({
+    commentId: {type: String},
+    author: {type: String},
+  }).validator(),
+  run({author, commentId}) {
+    author = author.trim();
+    const comment = Comments.findOne(commentId);
+    if (!comment) {
+      return false;
+    }
+
+    if (!comment.discuss) {
+      comment.discuss = [];
+    }
+
+    let newDiscuss;
+    const discussIdx = comment.discuss.indexOf(author);
+    if (discussIdx >= 0) {
+      comment.discuss.splice(discussIdx, 1);
+      newDiscuss = comment.discuss;
+    } else {
+      newDiscuss = comment.discuss.concat([author]);
+    }
+
+    Comments.update(commentId, {$set: {discuss: newDiscuss}});
+  },
+});
+
+export const updateComment = new ValidatedMethod({
   name: 'comments.update',
   validate: new SimpleSchema({
     author: {type: String},
@@ -39,7 +103,7 @@ export const renameComment = new ValidatedMethod({
   }).validator(),
   run({author, commentId, newContent}) {
     const comment = Comments.findOne(commentId);
-    if (comment.author == author) {
+    if (comment && comment.author == author) {
       Comments.update(commentId, {$set: {content: newContent}});
     }
   },
@@ -53,7 +117,7 @@ export const deleteComment = new ValidatedMethod({
   }).validator(),
   run({author, commentId}) {
     const comment = Comments.findOne(commentId);
-    if (comment.author == author) {
+    if (comment && comment.author == author) {
       Comments.remove(commentId);
     }
   },
