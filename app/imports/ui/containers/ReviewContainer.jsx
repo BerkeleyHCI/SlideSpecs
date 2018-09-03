@@ -32,21 +32,20 @@ export default class ReviewContainer extends BaseComponent {
 
   renderName = () => {
     return (
-      <div className="padded">
-        <div className=" alert">
-          <h3>name entry</h3>
-          please enter your name before providing feedback:
-          <hr />
-          <input
-            type="text"
-            placeholder="enter your name here"
-            className="code"
-          />
-          <hr />
-          <div className="btns-group">
-            <button onClick={this.setName} className="btn btn-menu">
-              set name
-            </button>
+      <div>
+        <h1 className="nav-head clearfix">share feedback</h1>
+        <div className="h-pad">
+          <div className="sized6 alert">
+            <h3>name entry</h3>
+            please enter your name before providing feedback:
+            <hr />
+            <input type="text" placeholder="your name" className="code" />
+            <hr />
+            <div className="btns-group">
+              <button onClick={this.setName} className="btn btn-menu">
+                set name
+              </button>
+            </div>
           </div>
         </div>
       </div>

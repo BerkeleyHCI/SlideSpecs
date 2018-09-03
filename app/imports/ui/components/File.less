@@ -53,18 +53,19 @@ div.file-item {
 
 div.file-item.file-item-review {
   margin-bottom: 4px;
-  margin-right: 4px;
+  margin-right: 0px;
+  margin-left: 4px;
 
-  @media only screen and (min-width: 1424px) {
+  @media only screen and (min-width: 1524px) {
     width: calc(19%);
   }
-  @media only screen and (min-width: 992px) and (max-width: 1424px) {
+  @media only screen and (min-width: 1152px) and (max-width: 1524px) {
     width: calc(24%);
   }
-  @media only screen and (min-width: 592px) and (max-width: 992px) {
+  @media only screen and (min-width: 692px) and (max-width: 1152px) {
     width: calc(31.5%);
   }
-  @media only screen and (max-width: 592px) {
+  @media only screen and (max-width: 692px) {
     width: calc(29%);
   }
 
@@ -105,7 +106,7 @@ div.reviewView {
     display: table;
     width: 100%;
     margin-top: -10px;
-    padding: 10px 0 0 0; /*set left/right padding according to needs*/
+    padding: 0px; /*set left/right padding according to needs*/
     box-sizing: border-box;
     height: 100%;
     .row {
@@ -132,8 +133,8 @@ div.reviewView {
     color: darken(@color-primary, 10%);
   }
 
-  .clear-icon:hover:before {
-    content: 'click to clear - ';
+  .clear-icon:hover:after {
+    content: ' ⌫';
   }
 
   kbd {
@@ -151,16 +152,9 @@ div.reviewView {
     }
   }
 
-  h1 {
-    padding: 15px;
-    small {
-      line-height: 2;
-    }
-  }
-
   .blue {
     background: @color-tertiary;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
   }
 
   .full-height {
@@ -177,17 +171,22 @@ div.reviewView {
     border-radius: 4px 4px 0px 0px;
   }
 
+  #review-view {
+    max-width: 2000px;
+    margin: 0px auto;
+  }
+
   #grid-holder {
-    margin: 15px;
+    margin: 0px;
   }
 
   #grid {
     background: darken(@color-empty, 2%);
-    max-height: 50vh;
+    padding: 4px 0px;
+    max-height: 40vh;
     width: 100%;
     position: fixed;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding: 15px;
   }
 }

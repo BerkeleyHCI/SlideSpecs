@@ -354,9 +354,9 @@ class SlideReviewPage extends BaseComponent {
   };
 
   goToTop = () => {
-    const view = document.getElementById('grid-holder');
-    if (view) {
-      view.scrollIntoView();
+    const view = document.getElementsByClassName('nav-head');
+    if (view[0]) {
+      view[0].scrollIntoView();
     }
   };
 
@@ -411,6 +411,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderContext = () => {
+    const fileList = this.renderFiles();
     let {image, byAuth, bySlide} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
@@ -434,6 +435,11 @@ class SlideReviewPage extends BaseComponent {
     return (
       <div className="float-at-top">
         <Img className="big-slide" source={image} />
+        <div id="grid-holder">
+          <div id="grid" onMouseDown={this.clearGrid}>
+            {fileList}
+          </div>
+        </div>
         <div className="alert center">
           <Clock />
           <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
@@ -453,7 +459,6 @@ class SlideReviewPage extends BaseComponent {
     let {image, showImage, byAuth, bySlide} = this.state;
     const {files, reviewer} = this.props;
     const submitter = this.renderSubmit();
-    const fileList = this.renderFiles();
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
@@ -461,7 +466,7 @@ class SlideReviewPage extends BaseComponent {
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
-          <h1 className="clearfix">
+          <h1 className="nav-head clearfix">
             share feedback
             <small
               onClick={this.clearReviewer}
@@ -470,22 +475,8 @@ class SlideReviewPage extends BaseComponent {
             </small>
           </h1>
 
-          <div id="grid-holder">
-            <div id="grid" onMouseDown={this.clearGrid}>
-              {fileList}
-            </div>
-          </div>
-
           <div id="review-view" className="table">
             <div className="row">
-              <Transition enter={{opacity: 1}} leave={{opacity: 0}}>
-                {showImage &&
-                  (styles => (
-                    <div id="comment-image" style={styles}>
-                      <Img source={image} />
-                    </div>
-                  ))}
-              </Transition>
               <div className="col-md-5 full-height-md no-float">{context}</div>
               <div className="col-md-7">
                 {cmtHead}
@@ -501,5 +492,7 @@ class SlideReviewPage extends BaseComponent {
     );
   }
 }
+
+//<Transition enter={{opacity: 1}} leave={{opacity: 0}}> {showImage && (styles => ( <div id="comment-image" style={styles}> <Img source={image} /> </div>))} </Transition>
 
 export default SlideReviewPage;
