@@ -33,9 +33,9 @@ export default class ReviewContainer extends BaseComponent {
   renderName = () => {
     return (
       <div>
-        <h1 className="nav-head clearfix">share feedback</h1>
+        <h2 className="nav-head clearfix">share feedback</h2>
         <div className="h-pad">
-          <div className="sized6 alert">
+          <div className="alert">
             <h3>name entry</h3>
             please enter your name before providing feedback:
             <hr />

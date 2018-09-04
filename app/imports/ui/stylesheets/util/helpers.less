@@ -14,8 +14,7 @@
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
+  user-select: none;
 }
 
 .yes-select() {
@@ -41,4 +40,16 @@
   -webkit-transition: none;
   -o-transition: color 0 ease-in;
   transition: none;
+}
+
+.no-break-out() {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }

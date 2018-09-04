@@ -1,12 +1,14 @@
 @import './utils.less';
 
-h1.nav-head {
-  .font-m2;
-  .title-caps;
+.nav-head {
   padding: 15px;
   background-color: @color-ancillary;
   color: @color-raw;
   margin-bottom: 15px;
+  &:hover small {
+    color: @color-raw;
+  }
+
   small {
     color: @color-danger;
     line-height: 2;

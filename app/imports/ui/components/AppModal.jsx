@@ -33,8 +33,8 @@ AppModal.propTypes = {
 };
 
 AppModal.defaultProps = {
-  mtitle: 'FILLER TITLE',
-  mtext: 'FILLER TEXT',
+  mtitle: '',
+  mtext: '',
   accept: console.log,
   deny: console.log,
   act: '',

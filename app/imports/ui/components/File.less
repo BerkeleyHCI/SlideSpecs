@@ -133,8 +133,8 @@ div.reviewView {
     color: darken(@color-primary, 10%);
   }
 
-  .clear-icon:hover:after {
-    content: ' ⌫';
+  .clear-icon:hover:before {
+    content: '× ';
   }
 
   kbd {
@@ -152,17 +152,12 @@ div.reviewView {
     }
   }
 
-  .blue {
-    background: @color-tertiary;
-    padding-bottom: 15px;
-  }
-
   .full-height {
     height: 100%;
   }
   .float-at-top {
     position: sticky;
-    z-index: 1;
+    z-index: 5;
     top: 0px;
   }
 
@@ -188,5 +183,25 @@ div.reviewView {
     position: fixed;
     overflow-y: scroll;
     overflow-x: hidden;
+  }
+
+  .submitter {
+    padding: 0px;
+    p {
+      padding: 10px 15px;
+    }
+    hr {
+      margin: 0px;
+    }
+    textarea {
+      background: darken(@color-empty, 2%);
+      padding: 15px;
+      &:hover {
+        background: darken(@color-empty, 4%);
+      }
+      &:focus {
+        background: darken(@color-empty, 6%);
+      }
+    }
   }
 }

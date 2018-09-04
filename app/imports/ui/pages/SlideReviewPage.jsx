@@ -86,6 +86,14 @@ class SlideReviewPage extends BaseComponent {
 
   componentDidUpdate = this.handleLoad;
   componentDidMount = () => {
+    // autoresize textareas w/ jquery plugin
+    //const addComment = this.addComment;
+    $('textarea').autoResize({
+      onResize: textarea => {
+        textarea.unbind('keydown').bind('keydown', this.addComment);
+      },
+    });
+
     this.handleLoad();
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -182,7 +190,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearText = () => {
-    const copyText = document.getElementsByClassName('comment-text')[0];
+    const copyText = document.getElementsByClassName('comment-text')[1];
     copyText.value = '';
     copyText.focus();
   };
@@ -273,22 +281,70 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
+  renderCommentFilter = () => {
+    const submitter = this.renderSubmit();
+
+    const {files} = this.props;
+    const {invert, filter} = this.state;
+    const invFn = () => this.setState({invert: !invert});
+    const setSort = (s, f) => {
+      return () => this.setState({sorter: s, filter: f});
+    };
+
+    const timeSort = setSort('created', 'time');
+    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
+    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
+    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
+    const slideSort = setSort(
+      x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
+      'slide',
+    );
+
+    //<button className="btn btn-menu" onClick={flagSort}>
+    //flag {filter === 'flag' ? '✔' : ''}
+    //</button>
+
+    return (
+      <div className="float-at-top">
+        <div className="btn-m-group btns-group">
+          <button onClick={timeSort} className="btn btn-menu">
+            time {filter === 'time' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={authSort}>
+            auth {filter === 'auth' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={slideSort}>
+            slide {filter === 'slide' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={agreeSort}>
+            agree {filter === 'agree' ? '✔' : ''}
+          </button>
+          <button className="btn btn-menu" onClick={invFn}>
+            {invert ? '▼' : '▲'}
+          </button>
+        </div>
+        {submitter}
+      </div>
+    );
+  };
+
   renderSubmit = () => {
     let {filtered} = this.state;
     let context = this.renderSlideTags(filtered);
     return (
-      <div className="alert">
-        {context}
+      <div className="submitter alert">
+        <p>{context}</p>
         <hr />
         <textarea
           type="text"
-          placeholder="write your feedback here. press enter to submit."
-          onKeyDown={this.addComment}
+          placeholder="feedback here. enter to submit, shift-enter for multi-lines."
           className="code comment-text"
         />
       </div>
     );
   };
+
+  //onKeyDown={this.addComment}
 
   renderFiles = () => {
     const {files} = this.props;
@@ -309,49 +365,6 @@ class SlideReviewPage extends BaseComponent {
   };
 
   //handleMouseOut={this.handleSlideOut}
-
-  renderCommentFilter = () => {
-    const {files} = this.props;
-    const {invert, filter} = this.state;
-    const invFn = () => this.setState({invert: !invert});
-    const setSort = (s, f) => {
-      return () => this.setState({sorter: s, filter: f});
-    };
-
-    const timeSort = setSort('created', 'time');
-    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
-    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
-    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
-    const slideSort = setSort(
-      x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
-      'slide',
-    );
-
-    return (
-      <div className="blue float-at-top">
-        <div className="btn-m-group btns-group">
-          <button onClick={timeSort} className="btn btn-menu">
-            time {filter === 'time' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={authSort}>
-            auth {filter === 'auth' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={slideSort}>
-            slide {filter === 'slide' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={agreeSort}>
-            agree {filter === 'agree' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={flagSort}>
-            flag {filter === 'flag' ? '✔' : ''}
-          </button>
-          <button className="btn btn-menu" onClick={invFn}>
-            order {invert ? '▼' : '▲'}
-          </button>
-        </div>
-      </div>
-    );
-  };
 
   goToTop = () => {
     const view = document.getElementsByClassName('nav-head');
@@ -458,7 +471,6 @@ class SlideReviewPage extends BaseComponent {
   render() {
     let {image, showImage, byAuth, bySlide} = this.state;
     const {files, reviewer} = this.props;
-    const submitter = this.renderSubmit();
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
@@ -466,21 +478,20 @@ class SlideReviewPage extends BaseComponent {
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
-          <h1 className="nav-head clearfix">
+          <h2 className="nav-head clearfix">
             share feedback
             <small
               onClick={this.clearReviewer}
               className="pull-right clear-icon">
               {reviewer}
             </small>
-          </h1>
+          </h2>
 
           <div id="review-view" className="table">
             <div className="row">
-              <div className="col-md-5 full-height-md no-float">{context}</div>
-              <div className="col-md-7">
+              <div className="col-md-6 full-height-md no-float">{context}</div>
+              <div className="col-md-6">
                 {cmtHead}
-                {submitter}
                 {comments}
               </div>
             </div>

@@ -141,6 +141,9 @@ img {
 }
 .tooltip {
   .type-regular;
+  * {
+    z-index: 100;
+  }
 }
 .tooltip.top {
   margin-top: 4px;
@@ -149,6 +152,7 @@ img {
   border: 1px solid @color-medium-rare;
   background-color: @color-danger;
   padding-left: 4px;
+  z-index: 100;
   opacity: 1;
 }
 .modal-dialog {

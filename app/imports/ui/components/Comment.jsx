@@ -18,8 +18,8 @@ class Comment extends BaseComponent {
 
   componentDidMount = () => {
     const togs = $('[data-toggle="tooltip"]');
-    //togs.tooltip(); // enable
-    //togs.tooltip('show'); // for visual debugging
+    togs.tooltip(); // enable
+    togs.tooltip('show'); // for visual debugging
     togs.tooltip({
       trigger: 'hover',
       template: '<div class="tooltip"><div class="tooltip-inner"></div></div>',
@@ -120,7 +120,7 @@ class Comment extends BaseComponent {
 
   handleReply = () => {
     const {author, _id} = this.props;
-    const commText = document.getElementsByClassName('comment-text')[0];
+    const commText = document.getElementsByClassName('comment-text')[1];
     if (commText) {
       commText.scrollIntoView(false);
       commText.value += ` [${author}'s comment](#c${_id})`;
