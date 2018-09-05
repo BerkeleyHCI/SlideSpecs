@@ -513,7 +513,10 @@ class SlideReviewPage extends BaseComponent {
             </small>
           </h2>
 
-          <div id="review-view" onClick={this.clearButtonBG} className="table">
+          <div
+            id="review-view"
+            onMouseDown={this.clearButtonBG}
+            className="table">
             <div className="row">
               <div className="col-md-5 full-height-md no-float">{context}</div>
               <div className="col-md-7">
