@@ -8,15 +8,12 @@ class ConvertPage extends Component {
     return (
       <div className="main-content">
         <h1>
-          <Link to="/">feedback</Link>
+          <Link to="/"> ‹ </Link>
+          feedback
         </h1>
-
         <h2>slide conversion help</h2>
-
         <div className="alert">
           <ConvertInstructions />
-          <hr />
-          then, select and upload all the images at once.
         </div>
       </div>
     );

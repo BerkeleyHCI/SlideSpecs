@@ -9,6 +9,7 @@ import _ from 'lodash';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
+import Input from '../components/Input.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
@@ -418,6 +419,13 @@ class SlideReviewPage extends BaseComponent {
       return (
         <div id="comments-list" className="alert">
           {items.map(i => <Comment {...i} />)}
+          {items && (
+            <div className="padded btns-group">
+              <button onClick={this.goToTop} className="padded btn btn-empty">
+                to top
+              </button>
+            </div>
+          )}
         </div>
       );
     }
@@ -445,23 +453,18 @@ class SlideReviewPage extends BaseComponent {
       );
     };
 
+    //<Clock />
+
     return (
       <div className="float-at-top">
+        <div className="alert">
+          <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
+          <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
+        </div>
         <Img className="big-slide" source={image} />
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
             {fileList}
-          </div>
-        </div>
-        <div className="alert center">
-          <Clock />
-          <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
-          <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
-          <hr />
-          <div className="btns-group">
-            <button onClick={this.goToTop} className="v-pad btn btn-empty">
-              to top
-            </button>
           </div>
         </div>
       </div>

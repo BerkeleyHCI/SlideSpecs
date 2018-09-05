@@ -3,19 +3,16 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {Session} from 'meteor/session.js';
 
+import Input from '../components/Input.jsx';
 import Message from '../components/Message.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import SlideReviewPage from '../pages/SlideReviewPage.jsx';
 
 export default class ReviewContainer extends BaseComponent {
-  getText = () => {
-    var copyText = document.getElementsByClassName('code')[0];
-    if (copyText) {
-      return copyText.value;
-    } else {
-      return '';
-    }
-  };
+  constructor(props) {
+    super(props);
+    this.inRef = React.createRef();
+  }
 
   componentDidMount = () => {
     const saved = localStorage.getItem('feedbacks.reviewer');
@@ -25,7 +22,7 @@ export default class ReviewContainer extends BaseComponent {
   };
 
   setName = () => {
-    const name = this.getText();
+    const name = this.inRef.current.value;
     localStorage.setItem('feedbacks.reviewer', name);
     Session.set('reviewer', name);
   };
@@ -39,7 +36,11 @@ export default class ReviewContainer extends BaseComponent {
             <h3>name entry</h3>
             please enter your name before providing feedback:
             <hr />
-            <input type="text" placeholder="your name" className="code" />
+            <Input
+              inRef={this.inRef}
+              handleSubmit={this.setName}
+              defaultValue="your name"
+            />
             <hr />
             <div className="btns-group">
               <button onClick={this.setName} className="btn btn-menu">

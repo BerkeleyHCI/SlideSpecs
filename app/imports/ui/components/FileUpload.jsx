@@ -13,7 +13,9 @@ class FileUpload extends Component {
     return (
       <div className="file-item">
         <h4>
-          {fileName} <small> {fileSize}</small>
+          {fileName}
+          <br />
+          <small> {fileSize}</small>
         </h4>
         <div className="slide-container">
           <div className="overlay">
