@@ -1,5 +1,17 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
+@keyframes pulse {
+  0% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.89;
+  }
+}
+
 div.file-item {
   position: absolute;
   margin-bottom: 2em;
@@ -35,11 +47,11 @@ div.file-item {
   }
 
   .overlay {
-    .font-m1;
+    .font-s3;
     z-index: 2;
     position: absolute;
-    padding: 1rem;
     background: rgba(0, 0, 0, 1);
+    padding: 0.4em 0.7em;
     color: white;
     opacity: 0;
     right: 0;
@@ -55,6 +67,7 @@ div.file-item.file-item-review {
   margin-bottom: 4px;
   margin-right: 0px;
   margin-left: 4px;
+  text-align: center;
 
   @media only screen and (min-width: 1524px) {
     width: calc(19%);
@@ -72,6 +85,22 @@ div.file-item.file-item-review {
   /*disable to allow for hover event trigger on parent item*/
   * {
     pointer-events: none;
+  }
+
+  .live {
+    position: absolute;
+    height: 100%;
+    width: 2em;
+    left: 0;
+    z-index: 5;
+    background: red;
+    opacity: 0.9;
+    animation: pulse 2s infinite ease-in-out;
+    transition: width 0.5s;
+  }
+
+  &:hover .live {
+    width: 3em;
   }
 
   outline: 1px solid @color-medium-rare;

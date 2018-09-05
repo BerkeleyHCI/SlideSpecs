@@ -200,6 +200,14 @@ class SlideReviewPage extends BaseComponent {
     this.setState({filtered: [], selected: []});
   };
 
+  clearButtonBG = e => {
+    const base = e.target.className.split()[0];
+    const matches = [/col-md-/, /table/];
+    if (matches.some(x => base.match(x))) {
+      this.clearButton();
+    }
+  };
+
   clearButton = e => {
     this.clearSelection();
     const {ds} = this.state;
@@ -347,6 +355,7 @@ class SlideReviewPage extends BaseComponent {
 
   renderFiles = () => {
     const {files} = this.props;
+    const {activeSlide} = this.state;
     return files.map((f, key) => {
       let link = Files.findOne({_id: f._id}).link('original', '//');
       return (
@@ -356,8 +365,9 @@ class SlideReviewPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          onMouseOver={this.handleSlide}
-          onMouseOut={this.handleSlideOut}
+          active={activeSlide - 1 == key}
+          handleMouse={this.handleSlide}
+          handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />
       );
@@ -503,7 +513,7 @@ class SlideReviewPage extends BaseComponent {
             </small>
           </h2>
 
-          <div id="review-view" className="table">
+          <div id="review-view" onClick={this.clearButtonBG} className="table">
             <div className="row">
               <div className="col-md-5 full-height-md no-float">{context}</div>
               <div className="col-md-7">

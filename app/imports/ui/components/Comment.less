@@ -43,6 +43,9 @@ div.comment {
     .meta {
       opacity: 0.8;
     }
+    .author {
+      box-shadow: inset 0 -2px 0 0 @color-medium;
+    }
   }
 
   .meta {
@@ -52,9 +55,9 @@ div.comment {
 
   .author {
     padding: 0 4px;
-    border-radius: 4px;
     &:hover {
-      background-color: @color-medium-rare;
+      box-shadow: inset 0 -2px 0 0 @color-well;
+      background-color: @color-rare;
     }
   }
 

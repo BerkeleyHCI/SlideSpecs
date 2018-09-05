@@ -6,6 +6,7 @@ class FileReview extends BaseComponent {
   render() {
     const {
       iter,
+      active,
       fileId,
       fileUrl,
       handleLoad,
@@ -14,12 +15,13 @@ class FileReview extends BaseComponent {
     } = this.props;
     return (
       <div
-        className="file-item file-item-review"
+        className={'file-item file-item-review ' + (active ? ' active' : '')}
         onMouseOver={handleMouse}
         onMouseOut={handleMouseOut}
         data-iter={iter}
         data-file-id={fileId}>
         <div className="slide-container">
+          {active && <div className="live" />}
           <div className="overlay">{iter}</div>
           <Img className="slide" source={fileUrl} onLoad={handleLoad} />
         </div>
