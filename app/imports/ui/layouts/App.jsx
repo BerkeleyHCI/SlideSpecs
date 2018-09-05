@@ -99,12 +99,6 @@ export default class App extends BaseComponent {
     }
   };
 
-  handleSlideEvent = data => {
-    const {session, slideNo} = data.match.params;
-    console.log(session, slideNo);
-    return null;
-  };
-
   renderContent = ({location}) => {
     this.renderSecure(); // http -> https
     const {user, reviewer, sessions, files, loading} = this.props;
@@ -132,10 +126,6 @@ export default class App extends BaseComponent {
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/share/:id" render={this.renderReview} />
-            <Route
-              path="/updateCurrentSlide/:session/:slideNo"
-              render={this.handleSlideEvent}
-            />
 
             <PrivateRoute
               exact
