@@ -1,5 +1,6 @@
 // Using iron-router to handle post request.
 
+/*
 Router.route('post', {
   path: '/eventUpdate/',
   where: 'server',
@@ -25,3 +26,4 @@ Router.route('post', {
     }
   },
 });
+ * */
