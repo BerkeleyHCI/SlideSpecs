@@ -1,5 +1,4 @@
 import {Mongo} from 'meteor/mongo';
-import {Factory} from 'meteor/factory';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 class SessionsCollection extends Mongo.Collection {
@@ -43,5 +42,3 @@ Sessions.schema = new SimpleSchema({
 });
 
 Sessions.attachSchema(Sessions.schema);
-
-Factory.define('session', Sessions, {});
