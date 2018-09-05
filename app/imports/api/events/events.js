@@ -18,8 +18,8 @@ Events.deny({
 });
 
 Events.schema = new SimpleSchema({
-  slideNo: {type: String},
   session: {type: String},
+  slideNo: {type: Number},
   created: {type: Date},
 });
 

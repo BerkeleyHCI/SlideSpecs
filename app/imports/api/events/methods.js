@@ -11,7 +11,7 @@ export const createEvent = new ValidatedMethod({
   name: 'events.create',
   validate: new SimpleSchema({
     session: {type: String},
-    slideNo: {type: String},
+    slideNo: {type: Number},
   }).validator(),
   run({session, slideNo}) {
     const totalSlides = Files.find({'meta.sessionId': session});
@@ -21,7 +21,7 @@ export const createEvent = new ValidatedMethod({
       throw new Error('This session pair is not valid.');
     }
 
-    if (totalSlides.length <= parseInt(slideNo)) {
+    if (totalSlides.length <= slideNo) {
       throw new Error('This session number is not valid.');
     }
 
@@ -34,13 +34,12 @@ export const createEvent = new ValidatedMethod({
 });
 
 // ATM this is not used.
-
 export const deleteEvent = new ValidatedMethod({
   name: 'events.delete',
   validate: new SimpleSchema({
     eventId: {type: String},
   }).validator(),
-  run({author, eventId}) {
+  run({eventId}) {
     const e = Events.findOne(eventId);
     if (e) {
       Events.remove(eventId);

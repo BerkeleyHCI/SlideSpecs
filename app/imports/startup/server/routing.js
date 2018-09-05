@@ -2,10 +2,10 @@ import {createEvent} from '../../api/events/methods.js';
 
 // Listen to incoming HTTP requests (can only be used on the server).
 
-WebApp.connectHandlers.use('/event', (request, response, next) => {
+WebApp.connectHandlers.use('/event', (request, response) => {
   let data = {};
   data.session = request.body.session || '';
-  data.slideNo = request.body.slideNo || '';
+  data.slideNo = Number(request.body.slideNo) || '';
   let validate = ({session, slideNo}) => {
     return !!(session && slideNo);
   };

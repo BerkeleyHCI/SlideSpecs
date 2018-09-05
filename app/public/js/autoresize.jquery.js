@@ -23,7 +23,7 @@ function loadAutoResize() {
         animate: true,
         animateDuration: 50,
         animateCallback: function() {},
-        extraSpace: 0,
+        extraSpace: 5,
         limit: 500,
       },
       options,

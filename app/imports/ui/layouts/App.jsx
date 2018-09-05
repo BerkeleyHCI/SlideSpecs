@@ -57,10 +57,12 @@ export default class App extends BaseComponent {
   };
 
   getSessionProps = sid => {
-    const {sessions, files, comments, reviewer} = this.props;
+    const {sessions, files, comments, events, reviewer} = this.props;
     let session = sessions.find(s => s._id === sid) || {};
     session.files = files.filter(f => f.meta.sessionId === sid);
     session.comments = comments.filter(c => c.session === sid);
+    session.events = events.filter(e => e.session === sid);
+    session.active = session.events[0];
     session.reviewer = reviewer;
     session.sessionId = sid;
     return session;

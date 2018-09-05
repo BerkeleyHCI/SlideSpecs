@@ -24,6 +24,7 @@ class SlideReviewPage extends BaseComponent {
     this.state = {
       redirectTo: null,
       activeComment: null,
+      activeSlide: null,
       sorter: 'created',
       filter: 'time',
       invert: true,
@@ -31,7 +32,7 @@ class SlideReviewPage extends BaseComponent {
       selected: [],
       bySlide: '',
       byAuth: '',
-      showImage: false,
+      hoverImage: '',
       image: '',
       ds: {},
     };
@@ -64,8 +65,6 @@ class SlideReviewPage extends BaseComponent {
       ds = new DragSelect({
         selectables: elements,
         onDragMove: updateSelection,
-        //onElementSelect: updateSelection,
-        //onElementUnselect: updateSelection,
         callback: updateSelection,
         autoScrollSpeed: 5,
         area: area,
@@ -85,10 +84,13 @@ class SlideReviewPage extends BaseComponent {
     };
   };
 
-  componentDidUpdate = this.handleLoad;
+  componentDidUpdate = () => {
+    this.handleLoad();
+    this.handleActive();
+  };
+
   componentDidMount = () => {
     // autoresize textareas w/ jquery plugin
-    //const addComment = this.addComment;
     $('textarea').autoResize({
       onResize: textarea => {
         textarea.unbind('keydown').bind('keydown', this.addComment);
@@ -105,16 +107,14 @@ class SlideReviewPage extends BaseComponent {
     // set image to link of the first slide
     const {files} = this.props;
     if (files.length > 0) {
-      this.updateSlideFile(files[0]._id);
+      this.updateImage(files[0]._id);
+      this.handleActive(); // or active
     }
-
-    // hide context image
-    this.handleSlideOut();
   };
 
   componentWillUnmount = () => {
     let {ds} = this.state;
-    if (ds) {
+    if (ds && ds.stop) {
       ds.stop(); // no dragging
     }
   };
@@ -160,25 +160,25 @@ class SlideReviewPage extends BaseComponent {
     Session.set('reviewer', null);
   };
 
-  updateSlideFile = fid => {
+  updateImage = fid => {
     const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({image: link, showImage: true});
+    this.setState({image: link});
+  };
+
+  updateHoverImage = fid => {
+    const link = Files.findOne({_id: fid}).link('original', '//');
+    this.setState({hoverImage: link});
   };
 
   handleSlide = e => {
     if (e.target === e.currentTarget) {
       const data = this.extractFileData(e.target);
-      this.updateSlideFile(data.slideId);
+      this.updateHoverImage(data.slideId);
     }
   };
 
   handleSlideOut = e => {
-    this.setState({showImage: false});
-  };
-
-  handleSlideFile = e => {
-    this.handleSlide(e);
-    this.handleSlideOut();
+    this.setState({hoverImage: false});
   };
 
   getText = () => {
@@ -345,8 +345,6 @@ class SlideReviewPage extends BaseComponent {
     );
   };
 
-  //onKeyDown={this.addComment}
-
   renderFiles = () => {
     const {files} = this.props;
     return files.map((f, key) => {
@@ -358,7 +356,8 @@ class SlideReviewPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          handleMouse={this.handleSlideFile}
+          onMouseOver={this.handleSlide}
+          onMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />
       );
@@ -371,6 +370,19 @@ class SlideReviewPage extends BaseComponent {
     const view = document.getElementsByClassName('nav-head');
     if (view[0]) {
       view[0].scrollIntoView();
+    }
+  };
+
+  // Updating the current slide.
+  handleActive = () => {
+    let {activeSlide} = this.state;
+    const {active, files} = this.props;
+    if (active && activeSlide !== active.slideNo) {
+      activeSlide = active.slideNo;
+      this.setState({activeSlide});
+      // assume 1 index, subtract 1
+      const fId = files[activeSlide - 1]._id;
+      this.updateImage(fId);
     }
   };
 
@@ -433,8 +445,10 @@ class SlideReviewPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderFiles();
-    let {image, byAuth, bySlide} = this.state;
+    let {image, hoverImage, byAuth, bySlide} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
+    const imgSrc = hoverImage ? hoverImage : image;
+
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
     const ClearingDiv = ({set, pre, clear}) => {
       return (
@@ -454,25 +468,24 @@ class SlideReviewPage extends BaseComponent {
     };
 
     //<Clock />
-
     return (
-      <div className="float-at-top">
-        <div className="alert">
-          <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
-          <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
-        </div>
-        <Img className="big-slide" source={image} />
+      <div className="context-filter float-at-top">
+        <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
             {fileList}
           </div>
+        </div>
+        <div className="alert">
+          <Input defaultValue="search feedback..." />
+          <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
+          <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
         </div>
       </div>
     );
   };
 
   render() {
-    let {image, showImage, byAuth, bySlide} = this.state;
     const {files, reviewer} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
@@ -492,8 +505,8 @@ class SlideReviewPage extends BaseComponent {
 
           <div id="review-view" className="table">
             <div className="row">
-              <div className="col-md-6 full-height-md no-float">{context}</div>
-              <div className="col-md-6">
+              <div className="col-md-5 full-height-md no-float">{context}</div>
+              <div className="col-md-7">
                 {cmtHead}
                 {comments}
               </div>
@@ -506,7 +519,5 @@ class SlideReviewPage extends BaseComponent {
     );
   }
 }
-
-//<Transition enter={{opacity: 1}} leave={{opacity: 0}}> {showImage && (styles => ( <div id="comment-image" style={styles}> <Img source={image} /> </div>))} </Transition>
 
 export default SlideReviewPage;
