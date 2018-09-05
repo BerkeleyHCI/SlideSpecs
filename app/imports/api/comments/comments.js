@@ -34,5 +34,3 @@ Comments.schema = new SimpleSchema({
 });
 
 Comments.attachSchema(Comments.schema);
-
-Factory.define('session', Comments, {});

@@ -1,5 +1,4 @@
 import {Mongo} from 'meteor/mongo';
-import {Factory} from 'meteor/factory';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 export const Events = new Mongo.Collection('Events');
@@ -34,5 +33,3 @@ Events.schema = new SimpleSchema({
 });
 
 Events.attachSchema(Events.schema);
-
-Factory.define('session', Events, {});
