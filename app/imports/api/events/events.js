@@ -17,19 +17,10 @@ Events.deny({
   },
 });
 
-SlideSchema = new SimpleSchema({
-  slideNo: {type: String},
-  slideId: {type: String},
-});
-
 Events.schema = new SimpleSchema({
-  created: {type: Date},
-  author: {type: String},
-  content: {type: String},
+  slideNo: {type: String},
   session: {type: String},
-  slides: {type: [SlideSchema]},
-  agree: {type: [String], defaultValue: []},
-  discuss: {type: [String], defaultValue: []},
+  created: {type: Date},
 });
 
 Events.attachSchema(Events.schema);

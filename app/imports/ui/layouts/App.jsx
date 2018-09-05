@@ -17,6 +17,7 @@ import SessionListPage from '../pages/SessionListPage.jsx';
 import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
+import ConvertPage from '../pages/ConvertPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -126,6 +127,7 @@ export default class App extends BaseComponent {
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/share/:id" render={this.renderReview} />
+            <Route path="/convert" component={ConvertPage} />
 
             <PrivateRoute
               exact
