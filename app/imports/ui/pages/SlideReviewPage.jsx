@@ -202,7 +202,7 @@ class SlideReviewPage extends BaseComponent {
 
   clearButtonBG = e => {
     const base = e.target.className.split()[0];
-    const matches = [/col-md-/, /table/];
+    const matches = [/col-md-/];
     if (matches.some(x => base.match(x))) {
       this.clearButton();
     }
@@ -309,26 +309,35 @@ class SlideReviewPage extends BaseComponent {
       'slide',
     );
 
-    //<button className="btn btn-menu" onClick={flagSort}>
-    //flag {filter === 'flag' ? '✔' : ''}
-    //</button>
-
     return (
       <div className="float-at-top">
         <div className="btn-m-group btns-group">
-          <button onClick={timeSort} className="btn btn-menu">
-            time {filter === 'time' ? '✔' : ''}
+          <button
+            onClick={timeSort}
+            className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
+            time
           </button>
-          <button className="btn btn-menu" onClick={authSort}>
-            auth {filter === 'auth' ? '✔' : ''}
+          <button
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
+            auth
           </button>
-          <button className="btn btn-menu" onClick={slideSort}>
-            slide {filter === 'slide' ? '✔' : ''}
+          <button
+            className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
+            onClick={slideSort}>
+            slide
           </button>
-          <button className="btn btn-menu" onClick={agreeSort}>
-            agree {filter === 'agree' ? '✔' : ''}
+          <button
+            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
+            onClick={agreeSort}>
+            agree
           </button>
-          <button className="btn btn-menu" onClick={invFn}>
+          <button
+            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
+            onClick={flagSort}>
+            flag
+          </button>
+          <button className={'btn btn-menu'} onClick={invFn}>
             {invert ? '▼' : '▲'}
           </button>
         </div>
