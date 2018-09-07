@@ -72,7 +72,7 @@
     color: @color-empty;
     padding: 0.2em;
     &:hover {
-      background-color: @color-primary;
+      background-color: darken(@color-ancillary, 5%);
     }
   }
 
@@ -91,7 +91,7 @@
 }
 
 .btn.active {
-  background-color: lighten(@color-primary, 5%);
+  background-color: @color-ancillary;
   box-shadow: none;
 }
 

@@ -496,13 +496,16 @@ class SlideReviewPage extends BaseComponent {
           </div>
         </div>
         <div className="alert">
-          <Input defaultValue="search feedback..." />
+          <Clock />
           <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
           <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
         </div>
       </div>
     );
   };
+
+  // readd and implement search
+  //<Input defaultValue="search feedback..." />
 
   render() {
     const {files, reviewer} = this.props;
