@@ -177,9 +177,10 @@ class UploadPage extends BaseComponent {
           <div className="main-content">
             <h1>
               {files.length > 0 ? (
-                <span>
-                  ‹ <Link to={`/sessions/${sessionId}`}>{name}</Link>
-                </span>
+                <Link to={`/sessions/${sessionId}`}>
+                  <span className="black"> ‹ </span>
+                  {name}
+                </Link>
               ) : (
                 <span>{name}</span>
               )}

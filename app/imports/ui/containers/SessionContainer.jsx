@@ -64,14 +64,12 @@ export default class SessionContainer extends BaseComponent {
             <hr />
             <input type="text" value={shareLink} className="code" readOnly />
             <hr />
-            <div className="btns-group">
-              <button className="btn btn-menu" onClick={this.copyUrl}>
-                copy link
-              </button>
-              <a className="btn btn-menu" href={shareLink} target="_blank">
-                open link
-              </a>
-            </div>
+            <button className="btn btn-primary" onClick={this.copyUrl}>
+              copy link
+            </button>
+            <a className="btn btn-danger" href={shareLink} target="_blank">
+              open link
+            </a>
             <hr />
             once ready, give your presentation. feedback can be accessed below.
           </div>

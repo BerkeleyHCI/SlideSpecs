@@ -8,8 +8,10 @@ class ConvertPage extends Component {
     return (
       <div className="main-content">
         <h1>
-          <Link to="/"> ‹ </Link>
-          feedback
+          <Link to="/">
+            <span className="black"> ‹ </span>
+            feedback
+          </Link>
         </h1>
         <h2>slide conversion help</h2>
         <div className="alert">
