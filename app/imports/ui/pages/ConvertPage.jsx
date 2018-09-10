@@ -15,6 +15,7 @@ class ConvertPage extends Component {
         </h1>
         <h2>slide conversion help</h2>
         <div className="alert">
+          <i className="fa fa-thumbs-o-up" />
           <ConvertInstructions />
         </div>
       </div>
