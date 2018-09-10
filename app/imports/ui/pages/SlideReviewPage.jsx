@@ -166,8 +166,12 @@ class SlideReviewPage extends BaseComponent {
   };
 
   updateHoverImage = fid => {
+    const {activeSlide} = this.state;
     const link = Files.findOne({_id: fid}).link('original', '//');
     this.setState({hoverImage: link});
+    if (!activeSlide) {
+      this.setState({image: link});
+    }
   };
 
   handleSlide = e => {
