@@ -20,7 +20,7 @@ function loadAutoResize() {
     var settings = $.extend(
       {
         onResize: function() {},
-        animate: true,
+        animate: false,
         animateDuration: 50,
         animateCallback: function() {},
         extraSpace: 5,

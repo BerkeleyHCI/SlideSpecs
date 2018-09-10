@@ -5,11 +5,10 @@ import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
-//import $ from 'jquery';
-
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
+import TextArea from '../components/TextArea.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
@@ -21,6 +20,7 @@ import {Transition} from 'react-spring';
 class SlideReviewPage extends BaseComponent {
   constructor(props) {
     super(props);
+    this.inRef = React.createRef();
     this.state = {
       redirectTo: null,
       activeComment: null,
@@ -50,7 +50,6 @@ class SlideReviewPage extends BaseComponent {
     const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
     let {ds, selected} = this.state;
-
     const updateSelection = () => {
       const s = ds.getSelection();
       if (s.length > 0) {
@@ -90,13 +89,6 @@ class SlideReviewPage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    // autoresize textareas w/ jquery plugin
-    $('textarea').autoResize({
-      onResize: textarea => {
-        textarea.unbind('keydown').bind('keydown', this.addComment);
-      },
-    });
-
     this.handleLoad();
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -116,6 +108,7 @@ class SlideReviewPage extends BaseComponent {
     let {ds} = this.state;
     if (ds && ds.stop) {
       ds.stop(); // no dragging
+      ds.destroy(); // kill off
     }
   };
 
@@ -185,19 +178,10 @@ class SlideReviewPage extends BaseComponent {
     this.setState({hoverImage: false});
   };
 
-  getText = () => {
-    const copyText = document.getElementsByClassName('comment-text')[0];
-    if (copyText) {
-      return copyText.value;
-    } else {
-      return '';
-    }
-  };
-
   clearText = () => {
-    const copyText = document.getElementsByClassName('comment-text')[1];
-    copyText.value = '';
-    copyText.focus();
+    const textarea = this.inRef.current;
+    textarea.value = '';
+    textarea.focus();
   };
 
   clearSelection = e => {
@@ -206,7 +190,7 @@ class SlideReviewPage extends BaseComponent {
 
   clearButtonBG = e => {
     const base = e.target.className.split()[0];
-    const matches = [/col-md-/];
+    const matches = [/col-/];
     if (matches.some(x => base.match(x))) {
       this.clearButton();
     }
@@ -232,7 +216,7 @@ class SlideReviewPage extends BaseComponent {
   addComment = e => {
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
-    const cText = this.getText().trim();
+    const cText = this.inRef.current.value.trim();
     const commentFields = {
       author: reviewer,
       content: cText,
@@ -240,16 +224,14 @@ class SlideReviewPage extends BaseComponent {
       slides,
     };
 
-    if (cText && e.keyCode === 13 && !e.shiftKey) {
-      createComment.call(commentFields, (err, res) => {
-        if (err) {
-          console.error(err);
-        } else {
-          this.clearButton();
-          this.clearText();
-        }
-      });
-    }
+    createComment.call(commentFields, (err, res) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.clearButton();
+        this.clearText();
+      }
+    });
   };
 
   renderSlideTags = (filter, done: false) => {
@@ -357,9 +339,10 @@ class SlideReviewPage extends BaseComponent {
       <div className="submitter alert">
         <p>{context}</p>
         <hr />
-        <textarea
-          type="text"
-          placeholder="feedback here. enter to submit, shift-enter for multi-lines."
+        <TextArea
+          inRef={this.inRef}
+          handleSubmit={this.addComment}
+          defaultValue="feedback here. enter to submit, shift-enter for multi-lines."
           className="code comment-text"
         />
       </div>
@@ -534,8 +517,8 @@ class SlideReviewPage extends BaseComponent {
             onMouseDown={this.clearButtonBG}
             className="table">
             <div className="row">
-              <div className="col-md-5 full-height-md no-float">{context}</div>
-              <div className="col-md-7">
+              <div className="col-sm-5 full-height-md no-float">{context}</div>
+              <div className="col-sm-7">
                 {cmtHead}
                 {comments}
               </div>

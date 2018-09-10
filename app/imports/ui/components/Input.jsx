@@ -1,19 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-// Auto-resize fix (text-area, input)
-// https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
-
 class Input extends Component {
-  constructor(props) {
-    super(props);
-    this.inRef = React.createRef();
-  }
-
-  handleUpdate = txt => {
-    this.input.value = txt;
-  };
-
   keyDown = e => {
     const {handleKeyDown, handleSubmit} = this.props;
     const text = e.target.value.trim();
@@ -36,6 +24,10 @@ class Input extends Component {
     );
   }
 }
+
+Input.propTypes = {
+  inRef: PropTypes.object.isRequired,
+};
 
 Input.defaultProps = {
   handleKeyDown: function() {},
