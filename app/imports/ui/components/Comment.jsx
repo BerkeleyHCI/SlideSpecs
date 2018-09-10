@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
+import TextArea from '../components/TextArea.jsx';
 import Markdown from 'react-markdown';
 import {
   agreeComment,
@@ -13,27 +14,22 @@ import {
 class Comment extends BaseComponent {
   constructor(props) {
     super(props);
-    this.state = {editing: false};
+    this.editRef = React.createRef();
+    this.state = {editing: false, replying: false};
   }
 
   componentDidMount = () => {
     const togs = $('[data-toggle="tooltip"]');
-    //togs.tooltip('show'); // for visual debugging
-    //togs.tooltip(); // enable
     togs.tooltip({
       trigger: 'hover',
       template: '<div class="tooltip"><div class="tooltip-inner"></div></div>',
     });
   };
 
-  //componentWillUnmount = () => { };
-
   goToElementId = id => {
     const view = document.getElementById(id);
     if (view) {
-      // Todo add active highligt
-      // Or scrolling to center
-      // Or hover action for preview
+      // TODO add hover action for preview
       view.scrollIntoView({block: 'center', inline: 'center'});
     }
   };
@@ -49,7 +45,7 @@ class Comment extends BaseComponent {
         };
         return (
           <a className="internal reply" onClick={scrollView}>
-            {props.children}
+            {props.children} <i className={'fa fa-reply'} />
           </a>
         );
       } else {
@@ -59,6 +55,25 @@ class Comment extends BaseComponent {
           </a>
         );
       }
+    },
+    text: props => {
+      // TODO handle ending punctuation
+      // split here for hashtag rendering
+      const words = props.split(/\s/).map((x, i) => {
+        if (x[0] == '#' && x.length > 1) {
+          return (
+            <span key={props + i}>
+              <a className="hashtag" onClick={this.props.handleTag}>
+                {x}
+              </a>{' '}
+            </span>
+          );
+        } else {
+          return <span key={props + i}>{x} </span>;
+        }
+      });
+
+      return <span key={props}>{words}</span>;
     },
   };
 
@@ -80,23 +95,14 @@ class Comment extends BaseComponent {
     this.props.clearModal();
   };
 
-  getText = () => {
-    const {_id} = this.props;
-    const copyText = document.getElementsByClassName('code' + _id)[0];
-    if (copyText) {
-      return copyText.value;
-    } else {
-      return '';
-    }
-  };
-
   setEdit = () => {
+    const {content} = this.props;
     this.setState({editing: true});
-    const {_id} = this.props;
     setTimeout(() => {
-      const copyText = document.getElementsByClassName('code' + _id)[0];
-      copyText.focus();
-    }, 70);
+      let eRef = this.editRef.current;
+      eRef.value = content;
+      eRef.focus();
+    }, 50);
   };
 
   clearEdit = () => {
@@ -104,23 +110,23 @@ class Comment extends BaseComponent {
   };
 
   handleEdit = e => {
+    const newContent = this.editRef.current.value.trim();
     const {reviewer, _id} = this.props;
-    const newContent = this.getText().trim();
-    const commentFields = {
-      author: reviewer,
-      commentId: _id,
-      newContent,
-    };
-
-    if (newContent && e.keyCode === 13 && !e.shiftKey) {
-      updateComment.call(commentFields);
-      this.clearEdit();
-    }
+    updateComment.call(
+      {
+        author: reviewer,
+        commentId: _id,
+        newContent,
+      },
+      () => {
+        this.clearEdit();
+      },
+    );
   };
 
   handleReply = () => {
-    const {author, _id} = this.props;
-    const commText = document.getElementsByClassName('comment-text')[1];
+    const {commentRef, author, _id} = this.props;
+    const commText = commentRef.current;
     if (commText) {
       commText.scrollIntoView(false);
       commText.value += ` [${author}'s comment](#c${_id})`;
@@ -167,12 +173,12 @@ class Comment extends BaseComponent {
     },
     {
       handleClick: this.handleAgree,
-      icon: 'good',
+      icon: 'thumbs-up',
       txt: 'agree',
     },
     {
       handleClick: this.handleDiscuss,
-      icon: 'flag',
+      icon: 'comments',
       txt: 'discuss',
     },
   ];
@@ -181,7 +187,7 @@ class Comment extends BaseComponent {
     {
       handleClick: this.setEdit,
       master: true,
-      icon: 'edit',
+      icon: 'pencil',
       txt: 'edit',
     },
     {
@@ -215,12 +221,13 @@ class Comment extends BaseComponent {
         data-placement="left"
         onClick={handleClick}
         className={`btn btn-empty ${master && 'btn-user'}`}>
-        <span className={'icon-' + icon} />
+        <i className={'fa fa-' + icon} />
       </button>
     );
   };
 
   renderComment = () => {
+    const {replying} = this.state;
     const {
       _id,
       author,
@@ -262,7 +269,7 @@ class Comment extends BaseComponent {
         <small>
           {created.toLocaleTimeString()}
           {agree && this.renderMeta('agreed', agree)}
-          {discuss && this.renderMeta('flagged', discuss)}
+          {discuss && this.renderMeta('discuss', discuss)}
         </small>
 
         <br />
@@ -287,12 +294,10 @@ class Comment extends BaseComponent {
           cancel
         </button>
         <br />
-        <textarea
-          type="text"
+        <TextArea
+          inRef={this.editRef}
           onBlur={this.clearEdit}
-          onKeyDown={this.handleEdit}
-          defaultValue={content}
-          className={'code' + _id}
+          handleSubmit={this.handleEdit}
         />
       </div>
     );

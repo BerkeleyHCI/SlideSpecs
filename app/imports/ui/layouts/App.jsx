@@ -177,9 +177,9 @@ export default class App extends BaseComponent {
     if (showConnectionIssue && !connected) {
       toast(() => (
         <AppNotification
-          icon="sync"
           msg="connection issue"
           desc="trying to reconnect..."
+          icon="refresh"
         />
       ));
     }

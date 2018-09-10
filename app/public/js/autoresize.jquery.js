@@ -19,6 +19,7 @@ function loadAutoResize() {
   $.fn.autoResize = function(options) {
     var settings = $.extend(
       {
+        selector: 'textarea',
         onResize: function() {},
         animate: false,
         animateDuration: 50,

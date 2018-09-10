@@ -104,7 +104,7 @@ class UploadPage extends BaseComponent {
               <AppNotification
                 msg="success"
                 desc="upload complete"
-                icon="good"
+                icon="check"
               />
             ),
             {autoClose: timeout},

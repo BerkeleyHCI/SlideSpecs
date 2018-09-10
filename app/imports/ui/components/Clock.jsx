@@ -23,7 +23,7 @@ class Clock extends Component {
   }
 
   render() {
-    return <p className="text-center">{this.state.time}</p>;
+    return <span className="clock">{this.state.time}</span>;
   }
 }
 

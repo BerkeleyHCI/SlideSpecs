@@ -30,8 +30,10 @@ class SlideReviewPage extends BaseComponent {
       invert: true,
       filtered: [],
       selected: [],
+      tags: [],
       bySlide: '',
       byAuth: '',
+      byTag: '',
       hoverImage: '',
       image: '',
       ds: {},
@@ -108,7 +110,6 @@ class SlideReviewPage extends BaseComponent {
     let {ds} = this.state;
     if (ds && ds.stop) {
       ds.stop(); // no dragging
-      ds.destroy(); // kill off
     }
   };
 
@@ -146,6 +147,22 @@ class SlideReviewPage extends BaseComponent {
 
   clearBySlide = () => {
     this.setState({bySlide: ''});
+  };
+
+  setByTag = e => {
+    e.preventDefault();
+    console.log(e.target);
+    const {byTag} = this.state;
+    const newTag = e.target.innerText.trim();
+    if (newTag && byTag === newTag) {
+      this.setState({byTag: ''});
+    } else if (newTag) {
+      this.setState({byTag: newTag});
+    }
+  };
+
+  clearByTag = () => {
+    this.setState({byTag: ''});
   };
 
   clearReviewer = () => {
@@ -243,7 +260,7 @@ class SlideReviewPage extends BaseComponent {
           general
         </kbd>
       ) : (
-        'no slides selected, attach as general feedback'
+        <i>no slides selected—attach general feedback</i>
       );
     } else {
       const plural = filter.length > 1;
@@ -262,7 +279,7 @@ class SlideReviewPage extends BaseComponent {
       ));
       return (
         <span className="slide-tags">
-          {!done && <span>attach comment to slide{plural && 's'}</span>}
+          {!done && <span>attach your comment to slide{plural && 's'} </span>}
           {slideKeys}
           {!done && (
             <button
@@ -277,7 +294,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderCommentFilter = () => {
-    const submitter = this.renderSubmit();
+    const filterer = this.renderFilter();
 
     const {files} = this.props;
     const {invert, filter} = this.state;
@@ -321,13 +338,13 @@ class SlideReviewPage extends BaseComponent {
           <button
             className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
             onClick={flagSort}>
-            flag
+            discuss
           </button>
           <button className={'btn btn-menu'} onClick={invFn}>
             {invert ? '▼' : '▲'}
           </button>
         </div>
-        {submitter}
+        {filterer}
       </div>
     );
   };
@@ -336,7 +353,7 @@ class SlideReviewPage extends BaseComponent {
     let {filtered} = this.state;
     let context = this.renderSlideTags(filtered);
     return (
-      <div className="submitter alert">
+      <div className="submitter">
         <p>{context}</p>
         <hr />
         <TextArea
@@ -370,7 +387,55 @@ class SlideReviewPage extends BaseComponent {
     });
   };
 
-  //handleMouseOut={this.handleSlideOut}
+  renderFilter = () => {
+    const submitter = this.renderSubmit();
+    const tagList = this.renderTags();
+    let {byAuth, bySlide, byTag} = this.state;
+    const sType = bySlide === 'general' ? 'scope' : 'slide';
+    if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
+    const ClearingDiv = ({set, pre, clear}) => {
+      return (
+        set && (
+          <div>
+            <hr />
+            <p>
+              <strong>{pre}: </strong>
+              {set}
+              <button onClick={clear} className="btn btn-menu pull-right">
+                clear
+              </button>
+            </p>
+          </div>
+        )
+      );
+    };
+
+    return (
+      <div className="filterer alert">
+        <p>
+          <Clock />
+          {tagList}
+        </p>
+        <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
+        <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
+        <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
+        <hr />
+        {submitter}
+      </div>
+    );
+  };
+
+  renderTags = () => {
+    const {comments} = this.props;
+    const getTag = t => t.split(/\s/).filter(t => t[0] == '#' && t.length > 1);
+    const alltags = comments.map(c => getTag(c.content));
+    const unique = _.uniq(_.flatten(alltags));
+    return unique.map(tag => (
+      <a onClick={this.setByTag} className="tag-link" key={tag}>
+        {tag}
+      </a>
+    ));
+  };
 
   goToTop = () => {
     const view = document.getElementsByClassName('nav-head');
@@ -393,7 +458,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter, invert, activeComment, byAuth, bySlide} = this.state;
+    const {sorter, invert, activeComment, byAuth, bySlide, byTag} = this.state;
     const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
@@ -417,6 +482,10 @@ class SlideReviewPage extends BaseComponent {
         });
       }
 
+      if (byTag) {
+        csort = csort.filter(c => c.content.includes(byTag));
+      }
+
       const items = csort.map((c, i) => {
         c.last = i === csort.length - 1; // no final hr
         c.active = c._id === activeComment; // highlight
@@ -428,6 +497,8 @@ class SlideReviewPage extends BaseComponent {
           reviewer,
           setModal,
           clearModal,
+          commentRef: this.inRef,
+          handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
           setActive: this.setActiveComment,
           unsetActive: this.clearActiveComment,
@@ -435,13 +506,18 @@ class SlideReviewPage extends BaseComponent {
       });
 
       return (
-        <div id="comments-list" className="alert">
-          {items.map(i => <Comment {...i} />)}
-          {items && (
-            <div className="padded btns-group">
-              <button onClick={this.goToTop} className="padded btn btn-empty">
-                to top
+        <div>
+          <div id="comments-list" className="alert">
+            {items.map(i => <Comment {...i} />)}
+          </div>
+          {items.length > 4 && (
+            <div className="padded full-width">
+              <button
+                onClick={this.goToTop}
+                className="btn center btn-menu btn-round">
+                <i className={'fa fa-arrow-up'} />
               </button>
+              <div className="v-pad" />
             </div>
           )}
         </div>
@@ -450,30 +526,9 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderContext = () => {
+    let {image, hoverImage} = this.state;
     const fileList = this.renderFiles();
-    let {image, hoverImage, byAuth, bySlide} = this.state;
-    const sType = bySlide === 'general' ? 'scope' : 'slide';
     const imgSrc = hoverImage ? hoverImage : image;
-
-    if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
-    const ClearingDiv = ({set, pre, clear}) => {
-      return (
-        set && (
-          <div>
-            <hr />
-            <p>
-              <strong>{pre} </strong>
-              {set}
-              <button onClick={clear} className="btn btn-menu pull-right">
-                clear
-              </button>
-            </p>
-          </div>
-        )
-      );
-    };
-
-    //<Clock />
     return (
       <div className="context-filter float-at-top">
         <Img className="big-slide" source={imgSrc} />
@@ -481,11 +536,6 @@ class SlideReviewPage extends BaseComponent {
           <div id="grid" onMouseDown={this.clearGrid}>
             {fileList}
           </div>
-        </div>
-        <div className="alert">
-          <Clock />
-          <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
-          <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
         </div>
       </div>
     );

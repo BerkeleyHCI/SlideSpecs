@@ -26,7 +26,7 @@ export default class SessionContainer extends BaseComponent {
         <AppNotification
           msg="link copied"
           desc="copied to clipboard"
-          icon="good"
+          icon="check"
         />
       ));
     }

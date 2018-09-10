@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 class TextArea extends Component {
   componentDidMount = () => {
-    $('textarea').autoResize();
+    const {inRef} = this.props;
+    $(inRef.current).autoResize();
   };
 
   keyDown = e => {
