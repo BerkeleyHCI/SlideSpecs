@@ -12,7 +12,7 @@ class AuthPage extends BaseComponent {
       <div className="page auth main-content">
         <div className="main-content">
           {content}
-          {link}
+          <h2>{link}</h2>
         </div>
       </div>
     );

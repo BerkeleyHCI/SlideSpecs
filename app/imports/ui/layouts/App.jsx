@@ -18,6 +18,7 @@ import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 import ConvertPage from '../pages/ConvertPage.jsx';
+import StudyPage from '../pages/StudyPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -126,10 +127,11 @@ export default class App extends BaseComponent {
           <Loading key="loading" />
         ) : (
           <Switch location={location}>
-            <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/join" component={AuthPageJoin} {...shared} />
+            <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/share/:id" render={this.renderReview} />
             <Route path="/convert" component={ConvertPage} />
+            <Route path="/ar-vr" component={StudyPage} />
 
             <PrivateRoute
               exact
@@ -192,7 +194,7 @@ const PrivateRoute = ({user, render, ...other}) => {
   if (user) {
     out = render;
   } else {
-    out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
+    out = () => (loc !== '/join' ? <Redirect to="/join" /> : null);
   }
 
   return <Route {...other} render={out} />;

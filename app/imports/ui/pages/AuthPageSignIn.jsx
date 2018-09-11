@@ -63,6 +63,7 @@ class SignInPage extends BaseComponent {
             ))}
           </div>
           <div className={`input-symbol ${errorClass('username')}`}>
+            <i className="fa fa-inline fa-user" title="username" />
             <input
               type="username"
               name="username"
@@ -71,9 +72,9 @@ class SignInPage extends BaseComponent {
               }}
               placeholder="username"
             />
-            <span className="icon-user-add" title="username" />
           </div>
           <div className={`input-symbol ${errorClass('password')}`}>
+            <i className="fa fa-inline fa-key" title="password" />
             <input
               type="password"
               name="password"
@@ -82,7 +83,6 @@ class SignInPage extends BaseComponent {
               }}
               placeholder="password"
             />
-            <span className="icon-lock" title="password" />
           </div>
           <button type="submit" className="btn-primary">
             sign in

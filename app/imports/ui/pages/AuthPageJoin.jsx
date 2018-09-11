@@ -70,6 +70,7 @@ class JoinPage extends BaseComponent {
             ))}
           </div>
           <div className={`input-symbol ${errorClass('username')}`}>
+            <i className="fa fa-inline fa-user" title="username" />
             <input
               type="username"
               name="username"
@@ -78,9 +79,9 @@ class JoinPage extends BaseComponent {
               }}
               placeholder="username"
             />
-            <span className="icon-user-add" title="username" />
           </div>
           <div className={`input-symbol ${errorClass('password')}`}>
+            <i className="fa fa-inline fa-key" title="password" />
             <input
               type="password"
               name="password"
@@ -89,9 +90,9 @@ class JoinPage extends BaseComponent {
               }}
               placeholder="password"
             />
-            <span className="icon-lock" title="password" />
           </div>
           <div className={`input-symbol ${errorClass('confirm')}`}>
+            <i className="fa fa-inline fa-key" title="password" />
             <input
               type="password"
               name="confirm"
@@ -100,7 +101,6 @@ class JoinPage extends BaseComponent {
               }}
               placeholder="confirm password"
             />
-            <span className="icon-lock" title="confirm password" />
           </div>
           <button type="submit" className="btn-primary">
             join now
@@ -115,7 +115,11 @@ class JoinPage extends BaseComponent {
       </Link>
     );
 
-    return this.renderRedirect() || <AuthPage {...this.props} content={content} link={link} />;
+    return (
+      this.renderRedirect() || (
+        <AuthPage {...this.props} content={content} link={link} />
+      )
+    );
   }
 }
 
