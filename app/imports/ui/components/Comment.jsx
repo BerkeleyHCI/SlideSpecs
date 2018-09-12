@@ -129,7 +129,7 @@ class Comment extends BaseComponent {
     const commText = commentRef.current;
     if (commText) {
       commText.scrollIntoView(false);
-      commText.value += ` [${author}'s comment](#c${_id})`;
+      commText.value += ` [${author}'s comment](#c${_id}) `;
       commText.focus();
     }
   };
@@ -275,8 +275,8 @@ class Comment extends BaseComponent {
         <br />
         <Markdown
           className="markdown-comment"
-          source={content}
           renderers={this.renderers}
+          source={content}
         />
 
         {!last && <hr />}

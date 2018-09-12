@@ -149,9 +149,9 @@ class SlideReviewPage extends BaseComponent {
     this.setState({bySlide: ''});
   };
 
+  // click on tag in comment
   setByTag = e => {
     e.preventDefault();
-    console.log(e.target);
     const {byTag} = this.state;
     const newTag = e.target.innerText.trim();
     if (newTag && byTag === newTag) {
@@ -159,6 +159,19 @@ class SlideReviewPage extends BaseComponent {
     } else if (newTag) {
       this.setState({byTag: newTag});
     }
+  };
+
+  // click on tag in filter
+  insertTag = e => {
+    e.preventDefault();
+    const tag = e.target.innerText.trim();
+    const textarea = this.inRef.current;
+    if (textarea.value === '') {
+      textarea.value = `${tag} `;
+    } else if (!textarea.value.includes(tag)) {
+      textarea.value += ` ${tag} `;
+    }
+    textarea.focus();
   };
 
   clearByTag = () => {
@@ -251,20 +264,18 @@ class SlideReviewPage extends BaseComponent {
     });
   };
 
-  renderSlideTags = (filter, done: false) => {
+  renderSlideTags = (filtered, done: false) => {
     const {bySlide} = this.state;
     const active = sn => (sn === bySlide ? 'active' : '');
-    if (filter.length === 0) {
+    if (filtered.length === 0) {
       return done ? (
         <kbd className={active({slideNo: 'general'})} onClick={this.setBySlide}>
           general
         </kbd>
-      ) : (
-        <i>no slides selected—attach general feedback</i>
-      );
+      ) : null;
     } else {
-      const plural = filter.length > 1;
-      const slideNos = _.sortBy(filter, x => Number(x.slideNo));
+      const plural = filtered.length > 1;
+      const slideNos = _.sortBy(filtered, x => Number(x.slideNo));
       const slideKeys = slideNos.map(s => (
         <kbd
           className={active(s.slideNo)}
@@ -279,7 +290,12 @@ class SlideReviewPage extends BaseComponent {
       ));
       return (
         <span className="slide-tags">
-          {!done && <span>attach your comment to slide{plural && 's'} </span>}
+          {!done && (
+            <span>
+              attach comment to slide
+              {plural && 's'}{' '}
+            </span>
+          )}
           {slideKeys}
           {!done && (
             <button
@@ -321,14 +337,14 @@ class SlideReviewPage extends BaseComponent {
             time
           </button>
           <button
-            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-            onClick={authSort}>
-            auth
-          </button>
-          <button
             className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
             onClick={slideSort}>
             slide
+          </button>
+          <button
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
+            auth
           </button>
           <button
             className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
@@ -350,12 +366,8 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderSubmit = () => {
-    let {filtered} = this.state;
-    let context = this.renderSlideTags(filtered);
     return (
       <div className="submitter">
-        <p>{context}</p>
-        <hr />
         <TextArea
           inRef={this.inRef}
           handleSubmit={this.addComment}
@@ -399,7 +411,7 @@ class SlideReviewPage extends BaseComponent {
           <div>
             <hr />
             <p>
-              <strong>{pre}: </strong>
+              <strong>view {pre}: </strong>
               {set}
               <button onClick={clear} className="btn btn-menu pull-right">
                 clear
@@ -431,7 +443,7 @@ class SlideReviewPage extends BaseComponent {
     const alltags = comments.map(c => getTag(c.content));
     const unique = _.uniq(_.flatten(alltags));
     return unique.map(tag => (
-      <a onClick={this.setByTag} className="tag-link" key={tag}>
+      <a onClick={this.insertTag} className="tag-link" key={tag}>
         {tag}
       </a>
     ));
@@ -508,9 +520,11 @@ class SlideReviewPage extends BaseComponent {
       return (
         <div>
           <div id="comments-list" className="alert">
-            {items.map(i => <Comment {...i} />)}
+            {items.map(i => (
+              <Comment {...i} />
+            ))}
           </div>
-          {items.length > 4 && (
+          {items.length >= 5 && (
             <div className="padded full-width">
               <button
                 onClick={this.goToTop}
@@ -526,9 +540,12 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderContext = () => {
-    let {image, hoverImage} = this.state;
+    const {image, hoverImage, filtered} = this.state;
+
     const fileList = this.renderFiles();
+    const context = this.renderSlideTags(filtered);
     const imgSrc = hoverImage ? hoverImage : image;
+
     return (
       <div className="context-filter float-at-top">
         <Img className="big-slide" source={imgSrc} />
@@ -537,6 +554,9 @@ class SlideReviewPage extends BaseComponent {
             {fileList}
           </div>
         </div>
+        {filtered.length > 0 && (
+          <div className="no-margin clearfix alert">{context}</div>
+        )}
       </div>
     );
   };
