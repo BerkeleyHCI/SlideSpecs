@@ -100,7 +100,8 @@ class SlideReviewPage extends BaseComponent {
       this.setState({control: state == 'ctrl'});
     } else if (!store && vals.length > 0) {
       // Save/update interface.
-      saved[sessionId] = vals[0];
+      const state = vals[0];
+      saved[sessionId] = state;
       localStorage.setObject('feedbacks.control', saved);
       this.setState({control: state == 'ctrl'});
     } else {
