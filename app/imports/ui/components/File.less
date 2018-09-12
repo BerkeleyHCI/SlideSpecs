@@ -167,17 +167,19 @@ div.reviewView {
   }
 
   kbd {
+    line-height: initial;
+    display: inline-block;
     background-color: @color-danger;
     &:hover {
-      background: black;
+      background-color: @color-note;
+      color: @color-full;
     }
   }
   kbd.active {
-    background-color: @color-note;
-    color: @color-full;
+    background-color: @color-ancillary;
     &:hover {
-      background: black;
-      color: @color-rare;
+      background-color: lighten(@color-ancillary, 10%);
+      color: @color-raw;
     }
   }
 
@@ -231,6 +233,11 @@ div.reviewView {
     position: fixed;
     overflow-y: scroll;
     overflow-x: hidden;
+  }
+
+  .btn-menu.pull-right {
+    padding: initial;
+    padding-right: 2px;
   }
 
   .filterer,

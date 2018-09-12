@@ -290,19 +290,18 @@ class SlideReviewPage extends BaseComponent {
       ));
       return (
         <span className="slide-tags">
-          {!done && (
+          {done ? (
+            <span>{slideKeys}</span>
+          ) : (
             <span>
+              <button
+                onClick={this.clearButton}
+                className="btn btn-menu pull-right">
+                clear
+              </button>
               attach comment to slide
-              {plural && 's'}{' '}
+              {plural && 's'} {slideKeys}
             </span>
-          )}
-          {slideKeys}
-          {!done && (
-            <button
-              onClick={this.clearButton}
-              className="btn btn-menu pull-right">
-              clear
-            </button>
           )}
         </span>
       );
