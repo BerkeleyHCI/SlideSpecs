@@ -7,7 +7,7 @@ import {Link} from 'react-router-dom';
 const StudyPageLink = (link, i) => {
   return (
     <li key={`link-${i}`}>
-      <Link to={`/share/${link}`}> presentation {i} </Link>
+      <Link to={`/share/${link}`}> presentation {i + 1} </Link>
     </li>
   );
 };
@@ -34,20 +34,21 @@ class StudyPage extends Component {
         <h1>feedback</h1>
         <h2>instructions</h2>
         <div className="alert">
-          please give feedback for each groups presentation. you can attach
-          feedback to specific slides and use tags to label your comments.
+          please give feedback for each group's presentation.
+          <br />
+          <br />
+          you can attach feedback to specific slides and use #tags to label
+          comments.
         </div>
         <h2>presentations</h2>
         <div className="alert">
-          all presentation links
           <ul> {linkIds.map(StudyPageLink)} </ul>
+          <br />
         </div>
         <h2>survey</h2>
         <div className="alert">
-          Post-presentations survey: [
-          <a
-            target="_blank"
-            href="https://docs.google.com/forms/d/1wJghymokLHhEdHEKrRU1FLfkY99G-qNbDt_p4tQsrXA/">
+          (Short!) Survey: [
+          <a target="_blank" href="https://goo.gl/forms/Usd4WAKtB6Mrjsfw1">
             link
           </a>
           ]
