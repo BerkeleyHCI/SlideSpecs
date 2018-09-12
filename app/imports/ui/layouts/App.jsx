@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
-import {BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
+import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 import AppModal from '../components/AppModal.jsx';
 
 import Loading from '../components/Loading.jsx';
