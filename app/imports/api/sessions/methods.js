@@ -7,6 +7,15 @@ import {Sessions} from './sessions.js';
 import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';
 
+/*
+- #story
+- #delivery
+- #slide-design
+- #great
+- #confusing
+- #core-idea
+ * */
+
 export const createSession = new ValidatedMethod({
   name: 'sessions.create',
   validate: new SimpleSchema({}).validator(),
@@ -26,12 +35,11 @@ export const createSession = new ValidatedMethod({
             author: 'system',
             content: `Starter tags:
 
-- #story
-- #delivery
-- #slide-design
-- #great
-- #confusing
-- #core-idea
+- #idea
+- #confusion
+- #interesting
+- #cool
+- #related
 - #meta
       `,
           });
