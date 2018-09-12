@@ -17,10 +17,32 @@ export const createSession = new ValidatedMethod({
         'You must log in to create a session.',
       );
     } else {
-      return Sessions.insert({
-        userId: this.userId,
-        created: Date.now(),
-      });
+      const starterComment = (err, _id) => {
+        if (!err)
+          Comments.insert({
+            created: Date.now(),
+            session: _id,
+            slides: [],
+            author: 'system',
+            content: `Starter tags:
+
+- #story
+- #delivery
+- #slide-design
+- #great
+- #confusing
+- #core-idea
+      `,
+          });
+      };
+
+      return Sessions.insert(
+        {
+          userId: this.userId,
+          created: Date.now(),
+        },
+        starterComment,
+      );
     }
   },
 });

@@ -370,7 +370,7 @@ class SlideReviewPage extends BaseComponent {
         <TextArea
           inRef={this.inRef}
           handleSubmit={this.addComment}
-          defaultValue="feedback here. enter to submit, shift-enter for multi-lines."
+          defaultValue="add feedback here. enter→submit, shift-enter→multi-line comment."
           className="code comment-text"
         />
       </div>
