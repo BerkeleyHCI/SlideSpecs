@@ -14,8 +14,20 @@ const StudyPageLink = (link, i) => {
 
 class StudyPage extends Component {
   render() {
-    // TODO update me w/ real
-    const linkIds = [1, 2, 3];
+    const linkIds = [
+      'sekvKeDoovKogBpJE',
+      'DBqSqEwmqjhomvP24',
+      'wZvSA8jh93WW2Ytqn',
+      'ccE6XkL2iRRbj9dkK',
+      'NBxpCTWSK4ik2kekM',
+      'KnsJK63N3f9vneyqy',
+      'm4h8GN8HyvAFsLBWm',
+      '4sHvcTKNR8H49Qxoe',
+      'SL2u4b47BsJK5C6rg',
+      'd9ePEZwoA4vvioqR2',
+      'LWTejnPdPjv6G7dub',
+      'tkK5wHfomfjR79yJk',
+    ];
 
     return (
       <div className="main-content">
@@ -32,11 +44,13 @@ class StudyPage extends Component {
         </div>
         <h2>survey</h2>
         <div className="alert">
-          Post-presentations survey: [<a
+          Post-presentations survey: [
+          <a
             target="_blank"
             href="https://docs.google.com/forms/d/1wJghymokLHhEdHEKrRU1FLfkY99G-qNbDt_p4tQsrXA/">
             link
-          </a>]
+          </a>
+          ]
         </div>
       </div>
     );
