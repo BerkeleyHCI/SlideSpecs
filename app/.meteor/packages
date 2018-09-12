@@ -67,3 +67,5 @@ ostrio:files
 twbs:bootstrap
 session@1.1.7
 webapp
+ostrio:loggerconsole
+ostrio:logger

@@ -1,4 +1,17 @@
 /*
+ * Augment local storage to work with objects.
+ */
+
+Storage.prototype.setObject = function(key, value) {
+  this.setItem(key, JSON.stringify(value));
+};
+
+Storage.prototype.getObject = function(key) {
+  var value = this.getItem(key);
+  return value && JSON.parse(value);
+};
+
+/*
  * jQuery autoResize (textarea auto-resizer)
  */
 

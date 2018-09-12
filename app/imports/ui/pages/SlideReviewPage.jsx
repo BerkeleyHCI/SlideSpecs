@@ -17,11 +17,21 @@ import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
 import {Transition} from 'react-spring';
 
+// Control-log.
+import {Logger} from 'meteor/ostrio:logger';
+import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
+
 class SlideReviewPage extends BaseComponent {
   constructor(props) {
     super(props);
+
+    // Control-log.
+    this.log = new Logger();
+    new LoggerConsole(this.log).enable();
+
     this.inRef = React.createRef();
     this.state = {
+      control: false,
       redirectTo: null,
       activeComment: null,
       activeSlide: null,
@@ -46,6 +56,33 @@ class SlideReviewPage extends BaseComponent {
       itemSelector: '.file-item',
     });
     mason.on('layoutComplete', this.handleSelectable);
+  };
+
+  handleControl = () => {
+    const {sessionId} = this.props;
+    let saved = localStorage.getObject('feedbacks.control') || {};
+    let keys = Object.keys(saved),
+      vals = Object.values(saved);
+    this.log(reviewer, saved);
+
+    if (!saved || keys.length == 0) {
+      const start = Math.random() > 0.5 ? 'ctrl' : 'test';
+      localStorage.setObject('feedbacks.control', {[sessionId]: start});
+      this.setState({control: start == 'ctrl'});
+    } else if (keys.length > 0) {
+      // Compute balancing experiment control state.
+      const numControl = vals.filter(v => v == 'ctrl').length;
+      const ratioControl = numControl / vals.length;
+      const state = ratioControl < 0.5 ? 'ctrl' : 'test';
+
+      // Save/update interface.
+      saved[sessionId] = state;
+      localStorage.setObject('feedbacks.control', saved);
+      this.setState({control: state == 'ctrl'});
+    } else {
+      console.error(saved, keys, 'study control error.');
+      this.setState({control: start == 'ctrl'});
+    }
   };
 
   handleSelectable = items => {
@@ -85,13 +122,9 @@ class SlideReviewPage extends BaseComponent {
     };
   };
 
-  componentDidUpdate = () => {
-    this.handleLoad();
-    this.handleActive();
-  };
-
   componentDidMount = () => {
     this.handleLoad();
+    this.handleControl();
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
@@ -106,10 +139,15 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
+  componentDidUpdate = () => {
+    this.handleLoad();
+    this.handleActive();
+  };
+
   componentWillUnmount = () => {
     let {ds} = this.state;
     if (ds && ds.stop) {
-      ds.stop(); // no dragging
+      ds.stop(); // no drag
     }
   };
 
@@ -559,9 +597,6 @@ class SlideReviewPage extends BaseComponent {
       </div>
     );
   };
-
-  // readd and implement search
-  //<Input defaultValue="search feedback..." />
 
   render() {
     const {files, reviewer} = this.props;
