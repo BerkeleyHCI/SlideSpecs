@@ -87,19 +87,22 @@ class SlideReviewPage extends BaseComponent {
       const start = Math.random() > 0.5 ? 'ctrl' : 'test';
       localStorage.setObject('feedbacks.control', {[sessionId]: start});
       this.setState({control: start == 'ctrl'});
-    } else if (keys.length > 0 && !store) {
+    } else if (store) {
+      // Simple case, just re-render past state.
+      this.setState({control: store == 'ctrl'});
+    } else if (!store && vals.length >= 6) {
       // Compute balancing experiment control state.
-      // TODO change to go through five times and switch.
       const numControl = vals.filter(v => v == 'ctrl').length;
-      const ratioControl = numControl / vals.length;
-      const state = ratioControl < 0.5 ? 'ctrl' : 'test';
+      const state = numControl < 6 ? 'ctrl' : 'test';
       // Save/update interface.
       saved[sessionId] = state;
       localStorage.setObject('feedbacks.control', saved);
       this.setState({control: state == 'ctrl'});
-    } else if (store) {
-      // Simple case, just re-render past state.
-      this.setState({control: store == 'ctrl'});
+    } else if (!store && vals.length > 0) {
+      // Save/update interface.
+      saved[sessionId] = vals[0];
+      localStorage.setObject('feedbacks.control', saved);
+      this.setState({control: state == 'ctrl'});
     } else {
       // Something... awry. BAD
       console.error(saved, keys, 'study control error.');
@@ -608,9 +611,7 @@ class SlideReviewPage extends BaseComponent {
       return (
         <div>
           <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
-            ))}
+            {items.map(i => <Comment {...i} />)}
           </div>
           {items.length >= 5 && (
             <div className="padded full-width">
