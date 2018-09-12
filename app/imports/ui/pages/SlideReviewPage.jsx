@@ -73,7 +73,7 @@ class SlideReviewPage extends BaseComponent {
   handleControl = () => {
     const {sessionId} = this.props;
     let saved = localStorage.getObject('feedbacks.control') || {};
-    this.log(saved);
+    let store = saved[sessionId];
     let keys = Object.keys(saved),
       vals = Object.values(saved);
 
@@ -81,20 +81,25 @@ class SlideReviewPage extends BaseComponent {
       const start = Math.random() > 0.5 ? 'ctrl' : 'test';
       localStorage.setObject('feedbacks.control', {[sessionId]: start});
       this.setState({control: start == 'ctrl'});
-    } else if (keys.length > 0) {
+    } else if (keys.length > 0 && !store) {
       // Compute balancing experiment control state.
       const numControl = vals.filter(v => v == 'ctrl').length;
       const ratioControl = numControl / vals.length;
       const state = ratioControl < 0.5 ? 'ctrl' : 'test';
-
       // Save/update interface.
       saved[sessionId] = state;
       localStorage.setObject('feedbacks.control', saved);
       this.setState({control: state == 'ctrl'});
+    } else if (store) {
+      // Simple case, just re-render past state.
+      this.setState({control: store == 'ctrl'});
     } else {
+      // Something... awry. BAD
       console.error(saved, keys, 'study control error.');
-      this.setState({control: start == 'ctrl'});
+      this.setState({control: start == 'ctrl'}); // backup
     }
+
+    this.log(saved);
   };
 
   handleSelectable = items => {
@@ -294,6 +299,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   addComment = e => {
+    const {control} = this.state;
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
@@ -301,6 +307,7 @@ class SlideReviewPage extends BaseComponent {
       author: reviewer,
       content: cText,
       session: sessionId,
+      private: control,
       slides,
     };
 
@@ -362,7 +369,7 @@ class SlideReviewPage extends BaseComponent {
     const filterer = this.renderFilter();
 
     const {files} = this.props;
-    const {invert, filter} = this.state;
+    const {control, invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
       return () => this.setState({sorter: s, filter: f});
@@ -390,21 +397,27 @@ class SlideReviewPage extends BaseComponent {
             onClick={slideSort}>
             slide
           </button>
-          <button
-            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-            onClick={authSort}>
-            auth
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
-            onClick={agreeSort}>
-            agree
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
-            onClick={flagSort}>
-            discuss
-          </button>
+          {!control && (
+            <button
+              className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+              onClick={authSort}>
+              auth
+            </button>
+          )}
+          {!control && (
+            <button
+              className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
+              onClick={agreeSort}>
+              agree
+            </button>
+          )}
+          {!control && (
+            <button
+              className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
+              onClick={flagSort}>
+              discuss
+            </button>
+          )}
           <button className={'btn btn-menu'} onClick={invFn}>
             {invert ? '▼' : '▲'}
           </button>
@@ -451,7 +464,7 @@ class SlideReviewPage extends BaseComponent {
   renderFilter = () => {
     const submitter = this.renderSubmit();
     const tagList = this.renderTags();
-    let {byAuth, bySlide, byTag} = this.state;
+    let {control, byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
     const ClearingDiv = ({set, pre, clear}) => {
@@ -519,7 +532,15 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter, invert, activeComment, byAuth, bySlide, byTag} = this.state;
+    const {
+      sorter,
+      invert,
+      activeComment,
+      byAuth,
+      bySlide,
+      byTag,
+      control,
+    } = this.state;
     const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
@@ -545,6 +566,13 @@ class SlideReviewPage extends BaseComponent {
 
       if (byTag) {
         csort = csort.filter(c => c.content.includes(byTag));
+      }
+
+      // Control interface - only show own comments.
+      if (control) {
+        csort = csort.filter(
+          c => c.author === reviewer || c.author === 'system',
+        );
       }
 
       const items = csort.map((c, i) => {
