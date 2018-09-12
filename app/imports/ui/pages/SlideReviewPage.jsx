@@ -147,7 +147,8 @@ class SlideReviewPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
-    this.handleControl();
+    // FILTER FOR STUDY
+    //this.handleControl();
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
@@ -604,9 +605,7 @@ class SlideReviewPage extends BaseComponent {
       return (
         <div>
           <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
-            ))}
+            {items.map(i => <Comment {...i} />)}
           </div>
           {items.length >= 5 && (
             <div className="padded full-width">
