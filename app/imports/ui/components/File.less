@@ -121,6 +121,7 @@ div.file-item.file-item-review {
 }
 
 div.reviewView {
+  min-height: calc(~'100vh - 66px');
   margin: 0px;
 
   .overlay {
@@ -184,6 +185,7 @@ div.reviewView {
   }
 
   .context-filter {
+    min-height: calc(100vh - 66px);
     max-height: 100vh;
     overflow-y: auto;
   }
@@ -217,8 +219,9 @@ div.reviewView {
   }
 
   #review-view {
+    min-height: calc(~'100vh - 66px');
     max-width: 2000px;
-    margin: 0px auto;
+    margin: 0px auto 4em auto;
   }
 
   #grid-holder {
@@ -228,11 +231,18 @@ div.reviewView {
   #grid {
     background: darken(@color-empty, 2%);
     padding: 4px 0px;
-    max-height: 40vh;
+    max-height: 38vh;
     width: 100%;
     position: fixed;
     overflow-y: scroll;
     overflow-x: hidden;
+  }
+
+  .alert.bottom {
+    z-index: 10;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
   }
 
   .btn-menu.pull-right {

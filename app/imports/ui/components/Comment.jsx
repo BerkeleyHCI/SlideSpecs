@@ -275,6 +275,8 @@ class Comment extends BaseComponent {
         <br />
         <Markdown
           className="markdown-comment"
+          disallowedTypes={['image', 'imageReference']}
+          unwrapDisallowed={true}
           renderers={this.renderers}
           source={content}
         />

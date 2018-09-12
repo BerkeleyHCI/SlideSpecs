@@ -71,7 +71,7 @@ export default class App extends BaseComponent {
     session.comments = comments.filter(c => c.session === sid);
 
     // FILTER FOR STUDY.
-    //session.comments = session.comments.filter(this.controlFilter);
+    session.comments = session.comments.filter(this.controlFilter);
 
     session.events = events.filter(e => e.session === sid);
     session.active = session.events[0];
