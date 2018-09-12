@@ -45,14 +45,17 @@ class SessionItem extends BaseComponent {
           <button onClick={this.renameSession} className="btn-menu">
             rename
           </button>
-          <button onClick={this.deleteSession} className="btn-menu">
-            delete
-          </button>
         </div>
       </li>
     );
   }
 }
+
+// too dangerous for user study
+// also TODO confirm w/ modal
+//<button onClick={this.deleteSession} className="btn-menu">
+//delete
+//</button>
 
 SessionItem.propTypes = {id: PropTypes.string};
 

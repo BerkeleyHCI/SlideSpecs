@@ -26,8 +26,8 @@ class SlideReviewPage extends BaseComponent {
     super(props);
 
     // Control-log.
-    this.log = new Logger();
-    new LoggerConsole(this.log).enable();
+    this.logger = new Logger();
+    new LoggerConsole(this.logger).enable();
 
     this.inRef = React.createRef();
     this.state = {
@@ -58,12 +58,24 @@ class SlideReviewPage extends BaseComponent {
     mason.on('layoutComplete', this.handleSelectable);
   };
 
+  log = data => {
+    console.log(data);
+    const {reviewer, sessionId} = this.props;
+    if (typeof data === 'string') {
+      this.logger.info(JSON.stringify({data, reviewer, sessionId}));
+    } else if (Object.keys.length > 0) {
+      this.logger.info(JSON.stringify({...data, reviewer, sessionId}));
+    } else {
+      this.logger.info(JSON.stringify({data, reviewer, sessionId}));
+    }
+  };
+
   handleControl = () => {
     const {sessionId} = this.props;
     let saved = localStorage.getObject('feedbacks.control') || {};
+    this.log(saved);
     let keys = Object.keys(saved),
       vals = Object.values(saved);
-    this.log(reviewer, saved);
 
     if (!saved || keys.length == 0) {
       const start = Math.random() > 0.5 ? 'ctrl' : 'test';
@@ -258,7 +270,7 @@ class SlideReviewPage extends BaseComponent {
 
   clearButtonBG = e => {
     const base = e.target.className.split()[0];
-    const matches = [/col-/];
+    const matches = [/col-/, /review-table/];
     if (matches.some(x => base.match(x))) {
       this.clearButton();
     }
@@ -619,7 +631,7 @@ class SlideReviewPage extends BaseComponent {
           <div
             id="review-view"
             onMouseDown={this.clearButtonBG}
-            className="table">
+            className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">

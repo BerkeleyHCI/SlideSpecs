@@ -4,6 +4,9 @@ import './fixtures.js';
 // Set up some rate limiting and other important security settings.
 import './security.js';
 
+// Server side logging from client
+import './logger.js';
+
 // Server side routing to handle post requests
 import './routing.js';
 

@@ -32,6 +32,7 @@ export const createSession = new ValidatedMethod({
 - #great
 - #confusing
 - #core-idea
+- #meta
       `,
           });
       };
