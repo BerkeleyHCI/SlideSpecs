@@ -89,6 +89,7 @@ class SlideReviewPage extends BaseComponent {
       this.setState({control: start == 'ctrl'});
     } else if (keys.length > 0 && !store) {
       // Compute balancing experiment control state.
+      // TODO change to go through five times and switch.
       const numControl = vals.filter(v => v == 'ctrl').length;
       const ratioControl = numControl / vals.length;
       const state = ratioControl < 0.5 ? 'ctrl' : 'test';
@@ -440,7 +441,7 @@ class SlideReviewPage extends BaseComponent {
         <TextArea
           inRef={this.inRef}
           handleSubmit={this.addComment}
-          defaultValue="add feedback here. enter→submit, shift-enter→multi-line comment."
+          defaultValue="add feedback here."
           className="code comment-text"
         />
       </div>
