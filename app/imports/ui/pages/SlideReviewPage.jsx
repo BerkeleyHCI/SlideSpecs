@@ -92,7 +92,6 @@ class SlideReviewPage extends BaseComponent {
       this.setState({control: store == 'ctrl'});
     } else if (!store && vals.length >= 6) {
       // Compute balancing experiment control state.
-      // TODO change to go through five times and switch.
       const numControl = vals.filter(v => v == 'ctrl').length;
       const state = numControl < 6 ? 'ctrl' : 'test';
       // Save/update interface.
@@ -613,9 +612,7 @@ class SlideReviewPage extends BaseComponent {
       return (
         <div>
           <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
-            ))}
+            {items.map(i => <Comment {...i} />)}
           </div>
           {items.length >= 5 && (
             <div className="padded full-width">
