@@ -18,11 +18,13 @@ export const createComment = new ValidatedMethod({
     author: {type: String},
     content: {type: String, min: 1},
     slides: {type: [SlideSchema]},
+    userOwn: {type: Boolean},
   }).validator(),
   run({author, content, session, slides}) {
     // TODO check that the session the slides exists
     return Comments.insert({
       created: Date.now(),
+      userOwn,
       author,
       content,
       session,

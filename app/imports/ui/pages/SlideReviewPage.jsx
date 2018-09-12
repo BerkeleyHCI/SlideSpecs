@@ -307,7 +307,7 @@ class SlideReviewPage extends BaseComponent {
       author: reviewer,
       content: cText,
       session: sessionId,
-      private: control,
+      userOwn: control,
       slides,
     };
 
