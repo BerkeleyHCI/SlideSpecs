@@ -20,7 +20,7 @@ class TextArea extends Component {
     const {inRef, defaultValue, className} = this.props;
     return (
       <textarea
-        autoFocus
+        autofocus
         type="text"
         ref={inRef}
         className={className}
