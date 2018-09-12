@@ -18,7 +18,7 @@ export const createSession = new ValidatedMethod({
       );
     } else {
       const starterComment = (err, _id) => {
-        if (!err)
+        if (!err) {
           Comments.insert({
             created: Date.now(),
             session: _id,
@@ -35,6 +35,7 @@ export const createSession = new ValidatedMethod({
 - #meta
       `,
           });
+        }
       };
 
       return Sessions.insert(

@@ -10,8 +10,6 @@ WebApp.connectHandlers.use('/event', (request, response) => {
     return !!(session && slideNo);
   };
 
-  console.log(data); // yea
-
   if (!validate(data)) {
     response.writeHead(400);
     response.end('Malformed data.');

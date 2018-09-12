@@ -25,11 +25,14 @@ export const createEvent = new ValidatedMethod({
       throw new Error('This session number is not valid.');
     }
 
-    return Events.insert({
+    const data = {
       created: Date.now(),
       session,
       slideNo,
-    });
+    };
+
+    console.log({type: 'event', ...data});
+    return Events.insert(data);
   },
 });
 

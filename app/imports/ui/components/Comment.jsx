@@ -112,16 +112,14 @@ class Comment extends BaseComponent {
   handleEdit = e => {
     const newContent = this.editRef.current.value.trim();
     const {reviewer, _id} = this.props;
-    updateComment.call(
-      {
-        author: reviewer,
-        commentId: _id,
-        newContent,
-      },
-      () => {
-        this.clearEdit();
-      },
-    );
+    const editFields = {
+      author: reviewer,
+      commentId: _id,
+      newContent,
+    };
+
+    this.props.log({type: 'edit', ...editFields});
+    updateComment.call(editFields, this.clearEdit);
   };
 
   handleReply = () => {
@@ -141,6 +139,7 @@ class Comment extends BaseComponent {
       commentId: _id,
     };
 
+    this.props.log({type: 'agree', ...commentFields});
     if (reviewer && _id) {
       agreeComment.call(commentFields);
     }
@@ -153,6 +152,7 @@ class Comment extends BaseComponent {
       commentId: _id,
     };
 
+    this.props.log({type: 'discuss', ...commentFields});
     if (reviewer && _id) {
       discussComment.call(commentFields);
     }

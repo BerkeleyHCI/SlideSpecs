@@ -59,14 +59,20 @@ class SlideReviewPage extends BaseComponent {
   };
 
   log = data => {
-    console.log(data);
+    //console.log(data);
     const {reviewer, sessionId} = this.props;
     if (typeof data === 'string') {
-      this.logger.info(JSON.stringify({data, reviewer, sessionId}));
+      this.logger.info(
+        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+      );
     } else if (Object.keys.length > 0) {
-      this.logger.info(JSON.stringify({...data, reviewer, sessionId}));
+      this.logger.info(
+        JSON.stringify({...data, reviewer, sessionId, time: Date.now()}),
+      );
     } else {
-      this.logger.info(JSON.stringify({data, reviewer, sessionId}));
+      this.logger.info(
+        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+      );
     }
   };
 
@@ -121,7 +127,7 @@ class SlideReviewPage extends BaseComponent {
         selectables: elements,
         onDragMove: updateSelection,
         callback: updateSelection,
-        autoScrollSpeed: 5,
+        autoScrollSpeed: 12,
         area: area,
       });
       this.setState({ds});
@@ -586,6 +592,7 @@ class SlideReviewPage extends BaseComponent {
           reviewer,
           setModal,
           clearModal,
+          log: this.log,
           commentRef: this.inRef,
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,

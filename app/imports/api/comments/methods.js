@@ -4,6 +4,7 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
 import _ from 'lodash';
 
+import {Sessions} from '../sessions/sessions.js';
 import {Comments} from './comments.js';
 
 SlideSchema = new SimpleSchema({
@@ -21,15 +22,19 @@ export const createComment = new ValidatedMethod({
     userOwn: {type: Boolean},
   }).validator(),
   run({author, userOwn, content, session, slides}) {
-    // TODO check that the session the slides exists
-    return Comments.insert({
-      created: Date.now(),
-      userOwn,
-      author,
-      content,
-      session,
-      slides,
-    });
+    const sess = Sessions.findOne(session);
+    if (sess) {
+      const data = {
+        created: Date.now(),
+        userOwn,
+        author,
+        content,
+        session,
+        slides,
+      };
+      console.log({type: 'comment.create', ...data});
+      return Comments.insert(data);
+    }
   },
 });
 
@@ -120,6 +125,7 @@ export const deleteComment = new ValidatedMethod({
   run({author, commentId}) {
     const comment = Comments.findOne(commentId);
     if (comment && comment.author == author) {
+      console.log({type: 'comment.delete', ...comment});
       Comments.remove(commentId);
     }
   },
