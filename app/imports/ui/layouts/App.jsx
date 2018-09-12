@@ -194,7 +194,7 @@ const PrivateRoute = ({user, render, ...other}) => {
   if (user) {
     out = render;
   } else {
-    out = () => (loc !== '/join' ? <Redirect to="/join" /> : null);
+    out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   }
 
   return <Route {...other} render={out} />;
