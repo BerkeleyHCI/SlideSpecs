@@ -57,11 +57,22 @@ export default class App extends BaseComponent {
     this.setState({modal: {isOpen: false}});
   };
 
+  controlFilter = comment => {
+    const auth = ['system', this.props.reviewer];
+    return (
+      !comment.userOwn || (comment.userOwn && auth.includes(comment.author))
+    );
+  };
+
   getSessionProps = sid => {
     const {sessions, files, comments, events, reviewer} = this.props;
     let session = sessions.find(s => s._id === sid) || {};
     session.files = files.filter(f => f.meta.sessionId === sid);
     session.comments = comments.filter(c => c.session === sid);
+
+    // FILTER FOR STUDY.
+    //session.comments = session.comments.filter(this.controlFilter);
+
     session.events = events.filter(e => e.session === sid);
     session.active = session.events[0];
     session.reviewer = reviewer;

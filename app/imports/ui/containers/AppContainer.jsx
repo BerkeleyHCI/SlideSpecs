@@ -21,20 +21,7 @@ export default withTracker(() => {
     connected: Meteor.status().connected,
     loading: ![sessions, comments, files, events].every(x => x.ready()),
     events: Events.find({}, {sort: {created: -1}}).fetch(),
-    comments: Comments.find(
-      {
-        $or: [
-          {userOwn: {$ne: true}},
-          {
-            $and: [
-              {userOwn: {$eq: true}},
-              {author: {$in: ['system', reviewer]}},
-            ],
-          },
-        ],
-      },
-      {sort: {created: 1}},
-    ).fetch(),
+    comments: Comments.find({}, {sort: {created: 1}}).fetch(),
     files: Files.find({}, {sort: {name: 1}}).fetch(),
     sessions: Sessions.find(
       {userId: Meteor.userId()},
