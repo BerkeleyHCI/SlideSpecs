@@ -11,12 +11,6 @@ class SessionsCollection extends Mongo.Collection {
     }
     return super.insert(ourSess, callback);
   }
-
-  remove(selector, callback) {
-    // TODO: Remove all slides related to this session
-    // Files.remove({session: ourSess.id})
-    return super.remove(selector, callback);
-  }
 }
 
 export const Sessions = new SessionsCollection('Sessions');

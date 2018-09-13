@@ -154,7 +154,7 @@ class SlideReviewPage extends BaseComponent {
     this.handleLoad();
 
     // FILTER FOR STUDY
-    //this.handleControl();
+    this.handleControl();
 
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');

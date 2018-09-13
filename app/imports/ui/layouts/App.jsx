@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
+import {Sessions} from '../../api/sessions/sessions.js';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 import AppModal from '../components/AppModal.jsx';
@@ -68,11 +69,8 @@ export default class App extends BaseComponent {
     const {sessions, files, comments, events, reviewer} = this.props;
     let session = sessions.find(s => s._id === sid) || {};
     session.files = files.filter(f => f.meta.sessionId === sid);
-    session.comments = comments.filter(c => c.session === sid);
-
-    // FILTER FOR STUDY.
-    session.comments = session.comments.filter(this.controlFilter);
-
+    session.sComments = comments.filter(c => c.session === sid);
+    session.comments = session.sComments.filter(this.controlFilter);
     session.events = events.filter(e => e.session === sid);
     session.active = session.events[0];
     session.reviewer = reviewer;
@@ -200,12 +198,19 @@ export default class App extends BaseComponent {
 }
 
 const PrivateRoute = ({user, render, ...other}) => {
+  const sessionId = other.computedMatch.params.id;
+  const sess = Sessions.findOne(sessionId);
   let loc = window.location.pathname;
   let out;
-  if (user) {
-    out = render;
-  } else {
+
+  if (!user) {
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
+  } else if (sessionId && sess == undefined) {
+    out = () => <NotFoundPage />;
+  } else if (sessionId && sess.userId != Meteor.userId()) {
+    out = () => <ForbiddenPage />;
+  } else {
+    out = render;
   }
 
   return <Route {...other} render={out} />;
