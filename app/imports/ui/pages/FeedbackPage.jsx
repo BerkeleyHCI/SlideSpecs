@@ -35,6 +35,7 @@ class FeedbackPage extends BaseComponent {
       redirectTo: null,
       activeComment: null,
       activeSlide: null,
+      commentsShown: 0,
       sorter: 'created',
       filter: 'time',
       invert: true,
@@ -460,7 +461,8 @@ class FeedbackPage extends BaseComponent {
 
   renderFilter = () => {
     const tagList = this.renderTags();
-    let {control, byAuth, bySlide, byTag} = this.state;
+    let {sComments} = this.props;
+    let {control, byAuth, bySlide, byTag, commentsShown} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
     const ClearingDiv = ({set, pre, clear}) => {
@@ -481,10 +483,13 @@ class FeedbackPage extends BaseComponent {
     };
 
     return (
-      <div className="filterer alert">
+      <div className="filterer alert no-submit">
         <p>
           <Clock />
           {tagList}
+          <kbd className="pull-right">
+            {commentsShown}/{sComments.length}
+          </kbd>
         </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
@@ -527,6 +532,7 @@ class FeedbackPage extends BaseComponent {
 
   renderComments = () => {
     const {
+      commentsShown,
       sorter,
       invert,
       activeComment,
@@ -560,6 +566,10 @@ class FeedbackPage extends BaseComponent {
 
       if (byTag) {
         csort = csort.filter(c => c.content.includes(byTag));
+      }
+
+      if (commentsShown !== csort.length) {
+        this.setState({commentsShown: csort.length});
       }
 
       const items = csort.map((c, i) => {
