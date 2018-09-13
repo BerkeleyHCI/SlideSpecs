@@ -485,11 +485,11 @@ class FeedbackPage extends BaseComponent {
     return (
       <div className="filterer alert no-submit">
         <p>
-          <Clock />
-          {tagList}
           <kbd className="pull-right">
             {commentsShown}/{sComments.length}
           </kbd>
+          <Clock />
+          {tagList}
         </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
