@@ -34,7 +34,6 @@ class FeedbackPage extends BaseComponent {
       control: false,
       redirectTo: null,
       activeComment: null,
-      activeSlide: null,
       commentsShown: 0,
       sorter: 'created',
       filter: 'time',
@@ -75,43 +74,6 @@ class FeedbackPage extends BaseComponent {
         JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
       );
     }
-  };
-
-  handleControl = () => {
-    const {sessionId} = this.props;
-    let saved = localStorage.getObject('feedbacks.control') || {};
-    let store = saved[sessionId];
-    let keys = Object.keys(saved),
-      vals = Object.values(saved);
-
-    if (!saved || keys.length == 0) {
-      const start = Math.random() > 0.5 ? 'ctrl' : 'test';
-      localStorage.setObject('feedbacks.control', {[sessionId]: start});
-      this.setState({control: start == 'ctrl'});
-    } else if (store) {
-      // Simple case, just re-render past state.
-      this.setState({control: store == 'ctrl'});
-    } else if (!store && vals.length >= 6) {
-      // Compute balancing experiment control state.
-      const numControl = vals.filter(v => v == 'ctrl').length;
-      const state = numControl < 6 ? 'ctrl' : 'test';
-      // Save/update interface.
-      saved[sessionId] = state;
-      localStorage.setObject('feedbacks.control', saved);
-      this.setState({control: state == 'ctrl'});
-    } else if (!store && vals.length > 0) {
-      // Save/update interface.
-      const state = vals[0];
-      saved[sessionId] = state;
-      localStorage.setObject('feedbacks.control', saved);
-      this.setState({control: state == 'ctrl'});
-    } else {
-      // Something... awry. BAD
-      console.error(saved, keys, 'study control error.');
-      this.setState({control: start == 'ctrl'}); // backup
-    }
-
-    this.log(saved);
   };
 
   handleSelectable = items => {
@@ -163,13 +125,11 @@ class FeedbackPage extends BaseComponent {
     const {files} = this.props;
     if (files.length > 0) {
       this.updateImage(files[0]._id);
-      this.handleActive(); // or active
     }
   };
 
   componentDidUpdate = () => {
     this.handleLoad();
-    this.handleActive();
   };
 
   componentWillUnmount = () => {
@@ -255,12 +215,8 @@ class FeedbackPage extends BaseComponent {
   };
 
   updateHoverImage = fid => {
-    const {activeSlide} = this.state;
     const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({hoverImage: link});
-    if (!activeSlide) {
-      this.setState({image: link});
-    }
+    this.setState({hoverImage: link, image: link});
   };
 
   handleSlide = e => {
@@ -440,7 +396,6 @@ class FeedbackPage extends BaseComponent {
 
   renderFiles = () => {
     const {files} = this.props;
-    const {activeSlide} = this.state;
     return files.map((f, key) => {
       let link = Files.findOne({_id: f._id}).link('original', '//');
       return (
@@ -450,7 +405,7 @@ class FeedbackPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          active={activeSlide - 1 == key}
+          active={false}
           handleMouse={this.handleSlide}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
@@ -528,19 +483,6 @@ class FeedbackPage extends BaseComponent {
     const view = document.getElementsByClassName('nav-head');
     if (view[0]) {
       view[0].scrollIntoView();
-    }
-  };
-
-  // Updating the current slide.
-  handleActive = () => {
-    let {activeSlide} = this.state;
-    const {active, files} = this.props;
-    if (active && activeSlide !== active.slideNo) {
-      activeSlide = active.slideNo;
-      this.setState({activeSlide});
-      // assume 1 index, subtract 1
-      const fId = files[activeSlide - 1]._id;
-      this.updateImage(fId);
     }
   };
 

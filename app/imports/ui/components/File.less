@@ -219,8 +219,14 @@ div.reviewView {
   }
 
   .tag-active {
+    opacity: 1;
     kbd.tag-count {
+      background-color: darken(@color-ancillary, 5%);
       opacity: 1;
+      &:hover {
+        background-color: @color-ancillary;
+        opacity: 1;
+      }
     }
   }
 
