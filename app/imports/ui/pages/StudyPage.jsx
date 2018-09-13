@@ -46,14 +46,6 @@ class StudyPage extends Component {
           <ul> {linkIds.map(StudyPageLink)} </ul>
           <br />
         </div>
-        <h2>survey</h2>
-        <div className="alert">
-          (Short!) Survey: [
-          <a target="_blank" href="https://goo.gl/forms/Usd4WAKtB6Mrjsfw1">
-            link
-          </a>
-          ]
-        </div>
       </div>
     );
   }
