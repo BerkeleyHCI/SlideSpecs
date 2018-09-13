@@ -27,6 +27,7 @@ class StudyPage extends Component {
       'd9ePEZwoA4vvioqR2',
       'LWTejnPdPjv6G7dub',
       'tkK5wHfomfjR79yJk',
+      'c2aYLAoHzfTiXmWRX',
     ];
 
     return (
