@@ -499,15 +499,29 @@ class FeedbackPage extends BaseComponent {
   };
 
   renderTags = () => {
+    const {byTag} = this.state;
     const {sComments} = this.props;
     const getTag = t => t.split(/\s/).filter(t => t[0] == '#' && t.length > 1);
-    const alltags = sComments.map(c => getTag(c.content));
-    const unique = _.uniq(_.flatten(alltags));
-    return unique.map(tag => (
-      <a onClick={this.setByTag} className="tag-link" key={tag}>
-        {tag}
-      </a>
-    ));
+    const alltags = _.flatten(sComments.map(c => getTag(c.content)));
+    const tagCount = _.countBy(alltags); // object
+    const unique = _.orderBy(
+      _.toPairs(tagCount),
+      [x => x[1], x => [0]],
+      ['desc', 'asc'],
+    ); // array
+
+    return unique.map(tag => {
+      console.log(tag[0] == byTag, tag[0], byTag);
+      const active = tag[0] == byTag;
+      return (
+        <span key={tag} className={'tag-group ' + (active ? 'tag-active' : '')}>
+          <a onClick={this.setByTag} className="tag-link ">
+            {tag[0]}
+          </a>
+          <kbd className="tag-count">{tag[1]} </kbd>
+        </span>
+      );
+    });
   };
 
   goToTop = () => {

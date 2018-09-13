@@ -209,8 +209,27 @@ div.reviewView {
     margin: auto;
   }
 
-  .tag-link {
+  .tag-group {
     margin-right: 1em;
+    &:hover {
+      .tag-count {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  .tag-active {
+    kbd.tag-count {
+      opacity: 1;
+    }
+  }
+
+  .tag-link {
+    opacity: 1;
+  }
+
+  kbd.tag-count {
+    opacity: 0.2;
   }
 
   .big-slide {

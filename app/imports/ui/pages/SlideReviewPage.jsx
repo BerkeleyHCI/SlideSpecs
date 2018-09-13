@@ -411,27 +411,21 @@ class SlideReviewPage extends BaseComponent {
             onClick={slideSort}>
             slide
           </button>
-          {!control && (
-            <button
-              className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-              onClick={authSort}>
-              auth
-            </button>
-          )}
-          {!control && (
-            <button
-              className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
-              onClick={agreeSort}>
-              agree
-            </button>
-          )}
-          {!control && (
-            <button
-              className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
-              onClick={flagSort}>
-              discuss
-            </button>
-          )}
+          <button
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
+            auth
+          </button>
+          <button
+            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
+            onClick={agreeSort}>
+            agree
+          </button>
+          <button
+            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
+            onClick={flagSort}>
+            discuss
+          </button>
           <button className={'btn btn-menu'} onClick={invFn}>
             {invert ? '▼' : '▲'}
           </button>
@@ -519,9 +513,11 @@ class SlideReviewPage extends BaseComponent {
     const alltags = comments.map(c => getTag(c.content));
     const unique = _.uniq(_.flatten(alltags));
     return unique.map(tag => (
-      <a onClick={this.insertTag} className="tag-link" key={tag}>
-        {tag}
-      </a>
+      <span className="tag-group">
+        <a onClick={this.insertTag} className="tag-link" key={tag}>
+          {tag}
+        </a>
+      </span>
     ));
   };
 
@@ -580,13 +576,6 @@ class SlideReviewPage extends BaseComponent {
 
       if (byTag) {
         csort = csort.filter(c => c.content.includes(byTag));
-      }
-
-      // Control interface - only show own comments.
-      if (control) {
-        csort = csort.filter(
-          c => c.author === reviewer || c.author === 'system',
-        );
       }
 
       const items = csort.map((c, i) => {

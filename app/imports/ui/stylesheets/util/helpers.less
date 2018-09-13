@@ -26,6 +26,14 @@
   user-select: auto; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
+.select-text() {
+  -moz-user-select: text;
+  -khtml-user-select: text;
+  -webkit-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
 .no-drag() {
   user-drag: none;
   user-select: none;
