@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Img from '../components/Image.jsx';
+import PropTypes from 'prop-types';
 
 class FileReview extends BaseComponent {
   render() {
@@ -9,6 +10,7 @@ class FileReview extends BaseComponent {
       active,
       fileId,
       fileUrl,
+      slideCount,
       handleLoad,
       handleMouse,
       handleMouseOut,
@@ -22,6 +24,11 @@ class FileReview extends BaseComponent {
         data-file-id={fileId}>
         <div className="slide-container">
           {active && <div className="live" />}
+          {slideCount > 0 && (
+            <div className="slide-overlay overlay ">
+              {slideCount} <i className="fa fa-comments" />
+            </div>
+          )}
           <div className="overlay">{iter}</div>
           <Img className="slide" source={fileUrl} onLoad={handleLoad} />
         </div>
@@ -29,4 +36,13 @@ class FileReview extends BaseComponent {
     );
   }
 }
+
+FileReview.propTypes = {
+  slideCount: PropTypes.number,
+};
+
+FileReview.defaultProps = {
+  slideCount: 0,
+};
+
 export default FileReview;

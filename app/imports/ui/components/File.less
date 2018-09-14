@@ -46,11 +46,20 @@ div.file-item {
     display: relative;
   }
 
+  // for slide count
+  .slide-overlay {
+    margin: 0.4em;
+    padding: 0.4em;
+    border-radius: 1em;
+    opacity: 0.5 !important;
+    top: initial !important;
+    bottom: 0;
+  }
+
   .overlay {
     .font-s3;
     z-index: 2;
     position: absolute;
-    background: rgba(0, 0, 0, 1);
     padding: 0.4em 0.7em;
     color: white;
     opacity: 0;
@@ -58,8 +67,10 @@ div.file-item {
     top: 0;
   }
 
-  &:hover .overlay {
-    opacity: 1;
+  &:hover .overlay,
+  &:hover .slide-overlay {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.8);
   }
 }
 

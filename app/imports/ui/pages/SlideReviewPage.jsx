@@ -513,8 +513,8 @@ class SlideReviewPage extends BaseComponent {
     const alltags = comments.map(c => getTag(c.content));
     const unique = _.uniq(_.flatten(alltags));
     return unique.map(tag => (
-      <span className="tag-group">
-        <a onClick={this.insertTag} className="tag-link" key={tag}>
+      <span key={tag} className="tag-group">
+        <a onClick={this.insertTag} className="tag-link">
           {tag}
         </a>
       </span>
@@ -601,7 +601,9 @@ class SlideReviewPage extends BaseComponent {
       return (
         <div>
           <div id="comments-list" className="alert">
-            {items.map(i => <Comment {...i} />)}
+            {items.map(i => (
+              <Comment {...i} />
+            ))}
           </div>
           {items.length >= 5 && (
             <div className="padded full-width">

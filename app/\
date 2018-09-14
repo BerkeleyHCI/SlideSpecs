@@ -399,11 +399,10 @@ class FeedbackPage extends BaseComponent {
     return files.map((f, key) => {
       let link = Files.findOne({_id: f._id}).link('original', '//');
       let count = sComments.filter(c => {
-        // speed up by not computing this in a loop, precompute and index.
         const general = [{slideNo: 'general'}];
         const slides = c.slides.length > 0 ? c.slides : general;
         const slideNos = slides.map(x => x.slideNo);
-        return slideNos.includes((key + 1).toString());
+        return slideNos.includes(key);
       }).length;
 
       return (
