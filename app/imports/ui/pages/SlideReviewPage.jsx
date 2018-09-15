@@ -9,6 +9,7 @@ import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
 import TextArea from '../components/TextArea.jsx';
+import ClearingDiv from '../components/ClearingDiv.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
@@ -475,22 +476,6 @@ class SlideReviewPage extends BaseComponent {
     let {control, byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
-    const ClearingDiv = ({set, pre, clear}) => {
-      return (
-        set && (
-          <div>
-            <hr />
-            <p>
-              <strong>view {pre}: </strong>
-              {set}
-              <button onClick={clear} className="btn btn-menu pull-right">
-                clear
-              </button>
-            </p>
-          </div>
-        )
-      );
-    };
 
     return (
       <div className="filterer alert">

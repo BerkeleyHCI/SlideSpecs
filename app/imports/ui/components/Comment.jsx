@@ -210,19 +210,21 @@ class Comment extends BaseComponent {
   };
 
   renderCommentButton = ({icon, key, txt, handleClick, master}) => {
-    const {reviewer, _id} = this.props;
+    const {feedback, reviewer, _id} = this.props;
     return (
-      <button
-        key={key}
-        title={txt}
-        data-id={_id}
-        data-auth={reviewer}
-        data-toggle="tooltip"
-        data-placement="left"
-        onClick={handleClick}
-        className={`btn btn-empty ${master && 'btn-user'}`}>
-        <i className={'fa fa-' + icon} />
-      </button>
+      !feedback && (
+        <button
+          key={key}
+          title={txt}
+          data-id={_id}
+          data-auth={reviewer}
+          data-toggle="tooltip"
+          data-placement="left"
+          onClick={handleClick}
+          className={`btn btn-empty ${master && 'btn-user'}`}>
+          <i className={'fa fa-' + icon} />
+        </button>
+      )
     );
   };
 

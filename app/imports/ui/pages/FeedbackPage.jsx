@@ -8,6 +8,7 @@ import _ from 'lodash';
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
+import ClearingDiv from '../components/ClearingDiv.jsx';
 import TextArea from '../components/TextArea.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
@@ -39,9 +40,8 @@ class FeedbackPage extends BaseComponent {
       filter: 'time',
       invert: true,
       filtered: [],
-      selected: [],
       tags: [],
-      bySlide: '',
+      bySlide: [], // array for this version of the interface
       byAuth: '',
       byTag: '',
       hoverImage: '',
@@ -79,12 +79,13 @@ class FeedbackPage extends BaseComponent {
   handleSelectable = items => {
     const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
-    let {ds, selected} = this.state;
+    let {ds} = this.state;
     const updateSelection = () => {
       const s = ds.getSelection();
       if (s.length > 0) {
         const filtered = s.map(this.extractFileData);
-        this.setState({selected: s, filtered});
+        const bySlide = filtered.map(s => s.slideNo);
+        this.setState({filtered, bySlide});
       }
     };
 
@@ -162,17 +163,27 @@ class FeedbackPage extends BaseComponent {
   };
 
   setBySlide = e => {
-    const {bySlide} = this.state;
+    const {ds} = this.state;
+    const slideId = e.target.dataset.fileId;
     const newSlide = e.target.innerText.trim();
-    if (newSlide && bySlide === newSlide) {
-      this.setState({bySlide: ''});
-    } else if (newSlide) {
-      this.setState({bySlide: newSlide});
+    const filtered = [{slideNo: newSlide, slideId}];
+    this.setState({bySlide: [newSlide], filtered});
+    const slide = document.querySelectorAll(`[data-iter='${newSlide}']`);
+    if (ds) {
+      const sel = ds.getSelection();
+      ds.removeSelection(sel);
+      ds.addSelection(slide);
     }
   };
 
   clearBySlide = () => {
-    this.setState({bySlide: ''});
+    // clearing internal grid
+    const {ds} = this.state;
+    if (ds) {
+      const sel = ds.getSelection();
+      ds.removeSelection(sel);
+    }
+    this.setState({filtered: [], bySlide: []});
   };
 
   // click on tag in comment
@@ -230,70 +241,27 @@ class FeedbackPage extends BaseComponent {
     this.setState({hoverImage: false});
   };
 
-  clearText = () => {
-    const textarea = this.inRef.current;
-    textarea.value = '';
-    textarea.focus();
-  };
-
-  clearSelection = e => {
-    this.setState({filtered: [], selected: []});
-  };
-
   clearButtonBG = e => {
     const base = e.target.className.split()[0];
     const matches = [/col-/, /review-table/];
     if (matches.some(x => base.match(x))) {
-      this.clearButton();
-    }
-  };
-
-  clearButton = e => {
-    this.clearSelection();
-    const {ds} = this.state;
-    if (ds) {
-      // clearing internal grid
-      const sel = ds.getSelection();
-      ds.removeSelection(sel);
+      this.clearBySlide();
     }
   };
 
   clearGrid = e => {
     e.preventDefault();
     if (e.target === e.currentTarget) {
-      this.clearSelection();
+      this.clearBySlide();
     }
-  };
-
-  addComment = e => {
-    const {control} = this.state;
-    const {reviewer, sessionId} = this.props;
-    const slides = this.state.filtered;
-    const cText = this.inRef.current.value.trim();
-    const commentFields = {
-      author: reviewer,
-      content: cText,
-      session: sessionId,
-      userOwn: control,
-      slides,
-    };
-
-    createComment.call(commentFields, (err, res) => {
-      if (err) {
-        console.error(err);
-      } else {
-        this.clearButton();
-        this.clearText();
-      }
-    });
   };
 
   renderSlideTags = (filtered, done: false) => {
     const {bySlide} = this.state;
-    const active = sn => (sn === bySlide ? 'active' : '');
+    const active = sn => (bySlide.includes(sn) ? 'active' : '');
     if (filtered.length === 0) {
       return done ? (
-        <kbd className={active({slideNo: 'general'})} onClick={this.setBySlide}>
+        <kbd className={active('general')} onClick={this.setBySlide}>
           general
         </kbd>
       ) : null;
@@ -314,19 +282,7 @@ class FeedbackPage extends BaseComponent {
       ));
       return (
         <span className="slide-tags">
-          {done ? (
-            <span>{slideKeys}</span>
-          ) : (
-            <span>
-              <button
-                onClick={this.clearButton}
-                className="btn btn-menu pull-right">
-                clear
-              </button>
-              attach comment to slide
-              {plural && 's'} {slideKeys}
-            </span>
-          )}
+          <span>{slideKeys}</span>
         </span>
       );
     }
@@ -364,27 +320,21 @@ class FeedbackPage extends BaseComponent {
             onClick={slideSort}>
             slide
           </button>
-          {!control && (
-            <button
-              className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-              onClick={authSort}>
-              auth
-            </button>
-          )}
-          {!control && (
-            <button
-              className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
-              onClick={agreeSort}>
-              agree
-            </button>
-          )}
-          {!control && (
-            <button
-              className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
-              onClick={flagSort}>
-              discuss
-            </button>
-          )}
+          <button
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
+            auth
+          </button>
+          <button
+            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
+            onClick={agreeSort}>
+            agree
+          </button>
+          <button
+            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
+            onClick={flagSort}>
+            discuss
+          </button>
           <button className={'btn btn-menu'} onClick={invFn}>
             {invert ? '▼' : '▲'}
           </button>
@@ -424,28 +374,11 @@ class FeedbackPage extends BaseComponent {
   };
 
   renderFilter = () => {
-    const tagList = this.renderTags();
     let {sComments} = this.props;
-    let {control, byAuth, bySlide, byTag, commentsShown} = this.state;
-    const sType = bySlide === 'general' ? 'scope' : 'slide';
-    if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
-    const ClearingDiv = ({set, pre, clear}) => {
-      return (
-        set && (
-          <div>
-            <hr />
-            <p>
-              <strong>view {pre}: </strong>
-              {set}
-              <button onClick={clear} className="btn btn-menu pull-right">
-                clear
-              </button>
-            </p>
-          </div>
-        )
-      );
-    };
-
+    let {byAuth, bySlide, byTag, filtered, commentsShown} = this.state;
+    const tagList = this.renderTags();
+    const slideKeys = this.renderSlideTags(filtered);
+    const sType = bySlide === ['general'] ? 'scope' : 'slide';
     return (
       <div className="filterer alert no-submit">
         <p>
@@ -457,7 +390,7 @@ class FeedbackPage extends BaseComponent {
         </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
-        <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
+        <ClearingDiv set={slideKeys} pre={sType} clear={this.clearBySlide} />
       </div>
     );
   };
@@ -521,12 +454,12 @@ class FeedbackPage extends BaseComponent {
         csort = csort.filter(c => c.author === byAuth);
       }
 
-      if (bySlide) {
+      if (bySlide.length > 0) {
         csort = csort.filter(c => {
           const general = [{slideNo: 'general'}];
           const slides = c.slides.length > 0 ? c.slides : general;
           const slideNos = slides.map(x => x.slideNo);
-          return slideNos.includes(bySlide);
+          return bySlide.some(sn => slideNos.includes(sn));
         });
       }
 
@@ -550,6 +483,7 @@ class FeedbackPage extends BaseComponent {
           setModal,
           clearModal,
           log: this.log,
+          feedback: true,
           commentRef: this.inRef,
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
@@ -582,11 +516,8 @@ class FeedbackPage extends BaseComponent {
 
   renderContext = () => {
     const {image, hoverImage, filtered} = this.state;
-
     const fileList = this.renderFiles();
-    const context = this.renderSlideTags(filtered);
     const imgSrc = hoverImage ? hoverImage : image;
-
     return (
       <div className="context-filter float-at-top">
         <Img className="big-slide" source={imgSrc} />
@@ -604,7 +535,6 @@ class FeedbackPage extends BaseComponent {
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
-
     return files ? (
       this.renderRedirect() || (
         <div className="main-content no-pad reviewView">
