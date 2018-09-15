@@ -24,12 +24,12 @@ class FileReview extends BaseComponent {
         data-file-id={fileId}>
         <div className="slide-container">
           {active && <div className="live" />}
+          <div className="overlay">{iter}</div>
           {slideCount > 0 && (
-            <div className="slide-overlay overlay ">
+            <div className="slide-overlay">
               {slideCount} <i className="fa fa-comments" />
             </div>
           )}
-          <div className="overlay">{iter}</div>
           <Img className="slide" source={fileUrl} onLoad={handleLoad} />
         </div>
       </div>

@@ -48,12 +48,16 @@ div.file-item {
 
   // for slide count
   .slide-overlay {
+    .font-s3;
+    z-index: 2;
+    position: absolute;
+    padding: 0.05em 0.4em;
     margin: 0.4em;
-    padding: 0.4em;
-    border-radius: 1em;
-    opacity: 0.5 !important;
-    top: initial !important;
+    color: white;
+    border-radius: 4px;
+    opacity: 0.5;
     bottom: 0;
+    right: 0;
   }
 
   .overlay {
@@ -67,10 +71,12 @@ div.file-item {
     top: 0;
   }
 
-  &:hover .overlay,
-  &:hover .slide-overlay {
-    opacity: 1 !important;
-    background: rgba(0, 0, 0, 0.8);
+  &:hover {
+    .overlay,
+    .slide-overlay {
+      background: rgba(0, 0, 0, 0.75);
+      opacity: 1;
+    }
   }
 }
 
@@ -135,10 +141,6 @@ div.reviewView {
   min-height: calc(~'100vh - 66px');
   margin: 0px;
 
-  .overlay {
-    background: rgba(0, 0, 0, 0.7);
-  }
-
   .slide-tags {
     max-width: 25%;
   }
@@ -165,7 +167,9 @@ div.reviewView {
     img {
       opacity: 0.7;
     }
+    .slide-overlay,
     .overlay {
+      background: rgba(0, 0, 0, 0.75);
       opacity: 1;
     }
   }
