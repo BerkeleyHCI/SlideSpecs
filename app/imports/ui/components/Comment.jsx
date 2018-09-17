@@ -80,15 +80,28 @@ class Comment extends BaseComponent {
   };
 
   confirmRemoveComment = () => {
-    const {setModal, clearModal, content} = this.props;
-    setModal({
-      accept: this.removeComment,
-      deny: clearModal,
-      mtitle: 'Delete this comment?',
-      mtext: content,
-      act: 'delete',
-      isOpen: true,
-    });
+    const {setModal, clearModal, content, replies} = this.props;
+    let modalContent;
+    if (replies.length > 0) {
+      modalContent = {
+        accept: clearModal,
+        deny: clearModal,
+        mtitle: 'Comment cannot be removed as it has replies.',
+        mtext: 'You can edit the content of the comment to be blank, though.',
+        act: 'accept',
+        isOpen: true,
+      };
+    } else {
+      modalContent = {
+        accept: this.removeComment,
+        deny: clearModal,
+        mtitle: 'Delete this comment?',
+        mtext: content,
+        act: 'delete',
+        isOpen: true,
+      };
+    }
+    setModal(modalContent);
   };
 
   removeComment = () => {
@@ -126,11 +139,11 @@ class Comment extends BaseComponent {
 
   handleReply = () => {
     const {commentRef, author, _id} = this.props;
-    const refText = ` [@${author}](#c${_id}) `;
+    const refText = ` [@${author}](#c${_id})`;
     const commText = commentRef.current;
-    if (commText && !commText.value.includes(refText)) {
+    if (commText && !` ${commText.value}`.includes(refText)) {
       commText.scrollIntoView(false);
-      commText.value = (commText.value + refText).trim();
+      commText.value = (commText.value + refText).trim() + ' ';
       commText.focus();
     }
   };

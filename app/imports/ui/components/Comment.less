@@ -143,20 +143,28 @@ div.comment.editing {
   background-color: @color-rare;
 }
 
-.reply-comment-1 {
-  border-left: 0.5em solid @color-rare;
+.reply-comment-1:hover,
+.reply-comment-2:hover,
+.reply-comment-3:hover,
+.reply-comment-4:hover,
+.reply-comment-5:hover {
+  transition: border-width 0.1s ease;
+  border-left-width: 1em;
 }
-.reply-comment-2 {
+.reply-comment-1 {
   border-left: 0.5em solid @color-medium-rare;
 }
+.reply-comment-2 {
+  border-left: 0.5em solid darken(@color-medium-rare, 15%);
+}
 .reply-comment-3 {
-  border-left: 0.5em solid @color-medium;
+  border-left: 0.5em solid darken(@color-medium-rare, 25%);
 }
 .reply-comment-4 {
-  border-left: 0.5em solid @color-well;
+  border-left: 0.5em solid darken(@color-medium-rare, 30%);
 }
 .reply-comment-5 {
-  border-left: 0.5em solid @color-well;
+  border-left: 0.5em solid darken(@color-medium-rare, 35%);
 }
 
 .markdown-comment {

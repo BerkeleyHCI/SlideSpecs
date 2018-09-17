@@ -597,6 +597,8 @@ class SlideReviewPage extends BaseComponent {
             {fileList}
           </div>
         </div>
+        <div className="v-pad" />
+        <div className="v-pad" />
         {filtered.length > 0 && (
           <div className="no-margin clearfix alert bottom">
             <SlideTags
