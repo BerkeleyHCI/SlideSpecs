@@ -4,6 +4,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 import Markdown from 'react-markdown';
+import _ from 'lodash';
 import {
   agreeComment,
   discussComment,
@@ -125,10 +126,11 @@ class Comment extends BaseComponent {
 
   handleReply = () => {
     const {commentRef, author, _id} = this.props;
+    const refText = ` [@${author}](#c${_id}) `;
     const commText = commentRef.current;
-    if (commText) {
+    if (commText && !commText.value.includes(refText)) {
       commText.scrollIntoView(false);
-      commText.value += ` [${author}'s comment](#c${_id}) `;
+      commText.value = (commText.value + refText).trim();
       commText.focus();
     }
   };
@@ -241,6 +243,7 @@ class Comment extends BaseComponent {
       discuss,
       last,
       log,
+      depth,
       reviewer,
       replies,
       isReply,
@@ -277,12 +280,15 @@ class Comment extends BaseComponent {
     );
 
     const replyProps = replies.map((c, i) => {
-      return Object.assign({}, this.props, {
+      return {
+        ...c,
+        isReply: true,
         key: i + c._id,
+        depth: depth + 1,
         replies: allReplies.filter(r => r.replyTo == c._id),
         active: c._id === activeComment,
-        last: i === replies.length - 1,
-      });
+        last: false,
+      };
     });
 
     return (
@@ -292,9 +298,9 @@ class Comment extends BaseComponent {
           onBlur={this.clearEdit}
           className={
             'clearfix comment ' +
-            (last ? 'last-comment' : '') +
-            (active ? 'active-comment' : '') +
-            (isReply ? 'reply-comment' : '')
+            (last ? ' last-comment' : '') +
+            (active ? ' active-comment' : '') +
+            (isReply ? ` reply-comment-${depth}` : '')
           }>
           <div className="hover-menu">
             <div className="btn-group btns-empty">
@@ -328,7 +334,7 @@ class Comment extends BaseComponent {
 
         <div>
           {replyProps.map(rp => (
-            <Comment {...rp} />
+            <Comment {...this.props} {...rp} />
           ))}
         </div>
       </div>
@@ -369,6 +375,7 @@ Comment.propTypes = {
 Comment.defaultProps = {
   isReply: false,
   replies: [],
+  depth: 0,
 };
 
 export default Comment;

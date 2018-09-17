@@ -290,6 +290,7 @@ class SlideReviewPage extends BaseComponent {
   };
 
   clearButtonBG = e => {
+    this.clearActiveComment();
     const base = e.target.className.split()[0];
     const matches = [/col-/, /review-table/];
     if (matches.some(x => base.match(x))) {
@@ -541,7 +542,6 @@ class SlideReviewPage extends BaseComponent {
         return {
           ...c,
           key: c._id,
-          //context,
           reviewer,
           setModal,
           clearModal,
@@ -552,7 +552,6 @@ class SlideReviewPage extends BaseComponent {
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
           bySlide: bySlide,
-          slides: filtered,
           handleSlideIn: this.handleSlideIn,
           handleSlideOut: this.handleSlideOut,
           clearButton: this.clearButton,
