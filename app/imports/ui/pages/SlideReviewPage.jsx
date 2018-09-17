@@ -5,6 +5,7 @@ import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
+import marked from 'marked';
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
@@ -545,6 +546,15 @@ class SlideReviewPage extends BaseComponent {
         [sorter, 'created'],
         [invert ? 'desc' : 'asc', 'asc'],
       );
+
+      // Reply function test
+      const handleLinks = (x, y) => {
+        console.log(x, y);
+      };
+
+      // Filtering out 'reply' comments.
+      csort.map(c => console.log(c.content));
+      csort.map(c => marked.lexer(c.content));
 
       if (byAuth) {
         csort = csort.filter(c => c.author === byAuth);
