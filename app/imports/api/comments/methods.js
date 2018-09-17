@@ -19,15 +19,19 @@ export const createComment = new ValidatedMethod({
     author: {type: String, min: 1},
     content: {type: String, min: 1},
     slides: {type: [SlideSchema]},
+    agree: {type: [String], optional: true},
+    discuss: {type: [String], optional: true},
     userOwn: {type: Boolean},
   }).validator(),
-  run({author, userOwn, content, session, slides}) {
+  run({author, userOwn, content, session, discuss, agree, slides}) {
     const sess = Sessions.findOne(session);
     if (sess) {
       const data = {
         created: Date.now(),
         userOwn,
         author,
+        discuss,
+        agree,
         content,
         session,
         slides,

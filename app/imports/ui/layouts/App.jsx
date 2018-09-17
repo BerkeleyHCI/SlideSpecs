@@ -15,6 +15,7 @@ import ReviewContainer from '../containers/ReviewContainer.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
+import DiscussPage from '../pages/DiscussPage.jsx';
 import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
@@ -96,6 +97,10 @@ export default class App extends BaseComponent {
     return this.preRender(match, UploadPage);
   };
 
+  renderDiscuss = ({match}) => {
+    return this.preRender(match, DiscussPage);
+  };
+
   renderFeedback = ({match}) => {
     return this.preRender(match, FeedbackPage);
   };
@@ -158,6 +163,12 @@ export default class App extends BaseComponent {
             <PrivateRoute
               path="/slides/:id"
               render={this.renderUpload}
+              user={user}
+            />
+
+            <PrivateRoute
+              path="/discuss/:id"
+              render={this.renderDiscuss}
               user={user}
             />
 

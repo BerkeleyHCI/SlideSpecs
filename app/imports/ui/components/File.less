@@ -234,6 +234,11 @@ div.reviewView {
     }
   }
 
+  .auth-active {
+    background-color: @color-note;
+    text-decoration: underline;
+  }
+
   .tag-active {
     opacity: 1;
     kbd.tag-count {
@@ -252,6 +257,26 @@ div.reviewView {
 
   kbd.tag-count {
     opacity: 0.2;
+  }
+
+  .transcript {
+    display: block;
+    text-align: center;
+    padding: 1em 3em;
+    line-height: initial;
+  }
+
+  .IWANTSOMEBIGGGBUTTONS button {
+    height: 100%;
+  }
+
+  .btn-secondary {
+    color: @color-full !important;
+    border-color: @color-raw !important;
+    box-shadow: none !important;
+    &:hover {
+      background: @color-note !important;
+    }
   }
 
   .big-slide {

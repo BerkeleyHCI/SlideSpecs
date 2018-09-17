@@ -1,12 +1,15 @@
 import {Meteor} from 'meteor/meteor';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import {Session} from 'meteor/session.js';
 import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
+import {toast} from 'react-toastify';
 import _ from 'lodash';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
+import SpeechRecognition from 'react-speech-recognition';
 import Input from '../components/Input.jsx';
 import TextArea from '../components/TextArea.jsx';
 import SlideTags from '../components/SlideTags.jsx';
@@ -23,7 +26,7 @@ import {Transition} from 'react-spring';
 import {Logger} from 'meteor/ostrio:logger';
 import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
 
-class SlideReviewPage extends BaseComponent {
+class DiscussPage extends BaseComponent {
   constructor(props) {
     super(props);
 
@@ -37,12 +40,14 @@ class SlideReviewPage extends BaseComponent {
       redirectTo: null,
       activeComment: null,
       activeSlide: null,
-      sorter: 'created',
-      filter: 'time',
+      revising: false,
+      sorter: 'flag',
+      filter: 'flag',
       invert: true,
       filtered: [],
       selected: [],
       tags: [],
+      author: null,
       bySlide: '',
       byAuth: '',
       byTag: '',
@@ -76,43 +81,6 @@ class SlideReviewPage extends BaseComponent {
         JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
       );
     }
-  };
-
-  handleControl = () => {
-    const {sessionId} = this.props;
-    let saved = localStorage.getObject('feedbacks.control') || {};
-    let store = saved[sessionId];
-    let keys = Object.keys(saved),
-      vals = Object.values(saved);
-
-    if (!saved || keys.length == 0) {
-      const start = Math.random() > 0.5 ? 'ctrl' : 'test';
-      localStorage.setObject('feedbacks.control', {[sessionId]: start});
-      this.setState({control: start == 'ctrl'});
-    } else if (store) {
-      // Simple case, just re-render past state.
-      this.setState({control: store == 'ctrl'});
-    } else if (!store && vals.length >= 6) {
-      // Compute balancing experiment control state.
-      const numControl = vals.filter(v => v == 'ctrl').length;
-      const state = numControl < 6 ? 'ctrl' : 'test';
-      // Save/update interface.
-      saved[sessionId] = state;
-      localStorage.setObject('feedbacks.control', saved);
-      this.setState({control: state == 'ctrl'});
-    } else if (!store && vals.length > 0) {
-      // Save/update interface.
-      const state = vals[0];
-      saved[sessionId] = state;
-      localStorage.setObject('feedbacks.control', saved);
-      this.setState({control: state == 'ctrl'});
-    } else {
-      // Something... awry. BAD
-      console.error(saved, keys, 'study control error.');
-      this.setState({control: start == 'ctrl'}); // backup
-    }
-
-    this.log(saved);
   };
 
   handleSelectable = items => {
@@ -153,10 +121,19 @@ class SlideReviewPage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    this.handleLoad();
+    // handle voice integration
+    const {browserSupportsSpeechRecognition} = this.props;
+    if (!browserSupportsSpeechRecognition) {
+      toast(() => (
+        <AppNotification
+          msg="VOICE ERROR"
+          desc="Dictation only supported in Google Chrome 27+"
+          icon="error"
+        />
+      ));
+    }
 
-    // FILTER FOR STUDY
-    this.handleControl();
+    this.handleLoad();
 
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -168,13 +145,11 @@ class SlideReviewPage extends BaseComponent {
     const {files} = this.props;
     if (files.length > 0) {
       this.updateImage(files[0]._id);
-      this.handleActive(); // or active
     }
   };
 
   componentDidUpdate = () => {
     this.handleLoad();
-    this.handleActive();
   };
 
   componentWillUnmount = () => {
@@ -190,6 +165,14 @@ class SlideReviewPage extends BaseComponent {
 
   clearActiveComment = () => {
     this.setState({activeComment: ''});
+  };
+
+  setDiscussAuth = author => {
+    this.setState({author});
+  };
+
+  clearDiscussAuth = () => {
+    this.setState({author: null});
   };
 
   setByAuth = e => {
@@ -315,16 +298,17 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
-  addComment = e => {
-    const {control} = this.state;
+  addComment = () => {
+    const {author, control} = this.state;
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
     const commentFields = {
-      author: reviewer,
       content: cText,
       session: sessionId,
+      discuss: ['system'],
       userOwn: control,
+      author,
       slides,
     };
 
@@ -334,6 +318,7 @@ class SlideReviewPage extends BaseComponent {
       } else {
         this.clearButton();
         this.clearText();
+        this.endTranscript();
       }
     });
   };
@@ -400,7 +385,7 @@ class SlideReviewPage extends BaseComponent {
         <TextArea
           inRef={this.inRef}
           handleSubmit={this.addComment}
-          defaultValue="add feedback here."
+          defaultValue="enter discussion here."
           className="code comment-text"
         />
       </div>
@@ -419,7 +404,7 @@ class SlideReviewPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          active={activeSlide - 1 == key}
+          active={false}
           handleMouse={this.handleSlide}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
@@ -429,14 +414,15 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderFilter = () => {
-    const submitter = this.renderSubmit();
     const tagList = this.renderTags();
+    const voice = this.renderVoice();
     let {control, byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
+    const {browserSupportsSpeechRecognition} = this.props;
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
 
     return (
-      <div className="filterer alert">
+      <div className="filterer alert clearfix">
         <p>
           <Clock />
           {tagList}
@@ -445,7 +431,7 @@ class SlideReviewPage extends BaseComponent {
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
         <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
         <hr />
-        {submitter}
+        {browserSupportsSpeechRecognition ? voice : this.renderSubmit()}
       </div>
     );
   };
@@ -457,8 +443,24 @@ class SlideReviewPage extends BaseComponent {
     const unique = _.uniq(_.flatten(alltags));
     return unique.map(tag => (
       <span key={tag} className="tag-group">
-        <a onClick={this.insertTag} className="tag-link">
+        <a onClick={this.setByTag} className="tag-link">
           {tag}
+        </a>
+      </span>
+    ));
+  };
+
+  renderAuthors = () => {
+    const {author} = this.state;
+    const {sComments} = this.props;
+    const allAuth = sComments.map(c => c.author);
+    const unique = _.uniq(_.flatten(allAuth));
+    return unique.sort().map(a => (
+      <span
+        key={a}
+        className={'tag-group' + (author == a ? ' auth-active' : '')}>
+        <a onClick={() => this.setDiscussAuth(a)} className="tag-link">
+          {a}
         </a>
       </span>
     ));
@@ -468,19 +470,6 @@ class SlideReviewPage extends BaseComponent {
     const view = document.getElementsByClassName('nav-head');
     if (view[0]) {
       view[0].scrollIntoView();
-    }
-  };
-
-  // Updating the current slide.
-  handleActive = () => {
-    let {activeSlide} = this.state;
-    const {active, files} = this.props;
-    if (active && activeSlide !== active.slideNo) {
-      activeSlide = active.slideNo;
-      this.setState({activeSlide});
-      // assume 1 index, subtract 1
-      const fId = files[activeSlide - 1]._id;
-      this.updateImage(fId);
     }
   };
 
@@ -495,15 +484,18 @@ class SlideReviewPage extends BaseComponent {
       byTag,
       control,
     } = this.state;
-    const {comments, reviewer, setModal, clearModal} = this.props;
-    if (!comments || !comments.length) {
+    const {sComments, reviewer, setModal, clearModal} = this.props;
+    if (!sComments || !sComments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
       let csort = _.orderBy(
-        comments,
+        sComments,
         [sorter, 'created'],
         [invert ? 'desc' : 'asc', 'asc'],
       );
+
+      // Clean - filter out those without discuss.
+      csort = csort.filter(c => c.discuss.length > 0);
 
       // Filtering 'reply' comments into array. HATE.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
@@ -547,6 +539,7 @@ class SlideReviewPage extends BaseComponent {
           clearModal,
           activeComment,
           log: this.log,
+          feedback: true,
           allReplies: replies,
           commentRef: this.inRef,
           handleTag: this.setByTag,
@@ -601,7 +594,9 @@ class SlideReviewPage extends BaseComponent {
         <div className="v-pad" />
         {filtered.length > 0 && (
           <div className="no-margin clearfix alert bottom">
+            Slides:
             <SlideTags
+              done={true}
               slides={filtered}
               bySlide={bySlide}
               handleSlideIn={this.handleSlideIn}
@@ -616,22 +611,131 @@ class SlideReviewPage extends BaseComponent {
     );
   };
 
+  renderVoice = () => {
+    const submitter = this.renderSubmit();
+    const authors = this.renderAuthors();
+    const {uTranscript, revising, author} = this.state;
+    const {
+      transcript,
+      listening,
+      resetTranscript,
+      interimTranscript,
+      startListening,
+      stopListening,
+    } = this.props;
+
+    // initialize the box to value.
+    if (
+      this.inRef &&
+      this.inRef.current &&
+      !this.inRef.current.value &&
+      uTranscript
+    ) {
+      this.inRef.current.value = uTranscript;
+    }
+
+    return (
+      <div>
+        {revising ? (
+          <div>
+            <div className="btn-m-group btns-group">
+              <button
+                className="btn btn-primary btn-menu"
+                onClick={this.addComment}>
+                confirm
+              </button>
+              <button className="btn btn-menu" onClick={this.resumeTranscript}>
+                record more
+              </button>
+              <button className="btn btn-menu" onClick={this.endTranscript}>
+                erase
+              </button>
+            </div>
+            <div className="padded">
+              <span className={!author ? 'auth-active' : ''}>
+                Speaker (required)
+              </span>
+              : &nbsp;&nbsp;
+              {authors}
+            </div>
+            {submitter}
+          </div>
+        ) : (
+          <div>
+            <div className="btns-group">
+              {listening ? (
+                <button
+                  className={'btn btn-danger btn-listening'}
+                  onClick={stopListening}>
+                  stop
+                </button>
+              ) : (
+                <button className={'btn btn-primary'} onClick={startListening}>
+                  record discussion
+                </button>
+              )}
+
+              {transcript.length > 0 && (
+                <button
+                  className="btn btn-secondary"
+                  onClick={this.prepTranscript}>
+                  Save
+                </button>
+              )}
+
+              {transcript.length > 0 && (
+                <button className="btn btn-danger" onClick={resetTranscript}>
+                  Erase
+                </button>
+              )}
+            </div>
+
+            {(transcript || listening) && (
+              <code className="transcript">
+                {transcript}
+                {listening && transcript.length == 0 && <i>*listening*</i>}
+              </code>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  endTranscript = () => {
+    const {stopListening, resetTranscript} = this.props;
+    this.setState({uTranscript: '', revising: false});
+    resetTranscript();
+    stopListening();
+  };
+
+  prepTranscript = () => {
+    const {stopListening, transcript} = this.props;
+    const text = '#discussion ' + transcript;
+    this.setState({uTranscript: text, revising: true});
+    stopListening();
+  };
+
+  resumeTranscript = () => {
+    const {startListening} = this.props;
+    this.setState({revising: false});
+    startListening();
+  };
+
   render() {
-    const {files, reviewer} = this.props;
+    const {files, reviewer, sessionId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
 
     return files ? (
       this.renderRedirect() || (
-        <div className="reviewView">
+        <div className="reviewView main-content no-pad">
           <h2 className="nav-head clearfix">
-            share feedback
-            <small
-              onClick={this.clearReviewer}
-              className="pull-right clear-icon">
-              {reviewer}
-            </small>
+            <Link to={`/sessions/${sessionId}`}>
+              <span className="black"> ‹ </span>
+              discuss feedback
+            </Link>
           </h2>
 
           <div
@@ -654,4 +758,11 @@ class SlideReviewPage extends BaseComponent {
   }
 }
 
-export default SlideReviewPage;
+// Props injected by SpeechRecognition
+DiscussPage.propTypes = {
+  transcript: PropTypes.string,
+  resetTranscript: PropTypes.func,
+  browserSupportsSpeechRecognition: PropTypes.bool,
+};
+
+export default SpeechRecognition({autoStart: false})(DiscussPage);

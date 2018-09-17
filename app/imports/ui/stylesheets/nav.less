@@ -9,6 +9,13 @@
     color: @color-raw;
   }
 
+  a {
+    color: @color-raw;
+    &:hover {
+      color: darken(@color-primary, 10%);
+    }
+  }
+
   small {
     color: @color-danger;
     line-height: 2;

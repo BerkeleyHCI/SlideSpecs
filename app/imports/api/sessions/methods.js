@@ -34,7 +34,6 @@ export const createSession = new ValidatedMethod({
             slides: [],
             author: 'system',
             content: `Starter tags:
-
 - #idea
 - #confusion
 - #interesting

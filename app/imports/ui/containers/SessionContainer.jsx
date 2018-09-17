@@ -42,8 +42,10 @@ export default class SessionContainer extends BaseComponent {
 
   render() {
     const {sessionId, name, files, sComments} = this.props;
+    const discussCount = sComments.filter(sc => sc.discuss.length > 0).length;
     const shareLink = window.location.origin + '/share/' + sessionId;
     const uLink = `/slides/${sessionId}`;
+    const dLink = `/discuss/${sessionId}`;
     const fLink = `/feedback/${sessionId}`;
     const content = (
       <div className="main-content">
@@ -70,16 +72,25 @@ export default class SessionContainer extends BaseComponent {
               open link
             </a>
             <hr />
-            once ready, give your presentation. feedback can be accessed below.
+            once ready, give your presentation.
           </div>
-        </div>
 
-        <div className="alert">
-          <h3>
-            3. review feedback <small>{sComments.length} comments</small>
-          </h3>
-          after your presentation, review the gathered feedback [
-          <Link to={fLink}>here</Link>]
+          <div className="alert">
+            <h3>
+              3. discuss feedback{' '}
+              <small>{discussCount} comments to discuss</small>
+            </h3>
+            after your presentation, discuss audience-selected comments [
+            <Link to={dLink}>here</Link>]
+          </div>
+
+          <div className="alert">
+            <h3>
+              4. review feedback{' '}
+              <small>{sComments.length} total comments</small>
+            </h3>
+            last, review all gathered feedback [<Link to={fLink}>here</Link>]
+          </div>
         </div>
       </div>
     );

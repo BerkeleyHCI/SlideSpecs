@@ -142,16 +142,15 @@ img {
 }
 .tooltip {
   .type-regular;
+  margin-top: 0px;
+  z-index: 100;
   * {
     z-index: 100;
   }
 }
-.tooltip {
-  margin-top: 0px;
-}
 .tooltip-inner {
   border: 1px solid @color-medium-rare;
-  background-color: @color-danger;
+  background-color: darken(@color-danger, 5%);
   padding-left: 4px;
   z-index: 100;
   opacity: 1;

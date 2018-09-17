@@ -23,6 +23,15 @@
   vertical-align: middle;
   white-space: nowrap;
 
+  &[class*='menu'] {
+    background-color: @color-danger;
+    color: @color-empty;
+    padding: 0.2em;
+    &:hover {
+      background-color: darken(@color-ancillary, 5%);
+    }
+  }
+
   &[class*='primary'] {
     background-color: @color-primary;
     color: @color-empty;
@@ -70,15 +79,6 @@
   &[class*='round'] {
     border-radius: 2em;
     padding: 1em;
-  }
-
-  &[class*='menu'] {
-    background-color: @color-danger;
-    color: @color-empty;
-    padding: 0.2em;
-    &:hover {
-      background-color: darken(@color-ancillary, 5%);
-    }
   }
 
   &[class*='empty'] {

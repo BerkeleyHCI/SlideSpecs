@@ -46,7 +46,10 @@ class Comment extends BaseComponent {
           this.goToElementId('c' + _id);
         };
         return (
-          <a className="internal reply" onClick={scrollView}>
+          <a
+            key={props.children.toString() + this.props._id}
+            className="internal reply"
+            onClick={scrollView}>
             {props.children} <i className={'fa fa-reply'} />
           </a>
         );
@@ -59,21 +62,24 @@ class Comment extends BaseComponent {
       }
     },
     text: props => {
-      // TODO handle ending punctuation
       // split here for hashtag rendering
-      const words = props.split(/\s/).map((x, i) => {
-        if (x[0] == '#' && x.length > 1) {
-          return (
-            <span key={props + i}>
-              <a className="hashtag" onClick={this.props.handleTag}>
-                {x}
-              </a>{' '}
-            </span>
-          );
-        } else {
-          return <span key={props + i}>{x} </span>;
-        }
-      });
+      // TODO handle ending punctuation
+      const words = props
+        .split(/\s/)
+        .map((x, i) => {
+          if (x[0] == '#' && x.length > 1) {
+            return (
+              <span key={props + i}>
+                <a className="hashtag" onClick={this.props.handleTag}>
+                  {x}{' '}
+                </a>
+              </span>
+            );
+          } else {
+            return <span key={props + i}>{x} </span>;
+          }
+        })
+        .filter(x => !!x);
 
       return <span key={props}>{words}</span>;
     },
@@ -141,9 +147,11 @@ class Comment extends BaseComponent {
     const {commentRef, author, _id} = this.props;
     const refText = ` [@${author}](#c${_id})`;
     const commText = commentRef.current;
-    if (commText && !` ${commText.value}`.includes(refText)) {
+    if (commText) {
       commText.scrollIntoView(false);
-      commText.value = (commText.value + refText).trim() + ' ';
+      if (!` ${commText.value}`.includes(refText)) {
+        commText.value = (commText.value + refText).trim() + ' ';
+      }
       commText.focus();
     }
   };

@@ -6,7 +6,7 @@ import {Session} from 'meteor/session.js';
 import Input from '../components/Input.jsx';
 import Message from '../components/Message.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
-import SlideReviewPage from '../pages/SlideReviewPage.jsx';
+import SlideReviewPage from '../pages/CommentPage.jsx';
 
 export default class ReviewContainer extends BaseComponent {
   constructor(props) {
