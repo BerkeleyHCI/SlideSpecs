@@ -487,6 +487,7 @@ class SlideReviewPage extends BaseComponent {
     const {
       sorter,
       invert,
+      filtered,
       activeComment,
       byAuth,
       bySlide,
@@ -537,7 +538,6 @@ class SlideReviewPage extends BaseComponent {
         c.last = i === csort.length - 1; // no final hr
         c.active = c._id === activeComment; // highlight
         c.replies = replies.filter(r => r.replyTo == c._id);
-        //const context = this.renderSlideTags(c.slides, true);
         return {
           ...c,
           key: c._id,
@@ -551,6 +551,13 @@ class SlideReviewPage extends BaseComponent {
           commentRef: this.inRef,
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
+          bySlide: bySlide,
+          slides: filtered,
+          handleSlideIn: this.handleSlideIn,
+          handleSlideOut: this.handleSlideOut,
+          clearButton: this.clearButton,
+          clearBySlide: this.clearBySlide,
+          setBySlide: this.setBySlide,
           setActive: this.setActiveComment,
           unsetActive: this.clearActiveComment,
         };
@@ -591,7 +598,7 @@ class SlideReviewPage extends BaseComponent {
             {fileList}
           </div>
         </div>
-        {filtered > 0 && (
+        {filtered.length > 0 && (
           <div className="no-margin clearfix alert bottom">
             <SlideTags
               slides={filtered}

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
+import SlideTags from '../components/SlideTags.jsx';
 import Markdown from 'react-markdown';
 import {
   agreeComment,
@@ -238,7 +239,6 @@ class Comment extends BaseComponent {
       agree,
       active,
       discuss,
-      context,
       last,
       log,
       reviewer,
@@ -246,7 +246,14 @@ class Comment extends BaseComponent {
       isReply,
       allReplies,
       activeComment,
+      bySlide,
       handleAuthor,
+      slides,
+      handleSlideIn,
+      handleSlideOut,
+      clearButton,
+      clearBySlide,
+      setBySlide,
     } = this.props;
     const master = author === reviewer;
     let bData;
@@ -255,6 +262,19 @@ class Comment extends BaseComponent {
     } else {
       bData = this.pubButtons;
     }
+
+    const context = (
+      <SlideTags
+        done={true}
+        slides={slides}
+        bySlide={bySlide}
+        handleSlideIn={handleSlideIn}
+        handleSlideOut={handleSlideOut}
+        clearButton={clearButton}
+        clearBySlide={clearBySlide}
+        setBySlide={setBySlide}
+      />
+    );
 
     const replyProps = replies.map((c, i) => {
       return Object.assign({}, this.props, {
