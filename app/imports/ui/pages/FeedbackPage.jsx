@@ -163,6 +163,7 @@ class FeedbackPage extends BaseComponent {
   };
 
   setBySlide = e => {
+    console.log(e.target);
     const {ds} = this.state;
     const slideId = e.target.dataset.fileId;
     const newSlide = e.target.innerText.trim();
@@ -188,6 +189,7 @@ class FeedbackPage extends BaseComponent {
 
   // click on tag in comment
   setByTag = e => {
+    console.log(e.target);
     e.preventDefault();
     const {byTag} = this.state;
     const newTag = e.target.innerText.trim();

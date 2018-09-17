@@ -64,24 +64,22 @@ class Comment extends BaseComponent {
     text: props => {
       // split here for hashtag rendering
       // TODO handle ending punctuation
-      const words = props
-        .split(/\s/)
-        .map((x, i) => {
-          if (x[0] == '#' && x.length > 1) {
-            return (
-              <span key={props + i}>
-                <a className="hashtag" onClick={this.props.handleTag}>
-                  {x}{' '}
-                </a>
-              </span>
-            );
-          } else {
-            return <span key={props + i}>{x} </span>;
-          }
-        })
-        .filter(x => !!x);
+      const id = this.props._id;
+      const words = props.split(/\s+/).map((x, i) => {
+        if (x[0] == '#' && x.length > 1) {
+          return (
+            <span key={id + props + i}>
+              <a className="hashtag" onClick={this.props.handleTag}>
+                {x}{' '}
+              </a>
+            </span>
+          );
+        } else {
+          return <span key={id + props + i}>{x} </span>;
+        }
+      });
 
-      return <span key={props}>{words}</span>;
+      return <span key={id + props}>{words}</span>;
     },
   };
 
@@ -388,12 +386,13 @@ class Comment extends BaseComponent {
 }
 
 Comment.propTypes = {
-  allReplies: PropTypes.array.isRequired,
+  allReplies: PropTypes.array,
   isReply: PropTypes.bool,
   replies: PropTypes.array,
 };
 
 Comment.defaultProps = {
+  allReplies: [],
   isReply: false,
   replies: [],
   depth: 0,
