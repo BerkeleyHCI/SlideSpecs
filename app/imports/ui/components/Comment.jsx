@@ -240,7 +240,12 @@ class Comment extends BaseComponent {
       discuss,
       context,
       last,
+      log,
       reviewer,
+      replies,
+      isReply,
+      allReplies,
+      activeComment,
       handleAuthor,
     } = this.props;
     const master = author === reviewer;
@@ -251,39 +256,61 @@ class Comment extends BaseComponent {
       bData = this.pubButtons;
     }
 
+    const replyProps = replies.map((c, i) => {
+      return Object.assign({}, this.props, {
+        key: i + c._id,
+        replies: allReplies.filter(r => r.replyTo == c._id),
+        active: c._id === activeComment,
+        last: i === replies.length - 1,
+      });
+    });
+
     return (
-      <div
-        id={'c' + _id}
-        onBlur={this.clearEdit}
-        className={'clearfix comment ' + (active ? 'active-comment' : '')}>
-        <div className="hover-menu">
-          <div className="btn-group btns-empty">
-            {bData.map((button, i) =>
-              this.renderCommentButton({...button, key: i}),
-            )}
+      <div>
+        <div
+          id={'c' + _id}
+          onBlur={this.clearEdit}
+          className={
+            'clearfix comment ' +
+            (last ? 'last-comment' : '') +
+            (active ? 'active-comment' : '') +
+            (isReply ? 'reply-comment' : '')
+          }>
+          <div className="hover-menu">
+            <div className="btn-group btns-empty">
+              {bData.map((button, i) =>
+                this.renderCommentButton({...button, key: i}),
+              )}
+            </div>
           </div>
+
+          <div className="pull-right">{context}</div>
+          <strong data-auth={author} className="author" onClick={handleAuthor}>
+            {author}
+          </strong>
+          <small>
+            {created.toLocaleTimeString()}
+            {agree && this.renderMeta('agreed', agree)}
+            {discuss && this.renderMeta('discuss', discuss)}
+          </small>
+
+          <br />
+          <Markdown
+            className="markdown-comment"
+            disallowedTypes={['image', 'imageReference']}
+            unwrapDisallowed={true}
+            renderers={this.renderers}
+            source={content}
+          />
+
+          {!last && <hr />}
         </div>
 
-        <div className="pull-right">{context}</div>
-        <strong data-auth={author} className="author" onClick={handleAuthor}>
-          {author}
-        </strong>
-        <small>
-          {created.toLocaleTimeString()}
-          {agree && this.renderMeta('agreed', agree)}
-          {discuss && this.renderMeta('discuss', discuss)}
-        </small>
-
-        <br />
-        <Markdown
-          className="markdown-comment"
-          disallowedTypes={['image', 'imageReference']}
-          unwrapDisallowed={true}
-          renderers={this.renderers}
-          source={content}
-        />
-
-        {!last && <hr />}
+        <div>
+          {replyProps.map(rp => (
+            <Comment {...rp} />
+          ))}
+        </div>
       </div>
     );
   };
@@ -312,5 +339,16 @@ class Comment extends BaseComponent {
     return editing ? this.renderEditor() : this.renderComment();
   }
 }
+
+Comment.propTypes = {
+  allReplies: PropTypes.array.isRequired,
+  isReply: PropTypes.bool,
+  replies: PropTypes.array,
+};
+
+Comment.defaultProps = {
+  isReply: false,
+  replies: [],
+};
 
 export default Comment;

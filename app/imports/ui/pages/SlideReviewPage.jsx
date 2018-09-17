@@ -9,6 +9,7 @@ import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
 import TextArea from '../components/TextArea.jsx';
+import SlideTags from '../components/SlideTags.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
@@ -267,7 +268,7 @@ class SlideReviewPage extends BaseComponent {
     }
   };
 
-  handleSlide = e => {
+  handleSlideIn = e => {
     if (e.target === e.currentTarget) {
       const data = this.extractFileData(e.target);
       this.updateHoverImage(data.slideId);
@@ -334,50 +335,6 @@ class SlideReviewPage extends BaseComponent {
         this.clearText();
       }
     });
-  };
-
-  renderSlideTags = (filtered, done: false) => {
-    const {bySlide} = this.state;
-    const active = sn => (sn === bySlide ? 'active' : '');
-    if (filtered.length === 0) {
-      return done ? (
-        <kbd className={active({slideNo: 'general'})} onClick={this.setBySlide}>
-          general
-        </kbd>
-      ) : null;
-    } else {
-      const plural = filtered.length > 1;
-      const slideNos = _.sortBy(filtered, x => Number(x.slideNo));
-      const slideKeys = slideNos.map(s => (
-        <kbd
-          className={active(s.slideNo)}
-          key={`key-${s.slideNo}`}
-          iter={s.slideNo}
-          data-file-id={s.slideId}
-          onMouseOver={this.handleSlide}
-          onMouseOut={this.handleSlideOut}
-          onClick={this.setBySlide}>
-          {s.slideNo}
-        </kbd>
-      ));
-      return (
-        <span className="slide-tags">
-          {done ? (
-            <span>{slideKeys}</span>
-          ) : (
-            <span>
-              <button
-                onClick={this.clearButton}
-                className="btn btn-menu pull-right">
-                clear
-              </button>
-              attach comment to slide
-              {plural && 's'} {slideKeys}
-            </span>
-          )}
-        </span>
-      );
-    }
   };
 
   renderCommentFilter = () => {
@@ -546,12 +503,13 @@ class SlideReviewPage extends BaseComponent {
         [invert ? 'desc' : 'asc', 'asc'],
       );
 
-      // Filtering 'reply' comments into array.
-      const reply = /\[(\S+?.*?)\]\(\s?#(\S+.*?)\)/g;
+      // Filtering 'reply' comments into array. HATE.
+      const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
-      const replied = csort.filter(isReply).map(c => {
+      const replies = csort.filter(isReply).map(c => {
         const match = reply.exec(c.content);
-        c.parentComment = match[2].trim();
+        c.replyTo = match[1].trim();
+        c.isReply = true;
         return c;
       });
 
@@ -578,16 +536,18 @@ class SlideReviewPage extends BaseComponent {
       const items = csort.map((c, i) => {
         c.last = i === csort.length - 1; // no final hr
         c.active = c._id === activeComment; // highlight
-        c.replies = replied.filter(r => r.parentComment === c._id);
-        const context = this.renderSlideTags(c.slides, true);
+        c.replies = replies.filter(r => r.replyTo == c._id);
+        //const context = this.renderSlideTags(c.slides, true);
         return {
           ...c,
           key: c._id,
-          context,
+          //context,
           reviewer,
           setModal,
           clearModal,
+          activeComment,
           log: this.log,
+          allReplies: replies,
           commentRef: this.inRef,
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
@@ -619,10 +579,8 @@ class SlideReviewPage extends BaseComponent {
   };
 
   renderContext = () => {
-    const {image, hoverImage, filtered} = this.state;
-
     const fileList = this.renderFiles();
-    const context = this.renderSlideTags(filtered);
+    const {image, hoverImage, filtered, bySlide} = this.state;
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
@@ -633,8 +591,18 @@ class SlideReviewPage extends BaseComponent {
             {fileList}
           </div>
         </div>
-        {filtered.length > 0 && (
-          <div className="no-margin clearfix alert bottom">{context}</div>
+        {filtered > 0 && (
+          <div className="no-margin clearfix alert bottom">
+            <SlideTags
+              slides={filtered}
+              bySlide={bySlide}
+              handleSlideIn={this.handleSlideIn}
+              handleSlideOut={this.handleSlideOut}
+              clearButton={this.clearButton}
+              clearBySlide={this.clearBySlide}
+              setBySlide={this.setBySlide}
+            />
+          </div>
         )}
       </div>
     );
