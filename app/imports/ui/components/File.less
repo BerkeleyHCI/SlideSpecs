@@ -270,8 +270,10 @@ div.reviewView {
     height: 100%;
   }
 
-  .btn-secondary {
+  .btn-empty {
+    border-width: 0px;
     color: @color-full !important;
+    background-color: @color-empty !important;
     border-color: @color-raw !important;
     box-shadow: none !important;
     &:hover {
@@ -330,13 +332,20 @@ div.reviewView {
       margin: 0px;
     }
     textarea {
-      background: darken(@color-empty, 2%);
+      animation: pulse 3s infinite ease-in-out;
+      background: darken(@color-empty, 4%);
       padding: 15px 15px 0px 15px;
       &:hover {
-        background: darken(@color-empty, 4%);
+        border-left: 0.5em solid @color-danger;
+        transition: border-width 0.1s ease;
+        background: darken(@color-empty, 2%);
       }
       &:focus {
-        background: darken(@color-empty, 6%);
+        border-left: 1em solid @color-ancillary;
+        transition: border-width 0.1s ease;
+        transition: border-color 0.1s ease;
+        background: @color-empty;
+        animation: none;
       }
     }
   }

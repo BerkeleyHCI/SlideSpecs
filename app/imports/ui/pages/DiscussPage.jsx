@@ -316,9 +316,9 @@ class DiscussPage extends BaseComponent {
       if (err) {
         console.error(err);
       } else {
+        this.endTranscript();
         this.clearButton();
         this.clearText();
-        this.endTranscript();
       }
     });
   };
@@ -640,17 +640,18 @@ class DiscussPage extends BaseComponent {
           <div>
             <div className="btn-m-group btns-group">
               <button
-                className="btn btn-primary btn-menu"
+                className={'btn ' + (author ? 'btn-primary' : 'btn-disabled')}
                 onClick={this.addComment}>
                 confirm
               </button>
-              <button className="btn btn-menu" onClick={this.resumeTranscript}>
-                record more
+              <button className="btn btn-empty" onClick={this.resumeTranscript}>
+                resume
               </button>
-              <button className="btn btn-menu" onClick={this.endTranscript}>
+              <button className="btn btn-danger" onClick={this.endTranscript}>
                 erase
               </button>
             </div>
+            <hr />
             <div className="padded">
               <span className={!author ? 'auth-active' : ''}>
                 Speaker (required)
@@ -676,9 +677,7 @@ class DiscussPage extends BaseComponent {
               )}
 
               {transcript.length > 0 && (
-                <button
-                  className="btn btn-secondary"
-                  onClick={this.prepTranscript}>
+                <button className="btn btn-empty" onClick={this.prepTranscript}>
                   Save
                 </button>
               )}
@@ -691,22 +690,17 @@ class DiscussPage extends BaseComponent {
             </div>
 
             {(transcript || listening) && (
-              <code className="transcript">
-                {transcript}
-                {listening && transcript.length == 0 && <i>*listening*</i>}
-              </code>
+              <div>
+                <code className="transcript">
+                  {transcript}
+                  {listening && transcript.length == 0 && <i>*listening*</i>}
+                </code>
+              </div>
             )}
           </div>
         )}
       </div>
     );
-  };
-
-  endTranscript = () => {
-    const {stopListening, resetTranscript} = this.props;
-    this.setState({uTranscript: '', revising: false});
-    resetTranscript();
-    stopListening();
   };
 
   prepTranscript = () => {
@@ -720,6 +714,13 @@ class DiscussPage extends BaseComponent {
     const {startListening} = this.props;
     this.setState({revising: false});
     startListening();
+  };
+
+  endTranscript = () => {
+    const {stopListening, resetTranscript} = this.props;
+    this.setState({uTranscript: '', revising: false, author: null});
+    resetTranscript();
+    stopListening();
   };
 
   render() {
