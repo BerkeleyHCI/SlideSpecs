@@ -41,7 +41,7 @@ export default class SessionContainer extends BaseComponent {
   };
 
   render() {
-    const {sessionId, name, files, comments} = this.props;
+    const {sessionId, name, files, sComments} = this.props;
     const shareLink = window.location.origin + '/share/' + sessionId;
     const uLink = `/slides/${sessionId}`;
     const fLink = `/feedback/${sessionId}`;
@@ -53,9 +53,8 @@ export default class SessionContainer extends BaseComponent {
             <h3>
               1. review slides <small>{files.length} slides</small>
             </h3>
-            manage the slides for this presentation session [<Link to={uLink}>
-              here
-            </Link>]
+            manage the slides for this presentation session [
+            <Link to={uLink}>here</Link>]
           </div>
 
           <div className="alert">
@@ -77,12 +76,10 @@ export default class SessionContainer extends BaseComponent {
 
         <div className="alert">
           <h3>
-            3. review feedback <small>{comments.length} comments</small>
+            3. review feedback <small>{sComments.length} comments</small>
           </h3>
-          after your presentation, review the gathered feedback [<Link
-            to={fLink}>
-            here
-          </Link>]
+          after your presentation, review the gathered feedback [
+          <Link to={fLink}>here</Link>]
         </div>
       </div>
     );
