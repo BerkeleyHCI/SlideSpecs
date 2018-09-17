@@ -5,7 +5,6 @@ import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
-import marked from 'marked';
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
@@ -547,14 +546,17 @@ class SlideReviewPage extends BaseComponent {
         [invert ? 'desc' : 'asc', 'asc'],
       );
 
-      // Reply function test
-      const handleLinks = (x, y) => {
-        console.log(x, y);
-      };
+      // Filtering 'reply' comments into array.
+      const reply = /\[(\S+?.*?)\]\(\s?#(\S+.*?)\)/g;
+      const isReply = c => reply.test(c.content);
+      const replied = csort.filter(isReply).map(c => {
+        const match = reply.exec(c.content);
+        c.parentComment = match[2].trim();
+        return c;
+      });
 
-      // Filtering out 'reply' comments.
-      csort.map(c => console.log(c.content));
-      csort.map(c => marked.lexer(c.content));
+      // remove child comments.
+      csort = csort.filter(c => !isReply(c));
 
       if (byAuth) {
         csort = csort.filter(c => c.author === byAuth);
@@ -576,6 +578,7 @@ class SlideReviewPage extends BaseComponent {
       const items = csort.map((c, i) => {
         c.last = i === csort.length - 1; // no final hr
         c.active = c._id === activeComment; // highlight
+        c.replies = replied.filter(r => r.parentComment === c._id);
         const context = this.renderSlideTags(c.slides, true);
         return {
           ...c,
