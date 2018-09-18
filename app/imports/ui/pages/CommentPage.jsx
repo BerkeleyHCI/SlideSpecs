@@ -32,7 +32,9 @@ class CommentPage extends BaseComponent {
 
     this.inRef = React.createRef();
     this.state = {
-      control: false,
+      defaultPriv: false,
+      following: true,
+      focusing: false,
       redirectTo: null,
       activeComment: null,
       activeSlide: null,
@@ -77,43 +79,6 @@ class CommentPage extends BaseComponent {
     }
   };
 
-  handleControl = () => {
-    const {sessionId} = this.props;
-    let saved = localStorage.getObject('feedbacks.control') || {};
-    let store = saved[sessionId];
-    let keys = Object.keys(saved),
-      vals = Object.values(saved);
-
-    if (!saved || keys.length == 0) {
-      const start = Math.random() > 0.5 ? 'ctrl' : 'test';
-      localStorage.setObject('feedbacks.control', {[sessionId]: start});
-      this.setState({control: start == 'ctrl'});
-    } else if (store) {
-      // Simple case, just re-render past state.
-      this.setState({control: store == 'ctrl'});
-    } else if (!store && vals.length >= 6) {
-      // Compute balancing experiment control state.
-      const numControl = vals.filter(v => v == 'ctrl').length;
-      const state = numControl < 6 ? 'ctrl' : 'test';
-      // Save/update interface.
-      saved[sessionId] = state;
-      localStorage.setObject('feedbacks.control', saved);
-      this.setState({control: state == 'ctrl'});
-    } else if (!store && vals.length > 0) {
-      // Save/update interface.
-      const state = vals[0];
-      saved[sessionId] = state;
-      localStorage.setObject('feedbacks.control', saved);
-      this.setState({control: state == 'ctrl'});
-    } else {
-      // Something... awry. BAD
-      console.error(saved, keys, 'study control error.');
-      this.setState({control: start == 'ctrl'}); // backup
-    }
-
-    this.log(saved);
-  };
-
   handleSelectable = items => {
     const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
@@ -153,9 +118,6 @@ class CommentPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
-
-    // FILTER FOR STUDY
-    //this.handleControl();
 
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -315,15 +277,16 @@ class CommentPage extends BaseComponent {
   };
 
   addComment = e => {
-    const {control} = this.state;
+    const {defaultPriv, following} = this.state;
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
+    const priv = cText.includes('#private');
     const commentFields = {
       author: reviewer,
       content: cText,
       session: sessionId,
-      userOwn: control,
+      userOwn: defaultPriv || priv,
       slides,
     };
 
@@ -337,11 +300,47 @@ class CommentPage extends BaseComponent {
     });
   };
 
+  togglePrivate = () => {
+    const defaultPriv = !this.state.defaultPriv;
+    this.setState({defaultPriv});
+  };
+
+  toggleFollow = () => {
+    const following = !this.state.following;
+    this.setState({following});
+  };
+
+  toggleFocus = () => {
+    const focusing = !this.state.focusing;
+    this.setState({focusing});
+  };
+
+  renderCommentHead = () => {
+    const {defaultPriv, following, focusing} = this.state;
+    return (
+      <span className="comment-config pull-right">
+        {'{ '}
+        <span className="comment-option" onClick={this.togglePrivate}>
+          {defaultPriv ? 'private' : 'public'}
+        </span>
+        ,{' '}
+        <span className="comment-option" onClick={this.toggleFocus}>
+          {focusing ? 'focus' : 'all'}
+        </span>
+        ,{' '}
+        <span className="comment-option" onClick={this.toggleFollow}>
+          {following ? 'autofollow' : 'manual'}
+        </span>
+        {' }'}
+      </span>
+    );
+  };
+
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
     const {files} = this.props;
-    const {control, invert, filter} = this.state;
+    const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
       return () => this.setState({sorter: s, filter: f});
@@ -394,8 +393,10 @@ class CommentPage extends BaseComponent {
   };
 
   renderSubmit = () => {
+    const {defaultPriv} = this.state;
     return (
       <div className="submitter">
+        {defaultPriv && <i className="pull-right fa fa-lock textarea-icon" />}
         <TextArea
           inRef={this.inRef}
           handleSubmit={this.addComment}
@@ -428,18 +429,21 @@ class CommentPage extends BaseComponent {
   };
 
   renderFilter = () => {
+    const cHead = this.renderCommentHead();
     const submitter = this.renderSubmit();
     const tagList = this.renderTags();
-    let {control, byAuth, bySlide, byTag} = this.state;
+    let {byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
 
     return (
       <div className="filterer alert">
         <p>
+          {cHead}
           <Clock />
-          {tagList}
         </p>
+        <hr />
+        <p> {tagList} </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
         <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
@@ -455,11 +459,9 @@ class CommentPage extends BaseComponent {
     const alltags = comments.map(c => getTag(c.content));
     const unique = _.uniq(_.flatten(alltags));
     return unique.map(tag => (
-      <span key={tag} className="tag-group">
-        <a onClick={this.insertTag} className="tag-link">
-          {tag}
-        </a>
-      </span>
+      <a key={tag} onClick={this.insertTag} className="tag-link">
+        {tag}
+      </a>
     ));
   };
 
@@ -472,7 +474,7 @@ class CommentPage extends BaseComponent {
 
   // Updating the current slide.
   handleActive = () => {
-    let {activeSlide} = this.state;
+    let {ds, following, activeSlide} = this.state;
     const {active, files} = this.props;
     if (active && activeSlide !== active.slideNo) {
       activeSlide = active.slideNo;
@@ -480,6 +482,16 @@ class CommentPage extends BaseComponent {
       // assume 1 index, subtract 1
       const fId = files[activeSlide - 1]._id;
       this.updateImage(fId);
+      if (following) {
+        const filtered = [{...active}];
+        this.setState({filtered});
+        const slide = document.querySelectorAll(`[data-iter='${activeSlide}']`);
+        if (ds && typeof ds.getSelection === 'function') {
+          const sel = ds.getSelection();
+          ds.removeSelection(sel);
+          ds.addSelection(slide);
+        }
+      }
     }
   };
 
@@ -489,10 +501,10 @@ class CommentPage extends BaseComponent {
       invert,
       filtered,
       activeComment,
+      focusing,
       byAuth,
       bySlide,
       byTag,
-      control,
     } = this.state;
     const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
@@ -503,6 +515,11 @@ class CommentPage extends BaseComponent {
         [sorter, 'created'],
         [invert ? 'desc' : 'asc', 'asc'],
       );
+
+      // Focus view filtering - omit replies.
+      if (focusing) {
+        csort = csort.filter(c => c.author === reviewer);
+      }
 
       // Filtering 'reply' comments into array. HATE.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
@@ -547,6 +564,7 @@ class CommentPage extends BaseComponent {
           clearModal,
           activeComment,
           log: this.log,
+          feedback: focusing,
           bySlide: bySlide,
           allReplies: replies,
           commentRef: this.inRef,
@@ -564,7 +582,7 @@ class CommentPage extends BaseComponent {
 
       return (
         <div>
-          <h2>comments</h2>
+          <h2> comments </h2>
           <div id="comments-list" className="alert">
             {items.map(i => (
               <Comment {...i} />
@@ -580,6 +598,7 @@ class CommentPage extends BaseComponent {
               <div className="v-pad" />
             </div>
           )}
+          {items.length == 0 && <div className="alert"> no comments</div>}
         </div>
       );
     }

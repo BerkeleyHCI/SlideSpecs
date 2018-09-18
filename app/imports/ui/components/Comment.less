@@ -20,6 +20,20 @@
   z-index: 5;
 }
 
+.comment-config {
+  color: @color-danger;
+  .comment-option:hover {
+    text-decoration: underline;
+  }
+  &:hover {
+    .comment-option {
+      color: @color-ancillary;
+    }
+  }
+}
+
+/*&:before { content: 'config - '; }*/
+
 .comment-addressed-box {
   border-right: 1px dotted @color-raw;
   border-radius: 4px;
@@ -30,6 +44,12 @@
   &:focus {
     background-color: @color-note !important;
   }
+}
+
+.textarea-icon {
+  position: absolute;
+  padding: 1em;
+  right: 0;
 }
 
 div.comment {

@@ -10,10 +10,10 @@ import {Files} from '../files/files.js';
 /*
 - #story
 - #delivery
-- #slide-design
+- #slideDesign
 - #great
 - #confusing
-- #core-idea
+- #coreIdea
  * */
 
 export const createSession = new ValidatedMethod({
@@ -33,7 +33,7 @@ export const createSession = new ValidatedMethod({
             session: _id,
             slides: [],
             author: 'system',
-            content: `Starter tags: #delivery #slide-design #story #great #confusing #coreidea`,
+            content: `Starter tags: #delivery #slideDesign #story #great #confusing #coreIdea`,
           });
         }
       };

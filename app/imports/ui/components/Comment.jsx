@@ -332,6 +332,7 @@ class Comment extends BaseComponent {
       reviewer,
       replies,
       isReply,
+      userOwn,
       allReplies,
       activeComment,
       discussView,
@@ -411,6 +412,12 @@ class Comment extends BaseComponent {
           </strong>
           <small>
             {created.toLocaleTimeString()}
+            {userOwn && (
+              <span>
+                {' '}
+                <i className={'fa fa-lock'} />{' '}
+              </span>
+            )}
             {agree && this.renderMeta('agreed', agree)}
             {discuss && this.renderMeta('discuss', discuss)}
           </small>
