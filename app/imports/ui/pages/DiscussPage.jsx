@@ -19,7 +19,7 @@ import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
-import {createComment} from '../../api/comments/methods.js';
+import {createComment, addressComment} from '../../api/comments/methods.js';
 import {Transition} from 'react-spring';
 
 // Control-log.
@@ -495,11 +495,12 @@ class DiscussPage extends BaseComponent {
       clearModal,
       activeComment,
       log: this.log,
-      feedback: true,
+      discussView: true,
       allReplies: replies,
       commentRef: this.inRef,
       handleTag: this.setByTag,
       handleAuthor: this.setByAuth,
+      handleAddress: this.handleAddress,
       bySlide: bySlide,
       handleSlideIn: this.handleSlideIn,
       handleSlideOut: this.handleSlideOut,
@@ -579,17 +580,22 @@ class DiscussPage extends BaseComponent {
 
       return (
         <div>
-          <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
-            ))}
-          </div>
+          {items.length > 0 && (
+            <div>
+              <h2>to discuss</h2>
+              <div id="comments-list" className="alert">
+                {items.map(i => (
+                  <Comment {...i} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {addressedItems.length > 0 && (
             <div>
-              <h2>addressed comments </h2>
+              <h2>discussed</h2>
               <div id="comments-list" className="alert">
-                {adressedItems.map(i => (
+                {addressedItems.map(i => (
                   <Comment {...i} />
                 ))}
               </div>
@@ -645,12 +651,19 @@ class DiscussPage extends BaseComponent {
     );
   };
 
+  handleAddress = e => {
+    const cBox = e.target;
+    const commentId = cBox.getAttribute('data-id');
+    addressComment.call({commentId});
+  };
+
   createAuthor = () => {
     const {sessionId} = this.props;
     let author = window.prompt('New author name?', '');
     const commentFields = {
-      content: 'added audience author.',
+      content: 'added as audience author.',
       session: sessionId,
+      discuss: ['system'],
       addressed: true,
       userOwn: true,
       slides: [],
@@ -708,15 +721,16 @@ class DiscussPage extends BaseComponent {
             </div>
             <hr />
             <div className="padded">
-              <span className={!author ? 'auth-active' : ''}>
-                Speaker (required)
-              </span>
-              : &nbsp;&nbsp;
+              Speaker (
+              <span className={!author ? 'auth-active' : ''}>required</span>
+              ): &nbsp;&nbsp;
               {authors}
               <span className="tag-group">
+                [
                 <a onClick={this.createAuthor} className="tag-link">
-                  [new speaker]
+                  +new
                 </a>
+                ]
               </span>
             </div>
             <hr />

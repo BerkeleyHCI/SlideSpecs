@@ -24,7 +24,7 @@ export const createComment = new ValidatedMethod({
     addressed: {type: Boolean, optional: true},
     userOwn: {type: Boolean},
   }).validator(),
-  run({author, userOwn, content, session, discuss, agree, slides}) {
+  run({author, userOwn, content, session, addressed, discuss, agree, slides}) {
     const sess = Sessions.findOne(session);
     if (sess) {
       const data = {
@@ -32,6 +32,7 @@ export const createComment = new ValidatedMethod({
         userOwn,
         author,
         discuss,
+        addressed,
         agree,
         content,
         session,

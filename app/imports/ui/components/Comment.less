@@ -20,6 +20,18 @@
   z-index: 5;
 }
 
+.comment-addressed-box {
+  border-right: 1px dotted @color-raw;
+  border-radius: 4px;
+  padding: 0.5em;
+  margin-right: 0.5em;
+  float: left;
+  &:hover,
+  &:focus {
+    background-color: @color-note !important;
+  }
+}
+
 div.comment {
   .no-break-out();
   transition: opacity 100ms ease;
@@ -51,6 +63,9 @@ div.comment {
       box-shadow: inset 0 -2px 0 0 @color-medium;
     }
     .hashtag {
+      background-color: @color-raw;
+    }
+    .comment-addressed-box {
       background-color: @color-raw;
     }
   }

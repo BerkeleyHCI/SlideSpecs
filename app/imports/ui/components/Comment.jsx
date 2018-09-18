@@ -268,8 +268,11 @@ class Comment extends BaseComponent {
       isReply,
       allReplies,
       activeComment,
+      discussView,
+      addressed,
       bySlide,
       handleAuthor,
+      handleAddress,
       slides,
       handleSlideIn,
       handleSlideOut,
@@ -322,6 +325,17 @@ class Comment extends BaseComponent {
             (active ? ' active-comment' : '') +
             (isReply ? ` reply-comment-${depth}` : '')
           }>
+          {discussView && (
+            <div className="comment-addressed-box">
+              <input
+                name="addressed"
+                type="checkbox"
+                data-id={_id}
+                defaultChecked={!!addressed}
+                onChange={handleAddress}
+              />
+            </div>
+          )}
           <div className="hover-menu">
             <div className="btn-group btns-empty">
               {bData.map((button, i) =>
