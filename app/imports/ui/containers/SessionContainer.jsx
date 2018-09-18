@@ -52,8 +52,9 @@ export default class SessionContainer extends BaseComponent {
   render() {
     const {sessionId, name, files, sComments} = this.props;
     const discussCount = sComments.filter(
-      sc => sc.discuss.length > 0 && !sc.addressed,
-    ).length;
+      sc => (sc.discuss || []).length > 0 && !sc.addressed,
+    ).length; // back portability
+
     const shareLink = window.location.origin + '/share/' + sessionId;
     const discussLink = window.location.origin + '/discuss/' + sessionId;
     const uLink = `/slides/${sessionId}`;
