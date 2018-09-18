@@ -130,9 +130,10 @@ class Comment extends BaseComponent {
 
   handleEdit = e => {
     const newContent = this.editRef.current.value.trim();
-    const {reviewer, _id} = this.props;
+    const {author, discuss, reviewer, _id} = this.props;
+    const sysDiscuss = discuss.includes('system');
     const editFields = {
-      author: reviewer,
+      author: sysDiscuss ? author : reviewer, // make globally editable
       commentId: _id,
       newContent,
     };
@@ -278,8 +279,9 @@ class Comment extends BaseComponent {
       setBySlide,
     } = this.props;
     const master = author === reviewer;
+    const sysDiscuss = discuss.includes('system');
     let bData;
-    if (master) {
+    if (master || sysDiscuss) {
       bData = [...this.pubButtons, ...this.privButtons];
     } else {
       bData = this.pubButtons;
