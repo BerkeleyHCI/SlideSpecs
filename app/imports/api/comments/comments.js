@@ -31,6 +31,7 @@ Comments.schema = new SimpleSchema({
   agree: {type: [String], defaultValue: []},
   discuss: {type: [String], defaultValue: []},
   userOwn: {type: Boolean, defaultValue: false},
+  addressed: {type: Boolean, defaultValue: false},
 });
 
 Comments.attachSchema(Comments.schema);

@@ -33,14 +33,7 @@ export const createSession = new ValidatedMethod({
             session: _id,
             slides: [],
             author: 'system',
-            content: `Starter tags:
-- #idea
-- #confusion
-- #interesting
-- #cool
-- #related
-- #meta
-      `,
+            content: `Starter tags: #delivery #slide-design #story #great #confusing #coreidea`,
           });
         }
       };

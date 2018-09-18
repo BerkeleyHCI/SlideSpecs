@@ -276,7 +276,7 @@ class FeedbackPage extends BaseComponent {
           key={`key-${s.slideNo}`}
           iter={s.slideNo}
           data-file-id={s.slideId}
-          onMouseOver={this.handleSlide}
+          onMouseOver={this.handleSlideIn}
           onMouseOut={this.handleSlideOut}
           onClick={this.setBySlide}>
           {s.slideNo}
@@ -342,6 +342,7 @@ class FeedbackPage extends BaseComponent {
           </button>
         </div>
         {filterer}
+        <hr />
       </div>
     );
   };
@@ -367,7 +368,7 @@ class FeedbackPage extends BaseComponent {
           fileName={f.name}
           active={false}
           slideCount={count}
-          handleMouse={this.handleSlide}
+          handleMouse={this.handleSlideIn}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />

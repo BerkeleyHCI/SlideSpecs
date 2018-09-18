@@ -31,7 +31,6 @@ class Comment extends BaseComponent {
   goToElementId = id => {
     const view = document.getElementById(id);
     if (view) {
-      // TODO add hover action for preview
       view.scrollIntoView({block: 'center', inline: 'center'});
     }
   };
@@ -366,8 +365,7 @@ class Comment extends BaseComponent {
     const {_id, author, content} = this.props;
     return (
       <div onBlur={this.clearEdit} className="clearfix comment editing">
-        <strong>{author}</strong>
-        <i> editing... </i>
+        <strong>{author}</strong> ·<i> editing... </i>
         <button onClick={this.clearEdit} className="btn pull-right">
           cancel
         </button>

@@ -257,7 +257,7 @@ div.reviewView {
   }
 
   kbd.tag-count {
-    opacity: 0.2;
+    opacity: 0.3;
   }
 
   .transcript {
@@ -273,7 +273,7 @@ div.reviewView {
 
   .btn-empty {
     border-width: 0px;
-    color: @color-full !important;
+    color: @color-danger !important;
     background-color: @color-empty !important;
     border-color: @color-raw !important;
     box-shadow: none !important;
@@ -323,8 +323,14 @@ div.reviewView {
     border-bottom: 1px solid @color-rare;
   }
 
+  .filterer.alert,
+  .submitter.alert {
+    border: none;
+  }
+
   .filterer,
   .submitter {
+    .no-break-out();
     padding: 0px;
     p {
       padding: 10px 15px;
@@ -342,6 +348,7 @@ div.reviewView {
         background: darken(@color-empty, 2%);
       }
       &:focus {
+        box-shadow: 0 4px 2px -2px @color-ancillary;
         border-left: 1em solid @color-ancillary;
         transition: border-width 0.1s ease;
         transition: border-color 0.1s ease;

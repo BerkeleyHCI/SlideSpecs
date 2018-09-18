@@ -21,6 +21,7 @@ export const createComment = new ValidatedMethod({
     slides: {type: [SlideSchema]},
     agree: {type: [String], optional: true},
     discuss: {type: [String], optional: true},
+    addressed: {type: Boolean, optional: true},
     userOwn: {type: Boolean},
   }).validator(),
   run({author, userOwn, content, session, discuss, agree, slides}) {
@@ -38,6 +39,22 @@ export const createComment = new ValidatedMethod({
       };
       console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
+    }
+  },
+});
+
+export const addressComment = new ValidatedMethod({
+  name: 'comments.address',
+  validate: new SimpleSchema({
+    commentId: {type: String},
+  }).validator(),
+  run({commentId}) {
+    const comment = Comments.findOne(commentId);
+    if (!comment) {
+      return false;
+    } else {
+      const newAddress = !comment.addressed;
+      return Comments.update(commentId, {$set: {addressed: newAddress}});
     }
   },
 });

@@ -134,7 +134,6 @@ class DiscussPage extends BaseComponent {
     }
 
     this.handleLoad();
-
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
@@ -316,9 +315,9 @@ class DiscussPage extends BaseComponent {
       if (err) {
         console.error(err);
       } else {
-        this.endTranscript();
-        this.clearButton();
         this.clearText();
+        this.clearButton();
+        this.endTranscript();
       }
     });
   };
@@ -405,7 +404,7 @@ class DiscussPage extends BaseComponent {
           fileId={f._id}
           fileName={f.name}
           active={false}
-          handleMouse={this.handleSlide}
+          handleMouse={this.handleSlideIn}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />
@@ -473,6 +472,45 @@ class DiscussPage extends BaseComponent {
     }
   };
 
+  renderCommentData = (arr, replies, c, i) => {
+    const {sComments, reviewer, setModal, clearModal} = this.props;
+    const {
+      sorter,
+      invert,
+      filtered,
+      activeComment,
+      byAuth,
+      bySlide,
+      byTag,
+      control,
+    } = this.state;
+    c.last = i === arr.length - 1; // no final hr
+    c.active = c._id === activeComment; // highlight
+    c.replies = replies.filter(r => r.replyTo == c._id);
+    return {
+      ...c,
+      key: c._id,
+      reviewer,
+      setModal,
+      clearModal,
+      activeComment,
+      log: this.log,
+      feedback: true,
+      allReplies: replies,
+      commentRef: this.inRef,
+      handleTag: this.setByTag,
+      handleAuthor: this.setByAuth,
+      bySlide: bySlide,
+      handleSlideIn: this.handleSlideIn,
+      handleSlideOut: this.handleSlideOut,
+      clearButton: this.clearButton,
+      clearBySlide: this.clearBySlide,
+      setBySlide: this.setBySlide,
+      setActive: this.setActiveComment,
+      unsetActive: this.clearActiveComment,
+    };
+  };
+
   renderComments = () => {
     const {
       sorter,
@@ -510,6 +548,10 @@ class DiscussPage extends BaseComponent {
       // remove child comments.
       csort = csort.filter(c => !isReply(c));
 
+      // split off 'addressed' comments
+      const addressed = csort.filter(c => c.addressed);
+      csort = csort.filter(c => !c.addressed);
+
       if (byAuth) {
         csort = csort.filter(c => c.author === byAuth);
       }
@@ -527,33 +569,13 @@ class DiscussPage extends BaseComponent {
         csort = csort.filter(c => c.content.includes(byTag));
       }
 
-      const items = csort.map((c, i) => {
-        c.last = i === csort.length - 1; // no final hr
-        c.active = c._id === activeComment; // highlight
-        c.replies = replies.filter(r => r.replyTo == c._id);
-        return {
-          ...c,
-          key: c._id,
-          reviewer,
-          setModal,
-          clearModal,
-          activeComment,
-          log: this.log,
-          feedback: true,
-          allReplies: replies,
-          commentRef: this.inRef,
-          handleTag: this.setByTag,
-          handleAuthor: this.setByAuth,
-          bySlide: bySlide,
-          handleSlideIn: this.handleSlideIn,
-          handleSlideOut: this.handleSlideOut,
-          clearButton: this.clearButton,
-          clearBySlide: this.clearBySlide,
-          setBySlide: this.setBySlide,
-          setActive: this.setActiveComment,
-          unsetActive: this.clearActiveComment,
-        };
-      });
+      const items = csort.map((c, i) =>
+        this.renderCommentData(csort, replies, c, i),
+      );
+
+      const addressedItems = addressed.map((c, i) =>
+        this.renderCommentData(addressed, replies, c, i),
+      );
 
       return (
         <div>
@@ -562,7 +584,19 @@ class DiscussPage extends BaseComponent {
               <Comment {...i} />
             ))}
           </div>
-          {items.length >= 5 && (
+
+          {addressedItems.length > 0 && (
+            <div>
+              <h2>addressed comments </h2>
+              <div id="comments-list" className="alert">
+                {adressedItems.map(i => (
+                  <Comment {...i} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {items.length + addressedItems.length >= 5 && (
             <div className="padded full-width">
               <button
                 onClick={this.goToTop}
@@ -609,6 +643,27 @@ class DiscussPage extends BaseComponent {
         )}
       </div>
     );
+  };
+
+  createAuthor = () => {
+    const {sessionId} = this.props;
+    let author = window.prompt('New author name?', '');
+    const commentFields = {
+      content: 'added audience author.',
+      session: sessionId,
+      addressed: true,
+      userOwn: true,
+      slides: [],
+      author,
+    };
+
+    createComment.call(commentFields, (err, res) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.setDiscussAuth(author);
+      }
+    });
   };
 
   renderVoice = () => {
@@ -658,7 +713,13 @@ class DiscussPage extends BaseComponent {
               </span>
               : &nbsp;&nbsp;
               {authors}
+              <span className="tag-group">
+                <a onClick={this.createAuthor} className="tag-link">
+                  [new speaker]
+                </a>
+              </span>
             </div>
+            <hr />
             {submitter}
           </div>
         ) : (
@@ -728,7 +789,6 @@ class DiscussPage extends BaseComponent {
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
-
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView main-content no-pad">
@@ -738,7 +798,6 @@ class DiscussPage extends BaseComponent {
               discuss feedback
             </Link>
           </h2>
-
           <div
             id="review-view"
             onMouseDown={this.clearButtonBG}
@@ -759,11 +818,11 @@ class DiscussPage extends BaseComponent {
   }
 }
 
-// Props injected by SpeechRecognition
 DiscussPage.propTypes = {
-  transcript: PropTypes.string,
-  resetTranscript: PropTypes.func,
+  // Props injected by SpeechRecognition
   browserSupportsSpeechRecognition: PropTypes.bool,
+  resetTranscript: PropTypes.func,
+  transcript: PropTypes.string,
 };
 
 export default SpeechRecognition({autoStart: false})(DiscussPage);

@@ -420,7 +420,7 @@ class CommentPage extends BaseComponent {
           fileId={f._id}
           fileName={f.name}
           active={activeSlide - 1 == key}
-          handleMouse={this.handleSlide}
+          handleMouse={this.handleSlideIn}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />
@@ -597,7 +597,6 @@ class CommentPage extends BaseComponent {
             {fileList}
           </div>
         </div>
-        <div className="v-pad" />
         <div className="v-pad" />
         {filtered.length > 0 && (
           <div className="no-margin clearfix alert bottom">
