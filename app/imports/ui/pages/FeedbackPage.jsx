@@ -189,7 +189,6 @@ class FeedbackPage extends BaseComponent {
 
   // click on tag in comment
   setByTag = e => {
-    console.log(e.target);
     e.preventDefault();
     const {byTag} = this.state;
     const newTag = e.target.innerText.trim();
@@ -342,7 +341,6 @@ class FeedbackPage extends BaseComponent {
           </button>
         </div>
         {filterer}
-        <hr />
       </div>
     );
   };
@@ -383,7 +381,7 @@ class FeedbackPage extends BaseComponent {
     const slideKeys = this.renderSlideTags(filtered);
     const sType = bySlide === ['general'] ? 'scope' : 'slide';
     return (
-      <div className="filterer alert no-submit">
+      <div className="filterer alert no-submit border-bottom">
         <p>
           <kbd className="pull-right">
             {commentsShown}/{sComments.length}
@@ -488,6 +486,7 @@ class FeedbackPage extends BaseComponent {
           log: this.log,
           feedback: true,
           commentRef: this.inRef,
+          setBySlide: this.setBySlide,
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
           setActive: this.setActiveComment,
@@ -495,8 +494,9 @@ class FeedbackPage extends BaseComponent {
         };
       });
 
-      return (
+      return items.length > 0 ? (
         <div>
+          <h2>comments</h2>
           <div id="comments-list" className="alert">
             {items.map(i => (
               <Comment {...i} />
@@ -513,6 +513,8 @@ class FeedbackPage extends BaseComponent {
             </div>
           )}
         </div>
+      ) : (
+        <div className="alert"> no matching comments</div>
       );
     }
   };

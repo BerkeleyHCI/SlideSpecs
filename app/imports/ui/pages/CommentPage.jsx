@@ -17,7 +17,6 @@ import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
-import {Transition} from 'react-spring';
 
 // Control-log.
 import {Logger} from 'meteor/ostrio:logger';
@@ -565,6 +564,7 @@ class CommentPage extends BaseComponent {
 
       return (
         <div>
+          <h2>comments</h2>
           <div id="comments-list" className="alert">
             {items.map(i => (
               <Comment {...i} />

@@ -14,6 +14,7 @@ import {
   createComment,
   updateComment,
   deleteComment,
+  addressComment,
 } from '../../api/comments/methods.js';
 
 class Comment extends BaseComponent {
@@ -306,7 +307,7 @@ class Comment extends BaseComponent {
           data-id={_id}
           data-auth={reviewer}
           data-toggle="tooltip"
-          data-placement="left"
+          data-placement="top"
           onClick={handleClick}
           className={`btn btn-empty ${master && 'btn-user'}`}>
           <i className={'fa fa-' + icon} />
@@ -344,11 +345,14 @@ class Comment extends BaseComponent {
       clearBySlide,
       setBySlide,
     } = this.props;
+
     const master = author === reviewer;
     const sysDiscuss = discuss.includes('system');
     let bData;
-    if (discussView) {
+    if (discussView && depth == 0) {
       bData = [this.addressButton, this.talkButton];
+    } else if (discussView) {
+      bData = [this.talkButton];
     } else if (sysDiscuss) {
       bData = [...this.pubButtons, this.editButton];
     } else if (master) {
