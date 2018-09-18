@@ -123,13 +123,14 @@ class CommentPage extends BaseComponent {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
+      this.handleActiveSlide();
     }, 500);
 
     // set image to link of the first slide
     const {files} = this.props;
     if (files.length > 0) {
+      this.handleActive(); // active
       this.updateImage(files[0]._id);
-      this.handleActive(); // or active
     }
   };
 
@@ -252,10 +253,13 @@ class CommentPage extends BaseComponent {
 
   clearButtonBG = e => {
     this.clearActiveComment();
-    const base = e.target.className.split()[0];
-    const matches = [/col-/, /review-table/];
-    if (matches.some(x => base.match(x))) {
-      this.clearButton();
+    const {following} = this.state;
+    if (!following) {
+      const base = e.target.className.split()[0];
+      const matches = [/col-/, /review-table/];
+      if (matches.some(x => base.match(x))) {
+        this.clearButton();
+      }
     }
   };
 
@@ -296,6 +300,9 @@ class CommentPage extends BaseComponent {
       } else {
         this.clearButton();
         this.clearText();
+        if (following) {
+          this.handleActiveSlide();
+        }
       }
     });
   };
@@ -419,7 +426,7 @@ class CommentPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          active={activeSlide - 1 == key}
+          active={parseInt(activeSlide) - 1 == key}
           handleMouse={this.handleSlideIn}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
@@ -474,25 +481,33 @@ class CommentPage extends BaseComponent {
 
   // Updating the current slide.
   handleActive = () => {
-    let {ds, following, activeSlide} = this.state;
+    let {activeSlide} = this.state;
     const {active, files} = this.props;
     if (active && activeSlide !== active.slideNo) {
+      this.handleActiveSlide();
+      // assume 1 index, subtract 1
       activeSlide = active.slideNo;
       this.setState({activeSlide});
-      // assume 1 index, subtract 1
       const fId = files[activeSlide - 1]._id;
       this.updateImage(fId);
-      if (following) {
-        const filtered = [{...active}];
-        this.setState({filtered});
-        const slide = document.querySelectorAll(`[data-iter='${activeSlide}']`);
-        if (ds && typeof ds.getSelection === 'function') {
-          const sel = ds.getSelection();
-          ds.removeSelection(sel);
-          ds.addSelection(slide);
-        }
-      }
     }
+  };
+
+  handleActiveSlide = () => {
+    let text = this.inRef.current.value.trim();
+    const {ds, following} = this.state;
+    const {active} = this.props;
+    try {
+      if (following && !text) {
+        this.clearButton();
+        const slideNo = active.slideNo.toString();
+        const filtered = [{slideId: active._id, slideNo}];
+        const slide = document.querySelectorAll(`[data-iter='${slideNo}']`);
+        console.log(slide);
+        ds.addSelection(slide);
+        this.setState({selected: slide, filtered});
+      }
+    } catch (e) {}
   };
 
   renderComments = () => {
