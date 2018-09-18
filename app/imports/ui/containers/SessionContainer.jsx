@@ -16,15 +16,24 @@ export default class SessionContainer extends BaseComponent {
     }
   };
 
-  copyUrl = () => {
-    var copyText = document.getElementsByClassName('code')[0];
+  copyComment = () => {
+    this.copyCodeUrl(0);
+  };
+
+  copyDiscuss = () => {
+    this.copyCodeUrl(1);
+  };
+
+  copyCodeUrl = idx => {
+    var copyText = document.getElementsByClassName('code')[idx];
+    const uType = idx == 0 ? 'comment' : 'discussion';
     if (copyText) {
       copyText.select();
       document.execCommand('copy');
       this.clearSelection();
       toast(() => (
         <AppNotification
-          msg="link copied"
+          msg={`${uType} link copied`}
           desc="copied to clipboard"
           icon="check"
         />
@@ -42,8 +51,11 @@ export default class SessionContainer extends BaseComponent {
 
   render() {
     const {sessionId, name, files, sComments} = this.props;
-    const discussCount = sComments.filter(sc => sc.discuss.length > 0).length;
+    const discussCount = sComments.filter(
+      sc => sc.discuss.length > 0 && !sc.addressed,
+    ).length;
     const shareLink = window.location.origin + '/share/' + sessionId;
+    const discussLink = window.location.origin + '/discuss/' + sessionId;
     const uLink = `/slides/${sessionId}`;
     const dLink = `/discuss/${sessionId}`;
     const fLink = `/feedback/${sessionId}`;
@@ -53,40 +65,44 @@ export default class SessionContainer extends BaseComponent {
         <div className="v-pad">
           <div className="alert">
             <h3>
-              1. review slides <small>{files.length} slides</small>
+              1. slide review <small>{files.length} slides</small>
             </h3>
             manage the slides for this presentation session [
             <Link to={uLink}>here</Link>]
           </div>
 
           <div className="alert">
-            <h3>2. present slides</h3>
-            share this link with the audience to collect their feedback.
-            <hr />
+            <h3>2. presentation</h3>
+            share this link with the audience to collect their feedback. then,
+            give your presentation.
             <input type="text" value={shareLink} className="code" readOnly />
             <hr />
-            <button className="btn btn-primary" onClick={this.copyUrl}>
-              copy link
+            <button className="btn btn-primary" onClick={this.copyComment}>
+              copy
             </button>
             <a className="btn btn-danger" href={shareLink} target="_blank">
-              open link
+              open
             </a>
-            <hr />
-            once ready, give your presentation.
           </div>
 
           <div className="alert">
             <h3>
-              3. discuss feedback{' '}
-              <small>{discussCount} comments to discuss</small>
+              3. discussion <small>{discussCount} comments to discuss</small>
             </h3>
-            after your presentation, discuss audience-selected comments [
-            <Link to={dLink}>here</Link>]
+            after your presentation, discuss audience-selected comments.
+            <input type="text" value={discussLink} className="code" readOnly />
+            <hr />
+            <button className="btn btn-primary" onClick={this.copyDiscuss}>
+              copy
+            </button>
+            <a className="btn btn-danger" href={discussLink} target="_blank">
+              open
+            </a>
           </div>
 
           <div className="alert">
             <h3>
-              4. review feedback{' '}
+              4. feedback review{' '}
               <small>{sComments.length} total comments</small>
             </h3>
             last, review all gathered feedback [<Link to={fLink}>here</Link>]

@@ -68,6 +68,22 @@ export const renameSession = new ValidatedMethod({
   },
 });
 
+export const setRespondingComment = new ValidatedMethod({
+  name: 'sessions.setRespondingComment',
+  validate: new SimpleSchema({
+    sessionId: {type: String},
+    commentId: {type: String},
+  }).validator(),
+  run({sessionId, commentId}) {
+    const session = Sessions.findOne(sessionId);
+    if (session) {
+      Sessions.update(sessionId, {$set: {responding: commentId}});
+    } else {
+      throw new Meteor.Error('api.sessions', 'Session does not exist.');
+    }
+  },
+});
+
 export const deleteSession = new ValidatedMethod({
   name: 'sessions.delete',
   validate: new SimpleSchema({

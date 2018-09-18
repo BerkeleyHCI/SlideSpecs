@@ -33,6 +33,7 @@ Sessions.schema = new SimpleSchema({
   name: {type: String},
   created: {type: Date},
   userId: {type: String, regEx: SimpleSchema.RegEx.Id},
+  responding: {type: String, defaultValue: '', optional: true},
 });
 
 Sessions.attachSchema(Sessions.schema);

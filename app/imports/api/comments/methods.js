@@ -22,7 +22,7 @@ export const createComment = new ValidatedMethod({
     agree: {type: [String], optional: true},
     discuss: {type: [String], optional: true},
     addressed: {type: Boolean, optional: true},
-    userOwn: {type: Boolean},
+    userOwn: {type: Boolean, optional: true},
   }).validator(),
   run({author, userOwn, content, session, addressed, discuss, agree, slides}) {
     const sess = Sessions.findOne(session);

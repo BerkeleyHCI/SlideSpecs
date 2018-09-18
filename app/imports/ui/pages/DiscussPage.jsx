@@ -9,6 +9,7 @@ import _ from 'lodash';
 
 import {Files} from '../../api/files/files.js';
 import BaseComponent from '../components/BaseComponent.jsx';
+import AppNotification from '../components/AppNotification.jsx';
 import SpeechRecognition from 'react-speech-recognition';
 import Input from '../components/Input.jsx';
 import TextArea from '../components/TextArea.jsx';
@@ -19,7 +20,9 @@ import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
+import {Comments} from '../../api/comments/comments.js';
 import {createComment, addressComment} from '../../api/comments/methods.js';
+import {setRespondingComment} from '../../api/sessions/methods.js';
 import {Transition} from 'react-spring';
 
 // Control-log.
@@ -261,6 +264,10 @@ class DiscussPage extends BaseComponent {
     this.setState({hoverImage: false});
   };
 
+  clearAuth = () => {
+    this.setState({author: '', comm: false});
+  };
+
   clearText = () => {
     const textarea = this.inRef.current;
     textarea.value = '';
@@ -298,25 +305,32 @@ class DiscussPage extends BaseComponent {
   };
 
   addComment = () => {
-    const {author, control} = this.state;
+    const {comm, author} = this.state;
     const {reviewer, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
     const commentFields = {
       content: cText,
       session: sessionId,
+      addressed: true,
       discuss: ['system'],
-      userOwn: control,
       author,
       slides,
     };
+
+    // Also check off the parent comment.
+    if (comm) {
+      addressComment.call({commentId: comm._id});
+    }
 
     createComment.call(commentFields, (err, res) => {
       if (err) {
         console.error(err);
       } else {
+        this.clearAuth();
         this.clearText();
         this.clearButton();
+        this.clearRespond();
         this.endTranscript();
       }
     });
@@ -451,9 +465,15 @@ class DiscussPage extends BaseComponent {
 
   renderAuthors = () => {
     const {author} = this.state;
-    const {sComments} = this.props;
+    const {sComments, responding} = this.props;
     const allAuth = sComments.map(c => c.author);
     const unique = _.uniq(_.flatten(allAuth));
+    if (!author && responding) {
+      const comm = Comments.findOne(responding);
+      const auth = comm.author;
+      this.setState({author: auth});
+    }
+
     return unique.sort().map(a => (
       <span
         key={a}
@@ -473,7 +493,7 @@ class DiscussPage extends BaseComponent {
   };
 
   renderCommentData = (arr, replies, c, i) => {
-    const {sComments, reviewer, setModal, clearModal} = this.props;
+    const {sessionId, sComments, reviewer, setModal, clearModal} = this.props;
     const {
       sorter,
       invert,
@@ -494,13 +514,13 @@ class DiscussPage extends BaseComponent {
       setModal,
       clearModal,
       activeComment,
+      sessionId,
       log: this.log,
       discussView: true,
       allReplies: replies,
       commentRef: this.inRef,
       handleTag: this.setByTag,
       handleAuthor: this.setByAuth,
-      handleAddress: this.handleAddress,
       bySlide: bySlide,
       handleSlideIn: this.handleSlideIn,
       handleSlideOut: this.handleSlideOut,
@@ -513,6 +533,11 @@ class DiscussPage extends BaseComponent {
   };
 
   renderComments = () => {
+    const {responding} = this.props;
+    if (responding) {
+      return this.renderRespond();
+    }
+
     const {
       sorter,
       invert,
@@ -631,7 +656,6 @@ class DiscussPage extends BaseComponent {
           </div>
         </div>
         <div className="v-pad" />
-        <div className="v-pad" />
         {filtered.length > 0 && (
           <div className="no-margin clearfix alert bottom">
             Slides:
@@ -649,12 +673,6 @@ class DiscussPage extends BaseComponent {
         )}
       </div>
     );
-  };
-
-  handleAddress = e => {
-    const cBox = e.target;
-    const commentId = cBox.getAttribute('data-id');
-    addressComment.call({commentId});
   };
 
   createAuthor = () => {
@@ -679,6 +697,29 @@ class DiscussPage extends BaseComponent {
     });
   };
 
+  clearRespond = () => {
+    const {sessionId} = this.props;
+    setRespondingComment.call({sessionId, commentId: ''});
+  };
+
+  renderRespond = () => {
+    const {responding} = this.props;
+    const respond = Comments.findOne(responding);
+    if (respond) {
+      return (
+        <div>
+          <h2> discussing </h2>
+          <div id="comments-list" className="alert">
+            <Comment {...respond} feedback={true} last={true} />
+          </div>
+          <button className="btn btn-primary" onClick={this.clearRespond}>
+            clear
+          </button>
+        </div>
+      );
+    }
+  };
+
   renderVoice = () => {
     const submitter = this.renderSubmit();
     const authors = this.renderAuthors();
@@ -686,11 +727,14 @@ class DiscussPage extends BaseComponent {
     const {
       transcript,
       listening,
+      responding,
       resetTranscript,
       interimTranscript,
       startListening,
       stopListening,
     } = this.props;
+
+    // TODO - box sometimes freezes. fix... maybe
 
     // initialize the box to value.
     if (
@@ -720,20 +764,24 @@ class DiscussPage extends BaseComponent {
               </button>
             </div>
             <hr />
-            <div className="padded">
-              Speaker (
-              <span className={!author ? 'auth-active' : ''}>required</span>
-              ): &nbsp;&nbsp;
-              {authors}
-              <span className="tag-group">
-                [
-                <a onClick={this.createAuthor} className="tag-link">
-                  +new
-                </a>
-                ]
-              </span>
-            </div>
-            <hr />
+            {!responding && (
+              <div>
+                <div className="padded">
+                  Speaker (
+                  <span className={!author ? 'auth-active' : ''}>required</span>
+                  ): &nbsp;&nbsp;
+                  {authors}
+                  <span className="tag-group">
+                    [
+                    <a onClick={this.createAuthor} className="tag-link">
+                      +new
+                    </a>
+                    ]
+                  </span>
+                </div>
+                <hr />
+              </div>
+            )}
             {submitter}
           </div>
         ) : (
@@ -779,9 +827,17 @@ class DiscussPage extends BaseComponent {
   };
 
   prepTranscript = () => {
-    const {stopListening, transcript} = this.props;
-    const text = '#discussion ' + transcript;
-    this.setState({uTranscript: text, revising: true});
+    let reply = '';
+    let comm = false;
+    const {responding, stopListening, transcript} = this.props;
+    if (responding) {
+      comm = Comments.findOne(responding);
+      const {author, _id} = comm;
+      reply = `[@${author}](#c${_id})`;
+    }
+
+    const text = `${reply} #discussion ${transcript}`.trim();
+    this.setState({uTranscript: text, comm, revising: true});
     stopListening();
   };
 

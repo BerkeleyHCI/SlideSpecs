@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
+import AppNotification from '../components/AppNotification.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 import Markdown from 'react-markdown';
+import {toast} from 'react-toastify';
 import _ from 'lodash';
+import {setRespondingComment} from '../../api/sessions/methods.js';
 import {
   agreeComment,
   discussComment,
@@ -82,6 +85,20 @@ class Comment extends BaseComponent {
     },
   };
 
+  setEdit = () => {
+    const {content} = this.props;
+    this.setState({editing: true});
+    setTimeout(() => {
+      let eRef = this.editRef.current;
+      eRef.value = content;
+      eRef.focus();
+    }, 50);
+  };
+
+  clearEdit = () => {
+    this.setState({editing: false});
+  };
+
   confirmRemoveComment = () => {
     const {setModal, clearModal, content, replies} = this.props;
     let modalContent;
@@ -113,20 +130,6 @@ class Comment extends BaseComponent {
     this.props.clearModal();
   };
 
-  setEdit = () => {
-    const {content} = this.props;
-    this.setState({editing: true});
-    setTimeout(() => {
-      let eRef = this.editRef.current;
-      eRef.value = content;
-      eRef.focus();
-    }, 50);
-  };
-
-  clearEdit = () => {
-    this.setState({editing: false});
-  };
-
   handleEdit = e => {
     const newContent = this.editRef.current.value.trim();
     const {author, discuss, reviewer, _id} = this.props;
@@ -139,6 +142,9 @@ class Comment extends BaseComponent {
 
     this.props.log({type: 'edit', ...editFields});
     updateComment.call(editFields, this.clearEdit);
+    toast(() => (
+      <AppNotification msg="updated" desc="Comment updated ok." icon="check" />
+    ));
   };
 
   handleReply = () => {
@@ -161,6 +167,14 @@ class Comment extends BaseComponent {
       commentId: _id,
     };
 
+    toast(() => (
+      <AppNotification
+        msg="Agreed"
+        desc="Agreed with comment."
+        icon="thumbs-up"
+      />
+    ));
+
     this.props.log({type: 'agree', ...commentFields});
     if (reviewer && _id) {
       agreeComment.call(commentFields);
@@ -174,9 +188,45 @@ class Comment extends BaseComponent {
       commentId: _id,
     };
 
+    toast(() => (
+      <AppNotification
+        msg="Marked"
+        desc="Marked for discussion."
+        icon="comments"
+      />
+    ));
+
     this.props.log({type: 'discuss', ...commentFields});
     if (reviewer && _id) {
       discussComment.call(commentFields);
+    }
+  };
+
+  handleAddress = () => {
+    const {_id} = this.props;
+    addressComment.call({commentId: _id});
+  };
+
+  handleSpeech = () => {
+    const {discuss, sessionId, _id} = this.props;
+    const commentFields = {
+      sessionId,
+      commentId: _id,
+    };
+
+    if (discuss.length == 0) {
+      this.handleDiscuss();
+    }
+
+    toast(() => (
+      <AppNotification
+        msg="Ready"
+        desc="Discuss comment with microphone."
+        icon="microphone"
+      />
+    ));
+    if (sessionId && _id) {
+      setRespondingComment.call(commentFields);
     }
   };
 
@@ -205,20 +255,35 @@ class Comment extends BaseComponent {
     },
   ];
 
-  privButtons = [
-    {
-      handleClick: this.setEdit,
-      master: true,
-      icon: 'pencil',
-      txt: 'edit',
-    },
-    {
-      handleClick: this.confirmRemoveComment,
-      master: true,
-      icon: 'trash',
-      txt: 'delete',
-    },
-  ];
+  editButton = {
+    handleClick: this.setEdit,
+    master: true,
+    icon: 'pencil',
+    txt: 'edit',
+  };
+
+  trashButton = {
+    handleClick: this.confirmRemoveComment,
+    master: true,
+    icon: 'trash',
+    txt: 'delete',
+  };
+
+  addressButton = {
+    handleClick: this.handleAddress,
+    master: true,
+    icon: this.props.addressed ? 'times' : 'check',
+    txt: this.props.addressed ? 'undo' : 'address',
+  };
+
+  talkButton = {
+    handleClick: this.handleSpeech,
+    master: true,
+    icon: 'microphone',
+    txt: 'speak',
+  };
+
+  privButtons = [this.editButton, this.trashButton, this.talkButton];
 
   renderMeta = (tag, users) => {
     return (
@@ -272,7 +337,6 @@ class Comment extends BaseComponent {
       addressed,
       bySlide,
       handleAuthor,
-      handleAddress,
       slides,
       handleSlideIn,
       handleSlideOut,
@@ -283,7 +347,11 @@ class Comment extends BaseComponent {
     const master = author === reviewer;
     const sysDiscuss = discuss.includes('system');
     let bData;
-    if (master || sysDiscuss) {
+    if (discussView) {
+      bData = [this.addressButton, this.talkButton];
+    } else if (sysDiscuss) {
+      bData = [...this.pubButtons, this.editButton];
+    } else if (master) {
       bData = [...this.pubButtons, ...this.privButtons];
     } else {
       bData = this.pubButtons;
@@ -325,17 +393,6 @@ class Comment extends BaseComponent {
             (active ? ' active-comment' : '') +
             (isReply ? ` reply-comment-${depth}` : '')
           }>
-          {discussView && (
-            <div className="comment-addressed-box">
-              <input
-                name="addressed"
-                type="checkbox"
-                data-id={_id}
-                defaultChecked={!!addressed}
-                onChange={handleAddress}
-              />
-            </div>
-          )}
           <div className="hover-menu">
             <div className="btn-group btns-empty">
               {bData.map((button, i) =>
@@ -379,7 +436,7 @@ class Comment extends BaseComponent {
     const {_id, author, content} = this.props;
     return (
       <div onBlur={this.clearEdit} className="clearfix comment editing">
-        <strong>{author}</strong> ·<i> editing... </i>
+        <strong>{author}</strong> · <i> editing... </i>
         <button onClick={this.clearEdit} className="btn pull-right">
           cancel
         </button>

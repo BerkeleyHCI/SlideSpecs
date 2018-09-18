@@ -166,7 +166,7 @@ export default class App extends BaseComponent {
               user={user}
             />
 
-            <PrivateRoute
+            <Route
               path="/discuss/:id"
               render={this.renderDiscuss}
               user={user}

@@ -156,7 +156,7 @@ class CommentPage extends BaseComponent {
     this.handleLoad();
 
     // FILTER FOR STUDY
-    this.handleControl();
+    //this.handleControl();
 
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
@@ -495,7 +495,7 @@ class CommentPage extends BaseComponent {
       byTag,
       control,
     } = this.state;
-    const {comments, reviewer, setModal, clearModal} = this.props;
+    const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
@@ -544,6 +544,7 @@ class CommentPage extends BaseComponent {
           key: c._id,
           reviewer,
           setModal,
+          sessionId,
           clearModal,
           activeComment,
           log: this.log,

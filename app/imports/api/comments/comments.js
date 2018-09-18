@@ -30,8 +30,8 @@ Comments.schema = new SimpleSchema({
   slides: {type: [SlideSchema]},
   agree: {type: [String], defaultValue: []},
   discuss: {type: [String], defaultValue: []},
-  userOwn: {type: Boolean, defaultValue: false},
-  addressed: {type: Boolean, defaultValue: false},
+  userOwn: {type: Boolean, defaultValue: false, optional: true},
+  addressed: {type: Boolean, defaultValue: false, optional: true},
 });
 
 Comments.attachSchema(Comments.schema);
