@@ -177,6 +177,7 @@ class DiscussPage extends BaseComponent {
 
   clearDiscussAuth = () => {
     this.setState({author: 'audience'});
+    this.endTranscript();
   };
 
   setByAuth = e => {
@@ -475,6 +476,7 @@ class DiscussPage extends BaseComponent {
       const auth = comm.author;
       if (comm && comm.author != author) {
         this.setState({author: auth});
+        this.resumeTranscript();
       }
     }
 
@@ -482,7 +484,7 @@ class DiscussPage extends BaseComponent {
       <span
         key={a}
         className={'tag-group' + (author == a ? ' auth-active' : '')}>
-        <a onClick={() => this.setDiscussAuth(a)} className="tag-link">
+        <a className="tag-link" onClick={() => this.setDiscussAuth(a)}>
           {a}
         </a>
       </span>
@@ -525,6 +527,7 @@ class DiscussPage extends BaseComponent {
       commentRef: this.inRef,
       handleTag: this.setByTag,
       handleAuthor: this.setByAuth,
+      startRecord: this.resumeTranscript,
       bySlide: bySlide,
       handleSlideIn: this.handleSlideIn,
       handleSlideOut: this.handleSlideOut,
@@ -838,7 +841,7 @@ class DiscussPage extends BaseComponent {
       comm = Comments.findOne(responding);
       const {author, _id} = comm;
       reply = `[@${author}](#c${_id})`;
-      author = auth;
+      auth = author;
     }
 
     const text = `${reply} #discussion ${transcript}`.trim();

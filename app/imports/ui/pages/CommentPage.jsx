@@ -599,9 +599,7 @@ class CommentPage extends BaseComponent {
         <div>
           <h2> comments </h2>
           <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
-            ))}
+            {items.map(i => <Comment {...i} />)}
           </div>
           {items.length >= 5 && (
             <div className="padded full-width">
