@@ -7,6 +7,7 @@ import SlideTags from '../components/SlideTags.jsx';
 import Markdown from 'react-markdown';
 import {toast} from 'react-toastify';
 import _ from 'lodash';
+import {Comments} from '../../api/comments/comments.js';
 import {setRespondingComment} from '../../api/sessions/methods.js';
 import {
   agreeComment,
@@ -215,6 +216,14 @@ class Comment extends BaseComponent {
       commentId: _id,
     };
 
+    if (sessionId && _id) {
+      setRespondingComment.call(commentFields);
+    }
+
+    if (this.props.startRecord) {
+      this.props.startRecord();
+    }
+
     if (discuss.length == 0) {
       this.handleDiscuss();
     }
@@ -226,9 +235,6 @@ class Comment extends BaseComponent {
         icon="microphone"
       />
     ));
-    if (sessionId && _id) {
-      setRespondingComment.call(commentFields);
-    }
   };
 
   extractCommentData = x => {
@@ -434,11 +440,7 @@ class Comment extends BaseComponent {
           {!last && <hr />}
         </div>
 
-        <div>
-          {replyProps.map(rp => (
-            <Comment {...this.props} {...rp} />
-          ))}
-        </div>
+        <div>{replyProps.map(rp => <Comment {...this.props} {...rp} />)}</div>
       </div>
     );
   };

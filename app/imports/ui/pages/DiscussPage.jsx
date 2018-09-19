@@ -50,7 +50,7 @@ class DiscussPage extends BaseComponent {
       filtered: [],
       selected: [],
       tags: [],
-      author: null,
+      author: 'audience',
       bySlide: '',
       byAuth: '',
       byTag: '',
@@ -136,7 +136,9 @@ class DiscussPage extends BaseComponent {
       ));
     }
 
+    this.createAudience();
     this.handleLoad();
+
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
@@ -174,7 +176,7 @@ class DiscussPage extends BaseComponent {
   };
 
   clearDiscussAuth = () => {
-    this.setState({author: null});
+    this.setState({author: 'audience'});
   };
 
   setByAuth = e => {
@@ -265,7 +267,7 @@ class DiscussPage extends BaseComponent {
   };
 
   clearAuth = () => {
-    this.setState({author: '', comm: false});
+    this.setState({author: 'audience', comm: false});
   };
 
   clearText = () => {
@@ -468,10 +470,12 @@ class DiscussPage extends BaseComponent {
     const {sComments, responding} = this.props;
     const allAuth = sComments.map(c => c.author);
     const unique = _.uniq(_.flatten(allAuth));
-    if (!author && responding) {
+    if (responding) {
       const comm = Comments.findOne(responding);
       const auth = comm.author;
-      this.setState({author: auth});
+      if (comm && comm.author != author) {
+        this.setState({author: auth});
+      }
     }
 
     return unique.sort().map(a => (
@@ -609,9 +613,7 @@ class DiscussPage extends BaseComponent {
             <div>
               <h2>to discuss</h2>
               <div id="comments-list" className="alert">
-                {items.map(i => (
-                  <Comment {...i} />
-                ))}
+                {items.map(i => <Comment {...i} />)}
               </div>
             </div>
           )}
@@ -620,9 +622,7 @@ class DiscussPage extends BaseComponent {
             <div>
               <h2>discussed</h2>
               <div id="comments-list" className="alert">
-                {addressedItems.map(i => (
-                  <Comment {...i} />
-                ))}
+                {addressedItems.map(i => <Comment {...i} />)}
               </div>
             </div>
           )}
@@ -675,11 +675,15 @@ class DiscussPage extends BaseComponent {
     );
   };
 
-  createAuthor = () => {
+  createAuthor = author => {
     const {sessionId} = this.props;
-    let author = window.prompt('New author name?', '');
+    console.log();
+    if (!author || typeof author != 'string') {
+      author = window.prompt('New author name?', '');
+    }
+
     const commentFields = {
-      content: 'added as audience author.',
+      content: 'added as author.',
       session: sessionId,
       discuss: ['system'],
       addressed: true,
@@ -692,7 +696,7 @@ class DiscussPage extends BaseComponent {
       if (err) {
         console.error(err);
       } else {
-        this.setDiscussAuth(author);
+        this.clearDiscussAuth();
       }
     });
   };
@@ -743,7 +747,9 @@ class DiscussPage extends BaseComponent {
       !this.inRef.current.value &&
       uTranscript
     ) {
-      this.inRef.current.value = uTranscript;
+      const textarea = this.inRef.current;
+      textarea.value = uTranscript + '\n\n';
+      textarea.focus();
     }
 
     return (
@@ -767,17 +773,11 @@ class DiscussPage extends BaseComponent {
             {!responding && (
               <div>
                 <div className="padded">
-                  Speaker (
-                  <span className={!author ? 'auth-active' : ''}>required</span>
-                  ): &nbsp;&nbsp;
+                  Speaker: &nbsp;
                   {authors}
-                  <span className="tag-group">
-                    [
-                    <a onClick={this.createAuthor} className="tag-link">
-                      +new
-                    </a>
-                    ]
-                  </span>
+                  <a onClick={this.createAuthor} className="tag-link">
+                    + new
+                  </a>
                 </div>
                 <hr />
               </div>
@@ -790,18 +790,12 @@ class DiscussPage extends BaseComponent {
               {listening ? (
                 <button
                   className={'btn btn-danger btn-listening'}
-                  onClick={stopListening}>
-                  stop
+                  onClick={this.prepTranscript}>
+                  save
                 </button>
               ) : (
                 <button className={'btn btn-primary'} onClick={startListening}>
-                  record discussion
-                </button>
-              )}
-
-              {transcript.length > 0 && (
-                <button className="btn btn-empty" onClick={this.prepTranscript}>
-                  Save
+                  record
                 </button>
               )}
 
@@ -826,18 +820,34 @@ class DiscussPage extends BaseComponent {
     );
   };
 
+  createAudience = () => {
+    const {sComments} = this.props;
+    this.setState({author: 'audience'});
+    const allAuth = sComments.map(c => c.author);
+    if (!allAuth.includes('audience')) {
+      this.createAuthor('audience');
+    }
+  };
+
   prepTranscript = () => {
     let reply = '';
+    let auth = 'audience';
     let comm = false;
     const {responding, stopListening, transcript} = this.props;
     if (responding) {
       comm = Comments.findOne(responding);
       const {author, _id} = comm;
       reply = `[@${author}](#c${_id})`;
+      author = auth;
     }
 
     const text = `${reply} #discussion ${transcript}`.trim();
-    this.setState({uTranscript: text, comm, revising: true});
+    this.setState({
+      uTranscript: text,
+      comm,
+      revising: true,
+      author: auth,
+    });
     stopListening();
   };
 
