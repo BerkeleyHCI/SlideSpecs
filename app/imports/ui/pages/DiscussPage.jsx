@@ -131,12 +131,7 @@ class DiscussPage extends BaseComponent {
       const nComm = Comments.findOne(responding);
       if (!comm && nComm) {
         this.setState({author: nComm.author, comm: nComm});
-      } else if (
-        comm &&
-        nComm &&
-        comm.author !== nComm.author &&
-        comm._id !== nComm._id
-      ) {
+      } else if (comm && nComm && comm._id !== nComm._id) {
         this.setState({author: nComm.author, comm: nComm});
         this.resumeTranscript();
       }
@@ -766,10 +761,6 @@ class DiscussPage extends BaseComponent {
       const textarea = this.inRef.current;
       textarea.value = uTranscript + '\n\n';
       textarea.focus();
-    }
-
-    if (responding) {
-      this.handleAutoRecord();
     }
 
     return (
