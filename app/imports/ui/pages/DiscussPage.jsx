@@ -123,6 +123,26 @@ class DiscussPage extends BaseComponent {
     };
   };
 
+  handleAutoRecord = () => {
+    const {comm} = this.state;
+    const {responding} = this.props;
+    // trigger the auto recording
+    if (responding) {
+      const nComm = Comments.findOne(responding);
+      if (!comm && nComm) {
+        this.setState({author: nComm.author, comm: nComm});
+      } else if (
+        comm &&
+        nComm &&
+        comm.author !== nComm.author &&
+        comm._id !== nComm._id
+      ) {
+        this.setState({author: nComm.author, comm: nComm});
+        this.resumeTranscript();
+      }
+    }
+  };
+
   componentDidMount = () => {
     // handle voice integration
     const {browserSupportsSpeechRecognition} = this.props;
@@ -154,6 +174,7 @@ class DiscussPage extends BaseComponent {
 
   componentDidUpdate = () => {
     this.handleLoad();
+    this.handleAutoRecord();
   };
 
   componentWillUnmount = () => {
@@ -273,8 +294,10 @@ class DiscussPage extends BaseComponent {
 
   clearText = () => {
     const textarea = this.inRef.current;
-    textarea.value = '';
-    textarea.focus();
+    if (textarea) {
+      textarea.value = '';
+      textarea.focus();
+    }
   };
 
   clearSelection = e => {
@@ -430,7 +453,6 @@ class DiscussPage extends BaseComponent {
   };
 
   renderFilter = () => {
-    const tagList = this.renderTags();
     const voice = this.renderVoice();
     let {control, byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
@@ -441,7 +463,6 @@ class DiscussPage extends BaseComponent {
       <div className="filterer alert clearfix">
         <p>
           <Clock />
-          {tagList}
         </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
@@ -468,18 +489,9 @@ class DiscussPage extends BaseComponent {
 
   renderAuthors = () => {
     const {author} = this.state;
-    const {sComments, responding} = this.props;
+    const {sComments} = this.props;
     const allAuth = sComments.map(c => c.author);
     const unique = _.uniq(_.flatten(allAuth));
-    if (responding) {
-      const comm = Comments.findOne(responding);
-      const auth = comm.author;
-      if (comm && comm.author != author) {
-        this.setState({author: auth});
-        this.resumeTranscript();
-      }
-    }
-
     return unique.sort().map(a => (
       <span
         key={a}
@@ -707,6 +719,7 @@ class DiscussPage extends BaseComponent {
   clearRespond = () => {
     const {sessionId} = this.props;
     setRespondingComment.call({sessionId, commentId: ''});
+    this.endTranscript();
   };
 
   renderRespond = () => {
@@ -753,6 +766,10 @@ class DiscussPage extends BaseComponent {
       const textarea = this.inRef.current;
       textarea.value = uTranscript + '\n\n';
       textarea.focus();
+    }
+
+    if (responding) {
+      this.handleAutoRecord();
     }
 
     return (
@@ -847,7 +864,6 @@ class DiscussPage extends BaseComponent {
     const text = `${reply} #discussion ${transcript}`.trim();
     this.setState({
       uTranscript: text,
-      comm,
       revising: true,
       author: auth,
     });
@@ -862,7 +878,7 @@ class DiscussPage extends BaseComponent {
 
   endTranscript = () => {
     const {stopListening, resetTranscript} = this.props;
-    this.setState({uTranscript: '', revising: false, author: null});
+    this.setState({uTranscript: '', revising: false, author: 'audience'});
     resetTranscript();
     stopListening();
   };
