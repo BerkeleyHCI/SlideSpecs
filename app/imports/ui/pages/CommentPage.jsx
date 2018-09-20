@@ -503,7 +503,6 @@ class CommentPage extends BaseComponent {
         const slideNo = active.slideNo.toString();
         const filtered = [{slideId: active._id, slideNo}];
         const slide = document.querySelectorAll(`[data-iter='${slideNo}']`);
-        console.log(slide);
         ds.addSelection(slide);
         this.setState({selected: slide, filtered});
       }

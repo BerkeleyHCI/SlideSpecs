@@ -730,6 +730,9 @@ class DiscussPage extends BaseComponent {
           <button className="btn btn-primary" onClick={this.clearRespond}>
             clear
           </button>
+          <button className="btn btn-danger" onClick={this.restartRecord}>
+            <i class="fa fa-refresh" aria-hidden="true" />
+          </button>
         </div>
       );
     }
@@ -838,6 +841,12 @@ class DiscussPage extends BaseComponent {
     if (!allAuth.includes('audience')) {
       this.createAuthor('audience');
     }
+  };
+
+  restartRecord = () => {
+    const {stopListening, startListening} = this.props;
+    stopListening();
+    setTimeout(startListening, 100);
   };
 
   prepTranscript = () => {

@@ -15,8 +15,6 @@ class SessionsCollection extends Mongo.Collection {
 
 export const Sessions = new SessionsCollection('Sessions');
 
-// Deny all client-side updates since we will be using methods to manage this collection
-
 Sessions.deny({
   insert() {
     return true;
