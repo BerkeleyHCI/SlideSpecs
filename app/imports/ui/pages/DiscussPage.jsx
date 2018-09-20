@@ -731,7 +731,7 @@ class DiscussPage extends BaseComponent {
             clear
           </button>
           <button className="btn btn-danger" onClick={this.restartRecord}>
-            <i class="fa fa-refresh" aria-hidden="true" />
+            <i className="fa fa-refresh" aria-hidden="true" />
           </button>
         </div>
       );
@@ -823,8 +823,14 @@ class DiscussPage extends BaseComponent {
             {(transcript || listening) && (
               <div>
                 <code className="transcript">
-                  {transcript}
-                  {listening && transcript.length == 0 && <i>*listening*</i>}
+                  {listening && <i>*listening*</i>}
+                  {listening &&
+                    transcript.length > 0 && (
+                      <span>
+                        {' '}
+                        &nbsp; words: {transcript.split(/\s/).length}
+                      </span>
+                    )}
                 </code>
               </div>
             )}
