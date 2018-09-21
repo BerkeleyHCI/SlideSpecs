@@ -823,14 +823,8 @@ class DiscussPage extends BaseComponent {
             {(transcript || listening) && (
               <div>
                 <code className="transcript">
-                  {listening && <i>*listening*</i>}
-                  {listening &&
-                    transcript.length > 0 && (
-                      <span>
-                        {' '}
-                        &nbsp; words: {transcript.split(/\s/).length}
-                      </span>
-                    )}
+                  {transcript}
+                  {listening && transcript.length == 0 && <i>*listening*</i>}
                 </code>
               </div>
             )}
@@ -839,6 +833,18 @@ class DiscussPage extends BaseComponent {
       </div>
     );
   };
+
+  /*
+                  {listening && <i>*listening*</i>}
+                  {listening &&
+                    transcript.length > 0 && (
+                      <span>
+                        {' '}
+                        &nbsp; words: {transcript.split(/\s/).length}
+                      </span>
+                    )}
+
+      */
 
   createAudience = () => {
     const {sComments} = this.props;
