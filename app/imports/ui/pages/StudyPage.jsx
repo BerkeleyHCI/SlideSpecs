@@ -37,22 +37,22 @@ class StudyPage extends Component {
     // for 10/17
     const linkIds = [
       {name: 'AR for Visually Impaired', link: 'rc9hj8ccnFMR7Xrrc'},
-      {name: 'Arobotics', link: 'ormbW5fLWdwb9uJhn'},
+      {name: 'ARobotics', link: 'ormbW5fLWdwb9uJhn'},
       {name: 'OOPS', link: 'NQyqNmFjjLnT7G4K6'},
       {name: 'OpenRecon', link: 'wkosB2emHrdLtbyf8'},
       {name: 'Ironman', link: '8See5hFhZrk5m3E8M'},
       {name: 'Leanput', link: 'R2Kf5cMQZkKQ7eupZ'},
       {name: 'CD Ratio', link: 'ty8FMobbtxR6sEnKz'},
-      {name: 'Mind the Gap', link: 'u72H322FYyp5uT4Ez'},
+      {name: 'Temperature and Virtual Immersion', link: 'u72H322FYyp5uT4Ez'},
       {name: 'Epic', link: '6BdoZffPNbpWrToXA'},
-      {name: '', link: '4CPNqDYbzuCsuDZiT'},
-      {name: '', link: 'bqGqonWpF5LNSbSHC'},
-      {name: '', link: 'hbGYCjxKMLTE3cgSk'},
+      {name: 'Shatter Squad', link: '4CPNqDYbzuCsuDZiT'},
+      {name: 'ISAACS', link: 'bqGqonWpF5LNSbSHC'},
+      {name: 'Human Avatar', link: 'hbGYCjxKMLTE3cgSk'},
       {name: '', link: 'dXYn8TdRpx9go4d5p'},
-      {name: '', link: 'tTNWCMxQ55qe5acpx'},
-      {name: '', link: '4gHRkSXo4kEA87FGK'},
-      {name: '', link: 'QNyRENSd4PJncxLSb'},
-      {name: '', link: 'AvcopdT6TLdh4Jz5E'},
+      {name: 'ARrange', link: 'tTNWCMxQ55qe5acpx'},
+      //{name: '', link: '4gHRkSXo4kEA87FGK'},
+      //{name: '', link: 'QNyRENSd4PJncxLSb'},
+      //{name: '', link: 'AvcopdT6TLdh4Jz5E'},
     ];
 
     return (
