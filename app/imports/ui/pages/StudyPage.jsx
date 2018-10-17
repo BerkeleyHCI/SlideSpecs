@@ -5,10 +5,12 @@ import {Link} from 'react-router-dom';
 // LINK STUDY PAGE FOR ARVR CLASS 9/12
 // note: updated for class on 10/17
 
-const StudyPageLink = (link, i) => {
+const StudyPageLink = (d, i) => {
   return (
-    <li key={`link-${i}`}>
-      <Link to={`/share/${link}`}> presentation {i + 1} </Link>
+    <li key={`d.link-${i}`}>
+      <Link to={`/share/${d.link}`}>
+        Group {i + 1} - {d.name}
+      </Link>
     </li>
   );
 };
@@ -34,23 +36,23 @@ class StudyPage extends Component {
 
     // for 10/17
     const linkIds = [
-      'rc9hj8ccnFMR7Xrrc', // group 1
-      'ormbW5fLWdwb9uJhn',
-      'NQyqNmFjjLnT7G4K6',
-      'wkosB2emHrdLtbyf8',
-      '8See5hFhZrk5m3E8M',
-      'R2Kf5cMQZkKQ7eupZ',
-      'ty8FMobbtxR6sEnKz',
-      'u72H322FYyp5uT4Ez',
-      '6BdoZffPNbpWrToXA',
-      '4CPNqDYbzuCsuDZiT',
-      'bqGqonWpF5LNSbSHC',
-      'hbGYCjxKMLTE3cgSk',
-      'dXYn8TdRpx9go4d5p',
-      'tTNWCMxQ55qe5acpx',
-      '4gHRkSXo4kEA87FGK',
-      'QNyRENSd4PJncxLSb',
-      'AvcopdT6TLdh4Jz5E', // group 17
+      {name: 'Leanput', link: 'rc9hj8ccnFMR7Xrrc'},
+      {name: 'CD Ratio', link: 'ormbW5fLWdwb9uJhn'},
+      {name: 'Mind the Gap', link: 'NQyqNmFjjLnT7G4K6'},
+      {name: '', link: 'wkosB2emHrdLtbyf8'},
+      {name: '', link: '8See5hFhZrk5m3E8M'},
+      {name: '', link: 'R2Kf5cMQZkKQ7eupZ'},
+      {name: '', link: 'ty8FMobbtxR6sEnKz'},
+      {name: '', link: 'u72H322FYyp5uT4Ez'},
+      {name: '', link: '6BdoZffPNbpWrToXA'},
+      {name: '', link: '4CPNqDYbzuCsuDZiT'},
+      {name: '', link: 'bqGqonWpF5LNSbSHC'},
+      {name: '', link: 'hbGYCjxKMLTE3cgSk'},
+      {name: '', link: 'dXYn8TdRpx9go4d5p'},
+      {name: '', link: 'tTNWCMxQ55qe5acpx'},
+      {name: '', link: '4gHRkSXo4kEA87FGK'},
+      {name: '', link: 'QNyRENSd4PJncxLSb'},
+      {name: '', link: 'AvcopdT6TLdh4Jz5E'},
     ];
 
     return (
