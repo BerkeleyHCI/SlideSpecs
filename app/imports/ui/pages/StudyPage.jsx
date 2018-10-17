@@ -36,9 +36,9 @@ class StudyPage extends Component {
 
     // for 10/17
     const linkIds = [
-      {name: 'Leanput', link: 'rc9hj8ccnFMR7Xrrc'},
-      {name: 'CD Ratio', link: 'ormbW5fLWdwb9uJhn'},
-      {name: 'Mind the Gap', link: 'NQyqNmFjjLnT7G4K6'},
+      {name: 'AR for Visually Impaired', link: 'rc9hj8ccnFMR7Xrrc'},
+      {name: 'Arobotics', link: 'ormbW5fLWdwb9uJhn'},
+      {name: 'OOPS', link: 'NQyqNmFjjLnT7G4K6'},
       {name: '', link: 'wkosB2emHrdLtbyf8'},
       {name: '', link: '8See5hFhZrk5m3E8M'},
       {name: '', link: 'R2Kf5cMQZkKQ7eupZ'},
