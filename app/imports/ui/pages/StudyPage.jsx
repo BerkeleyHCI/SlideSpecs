@@ -42,7 +42,7 @@ class StudyPage extends Component {
       {name: 'OpenRecon', link: 'wkosB2emHrdLtbyf8'},
       {name: 'Ironman', link: '8See5hFhZrk5m3E8M'},
       {name: 'Leanput', link: 'R2Kf5cMQZkKQ7eupZ'},
-      {name: 'CD Ratio', link: 'ty8FMobbtxR6sEnKz'},
+      {name: 'Infinite Walking', link: 'ty8FMobbtxR6sEnKz'},
       {name: 'Temperature and Virtual Immersion', link: 'u72H322FYyp5uT4Ez'},
       {name: 'Epic', link: '6BdoZffPNbpWrToXA'},
       {name: 'Shatter Squad', link: '4CPNqDYbzuCsuDZiT'},
