@@ -6,7 +6,6 @@ import AppNotification from '../components/AppNotification.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 import Markdown from 'react-markdown';
 import {toast} from 'react-toastify';
-import _ from 'lodash';
 import {Comments} from '../../api/comments/comments.js';
 import {setRespondingComment} from '../../api/sessions/methods.js';
 import {

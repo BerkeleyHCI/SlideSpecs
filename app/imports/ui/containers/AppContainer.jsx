@@ -10,22 +10,47 @@ import App from '../layouts/App.jsx';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 export default withTracker(() => {
-  const sessions = Meteor.subscribe('sessions');
-  const files = Meteor.subscribe('files');
-  const comments = Meteor.subscribe('comments');
-  const events = Meteor.subscribe('events');
   let reviewer = Session.get('reviewer');
-  return {
+  let data = {
     user: Meteor.user(),
     reviewer,
     connected: Meteor.status().connected,
-    loading: ![sessions, comments, files, events].every(x => x.ready()),
-    events: Events.find({}, {sort: {created: -1}}).fetch(),
-    comments: Comments.find({}, {sort: {created: 1}}).fetch(),
-    files: Files.find({}, {sort: {name: 1}}).fetch(),
-    sessions: Sessions.find(
-      {userId: Meteor.userId()},
-      {sort: {created: -1}},
-    ).fetch(),
+    loading: false,
+    comments: [],
+    sessions: [],
+    events: [],
+    files: [],
   };
+
+  let sessions;
+  if (Meteor.user() || reviewer) {
+    sessions = Meteor.subscribe('sessions');
+    data = Object.assign(data, {
+      loading: !sessions.ready(),
+      sessions: Sessions.find(
+        {userId: Meteor.userId()},
+        {sort: {created: -1}},
+      ).fetch(),
+    });
+  }
+
+  let session = Session.get('session');
+  if ((Meteor.user() || reviewer) && session) {
+    // TODO - filter files by active session
+    const files = Meteor.subscribe('files');
+    const comments = Meteor.subscribe('comments', session);
+    const events = Meteor.subscribe('events', session);
+    data = Object.assign(data, {
+      loading: ![sessions, comments, files, events].every(x => x.ready()),
+      events: Events.find({}, {sort: {created: -1}}).fetch(),
+      comments: Comments.find({}, {sort: {created: 1}}).fetch(),
+      files: Files.find({}, {sort: {name: 1}}).fetch(),
+      sessions: Sessions.find(
+        {userId: Meteor.userId()},
+        {sort: {created: -1}},
+      ).fetch(),
+    });
+  }
+
+  return data;
 })(App);

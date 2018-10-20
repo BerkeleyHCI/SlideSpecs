@@ -67,6 +67,10 @@ export default class App extends BaseComponent {
   };
 
   getSessionProps = sid => {
+    if (Session.get('session') !== sid) {
+      Session.set('session', sid);
+    }
+
     const {sessions, files, comments, events, reviewer} = this.props;
     let session = sessions.find(s => s._id === sid) || {};
     session.files = files.filter(f => f.meta.sessionId === sid);
