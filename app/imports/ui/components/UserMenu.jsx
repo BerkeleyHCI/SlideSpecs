@@ -19,7 +19,7 @@ export default class UserMenu extends BaseComponent {
     const {user} = this.props;
     const username = user.username;
     return (
-      <div className="user-menu vertical">
+      <div className="user-menu">
         <a className="btn-secondary" onClick={this.goHome}>
           {username}
         </a>
@@ -48,7 +48,7 @@ export default class UserMenu extends BaseComponent {
     let content = user ? this.renderOpen() : this.renderLoggedOut();
     return (
       this.renderRedirect() || (
-        <section id="menu">
+        <section className="clearfix" id="menu">
           <h1>
             <Link to="/">feedback</Link>
           </h1>

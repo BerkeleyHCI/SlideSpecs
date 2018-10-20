@@ -59,6 +59,23 @@ export const addressComment = new ValidatedMethod({
   },
 });
 
+// Ugh... this is naming for addressing a comment in the review pane.
+export const completeComment = new ValidatedMethod({
+  name: 'comments.complete',
+  validate: new SimpleSchema({
+    commentId: {type: String},
+  }).validator(),
+  run({commentId}) {
+    const comment = Comments.findOne(commentId);
+    if (!comment) {
+      return false;
+    } else {
+      const newComplete = !comment.completed;
+      return Comments.update(commentId, {$set: {completed: newComplete}});
+    }
+  },
+});
+
 export const agreeComment = new ValidatedMethod({
   name: 'comments.agree',
   validate: new SimpleSchema({

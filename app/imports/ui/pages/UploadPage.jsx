@@ -114,9 +114,9 @@ class UploadPage extends BaseComponent {
             uploading: false,
             progress: 0,
           });
-          setTimeout(() => {
-            this.redirectTo(`/sessions/${sessionId}`);
-          }, timeout);
+          //setTimeout(() => {
+          //this.redirectTo(`/sessions/${sessionId}`);
+          //}, timeout);
         } else {
           // UPLOADING NOW
           this.setState({

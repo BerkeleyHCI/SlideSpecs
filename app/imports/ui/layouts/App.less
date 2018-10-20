@@ -5,7 +5,7 @@
 
 body {
   .position(absolute, 0, 0, 0, 0);
-  background-color: @color-ancillary;
+  background: @color-tertiary;
 }
 
 #container {
@@ -30,18 +30,24 @@ body {
 
 #content-container {
   .position(relative, auto, auto, auto, @menu-width);
-  background: @color-tertiary;
   max-width: 80vw;
   height: 100vh;
   opacity: 1;
+  @media only screen and (max-width: 992px) {
+    max-width: 100vw;
+    height: initial;
+    left: 0px;
+  }
 }
 
 div.main-content {
-  background: @color-tertiary;
-  max-height: 100vh;
-  min-height: 100vh;
-  overflow-y: auto;
   padding: 2em;
+  /*min-height: calc(~'100vh - 156px');*/
+  @media only screen and (min-width: 992px) {
+    max-height: 100vh;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
 }
 div.main-content.no-pad {
   padding: 0em;

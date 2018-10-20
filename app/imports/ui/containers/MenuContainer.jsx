@@ -5,10 +5,10 @@ import UserMenu from '../components/UserMenu.jsx';
 
 class MenuContainer extends BaseComponent {
   render = () => {
-    const {user, guest, reviewer, content} = this.props;
+    const {user, reviewer, content} = this.props;
     return (
       <div>
-        <UserMenu user={user} guest={guest} reviewer={reviewer} />
+        <UserMenu user={user} reviewer={reviewer} />
         <div id="content-container">{content}</div>
       </div>
     );

@@ -32,6 +32,7 @@ Comments.schema = new SimpleSchema({
   discuss: {type: [String], defaultValue: []},
   userOwn: {type: Boolean, defaultValue: false, optional: true},
   addressed: {type: Boolean, defaultValue: false, optional: true},
+  completed: {type: Boolean, defaultValue: false, optional: true},
 });
 
 Comments.attachSchema(Comments.schema);
