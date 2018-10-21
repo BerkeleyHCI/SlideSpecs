@@ -335,15 +335,18 @@ class CommentPage extends BaseComponent {
         <span className="comment-option" onClick={this.toggleFocus}>
           <i className={'fa fa-' + (focusing ? 'eye' : 'comments')} />{' '}
           {focusing ? 'focus' : 'all'}
-        </span>{' '}
-        |{' '}
-        <span className="comment-option" onClick={this.toggleFollow}>
-          <i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
-          {following ? 'auto' : 'manual'}
         </span>
       </span>
     );
   };
+
+  /*
+{' '}|{' '}
+<span className="comment-option" onClick={this.toggleFollow}>
+<i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
+{following ? 'auto' : 'manual'}
+</span>
+*/
 
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
