@@ -697,6 +697,7 @@ class DiscussPage extends BaseComponent {
       session: sessionId,
       discuss: ['system'],
       addressed: true,
+      completed: true,
       userOwn: true,
       slides: [],
       author,
