@@ -6,6 +6,7 @@ import {_} from 'lodash';
 import {toast} from 'react-toastify';
 import {Files} from '../../api/files/files.js';
 import AppNotification from '../components/AppNotification.jsx';
+import Loading from '../components/Loading.jsx';
 import ConvertInstructions from '../components/ConvertInstructions.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileUpload from '../components/FileUpload.jsx';
@@ -131,12 +132,11 @@ class UploadPage extends BaseComponent {
 
   // This is our progress bar, bootstrap styled
   // Remove this function if not needed
+  //<Message title="uploading..." subtitle={this.state.progress + '%'} />
 
   showUploads() {
     if (this.state.uploading) {
-      return (
-        <Message title="uploading..." subtitle={this.state.progress + '%'} />
-      );
+      return <Message title="uploading..." subtitle={<Loading />} />;
     }
   }
 
