@@ -1,18 +1,23 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import autosize from 'autosize';
 
 class TextArea extends Component {
   componentDidMount = () => {
-    const {inRef} = this.props;
-    $(inRef.current).autoResize();
+    setTimeout(() => autosize(this.props.inRef.current), 200);
+  };
+
+  componentDidUpdate = () => {
+    setTimeout(() => autosize.update(this.props.inRef.current), 200);
   };
 
   keyDown = e => {
-    const {handleKeyDown, handleSubmit} = this.props;
+    const {inRef, handleKeyDown, handleSubmit} = this.props;
     const text = e.target.value.trim();
     handleKeyDown(text);
     if (text && e.keyCode === 13 && !e.shiftKey) {
       handleSubmit(text);
+      setTimeout(() => autosize.update(inRef.current), 200);
     }
   };
 

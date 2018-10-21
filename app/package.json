@@ -8,6 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.1.2",
     "autoprefixer": "^8.6.5",
+    "autosize": "^4.0.2",
     "babel-eslint": "^8.2.6",
     "bcrypt": "^2.0.1",
     "classnames": "^2.2.5",
