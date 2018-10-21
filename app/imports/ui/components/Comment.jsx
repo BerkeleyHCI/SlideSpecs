@@ -15,6 +15,7 @@ import {
   updateComment,
   deleteComment,
   addressComment,
+  completeComment,
 } from '../../api/comments/methods.js';
 
 class Comment extends BaseComponent {
@@ -208,6 +209,11 @@ class Comment extends BaseComponent {
     addressComment.call({commentId: _id});
   };
 
+  handleComplete = () => {
+    const {_id} = this.props;
+    completeComment.call({commentId: _id});
+  };
+
   handleSpeech = () => {
     const {discuss, sessionId, _id} = this.props;
     const commentFields = {
@@ -289,6 +295,13 @@ class Comment extends BaseComponent {
     txt: 'speak',
   };
 
+  completeButton = {
+    handleClick: this.handleComplete,
+    icon: this.props.completed ? 'times' : 'check',
+    txt: this.props.completed ? 'undo' : 'address',
+    //master: true,
+  };
+
   privButtons = [this.editButton, this.trashButton, this.talkButton];
 
   renderMeta = (tag, users) => {
@@ -303,9 +316,9 @@ class Comment extends BaseComponent {
   };
 
   renderCommentButton = ({icon, key, txt, handleClick, master}) => {
-    const {feedback, reviewer, _id} = this.props;
+    const {focused, reviewer, _id} = this.props;
     return (
-      !feedback && (
+      !focused && (
         <button
           key={key}
           title={txt}
@@ -334,6 +347,7 @@ class Comment extends BaseComponent {
       last,
       log,
       depth,
+      feedback,
       reviewer,
       replies,
       isReply,
@@ -357,6 +371,8 @@ class Comment extends BaseComponent {
     let bData;
     if (discussView && depth == 0) {
       bData = [this.addressButton, this.talkButton];
+    } else if (feedback) {
+      bData = [this.completeButton];
     } else if (discussView) {
       bData = [this.talkButton];
     } else if (sysDiscuss) {

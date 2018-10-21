@@ -214,6 +214,7 @@ class CommentPage extends BaseComponent {
   clearReviewer = () => {
     localStorage.setItem('feedbacks.reviewer', null);
     Session.set('reviewer', null);
+    Meteor.logout(); // clear
   };
 
   updateImage = fid => {
@@ -326,19 +327,20 @@ class CommentPage extends BaseComponent {
     const {defaultPriv, following, focusing} = this.state;
     return (
       <span className="comment-config pull-right">
-        {'{ '}
         <span className="comment-option" onClick={this.togglePrivate}>
+          <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
           {defaultPriv ? 'private' : 'public'}
-        </span>
-        ,{' '}
+        </span>{' '}
+        |{' '}
         <span className="comment-option" onClick={this.toggleFocus}>
+          <i className={'fa fa-' + (focusing ? 'eye' : 'comments')} />{' '}
           {focusing ? 'focus' : 'all'}
-        </span>
-        ,{' '}
+        </span>{' '}
+        |{' '}
         <span className="comment-option" onClick={this.toggleFollow}>
-          {following ? 'autofollow' : 'manual'}
+          <i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
+          {following ? 'auto' : 'manual'}
         </span>
-        {' }'}
       </span>
     );
   };
@@ -578,7 +580,7 @@ class CommentPage extends BaseComponent {
           clearModal,
           activeComment,
           log: this.log,
-          feedback: focusing,
+          focused: focusing,
           bySlide: bySlide,
           allReplies: replies,
           commentRef: this.inRef,
@@ -648,16 +650,25 @@ class CommentPage extends BaseComponent {
   };
 
   render() {
-    const {files, reviewer} = this.props;
+    const {files, sessionId, session, reviewer, userId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
 
+    const mu = Meteor.user();
+    const sessionOwner = mu && mu._id == userId;
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
           <h2 className="nav-head clearfix">
-            share feedback
+            {sessionOwner ? (
+              <Link to={`/sessions/${sessionId}`}>
+                <span className="black"> ‹ </span>
+                share feedback
+              </Link>
+            ) : (
+              <span> share feedback </span>
+            )}
             <small
               onClick={this.clearReviewer}
               className="pull-right clear-icon">

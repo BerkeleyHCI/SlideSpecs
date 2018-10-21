@@ -16,7 +16,16 @@ export default class ReviewContainer extends BaseComponent {
 
   componentDidMount = () => {
     const saved = localStorage.getItem('feedbacks.reviewer');
-    if (saved && saved != 'null') {
+    const mu = Meteor.user();
+    let username;
+    if (mu) {
+      username = mu.username;
+    }
+
+    if (username && saved !== username) {
+      localStorage.setItem('feedbacks.reviewer', username);
+      Session.set('reviewer', username);
+    } else if (saved && saved != 'null') {
       Session.set('reviewer', saved);
     }
   };

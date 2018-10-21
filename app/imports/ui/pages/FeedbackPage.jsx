@@ -15,7 +15,7 @@ import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
-import {createComment} from '../../api/comments/methods.js';
+import {createComment, completeComment} from '../../api/comments/methods.js';
 import {Transition} from 'react-spring';
 
 // Control-log.
@@ -163,7 +163,6 @@ class FeedbackPage extends BaseComponent {
   };
 
   setBySlide = e => {
-    console.log(e.target);
     const {ds} = this.state;
     const slideId = e.target.dataset.fileId;
     const newSlide = e.target.innerText.trim();
@@ -494,14 +493,29 @@ class FeedbackPage extends BaseComponent {
         };
       });
 
+      const completed = items.filter(c => c.completed);
+      const incomplete = items.filter(c => !c.completed);
+
       return items.length > 0 ? (
         <div>
-          <h2>comments</h2>
-          <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
-            ))}
-          </div>
+          {incomplete.length > 0 && (
+            <div>
+              <h2>to address</h2>
+              <div id="comments-list" className="alert">
+                {incomplete.map(i => <Comment {...i} />)}
+              </div>
+            </div>
+          )}
+
+          {completed.length > 0 && (
+            <div>
+              <h2>addressed</h2>
+              <div id="comments-list" className="alert">
+                {completed.map(i => <Comment {...i} />)}
+              </div>
+            </div>
+          )}
+
           {items.length >= 5 && (
             <div className="padded full-width">
               <button

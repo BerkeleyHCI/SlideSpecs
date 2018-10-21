@@ -67,7 +67,7 @@ export default class App extends BaseComponent {
   };
 
   getSessionProps = sid => {
-    if (Session.get('session') !== sid) {
+    if ((sid && !Session.get('session')) || Session.get('session') !== sid) {
       Session.set('session', sid);
     }
 

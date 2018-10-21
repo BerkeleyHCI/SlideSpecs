@@ -60,6 +60,8 @@ export const addressComment = new ValidatedMethod({
 });
 
 // Ugh... this is naming for addressing a comment in the review pane.
+// Probably should name these similarly to their associated pages.
+
 export const completeComment = new ValidatedMethod({
   name: 'comments.complete',
   validate: new SimpleSchema({
