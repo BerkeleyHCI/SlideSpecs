@@ -230,7 +230,7 @@ class FeedbackPage extends BaseComponent {
     this.setState({hoverImage: link, image: link});
   };
 
-  handleSlide = e => {
+  handleSlideIn = e => {
     if (e.target === e.currentTarget) {
       const data = this.extractFileData(e.target);
       this.updateHoverImage(data.slideId);
@@ -488,6 +488,8 @@ class FeedbackPage extends BaseComponent {
           setBySlide: this.setBySlide,
           handleTag: this.setByTag,
           handleAuthor: this.setByAuth,
+          handleSlideIn: this.handleSlideIn,
+          handleSlideOut: this.handleSlideOut,
           setActive: this.setActiveComment,
           unsetActive: this.clearActiveComment,
         };
