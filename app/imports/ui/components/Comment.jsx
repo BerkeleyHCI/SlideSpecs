@@ -367,7 +367,7 @@ class Comment extends BaseComponent {
     } = this.props;
 
     const master = author === reviewer;
-    const sysDiscuss = discuss.includes('system');
+    const sysDiscuss = discuss ? discuss.includes('system') : false;
     let bData;
     if (discussView && depth == 0) {
       bData = [this.addressButton, this.talkButton];
