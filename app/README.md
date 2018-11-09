@@ -25,3 +25,36 @@ meteor npm run lint
 - todo: https://github.com/tozd/docker-meteor
 - renew: sudo dehydrated -cron -x
 
+##### Server
+
+```
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+server {
+    listen       80;
+    listen       8081;
+    listen       443 ssl;
+    #server_name  bayscope2.eecs.berkeley.edu;
+
+    ssl_certificate /usr/local/etc/dehydrated/certs/bayscope2.eecs.berkeley.edu/fullchain.pem;
+    ssl_certificate_key  /usr/local/etc/dehydrated/certs/bayscope2.eecs.berkeley.edu/privkey.pem;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    location / {
+        proxy_pass   http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+
+    location /.well-known/acme-challenge {
+        alias /var/www/dehydrated;
+    }
+}
+```
+
