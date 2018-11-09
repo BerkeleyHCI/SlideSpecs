@@ -19,3 +19,9 @@ To lint:
 meteor npm run lint
 ```
 
+### Configuration
+
+- current: /usr/local/etc/dehydrated
+- todo: https://github.com/tozd/docker-meteor
+- renew: sudo dehydrated -cron -x
+
