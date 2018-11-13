@@ -4,7 +4,8 @@
 
 cloning:
 
-    git clone https://github.com/berkeleyhci/peer-feedback && cd app
+    git clone https://github.com/berkeleyhci/SlideSpecs
+    cd SlideSpecs/app
     meteor npm install
 
 running:
