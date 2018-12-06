@@ -1,1 +1,1 @@
-meteor run 2>&1 | tee --append output.log
+meteor run 2>&1 | tee -a output.log
