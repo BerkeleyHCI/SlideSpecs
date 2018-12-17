@@ -66,47 +66,10 @@ export default class SessionContainer extends BaseComponent {
         <div className="v-pad">
           <div className="alert">
             <h3>
-              1. slide review <small>{files.length} slides</small>
+              slide review <small>{files.length} slides</small>
             </h3>
             manage the slides for this presentation session [
             <Link to={uLink}>here</Link>]
-          </div>
-
-          <div className="alert">
-            <h3>2. presentation</h3>
-            share this link with the audience to collect their feedback. then,
-            give your presentation.
-            <input type="text" value={shareLink} className="code" readOnly />
-            <hr />
-            <button className="btn btn-primary" onClick={this.copyComment}>
-              copy
-            </button>
-            <a className="btn btn-danger" href={shareLink} target="_blank">
-              open
-            </a>
-          </div>
-
-          <div className="alert">
-            <h3>
-              3. discussion <small>{discussCount} comments to discuss</small>
-            </h3>
-            after your presentation, discuss audience-selected comments.
-            <input type="text" value={discussLink} className="code" readOnly />
-            <hr />
-            <button className="btn btn-primary" onClick={this.copyDiscuss}>
-              copy
-            </button>
-            <a className="btn btn-danger" href={discussLink} target="_blank">
-              open
-            </a>
-          </div>
-
-          <div className="alert">
-            <h3>
-              4. feedback review{' '}
-              <small>{sComments.length} total comments</small>
-            </h3>
-            last, review all gathered feedback [<Link to={fLink}>here</Link>]
           </div>
         </div>
       </div>
