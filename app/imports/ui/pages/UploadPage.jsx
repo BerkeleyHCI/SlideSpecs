@@ -122,7 +122,7 @@ class UploadPage extends BaseComponent {
           // UPLOADING NOW
           this.setState({
             progress: Math.round(
-              100 * (files.length - uploadCount) / files.length,
+              (100 * (files.length - uploadCount)) / files.length,
             ),
           });
         }
@@ -187,41 +187,34 @@ class UploadPage extends BaseComponent {
             </h1>
 
             <div className="custom-upload">
-              {!this.state.uploading &&
-                display.length > 0 && (
-                  <div>
-                    <h2>manage slides</h2>
-                    <button
-                      onClick={this.deleteFiles}
-                      className="btn btn-danger">
-                      delete all
-                    </button>
-                  </div>
-                )}
-              {!this.state.uploading &&
-                display.length === 0 && (
-                  <div className="alert">
-                    <h3>slide upload</h3>
-                    <ConvertInstructions />
-                    <hr />
-                    then, select and upload all the images at once.
-                    <hr />
-                    <label className="btn btn-primary">
-                      + upload slides
-                      <input
-                        type="file"
-                        id="fileinput"
-                        disabled={this.state.inProgress}
-                        ref="fileinput"
-                        onChange={this.uploadIt}
-                        multiple
-                      />
-                    </label>
-                    <button onClick={this.goHome} className="btn btn-danger">
-                      cancel
-                    </button>
-                  </div>
-                )}
+              {!this.state.uploading && display.length > 0 && (
+                <div>
+                  <h2>manage slides</h2>
+                  <button onClick={this.deleteFiles} className="btn btn-danger">
+                    delete all
+                  </button>
+                </div>
+              )}
+              {!this.state.uploading && display.length === 0 && (
+                <div className="alert">
+                  select the presentation files you want to add.
+                  <hr />
+                  <label className="btn btn-primary">
+                    + upload slides
+                    <input
+                      type="file"
+                      id="fileinput"
+                      disabled={this.state.inProgress}
+                      ref="fileinput"
+                      onChange={this.uploadIt}
+                      multiple
+                    />
+                  </label>
+                  <button onClick={this.goHome} className="btn btn-danger">
+                    cancel
+                  </button>
+                </div>
+              )}
               {uploads}
             </div>
             <div className="v-pad grid">{display}</div>
