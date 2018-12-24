@@ -36,6 +36,10 @@ export const Files = new FilesCollection({
 
     convert.stdout.on('data', function(data) {
       console.log('stdout: ' + data);
+      var re = new RegExp(file.ext, "i");
+      if (/re/.test(data)) {
+              // todo - addFile  https://github.com/VeliovGroup/Meteor-Files/wiki/addFile
+      }
     });
 
     convert.stderr.on('data', function(data) {

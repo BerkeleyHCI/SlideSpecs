@@ -70,6 +70,7 @@ class UploadPage extends BaseComponent {
               userId: Meteor.userId(),
               sessionId,
             },
+            //transport: 'http',
             streams: 'dynamic',
             chunkSize: 'dynamic',
             allowWebWorkers: true,

@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
-# convert-pdf [file.pdf] [/out/dir/]
+# convert-pdf [file.pdf] [/out/dir]
 
 # requirements
 # convert -- brew install imagemagick
+
+# todo - make the name-saved-as more unique
 
 full=$(basename -- "$1")
 base="${full%.*}"
 extn="${full##*.}"
 convert -density 100 "$1" "$2/$base-%03d.jpg"
+ls -1 "$2/$base-*.jpg"
 echo "convert-pdf complete: $1"
 exit 0
 
