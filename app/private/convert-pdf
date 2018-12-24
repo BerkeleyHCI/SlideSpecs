@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# requirements
+# convert -- brew install imagemagick
+# soffice -- brew cask install libreoffice
+
+convertPDF() {
+    full=$(basename -- "$1")
+    extn="${full##*.}"
+    file="${full%.*}"
+    mkdir -p "$file"
+    convert -monitor -density 100 "$full" "$file/$file-%03d.jpg"
+    #convert -monitor -density 60 -resize x600\> "$full" "$file/$file-%03d.jpg"
+}
+
+convertPDF "$1"

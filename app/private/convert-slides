@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# requirements
+# convert -- brew install imagemagick
+# soffice -- brew cask install libreoffice
+
+# progress
+# PPT - OK (convert, soffice)
+# KEY - ~  (convert, soffice) - weird formatting...
+# Google Slides - X - not working
+# see: https://codelabs.developers.google.com/codelabs/slides-api/
+
+convertSlides() {
+    full=$(basename -- "$1")
+    extn="${full##*.}"
+    file="${full%.*}"
+    soffice --headless --invisible --convert-to pdf "$full"
+    convert -monitor -density 100 "$file.pdf" "$file/$file-%03d.jpg"
+}
+
+convertSlides "$1"
