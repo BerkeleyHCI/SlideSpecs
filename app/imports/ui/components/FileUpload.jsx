@@ -12,24 +12,26 @@ class FileUpload extends Component {
     const {iter, fileName, fileSize, fileUrl, handleLoad} = this.props;
     return (
       <div className="file-item">
-        <h4>
-          {fileName}
-          <br />
-          <small> {fileSize}</small>
-        </h4>
         <div className="slide-container">
           <div className="overlay">
             <p>{iter}</p>
           </div>
           <Img className="slide" source={fileUrl} onLoad={handleLoad} />
         </div>
-        <div className="btns-group">
-          <button onClick={this.removeFile} className="btn btn-sm">
-            delete
-          </button>
-        </div>
       </div>
     );
   }
 }
+
+//<h4>
+//{fileName}
+//<br />
+//<small> {fileSize}</small>
+//</h4>
+//<div className="btns-group">
+//<button onClick={this.removeFile} className="btn btn-sm">
+//delete
+//</button>
+//</div>
+
 export default FileUpload;

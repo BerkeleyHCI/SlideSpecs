@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
+import {FullMessage, Message} from '../components/Message.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 import {toast} from 'react-toastify';
-import Message from '../components/Message.jsx';
 import {
   createSession,
   renameSession,
@@ -75,7 +75,7 @@ export default class SessionListPage extends BaseComponent {
 
     let Sessions;
     if (!sessions || !sessions.length) {
-      Sessions = <Message title="no sessions yet" subtitle="add above" />;
+      Sessions = <div className="alert">no sessions yet</div>;
     } else {
       Sessions = sessions.map(sess => <SessionItem key={sess._id} {...sess} />);
     }

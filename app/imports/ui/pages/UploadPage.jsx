@@ -7,10 +7,12 @@ import {toast} from 'react-toastify';
 import {Files} from '../../api/files/files.js';
 import AppNotification from '../components/AppNotification.jsx';
 import Loading from '../components/Loading.jsx';
+import DragUpload from '../components/DragUpload.jsx';
+import SelectUpload from '../components/SelectUpload.jsx';
 import ConvertInstructions from '../components/ConvertInstructions.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileUpload from '../components/FileUpload.jsx';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
 
 class UploadPage extends BaseComponent {
@@ -22,28 +24,18 @@ class UploadPage extends BaseComponent {
     };
   }
 
+  updateMason = () => {
+    if (this.props.files) {
+      new Masonry('.grid', {itemSelector: '.file-item'});
+    }
+  };
+
   componentDidMount() {
-    new Masonry('.grid', {itemSelector: '.file-item'});
+    this.updateMason();
   }
 
   componentDidUpdate() {
-    new Masonry('.grid', {itemSelector: '.file-item'});
-  }
-
-  componentWillUnmount() {
-    //const mason = new Masonry('.grid', {itemSelector: '.file-item'});
-    //mason.destroy();
-  }
-
-  humanFileSize(bytes) {
-    let fileSizeInBytes = bytes;
-    var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-    do {
-      fileSizeInBytes = fileSizeInBytes / 1024;
-      i++;
-    } while (fileSizeInBytes > 1024);
-    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+    this.updateMason();
   }
 
   deleteFiles = () => {
@@ -51,15 +43,20 @@ class UploadPage extends BaseComponent {
     deleteSessionFiles.call({sessionId});
   };
 
-  // TODO merge the progress for all uploads, creating single number percent.
+  handleDropUpload = files => {
+    this.handleUpload(files);
+  };
 
-  uploadIt = e => {
-    let uploadCount;
-    let uploadGroup;
-    const startProg = () => this.setState({uploading: true});
+  handleSelectUpload = e => {
     e.preventDefault();
-    let {sessionId, fileLocator} = this.props;
     const files = [...e.currentTarget.files];
+    this.handleUpload(files);
+  };
+
+  handleUpload = files => {
+    let uploadCount, uploadGroup;
+    const startProg = () => this.setState({uploading: true});
+    let {sessionId, fileLocator} = this.props;
     if (files) {
       startProg();
       uploadCount = files.length;
@@ -83,6 +80,7 @@ class UploadPage extends BaseComponent {
         //uploadInstance.on('start', function() {});
         //uploadInstance.on('uploaded', function(error, fileObj) {});
         //uploadInstance.on('progress', function(progress, fileObj) {});
+        // TODO merge the progress for all uploads, creating single number percent.
 
         uploadInstance.on('end', function(error, fileObj) {
           uploadCount -= 1;
@@ -99,7 +97,6 @@ class UploadPage extends BaseComponent {
         if (uploadCount === 0) {
           // DONE WITH ALL UPLOADS
           clearInterval(uploadInterval);
-          const timeout = 3000;
           toast(
             () => (
               <AppNotification
@@ -108,16 +105,13 @@ class UploadPage extends BaseComponent {
                 icon="check"
               />
             ),
-            {autoClose: timeout},
+            {autoClose: 2000},
           );
 
           this.setState({
             uploading: false,
             progress: 0,
           });
-          //setTimeout(() => {
-          //this.redirectTo(`/sessions/${sessionId}`);
-          //}, timeout);
         } else {
           // UPLOADING NOW
           this.setState({
@@ -130,47 +124,33 @@ class UploadPage extends BaseComponent {
     }
   };
 
-  // This is our progress bar, bootstrap styled
-  // Remove this function if not needed
-  //<Message title="uploading..." subtitle={this.state.progress + '%'} />
-
-  showUploads() {
-    if (this.state.uploading) {
-      return <Message title="uploading..." subtitle={<Loading />} />;
-    }
-  }
-
-  handleLoad = () => {
-    new Masonry('.grid', {itemSelector: '.file-item'});
-  };
-
   goHome = e => {
     e.preventDefault();
     this.redirectTo('/');
   };
 
   render() {
+    const {uploading} = this.state;
     const {sessionId, name, files} = this.props;
+    let uploadingMsg = <Message title="uploading..." subtitle={<Loading />} />;
+    //<Message title="uploading..." subtitle={this.state.progress + '%'} />
+
     if (files) {
-      let fileCursors = files;
-      let uploads = this.showUploads();
       let display =
-        (!this.state.uploading &&
-          fileCursors.map((aFile, key) => {
+        (!uploading &&
+          files.map((aFile, key) => {
             let link = Files.findOne({_id: aFile._id}).link('original', '//');
             return (
               <FileUpload
                 iter={key + 1}
                 key={'file' + key}
                 fileId={aFile._id}
-                fileName={aFile.name}
                 fileUrl={link}
-                fileSize={this.humanFileSize(aFile.size)}
-                handleLoad={this.handleLoad}
+                handleLoad={this.updateMason}
               />
             );
           })) ||
-        null;
+        [];
 
       return (
         this.renderRedirect() || (
@@ -187,37 +167,31 @@ class UploadPage extends BaseComponent {
             </h1>
 
             <div className="custom-upload">
-              {!this.state.uploading && display.length > 0 && (
+              {uploading && uploadingMsg}
+
+              {!uploading && display.length > 0 && (
                 <div>
                   <h2>manage slides</h2>
                   <button onClick={this.deleteFiles} className="btn btn-danger">
                     delete all
                   </button>
+                  <div className="v-pad grid">{display}</div>
                 </div>
               )}
-              {!this.state.uploading && display.length === 0 && (
+
+              {!uploading && display.length === 0 && (
                 <div className="alert">
-                  select the presentation files you want to add.
+                  select the presentations to upload.
                   <hr />
-                  <label className="btn btn-primary">
-                    + upload slides
-                    <input
-                      type="file"
-                      id="fileinput"
-                      disabled={this.state.inProgress}
-                      ref="fileinput"
-                      onChange={this.uploadIt}
-                      multiple
-                    />
-                  </label>
+                  <DragUpload handleUpload={this.handleDropUpload} />
+                  <hr />
+                  <SelectUpload handleUpload={this.handleSelectUpload} />
                   <button onClick={this.goHome} className="btn btn-danger">
                     cancel
                   </button>
                 </div>
               )}
-              {uploads}
             </div>
-            <div className="v-pad grid">{display}</div>
           </div>
         )
       );

@@ -1,17 +1,14 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
 // Empty states and 404 messages
+.rel-wrapper {
+  .position(relative, 50%, 0, auto, 0) !important;
+  transform: translate3d(0, -50%, 0);
+}
+
 .wrapper-message {
-  @media only screen and (min-width: 992px) {
-    .position(absolute, 45%, 0, auto, 0);
-    transform: translate3d(0, -50%, 0);
-  }
-
-  @media only screen and (max-width: 992px) {
-    .position(relative, 0, auto);
-    display: block !important;
-  }
-
+  .position(absolute, 45%, 0, auto, 0);
+  transform: translate3d(0, -50%, 0);
   text-align: center;
 
   .title-message {
