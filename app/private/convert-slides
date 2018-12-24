@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# convert-slides [file.ppt] [/out/dir/]
+
 # requirements
 # convert -- brew install imagemagick
 # soffice -- brew cask install libreoffice
@@ -10,12 +12,10 @@
 # Google Slides - X - not working
 # see: https://codelabs.developers.google.com/codelabs/slides-api/
 
-convertSlides() {
-    full=$(basename -- "$1")
-    extn="${full##*.}"
-    file="${full%.*}"
-    soffice --headless --invisible --convert-to pdf "$full"
-    convert -monitor -density 100 "$file.pdf" "$file/$file-%03d.jpg"
-}
-
-convertSlides "$1"
+full=$(basename -- "$1")
+extn="${full##*.}"
+file="${full%.*}"
+soffice --headless --invisible --convert-to pdf "$full"
+convert -monitor -density 100 "$file.pdf" "$2/$file-%03d.jpg"
+echo "convert-slides complete: $1"
+exit 0

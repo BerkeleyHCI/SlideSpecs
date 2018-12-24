@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import {Meteor} from 'meteor/meteor';
-import {Images} from '../files.js';
+import {Images} from '../images.js';
 
 Images.allowClient();
 
