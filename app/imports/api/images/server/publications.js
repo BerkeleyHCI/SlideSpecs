@@ -4,8 +4,11 @@ import {Images} from '../images.js';
 
 Images.allowClient();
 
-// Check comments for filtering per session.
-
-Meteor.publish('images', function() {
-  return Images.find().cursor;
+Meteor.publish('images', function(session) {
+  check(session, String);
+  if (!session) {
+    return this.ready();
+  } else {
+    return Images.find({'meta.sessionId': session}).cursor;
+  }
 });

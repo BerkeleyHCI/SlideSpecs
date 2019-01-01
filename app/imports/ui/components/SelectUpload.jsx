@@ -5,10 +5,10 @@ import BaseComponent from './BaseComponent.jsx';
 class SelectUpload extends BaseComponent {
   render() {
     const uploading = this.props.inProgress;
-    const {handleUpload} = this.props;
+    const {handleUpload, labelText, className} = this.props;
     return (
-      <label className="btn btn-primary">
-        + select
+      <label className={'btn ' + className}>
+        {labelText}
         <input
           type="file"
           id="fileinput"
@@ -24,6 +24,11 @@ class SelectUpload extends BaseComponent {
 
 SelectUpload.propTypes = {
   handleUpload: PropTypes.func.isRequired,
+  labelText: PropTypes.string,
+};
+
+SelectUpload.defaultProps = {
+  labelText: '+ select',
 };
 
 export default SelectUpload;

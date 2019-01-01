@@ -1,8 +1,10 @@
 import {Meteor} from 'meteor/meteor';
 import {FilesCollection} from 'meteor/ostrio:files';
+import {Images} from '../images/images.js';
 
-// TODO make save folder dynamic, or relative?...
-const storagePath = '/Users/jwrnr/Downloads/peer-feedback/';
+// TODO make save folder dynamic//relative?...
+const storagePath = '/Users/jwrnr/Downloads/peer-feedback/files/';
+const imagePath = '/Users/jwrnr/Downloads/peer-feedback/images/';
 
 export const Files = new FilesCollection({
   collectionName: 'files',
@@ -31,14 +33,29 @@ export const Files = new FilesCollection({
       spawn = Npm.require('child_process').spawn,
       convert = spawn(`${process.env.PWD}/private/${script}`, [
         file.path,
-        storagePath + 'images',
+        imagePath,
       ]);
 
+    // reference: https://github.com/VeliovGroup/Meteor-Files/wiki/addFile
     convert.stdout.on('data', function(data) {
-      console.log('stdout: ' + data);
-      var re = new RegExp(file.ext, "i");
-      if (/re/.test(data)) {
-              // todo - addFile  https://github.com/VeliovGroup/Meteor-Files/wiki/addFile
+      if (data.includes(file._id)) {
+        var text = data.toString('utf8');
+        const images = text.split('\n');
+        images
+          .filter(i => i.includes(file._id))
+          .map(i => {
+            console.log('adding image file: ' + i);
+            const fileName = i.substring(i.lastIndexOf('/') + 1);
+            const slideNo = i.match(/\d+/g).slice(-1)[0]; // get slide number from image title
+            Images.addFile(i, {
+              fileName,
+              type: 'image/png',
+              userId: file.meta.userId,
+              meta: {...file.meta, slideNo},
+            });
+          });
+      } else {
+        console.log('stdout: ' + data);
       }
     });
 

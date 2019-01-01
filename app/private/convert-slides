@@ -13,9 +13,10 @@
 # see: https://codelabs.developers.google.com/codelabs/slides-api/
 
 full=$(basename -- "$1")
+base="${full%.*}"
 extn="${full##*.}"
-file="${full%.*}"
 soffice --headless --invisible --convert-to pdf "$full"
-convert -monitor -density 100 "$file.pdf" "$2/$file-%04d.jpg"
-echo "convert-slides complete: $1"
+convert -density 100 "$base.pdf" "$2/$base-%04d.jpg"
+find "$2" -type f -iname "*$base*jpg"
+echo "convert-slides complete."
 exit 0

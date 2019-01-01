@@ -4,7 +4,9 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 import {Sessions} from './sessions.js';
 import {Comments} from '../comments/comments.js';
+import {Events} from '../events/events.js';
 import {Files} from '../files/files.js';
+import {Images} from '../images/images.js';
 
 /*
 - #story
@@ -99,7 +101,9 @@ export const deleteSession = new ValidatedMethod({
       try {
         // deleting related files
         Files.remove({'meta.sessionId': sessionId});
+        Images.remove({'meta.sessionId': sessionId});
         Comments.remove({session: sessionId});
+        Events.remove({session: sessionId});
         Sessions.remove(sessionId);
       } catch (e) {
         console.error(e);

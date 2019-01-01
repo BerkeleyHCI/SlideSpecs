@@ -50,7 +50,7 @@ export default class UserMenu extends BaseComponent {
       this.renderRedirect() || (
         <section className="clearfix" id="menu">
           <h1>
-            <Link to="/">feedback</Link>
+            <Link to="/">slidespecs</Link>
           </h1>
           {content}
         </section>

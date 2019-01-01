@@ -10,10 +10,12 @@ import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import ConvertInstructions from '../components/ConvertInstructions.jsx';
+import TalkListItem from '../components/TalkListItem.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import FileUpload from '../components/FileUpload.jsx';
 import {Message} from '../components/Message.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
+import {createTalk} from '../../api/talks/methods.js';
 
 class UploadPage extends BaseComponent {
   constructor(props) {
@@ -56,12 +58,18 @@ class UploadPage extends BaseComponent {
   handleUpload = files => {
     let uploadCount, uploadGroup;
     const startProg = () => this.setState({uploading: true});
-    let {sessionId, fileLocator} = this.props;
+    let {sessionId, talks, fileLocator} = this.props;
     if (files) {
       startProg();
       uploadCount = files.length;
       uploadGroup = files.length;
       files.map(file => {
+        // Make a new talk object for each slide presentation.
+        const talkId = createTalk.call({
+          sessionId,
+          name: file.name.replace(/\.[^/.]+$/, ''),
+        });
+
         let uploadInstance = Files.insert(
           {
             file,
@@ -69,6 +77,7 @@ class UploadPage extends BaseComponent {
               locator: fileLocator,
               userId: Meteor.userId(),
               sessionId,
+              talkId,
             },
             //transport: 'http',
             streams: 'dynamic',
@@ -125,78 +134,57 @@ class UploadPage extends BaseComponent {
     }
   };
 
-  goHome = e => {
-    e.preventDefault();
-    this.redirectTo('/');
-  };
-
   render() {
     const {uploading} = this.state;
-    const {sessionId, name, files} = this.props;
-    let uploadingMsg = <Message title="uploading..." subtitle={<Loading />} />;
-    //<Message title="uploading..." subtitle={this.state.progress + '%'} />
+    const {sessionId, talks, name, files, images} = this.props;
 
-    if (files) {
-      let display =
-        (!uploading &&
-          files.map((aFile, key) => {
-            let link = Files.findOne({_id: aFile._id}).link('original', '//');
-            return (
-              <FileUpload
-                iter={key + 1}
-                key={'file' + key}
-                fileId={aFile._id}
-                fileUrl={link}
-                handleLoad={this.updateMason}
-              />
-            );
-          })) ||
-        [];
+    if (uploading) {
+      return <Message title="uploading..." subtitle={<Loading />} />;
+      //<Message title="uploading..." subtitle={this.state.progress + '%'} />
+    }
 
-      return (
-        this.renderRedirect() || (
-          <div className="main-content">
-            <h1>
-              {files.length > 0 ? (
-                <Link to={`/sessions/${sessionId}`}>
-                  <span className="black"> ‹ </span>
-                  {name}
-                </Link>
-              ) : (
-                <span>{name}</span>
-              )}
-            </h1>
+    return (
+      <div className="main-content">
+        <h1>
+          <Link to={`/`}>
+            <span className="black"> ‹ </span>
+            {name}
+          </Link>
+        </h1>
 
-            <div className="custom-upload">
-              {uploading && uploadingMsg}
+        {talks.length > 0 && (
+          <div>
+            <ul className="v-pad list-group">
+              {talks.map(talk => (
+                <TalkListItem
+                  key={talk._id}
+                  talk={talk}
+                  images={images}
+                  files={files}
+                />
+              ))}
+            </ul>
 
-              {!uploading && display.length > 0 && (
-                <div>
-                  <h2>manage slides</h2>
-                  <button onClick={this.deleteFiles} className="btn btn-danger">
-                    delete all
-                  </button>
-                  <div className="v-pad grid">{display}</div>
-                </div>
-              )}
-
-              {!uploading && display.length === 0 && (
-                <div className="alert">
-                  select the presentations to upload.
-                  <hr />
-                  <DragUpload handleUpload={this.handleDropUpload} />
-                  <hr />
-                  <SelectUpload handleUpload={this.handleSelectUpload} />
-                  <button onClick={this.goHome} className="btn btn-danger">
-                    cancel
-                  </button>
-                </div>
-              )}
+            <div className="btns-group">
+              <button onClick={this.deleteFiles} className="btn btn-danger">
+                delete all
+              </button>
             </div>
           </div>
-        )
-      );
-    } else return <div>loading file list...</div>;
+        )}
+
+        <div className="alert">
+          add presentations here.
+          <SelectUpload
+            labelText="+ new"
+            className="pull-right btn-menu"
+            handleUpload={this.handleSelectUpload}
+          />
+          <hr />
+          <DragUpload handleUpload={this.handleDropUpload} />
+        </div>
+      </div>
+    );
   }
 }
 

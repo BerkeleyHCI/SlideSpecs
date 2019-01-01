@@ -70,10 +70,19 @@ export default class App extends BaseComponent {
     if ((sid && !Session.get('session')) || Session.get('session') !== sid) {
       Session.set('session', sid);
     }
-
-    const {sessions, files, comments, events, reviewer} = this.props;
+    const {
+      sessions,
+      talks,
+      files,
+      images,
+      comments,
+      events,
+      reviewer,
+    } = this.props;
     let session = sessions.find(s => s._id === sid) || {};
     session.files = files.filter(f => f.meta.sessionId === sid);
+    session.images = images.filter(f => f.meta.sessionId === sid);
+    session.talks = talks.filter(f => f.session === sid);
     session.sComments = comments.filter(c => c.session === sid);
     session.comments = session.sComments.filter(this.controlFilter);
     session.events = events.filter(e => e.session === sid);

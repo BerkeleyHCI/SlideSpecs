@@ -12,7 +12,7 @@ base="${full%.*}"
 extn="${full##*.}"
 convert -density 100 "$1" "$2/$base-%04d.jpg"
 find "$2" -type f -iname "*$base*jpg"
-echo "convert-pdf complete: $1"
+echo "convert-pdf complete."
 exit 0
 
 # x600\> "$full"
