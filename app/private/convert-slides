@@ -16,6 +16,6 @@ full=$(basename -- "$1")
 extn="${full##*.}"
 file="${full%.*}"
 soffice --headless --invisible --convert-to pdf "$full"
-convert -monitor -density 100 "$file.pdf" "$2/$file-%03d.jpg"
+convert -monitor -density 100 "$file.pdf" "$2/$file-%04d.jpg"
 echo "convert-slides complete: $1"
 exit 0
