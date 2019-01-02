@@ -18,17 +18,20 @@
   display: inline-block;
   position: relative;
   text-align: center;
-  border-radius: 0px;
+  border-radius: 4px;
   text-decoration: none !important; //prevents global <a> styles from applying
   vertical-align: middle;
   white-space: nowrap;
 
   &[class*='menu'] {
-    background-color: @color-danger;
+    background-color: lighten(@color-danger, 25%);
     color: @color-empty;
-    padding: 0.2em;
+    padding: 0.2em 0.4em;
+    letter-spacing: initial;
+    text-transform: none;
+    text-indent: initial;
     &:hover {
-      background-color: darken(@color-ancillary, 5%);
+      background-color: lighten(@color-danger, 10%);
     }
   }
 
@@ -84,7 +87,6 @@
   &[class*='empty'] {
     background-color: @color-empty;
     color: @color-danger !important;
-    padding: 0.2em;
     &:hover {
       background-color: darken(@color-empty, 5%);
     }

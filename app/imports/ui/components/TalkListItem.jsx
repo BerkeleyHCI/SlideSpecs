@@ -30,7 +30,7 @@ class TalkListItem extends Component {
     return (
       <li className="list-group-item clearfix">
         <Link to={talkLink}>{talk.name}</Link>
-        <div className="pull-right">
+        <div className="btn-m-group pull-right">
           <button onClick={this.renameTalk} className="btn-menu">
             rename
           </button>

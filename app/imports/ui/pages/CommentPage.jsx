@@ -14,7 +14,7 @@ import ClearingDiv from '../components/ClearingDiv.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
 
@@ -603,7 +603,9 @@ class CommentPage extends BaseComponent {
         <div>
           <h2> comments </h2>
           <div id="comments-list" className="alert">
-            {items.map(i => <Comment {...i} />)}
+            {items.map(i => (
+              <Comment {...i} />
+            ))}
           </div>
           {items.length >= 5 && (
             <div className="padded full-width">

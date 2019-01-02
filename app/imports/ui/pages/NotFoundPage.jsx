@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
+import Loading from '../components/Loading.jsx';
 
 class NotFoundPage extends Component {
   render() {

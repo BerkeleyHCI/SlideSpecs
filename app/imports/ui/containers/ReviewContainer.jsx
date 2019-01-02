@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import {Session} from 'meteor/session.js';
 
 import Input from '../components/Input.jsx';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import SlideReviewPage from '../pages/CommentPage.jsx';
 

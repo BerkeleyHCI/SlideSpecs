@@ -9,11 +9,11 @@ import AppModal from '../components/AppModal.jsx';
 import Loading from '../components/Loading.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
-import SessionContainer from '../containers/SessionContainer.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
 
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
+import SessionPage from '../pages/SessionPage.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import DiscussPage from '../pages/DiscussPage.jsx';
 import FeedbackPage from '../pages/FeedbackPage.jsx';
@@ -103,7 +103,7 @@ export default class App extends BaseComponent {
   };
 
   renderSession = ({match}) => {
-    return this.preRender(match, SessionContainer);
+    return this.preRender(match, SessionPage);
   };
 
   renderUpload = ({match}) => {

@@ -18,7 +18,7 @@ import ClearingDiv from '../components/ClearingDiv.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {Comments} from '../../api/comments/comments.js';
 import {createComment, addressComment} from '../../api/comments/methods.js';
@@ -623,7 +623,9 @@ class DiscussPage extends BaseComponent {
             <div>
               <h2>to discuss</h2>
               <div id="comments-list" className="alert">
-                {items.map(i => <Comment {...i} />)}
+                {items.map(i => (
+                  <Comment {...i} />
+                ))}
               </div>
             </div>
           )}
@@ -632,7 +634,9 @@ class DiscussPage extends BaseComponent {
             <div>
               <h2>discussed</h2>
               <div id="comments-list" className="alert">
-                {addressedItems.map(i => <Comment {...i} />)}
+                {addressedItems.map(i => (
+                  <Comment {...i} />
+                ))}
               </div>
             </div>
           )}

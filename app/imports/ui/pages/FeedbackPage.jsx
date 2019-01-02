@@ -13,7 +13,7 @@ import TextArea from '../components/TextArea.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment, completeComment} from '../../api/comments/methods.js';
 import {Transition} from 'react-spring';
@@ -504,7 +504,9 @@ class FeedbackPage extends BaseComponent {
             <div>
               <h2>to address</h2>
               <div id="comments-list" className="alert">
-                {incomplete.map(i => <Comment {...i} />)}
+                {incomplete.map(i => (
+                  <Comment {...i} />
+                ))}
               </div>
             </div>
           )}
@@ -513,7 +515,9 @@ class FeedbackPage extends BaseComponent {
             <div>
               <h2>addressed</h2>
               <div id="comments-list" className="alert">
-                {completed.map(i => <Comment {...i} />)}
+                {completed.map(i => (
+                  <Comment {...i} />
+                ))}
               </div>
             </div>
           )}

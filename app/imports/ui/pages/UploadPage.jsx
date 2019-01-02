@@ -164,12 +164,6 @@ class UploadPage extends BaseComponent {
                 />
               ))}
             </ul>
-
-            <div className="btns-group">
-              <button onClick={this.deleteFiles} className="btn btn-danger">
-                delete all
-              </button>
-            </div>
           </div>
         )}
 
@@ -182,6 +176,15 @@ class UploadPage extends BaseComponent {
           />
           <hr />
           <DragUpload handleUpload={this.handleDropUpload} />
+          {talks.length > 0 && (
+            <div className="btns-group">
+              <button
+                onClick={this.deleteFiles}
+                className="btn btn-menu btn-empty">
+                delete all
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

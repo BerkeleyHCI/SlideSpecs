@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Message from '../components/Message.jsx';
+import {Message} from '../components/Message.jsx';
 
 class ForbiddenPage extends Component {
   render() {
