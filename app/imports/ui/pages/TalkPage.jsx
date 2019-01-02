@@ -50,7 +50,7 @@ class TalkPage extends Component {
           <Link to={`/sessions/${session._id}`}>
             <span className="black"> ‹ </span>
             {session.name}
-            <small>{name}</small>
+            <small className="pull-right">{name}</small>
           </Link>
         </h1>
 
