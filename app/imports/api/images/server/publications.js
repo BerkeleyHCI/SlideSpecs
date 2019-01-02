@@ -4,11 +4,20 @@ import {Images} from '../images.js';
 
 Images.allowClient();
 
-Meteor.publish('images', function(session) {
+Meteor.publish('images.session', function(session) {
   check(session, String);
   if (!session) {
     return this.ready();
   } else {
     return Images.find({'meta.sessionId': session}).cursor;
+  }
+});
+
+Meteor.publish('images.talk', function(talk) {
+  check(talk, String);
+  if (!talk) {
+    return this.ready();
+  } else {
+    return Images.find({'meta.talkId': talk}).cursor;
   }
 });

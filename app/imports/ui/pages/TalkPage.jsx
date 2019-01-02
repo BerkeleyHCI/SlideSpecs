@@ -1,23 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {toast} from 'react-toastify';
+import {Meteor} from 'meteor/meteor';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import {_} from 'lodash';
+import {toast} from 'react-toastify';
 
-import BaseComponent from '../components/BaseComponent.jsx';
-import MenuContainer from '../containers/MenuContainer.jsx';
-import AppNotification from '../components/AppNotification.jsx';
-import {Message} from '../components/Message.jsx';
 import {Files} from '../../api/files/files.js';
+
+import AppNotification from '../components/AppNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import ConvertInstructions from '../components/ConvertInstructions.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
+import BaseComponent from '../components/BaseComponent.jsx';
 import FileUpload from '../components/FileUpload.jsx';
+import {Message} from '../components/Message.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
 import {createTalk} from '../../api/talks/methods.js';
 
-export default class SessionPage extends BaseComponent {
+class TalkPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,40 +27,19 @@ export default class SessionPage extends BaseComponent {
     };
   }
 
-  componentDidMount = () => {};
-
-  copyComment = () => {
-    this.copyCodeUrl(0);
-  };
-
-  copyDiscuss = () => {
-    this.copyCodeUrl(1);
-  };
-
-  copyCodeUrl = idx => {
-    var copyText = document.getElementsByClassName('code')[idx];
-    const uType = idx == 0 ? 'comment' : 'discussion';
-    if (copyText) {
-      copyText.select();
-      document.execCommand('copy');
-      this.clearSelection();
-      toast(() => (
-        <AppNotification
-          msg={`${uType} link copied`}
-          desc="copied to clipboard"
-          icon="check"
-        />
-      ));
+  updateMason = () => {
+    if (this.props.files) {
+      new Masonry('.grid', {itemSelector: '.file-item'});
     }
   };
 
-  clearSelection = () => {
-    if (window.getSelection) {
-      window.getSelection().removeAllRanges();
-    } else if (document.selection) {
-      document.selection.empty();
-    }
-  };
+  componentDidMount() {
+    this.updateMason();
+  }
+
+  componentDidUpdate() {
+    this.updateMason();
+  }
 
   deleteFiles = () => {
     const {sessionId} = this.props;
@@ -157,21 +137,14 @@ export default class SessionPage extends BaseComponent {
 
   render() {
     const {uploading} = this.state;
-    const {sessionId, name, talks, files, images} = this.props;
-    const shareLink = window.location.origin + '/share/' + sessionId;
-    const discussLink = window.location.origin + '/discuss/' + sessionId;
-    const uLink = `/slides/${sessionId}`;
-    const dLink = `/discuss/${sessionId}`;
-    const fLink = `/feedback/${sessionId}`;
+    const {sessionId, talks, name, files, images} = this.props;
 
     if (uploading) {
       return <Message title="uploading..." subtitle={<Loading />} />;
       //<Message title="uploading..." subtitle={this.state.progress + '%'} />
     }
 
-    //<h3> <small>{talks.length} talks</small> </h3>
-
-    const content = (
+    return (
       <div className="main-content">
         <h1>
           <Link to={`/`}>
@@ -180,7 +153,7 @@ export default class SessionPage extends BaseComponent {
           </Link>
         </h1>
 
-        {talks.length > 0 && (
+        {images.length > 0 && (
           <div>
             <ul className="v-pad list-group">
               {talks.map(talk => (
@@ -195,37 +168,14 @@ export default class SessionPage extends BaseComponent {
           </div>
         )}
 
-        <div className="alert">
-          add presentations here.
-          <SelectUpload
-            labelText="+ new"
-            className="pull-right btn-menu btn-primary"
-            handleUpload={this.handleSelectUpload}
-          />
-          <hr />
-          <DragUpload handleUpload={this.handleDropUpload} />
-          {talks.length > 0 && (
-            <div className="btns-group">
-              <button onClick={this.deleteFiles} className="btn btn-empty">
-                delete all
-              </button>
-            </div>
-          )}
+        <div className="btns-group">
+          <button onClick={this.deleteFiles} className="btn btn-empty">
+            delete all
+          </button>
         </div>
       </div>
     );
-
-    return <MenuContainer {...this.props} content={content} />;
   }
 }
 
-SessionPage.propTypes = {
-  user: PropTypes.object, // current meteor user
-  sessionId: PropTypes.string, // current session
-  files: PropTypes.array, // current session files
-};
-
-SessionPage.defaultProps = {
-  user: null,
-  files: [],
-};
+export default TalkPage;

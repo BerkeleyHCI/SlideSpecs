@@ -2,13 +2,22 @@
 import {Meteor} from 'meteor/meteor';
 import {Files} from '../files.js';
 
-Files.allowClient(); // TODO - check if this is still needed, or if there is a safer way to upload.
+Files.allowClient();
 
-Meteor.publish('files', function(session) {
+Meteor.publish('files.session', function(session) {
   check(session, String);
   if (!session) {
     return this.ready();
   } else {
     return Files.find({'meta.sessionId': session}).cursor;
+  }
+});
+
+Meteor.publish('files.talk', function(talk) {
+  check(talk, String);
+  if (!talk) {
+    return this.ready();
+  } else {
+    return Files.find({'meta.talkId': talk}).cursor;
   }
 });

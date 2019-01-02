@@ -41,9 +41,12 @@ class SessionItem extends BaseComponent {
     return (
       <li className="list-group-item clearfix">
         <Link to={sessLink}>{name}</Link>
-        <div className="pull-right">
+        <div className="btn-m-group pull-right">
           <button onClick={this.renameSession} className="btn-menu">
             rename
+          </button>
+          <button onClick={this.deleteSession} className="btn-menu">
+            delete
           </button>
         </div>
       </li>

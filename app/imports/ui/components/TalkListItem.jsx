@@ -25,7 +25,7 @@ class TalkListItem extends Component {
 
   render() {
     const {talk, files, images} = this.props;
-    const talkLink = `/talks/${talk._id}`;
+    const talkLink = `/slides/${talk._id}`;
 
     return (
       <li className="list-group-item clearfix">

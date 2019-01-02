@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
-import {Sessions} from '../../api/sessions/sessions.js';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
-import AppModal from '../components/AppModal.jsx';
 
+import {Sessions} from '../../api/sessions/sessions.js';
+import {Talks} from '../../api/talks/talks.js';
+import AppModal from '../components/AppModal.jsx';
 import Loading from '../components/Loading.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -13,8 +14,9 @@ import ReviewContainer from '../containers/ReviewContainer.jsx';
 
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
-import SessionPage from '../pages/SessionPage.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
+import SessionPage from '../pages/SessionPage.jsx';
+import TalkPage from '../pages/TalkPage.jsx';
 import DiscussPage from '../pages/DiscussPage.jsx';
 import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
@@ -70,56 +72,67 @@ export default class App extends BaseComponent {
     if ((sid && !Session.get('session')) || Session.get('session') !== sid) {
       Session.set('session', sid);
     }
-    const {
-      sessions,
-      talks,
-      files,
-      images,
-      comments,
-      events,
-      reviewer,
-    } = this.props;
+    const {sessions, talks, files, images, comments} = this.props;
     let session = sessions.find(s => s._id === sid) || {};
     session.files = files.filter(f => f.meta.sessionId === sid);
     session.images = images.filter(f => f.meta.sessionId === sid);
     session.talks = talks.filter(f => f.session === sid);
-    session.sComments = comments.filter(c => c.session === sid);
-    session.comments = session.sComments.filter(this.controlFilter);
-    session.events = events.filter(e => e.session === sid);
-    session.active = session.events[0];
-    session.reviewer = reviewer;
     session.sessionId = sid;
     return session;
   };
 
-  preRender = (match, Comp) => {
+  getTalkProps = tid => {
+    if ((tid && !Session.get('talk')) || Session.get('talk') !== tid) {
+      Session.set('talk', tid);
+    }
+    const {talks, files, images, comments, events, reviewer} = this.props;
+    let talk = talks.find(t => t._id === tid) || {};
+    talk.files = files.filter(f => f.meta.talkId === tid);
+    talk.images = images.filter(f => f.meta.talkId === tid);
+    talk.sComments = comments.filter(c => c.talk === tid);
+    talk.comments = talk.sComments.filter(this.controlFilter);
+    talk.events = events.filter(e => e.talk === tid);
+    talk.active = talk.events[0];
+    talk.reviewer = reviewer;
+    talk.talkId = tid;
+    return talk;
+  };
+
+  preRender = (match, Comp, pType) => {
     if (!match) {
-      return <Loading key="loading" />;
+      return <Loading />;
     } else {
       const shared = this.getSharedProps();
-      const sProps = this.getSessionProps(match.params.id);
-      return <Comp {...shared} {...sProps} />;
+      let sProps = {};
+      if (pType == 'session') {
+        sProps = this.getSessionProps(match.params.id);
+      }
+      let tProps = {};
+      if (pType == 'talk') {
+        tProps = this.getTalkProps(match.params.id);
+      }
+      return <Comp {...shared} {...sProps} {...tProps} />;
     }
   };
 
   renderSession = ({match}) => {
-    return this.preRender(match, SessionPage);
+    return this.preRender(match, SessionPage, 'session');
   };
 
-  renderUpload = ({match}) => {
-    return this.preRender(match, UploadPage);
+  renderTalk = ({match}) => {
+    return this.preRender(match, TalkPage, 'talk');
   };
 
   renderDiscuss = ({match}) => {
-    return this.preRender(match, DiscussPage);
+    return this.preRender(match, DiscussPage, 'talk');
   };
 
   renderFeedback = ({match}) => {
-    return this.preRender(match, FeedbackPage);
+    return this.preRender(match, FeedbackPage, 'talk');
   };
 
   renderReview = ({match}) => {
-    return this.preRender(match, ReviewContainer);
+    return this.preRender(match, ReviewContainer, 'talk');
   };
 
   renderSecure = () => {
@@ -175,7 +188,7 @@ export default class App extends BaseComponent {
 
             <PrivateRoute
               path="/slides/:id"
-              render={this.renderUpload}
+              render={this.renderTalk}
               user={user}
             />
 
@@ -222,16 +235,20 @@ export default class App extends BaseComponent {
 }
 
 const PrivateRoute = ({user, render, ...other}) => {
-  const sessionId = other.computedMatch.params.id;
-  const sess = Sessions.findOne(sessionId);
+  const matchId = other.computedMatch.params.id;
+  const sess = Sessions.findOne(matchId);
+  const talk = Talks.findOne(matchId);
   let loc = window.location.pathname;
   let out;
 
   if (!user) {
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
-  } else if (sessionId && sess == undefined) {
+  } else if (matchId && !sess && !talk) {
     out = () => <NotFoundPage />;
-  } else if (sessionId && sess.userId != Meteor.userId()) {
+  } else if (
+    (sess && sess.userId !== Meteor.userId()) ||
+    (talk && talk.userId !== Meteor.userId())
+  ) {
     out = () => <ForbiddenPage />;
   } else {
     out = render;

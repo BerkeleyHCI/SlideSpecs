@@ -41,19 +41,10 @@ export default withTracker(() => {
   let session = Session.get('session');
   if (session) {
     talks = Meteor.subscribe('talks', session);
-    comments = Meteor.subscribe('comments', session);
-    events = Meteor.subscribe('events', session);
-    files = Meteor.subscribe('files', session);
-    images = Meteor.subscribe('images', session);
-
+    files = Meteor.subscribe('files.session', session);
+    images = Meteor.subscribe('images.session', session);
     data = Object.assign(data, {
-      sessions: Sessions.find(
-        {userId: Meteor.userId()},
-        {sort: {created: -1}},
-      ).fetch(),
       talks: Talks.find({}, {sort: {created: -1}}).fetch(),
-      comments: Comments.find({}, {sort: {created: 1}}).fetch(),
-      events: Events.find({}, {sort: {created: -1}}).fetch(),
       files: Files.find({}, {sort: {name: 1}}).fetch(),
       images: Images.find({}, {sort: {name: 1}}).fetch(),
     });
@@ -61,15 +52,22 @@ export default withTracker(() => {
 
   let talk = Session.get('talk');
   if (talk) {
-    // TODO - filter files by active session
-    // TODO - filter images by active session
-    console.log('talk is set', talk);
+    files = Meteor.subscribe('files.talk', talk);
+    images = Meteor.subscribe('images.talk', talk);
+    comments = Meteor.subscribe('comments', talk);
+    events = Meteor.subscribe('events', talk);
+    data = Object.assign(data, {
+      files: Files.find({}, {sort: {name: 1}}).fetch(),
+      images: Images.find({}, {sort: {name: 1}}).fetch(),
+      comments: Comments.find({}, {sort: {name: 1}}).fetch(),
+      events: Events.find({}, {sort: {name: 1}}).fetch(),
+    });
   }
 
   if (session && (Meteor.user() || reviewer)) {
     data = Object.assign(data, {
       loading: ![sessions, talks, comments, events, files, images].every(
-        x => x && x.ready(),
+        x => !x || (x && x.ready()),
       ),
     });
   }

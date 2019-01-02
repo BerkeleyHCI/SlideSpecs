@@ -2,8 +2,8 @@ import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {_} from 'lodash';
-
 import {toast} from 'react-toastify';
+
 import {Files} from '../../api/files/files.js';
 import AppNotification from '../components/AppNotification.jsx';
 import Loading from '../components/Loading.jsx';
@@ -178,9 +178,7 @@ class UploadPage extends BaseComponent {
           <DragUpload handleUpload={this.handleDropUpload} />
           {talks.length > 0 && (
             <div className="btns-group">
-              <button
-                onClick={this.deleteFiles}
-                className="btn btn-menu btn-empty">
+              <button onClick={this.deleteFiles} className="btn btn-empty">
                 delete all
               </button>
             </div>
