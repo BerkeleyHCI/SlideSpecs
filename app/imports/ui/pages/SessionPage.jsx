@@ -13,7 +13,7 @@ import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import ConvertInstructions from '../components/ConvertInstructions.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
-import FileUpload from '../components/FileUpload.jsx';
+import SlideFile from '../components/SlideFile.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
 import {createTalk} from '../../api/talks/methods.js';
 
