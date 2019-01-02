@@ -1,7 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {_} from 'lodash';
 import {toast} from 'react-toastify';
 
 import {Files} from '../../api/files/files.js';
@@ -9,10 +8,8 @@ import AppNotification from '../components/AppNotification.jsx';
 import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
-import ConvertInstructions from '../components/ConvertInstructions.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
-import SlideFile from '../components/SlideFile.jsx';
 import {Message} from '../components/Message.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
 import {createTalk} from '../../api/talks/methods.js';

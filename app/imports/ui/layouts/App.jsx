@@ -85,15 +85,16 @@ export default class App extends BaseComponent {
     if ((tid && !Session.get('talk')) || Session.get('talk') !== tid) {
       Session.set('talk', tid);
     }
-    const {talks, files, images, comments, events, reviewer} = this.props;
+    const {sessions, talks, files, images, comments, events} = this.props;
     let talk = talks.find(t => t._id === tid) || {};
+    talk.sessionId = talk.session;
+    talk.session = sessions.find(s => s._id === talk.sessionId) || {};
     talk.files = files.filter(f => f.meta.talkId === tid);
     talk.images = images.filter(f => f.meta.talkId === tid);
     talk.sComments = comments.filter(c => c.talk === tid);
     talk.comments = talk.sComments.filter(this.controlFilter);
     talk.events = events.filter(e => e.talk === tid);
     talk.active = talk.events[0];
-    talk.reviewer = reviewer;
     talk.talkId = tid;
     return talk;
   };

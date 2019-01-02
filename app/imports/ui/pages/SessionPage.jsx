@@ -173,12 +173,7 @@ export default class SessionPage extends BaseComponent {
 
     const content = (
       <div className="main-content">
-        <h1>
-          <Link to={`/`}>
-            <span className="black"> ‹ </span>
-            {name}
-          </Link>
-        </h1>
+        <h1>{name}</h1>
 
         {talks.length > 0 && (
           <div>
@@ -196,7 +191,7 @@ export default class SessionPage extends BaseComponent {
         )}
 
         <div className="alert">
-          add presentations here.
+          add {talks.length > 0 && ' more '} presentations here.
           <SelectUpload
             labelText="+ new"
             className="pull-right btn-menu btn-primary"
@@ -220,9 +215,9 @@ export default class SessionPage extends BaseComponent {
 }
 
 SessionPage.propTypes = {
-  user: PropTypes.object, // current meteor user
-  sessionId: PropTypes.string, // current session
-  files: PropTypes.array, // current session files
+  user: PropTypes.object,
+  sessionId: PropTypes.string,
+  files: PropTypes.array, 
 };
 
 SessionPage.defaultProps = {
