@@ -23,6 +23,7 @@ meteor npm run lint
 ### Configuration
 
 - current: /usr/local/etc/dehydrated
+- nginx: /usr/local/etc/nginx/servers/
 - todo: https://github.com/tozd/docker-meteor
 - renew: sudo dehydrated -cron -x
 
