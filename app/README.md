@@ -12,6 +12,13 @@ meteor
 open http://localhost:3000
 ```
 
+##### PDF Conversion (osx)
+
+```
+brew install imagemagick      # convert
+brew cask install libreoffice # soffice
+```
+
 ### Scripts
 
 To lint:
