@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-until meteor --production 2>&1 | tee -a output.log; do
+until meteor 2>&1 | tee -a output.log; do
     echo "Server crashed with exit code $?.  Respawning.." >&2
     sleep 1
 done
