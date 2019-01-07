@@ -22,12 +22,14 @@ meteor npm run lint
 
 ### Configuration
 
-- current: /usr/local/etc/dehydrated
-- nginx: /usr/local/etc/nginx/servers/
+- current cert: /usr/local/etc/dehydrated
+- renew cert: sudo dehydrated -cron -x
 - todo: https://github.com/tozd/docker-meteor
-- renew: sudo dehydrated -cron -x
 
 ##### Server
+
+- nginx: `/usr/local/etc/nginx/servers/`
+- load conf: `sudo /usr/local/bin/nginx -s reload`
 
 ```
 map $http_upgrade $connection_upgrade {
