@@ -150,18 +150,16 @@ class UploadPage extends BaseComponent {
         </h1>
 
         {talks.length > 0 && (
-          <div>
-            <ul className="v-pad list-group">
-              {talks.map(talk => (
-                <TalkListItem
-                  key={talk._id}
-                  talk={talk}
-                  images={images}
-                  files={files}
-                />
-              ))}
-            </ul>
-          </div>
+          <ul className="v-pad list-group">
+            {talks.map(talk => (
+              <TalkListItem
+                key={talk._id}
+                talk={talk}
+                images={images}
+                files={files}
+              />
+            ))}
+          </ul>
         )}
 
         <div className="alert">
