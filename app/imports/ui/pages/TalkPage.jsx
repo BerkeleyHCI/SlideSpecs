@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import {_} from 'lodash';
 import {toast} from 'react-toastify';
 
+import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
 import {deleteTalk} from '../../api/talks/methods.js';
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -27,21 +28,29 @@ class TalkPage extends BaseComponent {
     this.updateMason();
   }
 
+  //<button
+  //onClick={this.deleteTalk}
+  //className="btn btn-menu pull-right">
+  //delete presentation
+  //</button>
+
   deleteTalk = () => {
     const {talkId, session} = this.props;
-    deleteTalk.call({talkId}, () => this.redirectTo(session._id));
+    this.redirectTo(session._id);
+    deleteTalk.call({talkId});
   };
 
   render() {
     const {session, talkId, name, files, images, comments, events} = this.props;
-    let talkFile = files
-      .findOne(f => f.talkId === talkId)
-      .link('original', '//');
+    let talkFile = Files.findOne({'meta.talkId': talkId}).link(
+      'original',
+      '//',
+    );
     let imageSet = images.map((i, key) => (
       <SlideFile
         key={'file-' + key}
         iter={key + 1}
-        fileUrl={Images.findOne({_id: i._id}).link('original', '//')}
+        fileUrl={Images.findOne(i._id).link('original', '//')}
         handleLoad={this.updateMason}
         fileId={i._id}
         fileName={i.name}
@@ -55,8 +64,9 @@ class TalkPage extends BaseComponent {
             <Link to={`/sessions/${session._id}`}>
               <span className="black"> ‹ </span>
               {session.name}
-              <small className="pull-right">{name}</small>
             </Link>
+
+            <small> / {name}</small>
           </h1>
 
           <div className="alert">
@@ -66,16 +76,11 @@ class TalkPage extends BaseComponent {
               <li>actions: {events.length}</li>
             </ul>
             <hr />
-            <Link to={`/`}>
+            <a download href={talkFile}>
               <button className="btn btn-menu btn-primary">
                 download original
               </button>
-            </Link>
-            <button
-              onClick={this.deleteTalk}
-              className="btn btn-menu pull-right">
-              delete presentation
-            </button>
+            </a>
           </div>
 
           <div id="grid">{imageSet}</div>
@@ -88,16 +93,16 @@ class TalkPage extends BaseComponent {
 TalkPage.propTypes = {
   user: PropTypes.object,
   talkId: PropTypes.string,
-  images: PropTypes.array,
   comments: PropTypes.array,
   events: PropTypes.array,
+  images: PropTypes.array,
 };
 
 TalkPage.defaultProps = {
   user: null,
-  images: [],
   comments: [],
   events: [],
+  images: [],
 };
 
 export default TalkPage;

@@ -23,6 +23,7 @@ import NotFoundPage from '../pages/NotFoundPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 import ConvertPage from '../pages/ConvertPage.jsx';
 import StudyPage from '../pages/StudyPage.jsx';
+import SharePage from '../pages/SharePage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -69,34 +70,40 @@ export default class App extends BaseComponent {
   };
 
   getSessionProps = sid => {
-    if ((sid && !Session.get('session')) || Session.get('session') !== sid) {
+    const storedSession = Session.get('session');
+    Session.set('talk', null);
+    if (sid && (!storedSession || storedSession !== sid)) {
       Session.set('session', sid);
     }
     const {sessions, talks, files, images, comments} = this.props;
-    let session = sessions.find(s => s._id === sid) || {};
-    session.files = files.filter(f => f.meta.sessionId === sid);
-    session.images = images.filter(f => f.meta.sessionId === sid);
-    session.talks = talks.filter(f => f.session === sid);
-    session.sessionId = sid;
-    return session;
+    let props = sessions.find(s => s._id === sid) || {};
+    props.files = files.filter(f => f.meta.sessionId === sid);
+    props.images = images.filter(f => f.meta.sessionId === sid);
+    props.talks = talks.filter(f => f.session === sid);
+    props.sessionId = sid;
+    return props;
   };
 
   getTalkProps = tid => {
-    if ((tid && !Session.get('talk')) || Session.get('talk') !== tid) {
+    const storedTalk = Session.get('talk');
+    const {sessions, talks, files, images, comments, events} = this.props;
+    if (tid && (!storedTalk || storedTalk !== tid)) {
       Session.set('talk', tid);
     }
-    const {sessions, talks, files, images, comments, events} = this.props;
     let talk = talks.find(t => t._id === tid) || {};
-    talk.sessionId = talk.session;
-    talk.session = sessions.find(s => s._id === talk.sessionId) || {};
-    talk.files = files.filter(f => f.meta.talkId === tid);
-    talk.images = images.filter(f => f.meta.talkId === tid);
-    talk.sComments = comments.filter(c => c.talk === tid);
-    talk.comments = talk.sComments.filter(this.controlFilter);
-    talk.events = events.filter(e => e.talk === tid);
-    talk.active = talk.events[0];
-    talk.talkId = tid;
-    return talk;
+    Session.set('session', talk.session);
+
+    let props = talk;
+    props.sessionId = talk.session;
+    props.session = sessions.find(s => s._id === talk.sessionId) || {};
+    props.files = files.filter(f => f.meta.talkId === tid);
+    props.images = images.filter(f => f.meta.talkId === tid);
+    props.sComments = comments.filter(c => c.talk === tid);
+    props.comments = talk.sComments.filter(this.controlFilter);
+    props.events = events.filter(e => e.talk === tid);
+    props.active = talk.events[0];
+    props.talkId = tid;
+    return props;
   };
 
   preRender = (match, Comp, pType) => {
@@ -130,6 +137,10 @@ export default class App extends BaseComponent {
 
   renderFeedback = ({match}) => {
     return this.preRender(match, FeedbackPage, 'talk');
+  };
+
+  renderShare = ({match}) => {
+    return this.preRender(match, SharePage, 'session');
   };
 
   renderReview = ({match}) => {
@@ -170,9 +181,8 @@ export default class App extends BaseComponent {
           <Switch location={location}>
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
-            <Route path="/share/:id" render={this.renderReview} />
-            <Route path="/convert" component={ConvertPage} />
-            <Route path="/ar-vr" component={StudyPage} />
+            <Route path="/share/:id" render={this.renderShare} />
+            <Route path="/review/:id" render={this.renderReview} />
 
             <PrivateRoute
               exact
@@ -242,6 +252,8 @@ const PrivateRoute = ({user, render, ...other}) => {
   let loc = window.location.pathname;
   let out;
 
+  // TODO - handle using the session / talk variables to recover routes.
+
   if (!user) {
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else if (matchId && !sess && !talk) {
@@ -263,11 +275,13 @@ App.propTypes = {
   connected: PropTypes.bool.isRequired, // server connection status
   loading: PropTypes.bool.isRequired, // subscription status
   sessions: PropTypes.array, // all visible files
+  talks: PropTypes.array,
   files: PropTypes.array, // all visible files
 };
 
 App.defaultProps = {
   user: null,
   sessions: [],
+  talks: [],
   files: [],
 };

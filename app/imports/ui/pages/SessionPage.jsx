@@ -28,42 +28,10 @@ export default class SessionPage extends BaseComponent {
 
   componentDidMount = () => {};
 
-  copyComment = () => {
-    this.copyCodeUrl(0);
-  };
-
-  copyDiscuss = () => {
-    this.copyCodeUrl(1);
-  };
-
-  copyCodeUrl = idx => {
-    var copyText = document.getElementsByClassName('code')[idx];
-    const uType = idx == 0 ? 'comment' : 'discussion';
-    if (copyText) {
-      copyText.select();
-      document.execCommand('copy');
-      this.clearSelection();
-      toast(() => (
-        <AppNotification
-          msg={`${uType} link copied`}
-          desc="copied to clipboard"
-          icon="check"
-        />
-      ));
-    }
-  };
-
-  clearSelection = () => {
-    if (window.getSelection) {
-      window.getSelection().removeAllRanges();
-    } else if (document.selection) {
-      document.selection.empty();
-    }
-  };
-
   deleteFiles = () => {
     const {sessionId} = this.props;
-    deleteSessionFiles.call({sessionId});
+    if (confirm('Delete ALL talks for this session?'))
+      deleteSessionFiles.call({sessionId});
   };
 
   handleDropUpload = files => {
@@ -159,7 +127,7 @@ export default class SessionPage extends BaseComponent {
     const {uploading} = this.state;
     const {sessionId, name, talks, files, images} = this.props;
     const shareLink = window.location.origin + '/share/' + sessionId;
-    const discussLink = window.location.origin + '/discuss/' + sessionId;
+    const discussLink = window.location.origin + '/review/' + sessionId;
     const uLink = `/slides/${sessionId}`;
     const dLink = `/discuss/${sessionId}`;
     const fLink = `/feedback/${sessionId}`;
@@ -174,6 +142,15 @@ export default class SessionPage extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1>{name}</h1>
+
+        <div className="alert">
+          share this session |
+          <a className="black" href={shareLink} target="_blank">
+            {' '}
+            {shareLink}
+            <button className="pull-right btn-menu btn-primary">open</button>
+          </a>
+        </div>
 
         {talks.length > 0 && (
           <div>
@@ -217,10 +194,12 @@ export default class SessionPage extends BaseComponent {
 SessionPage.propTypes = {
   user: PropTypes.object,
   sessionId: PropTypes.string,
-  files: PropTypes.array, 
+  talks: PropTypes.array,
+  files: PropTypes.array,
 };
 
 SessionPage.defaultProps = {
   user: null,
+  talks: [],
   files: [],
 };

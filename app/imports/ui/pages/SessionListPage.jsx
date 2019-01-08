@@ -32,7 +32,9 @@ class SessionItem extends BaseComponent {
   };
 
   deleteSession = () => {
-    deleteSession.call({sessionId: this.props._id});
+    const {name} = this.props;
+    if (confirm(`Delete ${name}?`))
+      deleteSession.call({sessionId: this.props._id});
   };
 
   render() {
