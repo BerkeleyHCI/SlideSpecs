@@ -10,8 +10,8 @@ import NameSet from '../components/NameSet.jsx';
 class SharePage extends BaseComponent {
   renderTalk = (talk, i) => {
     return (
-      <li className="list-group-item clearfix">
-        <Link key={talk._id} to={`/comment/${talk._id}`}>
+      <li key={talk._id} className="list-group-item clearfix">
+        <Link to={`/comment/${talk._id}`}>
           {i + 1}. {talk.name}
         </Link>
       </li>
