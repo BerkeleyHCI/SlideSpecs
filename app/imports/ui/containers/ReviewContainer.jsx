@@ -5,12 +5,12 @@ import NameSet from '../components/NameSet.jsx';
 
 export default class ReviewContainer extends BaseComponent {
   render() {
+    const {reviewer, Comp} = this.props;
     let content;
-    const {reviewer, Comp, ...other} = this.props;
     if (!reviewer) {
       content = <NameSet />;
     } else {
-      content = <Comp {...other} />;
+      content = <Comp {...this.props} />;
     }
 
     return this.renderRedirect() || content;

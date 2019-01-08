@@ -212,13 +212,15 @@ class CommentPage extends BaseComponent {
   };
 
   updateImage = id => {
-    const link = Images.findOne(id).link('original', '//');
-    this.setState({image: link});
+    console.log(Images, id);
+    //const link = Images.findOne(id).link('original', '//');
+    //this.setState({image: link});
   };
 
   updateHoverImage = id => {
     const {activeSlide} = this.state;
-    const link = Images.findOne(id).link('original', '//');
+    //const link = Images.findOne(id).link('original', '//');
+    const link = 'original';
     this.setState({hoverImage: link});
     if (!activeSlide) {
       this.setState({image: link});
@@ -414,7 +416,8 @@ class CommentPage extends BaseComponent {
     const {files} = this.props;
     const {activeSlide} = this.state;
     return files.map((f, key) => {
-      let link = Images.findOne({_id: f._id}).link('original', '//');
+      //let link = Images.findOne({_id: f._id}).link('original', '//');
+      let link = 'original';
       return (
         <FileReview
           key={'file-' + key}

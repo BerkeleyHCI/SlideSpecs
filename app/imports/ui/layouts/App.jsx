@@ -78,18 +78,27 @@ export default class App extends BaseComponent {
     if (sid && (!storedSession || storedSession !== sid)) {
       Session.set('session', sid);
     }
-    const {sessions, talks, files, images, comments} = this.props;
+    const {sessions, reviewer, talks, files, images, comments} = this.props;
     let props = sessions.find(s => s._id === sid) || {};
     props.files = files.filter(f => f.meta.sessionId === sid);
     props.images = images.filter(f => f.meta.sessionId === sid);
     props.talks = talks.filter(f => f.session === sid);
+    props.reviewer = reviewer;
     props.sessionId = sid;
     return props;
   };
 
   getTalkProps = tid => {
     const storedTalk = Session.get('talk');
-    const {sessions, talks, files, images, comments, events} = this.props;
+    const {
+      sessions,
+      talks,
+      reviewer,
+      files,
+      images,
+      comments,
+      events,
+    } = this.props;
     if (tid && (!storedTalk || storedTalk !== tid)) {
       Session.set('talk', tid);
     }
@@ -104,6 +113,7 @@ export default class App extends BaseComponent {
     props.sComments = comments.filter(c => c.talk === tid);
     props.comments = talk.sComments.filter(this.controlFilter);
     props.events = events.filter(e => e.talk === tid);
+    props.reviewer = reviewer;
     props.active = talk.events[0];
     props.talkId = tid;
     return props;
@@ -161,7 +171,7 @@ export default class App extends BaseComponent {
 
   renderContent = ({location}) => {
     this.renderSecure(); // http -> https
-    const {user, reviewer, sessions, files, loading} = this.props;
+    const {user, sessions, files, loading} = this.props;
     const shared = this.getSharedProps();
     const {modal} = this.state;
     this.showConnection();
