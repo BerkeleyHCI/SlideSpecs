@@ -1,20 +1,17 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Session} from 'meteor/session.js';
-import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
-import {Files} from '../../api/files/files.js';
+import {Images} from '../../api/images/images.js';
 import BaseComponent from '../components/BaseComponent.jsx';
-import Input from '../components/Input.jsx';
 import TextArea from '../components/TextArea.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
-import {Message} from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
 
@@ -123,20 +120,17 @@ class CommentPage extends BaseComponent {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
-      this.handleActiveSlide();
     }, 500);
 
     // set image to link of the first slide
-    const {files} = this.props;
-    if (files.length > 0) {
-      this.handleActive(); // active
-      this.updateImage(files[0]._id);
+    const {images} = this.props;
+    if (images.length > 0) {
+      this.updateImage(images[0]._id);
     }
   };
 
   componentDidUpdate = () => {
     this.handleLoad();
-    this.handleActive();
   };
 
   componentWillUnmount = () => {
@@ -217,14 +211,14 @@ class CommentPage extends BaseComponent {
     Meteor.logout(); // clear
   };
 
-  updateImage = fid => {
-    const link = Files.findOne({_id: fid}).link('original', '//');
+  updateImage = id => {
+    const link = Images.findOne(id).link('original', '//');
     this.setState({image: link});
   };
 
-  updateHoverImage = fid => {
+  updateHoverImage = id => {
     const {activeSlide} = this.state;
-    const link = Files.findOne({_id: fid}).link('original', '//');
+    const link = Images.findOne(id).link('original', '//');
     this.setState({hoverImage: link});
     if (!activeSlide) {
       this.setState({image: link});
@@ -301,9 +295,6 @@ class CommentPage extends BaseComponent {
       } else {
         this.clearButton();
         this.clearText();
-        if (following) {
-          this.handleActiveSlide();
-        }
       }
     });
   };
@@ -423,7 +414,7 @@ class CommentPage extends BaseComponent {
     const {files} = this.props;
     const {activeSlide} = this.state;
     return files.map((f, key) => {
-      let link = Files.findOne({_id: f._id}).link('original', '//');
+      let link = Images.findOne({_id: f._id}).link('original', '//');
       return (
         <FileReview
           key={'file-' + key}
@@ -482,36 +473,6 @@ class CommentPage extends BaseComponent {
     if (view[0]) {
       view[0].scrollIntoView();
     }
-  };
-
-  // Updating the current slide.
-  handleActive = () => {
-    let {activeSlide} = this.state;
-    const {active, files} = this.props;
-    if (active && activeSlide !== active.slideNo) {
-      this.handleActiveSlide();
-      // assume 1 index, subtract 1
-      activeSlide = active.slideNo;
-      this.setState({activeSlide});
-      const fId = files[activeSlide - 1]._id;
-      this.updateImage(fId);
-    }
-  };
-
-  handleActiveSlide = () => {
-    let text = this.inRef.current.value.trim();
-    const {ds, following} = this.state;
-    const {active} = this.props;
-    try {
-      if (following && !text) {
-        this.clearButton();
-        const slideNo = active.slideNo.toString();
-        const filtered = [{slideId: active._id, slideNo}];
-        const slide = document.querySelectorAll(`[data-iter='${slideNo}']`);
-        ds.addSelection(slide);
-        this.setState({selected: slide, filtered});
-      }
-    } catch (e) {}
   };
 
   renderComments = () => {
@@ -669,10 +630,10 @@ class CommentPage extends BaseComponent {
             {sessionOwner ? (
               <Link to={`/sessions/${sessionId}`}>
                 <span className="black"> ‹ </span>
-                share feedback
+                slidespecs
               </Link>
             ) : (
-              <span> share feedback </span>
+              <span> slidespecs </span>
             )}
             <small
               onClick={this.clearReviewer}

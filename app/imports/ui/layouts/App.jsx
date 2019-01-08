@@ -17,14 +17,16 @@ import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import SessionPage from '../pages/SessionPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
+import CommentPage from '../pages/CommentPage.jsx';
 import DiscussPage from '../pages/DiscussPage.jsx';
 import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ForbiddenPage from '../pages/ForbiddenPage.jsx';
-import UploadPage from '../pages/UploadPage.jsx';
-import ConvertPage from '../pages/ConvertPage.jsx';
-import StudyPage from '../pages/StudyPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
+
+//import UploadPage from '../pages/UploadPage.jsx';
+//import ConvertPage from '../pages/ConvertPage.jsx';
+//import StudyPage from '../pages/StudyPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -115,12 +117,13 @@ export default class App extends BaseComponent {
       let sProps = {};
       if (pType == 'session') {
         sProps = this.getSessionProps(match.params.id);
+        return <Comp {...shared} {...sProps} />;
       }
       let tProps = {};
       if (pType == 'talk') {
         tProps = this.getTalkProps(match.params.id);
+        return <ReviewContainer Comp={Comp} {...shared} {...tProps} />;
       }
-      return <Comp {...shared} {...sProps} {...tProps} />;
     }
   };
 
@@ -144,8 +147,8 @@ export default class App extends BaseComponent {
     return this.preRender(match, SharePage, 'session');
   };
 
-  renderReview = ({match}) => {
-    return this.preRender(match, ReviewContainer, 'talk');
+  renderComment = ({match}) => {
+    return this.preRender(match, CommentPage, 'talk');
   };
 
   renderSecure = () => {
@@ -183,7 +186,7 @@ export default class App extends BaseComponent {
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/share/:id" render={this.renderShare} />
-            <Route path="/review/:id" render={this.renderReview} />
+            <Route path="/comment/:id" render={this.renderComment} />
 
             <PrivateRoute
               exact
