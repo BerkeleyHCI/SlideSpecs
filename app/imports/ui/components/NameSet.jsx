@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import SlideReviewPage from '../pages/CommentPage.jsx';
 import {Message} from './Message.jsx';
 import Input from './Input.jsx';
 
