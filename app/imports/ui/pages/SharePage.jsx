@@ -1,33 +1,48 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
-import BaseComponent from '../components/BaseComponent.jsx';
-import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
 
-const SharePageLink = talk => {
-  return (
-    <li key={talk._id}>
-      <Link to={`/review/${talk._id}`}>{talk.name}</Link>
-    </li>
-  );
-};
+import BaseComponent from '../components/BaseComponent.jsx';
+import MenuContainer from '../containers/MenuContainer.jsx';
+import {Message} from '../components/Message.jsx';
+import NameSet from '../components/NameSet.jsx';
 
 class SharePage extends BaseComponent {
+  renderTalk = (talk, i) => {
+    return (
+      <li className="list-group-item clearfix">
+        <Link key={talk._id} to={`/review/${talk._id}`}>
+          {i + 1}. {talk.name}
+        </Link>
+      </li>
+    );
+  };
+
+  renderName = () => {
+    if (Session.get('reviewer')) {
+      return null;
+    } else {
+      return <NameSet />;
+    }
+  };
+
   render() {
     const {name, talks} = this.props;
-    const content = (
+    const renderedTalks = talks.map(this.renderTalk);
+    const content = this.renderName() || (
       <div className="main-content">
         <h1>{name}</h1>
-        <h3>instructions</h3>
+
+        <div>
+          <ul className="v-pad list-group">{renderedTalks}</ul>
+          {talks.length == 0 && 'no talks yet'}
+        </div>
+
         <div className="alert">
           Please give feedback for each group's presentation.
           <hr />
           You can attach feedback to specific slides and use #tags to label
           comments.
-        </div>
-        <div className="alert">
-          <ol>{talks.map(SharePageLink)}</ol>
-          {talks.length == 0 && 'no talks yet'}
         </div>
       </div>
     );

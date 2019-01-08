@@ -28,14 +28,12 @@ export default withTracker(() => {
   };
 
   let sessions, talks, comments, events, files, images;
-  if (Meteor.user() || reviewer) {
-    sessions = Meteor.subscribe('sessions');
+  if (Meteor.userId()) {
+    const userId = Meteor.userId().toString();
+    sessions = Meteor.subscribe('sessions.user', userId);
     data = Object.assign(data, {
       loading: !sessions.ready(),
-      sessions: Sessions.find(
-        {userId: Meteor.userId()},
-        {sort: {created: -1}},
-      ).fetch(),
+      sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
     });
   }
 
@@ -48,6 +46,14 @@ export default withTracker(() => {
       talks: Talks.find({}, {sort: {created: -1}}).fetch(),
       files: Files.find({}, {sort: {name: 1}}).fetch(),
       images: Images.find({}, {sort: {name: 1}}).fetch(),
+    });
+  }
+
+  if (session && reviewer) {
+    sessions = Meteor.subscribe('sessions.all');
+    data = Object.assign(data, {
+      loading: !sessions.ready(),
+      sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
     });
   }
 

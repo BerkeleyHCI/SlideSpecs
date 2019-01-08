@@ -20,6 +20,7 @@ import TalkPage from '../pages/TalkPage.jsx';
 import DiscussPage from '../pages/DiscussPage.jsx';
 import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
+import ForbiddenPage from '../pages/ForbiddenPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 import ConvertPage from '../pages/ConvertPage.jsx';
 import StudyPage from '../pages/StudyPage.jsx';

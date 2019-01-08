@@ -12,6 +12,9 @@ export default class UserMenu extends BaseComponent {
 
   logout = e => {
     e.preventDefault();
+    Session.set('reviewer', null);
+    Session.set('session', null);
+    Session.set('talk', null);
     Meteor.logout();
   };
 
