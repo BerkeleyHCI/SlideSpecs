@@ -6,6 +6,7 @@ import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 
 import {Sessions} from '../../api/sessions/sessions.js';
 import {Talks} from '../../api/talks/talks.js';
+
 import AppModal from '../components/AppModal.jsx';
 import Loading from '../components/Loading.jsx';
 import AppNotification from '../components/AppNotification.jsx';
@@ -23,10 +24,6 @@ import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ForbiddenPage from '../pages/ForbiddenPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
-
-//import UploadPage from '../pages/UploadPage.jsx';
-//import ConvertPage from '../pages/ConvertPage.jsx';
-//import StudyPage from '../pages/StudyPage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -90,31 +87,23 @@ export default class App extends BaseComponent {
 
   getTalkProps = tid => {
     const storedTalk = Session.get('talk');
-    const {
-      sessions,
-      talks,
-      reviewer,
-      files,
-      images,
-      comments,
-      events,
-    } = this.props;
+    const {sessions, talks, reviewer, files, images, comments} = this.props;
     if (tid && (!storedTalk || storedTalk !== tid)) {
       Session.set('talk', tid);
     }
-    let talk = talks.find(t => t._id === tid) || {};
+    const talk = talks.find(t => t._id === tid) || {};
+    console.log(talks, tid, talk);
     Session.set('session', talk.session);
 
-    let props = talk;
+    let props = {};
+    props.talk = talk;
     props.sessionId = talk.session;
-    props.session = sessions.find(s => s._id === talk.sessionId) || {};
+    props.session = sessions.find(s => s._id === talk.sessionId);
     props.files = files.filter(f => f.meta.talkId === tid);
     props.images = images.filter(f => f.meta.talkId === tid);
     props.sComments = comments.filter(c => c.talk === tid);
-    props.comments = talk.sComments.filter(this.controlFilter);
-    props.events = events.filter(e => e.talk === tid);
+    props.comments = props.sComments.filter(this.controlFilter);
     props.reviewer = reviewer;
-    props.active = talk.events[0];
     props.talkId = tid;
     return props;
   };

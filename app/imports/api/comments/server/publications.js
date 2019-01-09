@@ -1,11 +1,11 @@
 import {Meteor} from 'meteor/meteor';
 import {Comments} from '../comments.js';
 
-Meteor.publish('comments', session => {
-  check(session, String);
-  if (!session) {
+Meteor.publish('comments', talk => {
+  check(talk, String);
+  if (!talk) {
     return this.ready();
   } else {
-    return Comments.find({session: session});
+    return Comments.find({talk: talk});
   }
 });

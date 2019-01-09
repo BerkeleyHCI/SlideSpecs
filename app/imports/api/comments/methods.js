@@ -4,6 +4,7 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
 
 import {Sessions} from '../sessions/sessions.js';
+import {Talks} from '../talks/talks.js';
 import {Comments} from './comments.js';
 
 SlideSchema = new SimpleSchema({
@@ -14,7 +15,8 @@ SlideSchema = new SimpleSchema({
 export const createComment = new ValidatedMethod({
   name: 'comments.create',
   validate: new SimpleSchema({
-    session: {type: String},
+    session: {type: SimpleSchema.RegEx.Id},
+    talk: {type: SimpleSchema.RegEx.Id},
     author: {type: String, min: 1},
     content: {type: String, min: 1},
     slides: {type: [SlideSchema]},
@@ -23,9 +25,20 @@ export const createComment = new ValidatedMethod({
     addressed: {type: Boolean, optional: true},
     userOwn: {type: Boolean, optional: true},
   }).validator(),
-  run({author, userOwn, content, session, addressed, discuss, agree, slides}) {
+  run({
+    author,
+    userOwn,
+    content,
+    session,
+    talk,
+    addressed,
+    discuss,
+    agree,
+    slides,
+  }) {
     const sess = Sessions.findOne(session);
-    if (sess) {
+    const uTalk = Talks.findOne(talk);
+    if (sess && talk && talk.session === sess._id) {
       const data = {
         created: Date.now(),
         userOwn,

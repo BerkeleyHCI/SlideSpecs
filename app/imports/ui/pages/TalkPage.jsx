@@ -41,7 +41,7 @@ class TalkPage extends BaseComponent {
   };
 
   render() {
-    const {session, talkId, name, files, images, comments, events} = this.props;
+    const {session, talkId, name, files, images, comments} = this.props;
     let talkFile = Files.findOne({'meta.talkId': talkId}).link(
       'original',
       '//',
@@ -73,7 +73,6 @@ class TalkPage extends BaseComponent {
             <ul>
               <li>slides: {images.length}</li>
               <li>comments: {comments.length}</li>
-              <li>actions: {events.length}</li>
             </ul>
             <hr />
             <a download href={talkFile}>
@@ -94,14 +93,12 @@ TalkPage.propTypes = {
   user: PropTypes.object,
   talkId: PropTypes.string,
   comments: PropTypes.array,
-  events: PropTypes.array,
   images: PropTypes.array,
 };
 
 TalkPage.defaultProps = {
   user: null,
   comments: [],
-  events: [],
   images: [],
 };
 

@@ -34,7 +34,6 @@ class CommentPage extends BaseComponent {
       focusing: false,
       redirectTo: null,
       activeComment: null,
-      activeSlide: null,
       sorter: 'created',
       filter: 'time',
       invert: true,
@@ -218,13 +217,9 @@ class CommentPage extends BaseComponent {
   };
 
   updateHoverImage = id => {
-    const {activeSlide} = this.state;
     //const link = Images.findOne(id).link('original', '//');
     const link = 'original';
     this.setState({hoverImage: link});
-    if (!activeSlide) {
-      this.setState({image: link});
-    }
   };
 
   handleSlideIn = e => {
@@ -279,7 +274,7 @@ class CommentPage extends BaseComponent {
 
   addComment = e => {
     const {defaultPriv, following} = this.state;
-    const {reviewer, sessionId} = this.props;
+    const {reviewer, talkId, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
     const priv = cText.includes('#private');
@@ -287,10 +282,12 @@ class CommentPage extends BaseComponent {
       author: reviewer,
       content: cText,
       session: sessionId,
+      talk: talkId,
       userOwn: defaultPriv || priv,
       slides,
     };
 
+    console.log(commentFields);
     createComment.call(commentFields, (err, res) => {
       if (err) {
         console.error(err);
@@ -413,9 +410,8 @@ class CommentPage extends BaseComponent {
   };
 
   renderFiles = () => {
-    const {files} = this.props;
-    const {activeSlide} = this.state;
-    return files.map((f, key) => {
+    const {images} = this.props;
+    return images.map((f, key) => {
       //let link = Images.findOne({_id: f._id}).link('original', '//');
       let link = 'original';
       return (
@@ -425,7 +421,7 @@ class CommentPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          active={parseInt(activeSlide) - 1 == key}
+          active={false}
           handleMouse={this.handleSlideIn}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
@@ -631,7 +627,7 @@ class CommentPage extends BaseComponent {
         <div className="reviewView">
           <h2 className="nav-head clearfix">
             {sessionOwner ? (
-              <Link to={`/sessions/${sessionId}`}>
+              <Link to={`/share/${sessionId}`}>
                 <span className="black"> ‹ </span>
                 slidespecs
               </Link>
