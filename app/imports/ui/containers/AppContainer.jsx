@@ -13,9 +13,12 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 export default withTracker(() => {
   let reviewer = Session.get('reviewer');
+  let session = Session.get('session');
+  let talk = Session.get('talk');
+
   let data = {
-    user: Meteor.user(),
     connected: Meteor.status().connected,
+    user: Meteor.user(),
     reviewer: reviewer,
     loading: false,
     sessions: [],
@@ -37,7 +40,6 @@ export default withTracker(() => {
     });
   }
 
-  let session = Session.get('session');
   if (session) {
     talks = Meteor.subscribe('talks', session);
     files = Meteor.subscribe('files.session', session);
@@ -49,14 +51,12 @@ export default withTracker(() => {
     });
   }
 
-  let talk = Session.get('talk');
   if (talk && reviewer) {
     sessions = Meteor.subscribe('sessions.all');
+    comments = Meteor.subscribe('comments', talk);
     files = Meteor.subscribe('files.talk', talk);
     images = Meteor.subscribe('images.talk', talk);
-    comments = Meteor.subscribe('comments', talk);
     data = Object.assign(data, {
-      loading: !sessions.ready(),
       sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
       talks: Talks.find({}, {sort: {created: -1}}).fetch(),
       comments: Comments.find({}, {sort: {name: 1}}).fetch(),

@@ -8,9 +8,9 @@ export default class SessionContainer extends BaseComponent {
     const storedSession = Session.get('session');
     if (sid && (!storedSession || storedSession !== sid)) {
       Session.set('session', sid);
-      Session.set('talk', null);
     }
 
+    Session.set('talk', null);
     const {sessions, reviewer, talks, files, images, comments} = this.props;
     let props = sessions.find(s => s._id === sid) || {};
     props.talks = talks.filter(f => f.session === sid);
