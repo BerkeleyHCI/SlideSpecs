@@ -93,6 +93,7 @@ class TalkPage extends BaseComponent {
 
 TalkPage.propTypes = {
   user: PropTypes.object,
+  session: PropTypes.object,
   talkId: PropTypes.string,
   comments: PropTypes.array,
   images: PropTypes.array,
@@ -100,6 +101,7 @@ TalkPage.propTypes = {
 
 TalkPage.defaultProps = {
   user: null,
+  session: {},
   comments: [],
   images: [],
 };

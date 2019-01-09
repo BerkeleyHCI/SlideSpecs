@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Session} from 'meteor/session.js';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
@@ -11,7 +12,8 @@ import AppModal from '../components/AppModal.jsx';
 import Loading from '../components/Loading.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
-import ReviewContainer from '../containers/ReviewContainer.jsx';
+import SessionContainer from '../containers/SessionContainer.jsx';
+import TalkContainer from '../containers/TalkContainer.jsx';
 
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
@@ -62,64 +64,14 @@ export default class App extends BaseComponent {
     this.setState({modal: {isOpen: false}});
   };
 
-  controlFilter = comment => {
-    const auth = ['system', this.props.reviewer];
-    return (
-      !comment.userOwn || (comment.userOwn && auth.includes(comment.author))
-    );
-  };
-
-  getSessionProps = sid => {
-    const storedSession = Session.get('session');
-    Session.set('talk', null);
-    if (sid && (!storedSession || storedSession !== sid)) {
-      Session.set('session', sid);
-    }
-    const {sessions, reviewer, talks, files, images, comments} = this.props;
-    let props = sessions.find(s => s._id === sid) || {};
-    props.talks = talks.filter(f => f.session === sid);
-    props.files = files.filter(f => f.meta.sessionId === sid);
-    props.images = images.filter(f => f.meta.sessionId === sid);
-    props.reviewer = reviewer;
-    props.sessionId = sid;
-    return props;
-  };
-
-  getTalkProps = tid => {
-    const storedTalk = Session.get('talk');
-    Session.set('session', null);
-    const {sessions, talks, reviewer, files, images, comments} = this.props;
-    if (tid && (!storedTalk || storedTalk !== tid)) {
-      Session.set('talk', tid);
-    }
-    const talk = talks.find(t => t._id === tid) || {};
-    console.log(talks, tid, talk);
-    Session.set('session', talk.session);
-
-    let props = {};
-    props.talk = talk;
-    props.sessionId = talk.session;
-    props.session = sessions.find(s => s._id === talk.sessionId);
-    props.files = files.filter(f => f.meta.talkId === tid);
-    props.images = images.filter(f => f.meta.talkId === tid);
-    props.sComments = comments.filter(c => c.talk === tid);
-    props.comments = props.sComments.filter(this.controlFilter);
-    props.reviewer = reviewer;
-    props.talkId = tid;
-    return props;
-  };
-
   preRender = (match, Comp, pType) => {
     const shared = this.getSharedProps();
-    let sProps = {};
     if (pType == 'session') {
-      sProps = this.getSessionProps(match.params.id);
-      return <Comp {...shared} {...sProps} />;
-    }
-    let tProps = {};
-    if (pType == 'talk') {
-      tProps = this.getTalkProps(match.params.id);
-      return <ReviewContainer Comp={Comp} {...shared} {...tProps} />;
+      return <SessionContainer Comp={Comp} {...shared} id={match.params.id} />;
+    } else if (pType == 'talk') {
+      return <TalkContainer Comp={Comp} {...shared} id={match.params.id} />;
+    } else {
+      return <NotFoundPage />;
     }
   };
 
@@ -247,22 +199,11 @@ export default class App extends BaseComponent {
 
 const PrivateRoute = ({user, render, ...other}) => {
   const matchId = other.computedMatch.params.id;
-  const sess = Sessions.findOne(matchId);
-  const talk = Talks.findOne(matchId);
-  let loc = window.location.pathname;
-  let out;
-
-  // TODO - handle using the session / talk variables to recover routes.
+  let out,
+    loc = window.location.pathname;
 
   if (!user) {
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
-  } else if (matchId && !sess && !talk) {
-    out = () => <NotFoundPage />;
-  } else if (
-    (sess && sess.userId !== Meteor.userId()) ||
-    (talk && talk.userId !== Meteor.userId())
-  ) {
-    out = () => <ForbiddenPage />;
   } else {
     out = render;
   }
