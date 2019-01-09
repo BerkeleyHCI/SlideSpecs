@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TODO - also export the image files.
+# TODO - also export files/images
 
 data=../data
 declare -a arr=("users" "Sessions" "Talks" "Comments" "files" "images")

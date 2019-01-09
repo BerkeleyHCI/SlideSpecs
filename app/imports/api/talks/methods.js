@@ -3,9 +3,12 @@ import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 import {Talks} from './talks.js';
-import {Images} from '../images/images.js';
 import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';
+import {Images} from '../images/images.js';
+
+// common pattern for checking permission
+//const talkCheck = talkId => { }
 
 export const createTalk = new ValidatedMethod({
   name: 'talks.create',
@@ -56,10 +59,15 @@ export const deleteTalk = new ValidatedMethod({
   }).validator(),
   run({talkId}) {
     const talk = Talks.findOne(talkId);
-    if (talk.userId !== this.userId) {
+    if (!talk) {
+      throw new Meteor.Error(
+        'api.talks.delete.talkNotFound',
+        'This talk does not exist.',
+      );
+    } else if (talk.userId !== this.userId) {
       throw new Meteor.Error(
         'api.talks.delete.accessDenied',
-        "You don't have permission to edit this talk.",
+        "You don't have permission to delete this talk.",
       );
     } else {
       try {

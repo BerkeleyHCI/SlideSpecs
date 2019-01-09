@@ -5,9 +5,11 @@ import {Link} from 'react-router-dom';
 import {_} from 'lodash';
 import {toast} from 'react-toastify';
 
+import {Talks} from '../../api/images/images.js';
+import {deleteTalk} from '../../api/talks/methods.js';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
-import {deleteTalk} from '../../api/talks/methods.js';
+
 import BaseComponent from '../components/BaseComponent.jsx';
 import SlideFile from '../components/SlideFile.jsx';
 import {Message} from '../components/Message.jsx';

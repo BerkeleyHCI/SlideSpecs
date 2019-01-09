@@ -3,6 +3,7 @@ import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 import {Sessions} from './sessions.js';
+import {Talks} from '../talks/talks.js';
 import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';
 import {Images} from '../images/images.js';
@@ -26,25 +27,10 @@ export const createSession = new ValidatedMethod({
         'You must log in to create a session.',
       );
     } else {
-      const starterComment = (err, _id) => {
-        if (!err) {
-          Comments.insert({
-            created: Date.now(),
-            session: _id,
-            slides: [],
-            author: 'system',
-            content: `Starter tags: #delivery #slideDesign #story #great #confusing #coreIdea`,
-          });
-        }
-      };
-
-      return Sessions.insert(
-        {
-          userId: this.userId,
-          created: Date.now(),
-        },
-        starterComment,
-      );
+      return Sessions.insert({
+        userId: this.userId,
+        created: Date.now(),
+      });
     }
   },
 });
@@ -68,22 +54,6 @@ export const renameSession = new ValidatedMethod({
   },
 });
 
-export const setRespondingComment = new ValidatedMethod({
-  name: 'sessions.setRespondingComment',
-  validate: new SimpleSchema({
-    sessionId: {type: String},
-    commentId: {type: String},
-  }).validator(),
-  run({sessionId, commentId}) {
-    const session = Sessions.findOne(sessionId);
-    if (session) {
-      Sessions.update(sessionId, {$set: {responding: commentId}});
-    } else {
-      throw new Meteor.Error('api.sessions', 'Session does not exist.');
-    }
-  },
-});
-
 export const deleteSession = new ValidatedMethod({
   name: 'sessions.delete',
   validate: new SimpleSchema({
@@ -91,17 +61,18 @@ export const deleteSession = new ValidatedMethod({
   }).validator(),
   run({sessionId}) {
     const session = Sessions.findOne(sessionId);
-    if (session.userId !== this.userId) {
+    if (!session || session.userId !== this.userId) {
       throw new Meteor.Error(
         'api.sessions.delete.accessDenied',
-        "You don't have permission to edit this session.",
+        "You don't have permission to delete this session.",
       );
     } else {
       try {
-        // deleting related files
+        // deleting related files / records
         Files.remove({'meta.sessionId': sessionId});
         Images.remove({'meta.sessionId': sessionId});
         Comments.remove({session: sessionId});
+        Talks.remove({session: sessionId});
         Sessions.remove(sessionId);
       } catch (e) {
         console.error(e);

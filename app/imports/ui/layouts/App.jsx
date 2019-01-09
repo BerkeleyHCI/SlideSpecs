@@ -77,9 +77,9 @@ export default class App extends BaseComponent {
     }
     const {sessions, reviewer, talks, files, images, comments} = this.props;
     let props = sessions.find(s => s._id === sid) || {};
+    props.talks = talks.filter(f => f.session === sid);
     props.files = files.filter(f => f.meta.sessionId === sid);
     props.images = images.filter(f => f.meta.sessionId === sid);
-    props.talks = talks.filter(f => f.session === sid);
     props.reviewer = reviewer;
     props.sessionId = sid;
     return props;
@@ -87,6 +87,7 @@ export default class App extends BaseComponent {
 
   getTalkProps = tid => {
     const storedTalk = Session.get('talk');
+    Session.set('session', null);
     const {sessions, talks, reviewer, files, images, comments} = this.props;
     if (tid && (!storedTalk || storedTalk !== tid)) {
       Session.set('talk', tid);
@@ -109,20 +110,16 @@ export default class App extends BaseComponent {
   };
 
   preRender = (match, Comp, pType) => {
-    if (!match) {
-      return <Loading />;
-    } else {
-      const shared = this.getSharedProps();
-      let sProps = {};
-      if (pType == 'session') {
-        sProps = this.getSessionProps(match.params.id);
-        return <Comp {...shared} {...sProps} />;
-      }
-      let tProps = {};
-      if (pType == 'talk') {
-        tProps = this.getTalkProps(match.params.id);
-        return <ReviewContainer Comp={Comp} {...shared} {...tProps} />;
-      }
+    const shared = this.getSharedProps();
+    let sProps = {};
+    if (pType == 'session') {
+      sProps = this.getSessionProps(match.params.id);
+      return <Comp {...shared} {...sProps} />;
+    }
+    let tProps = {};
+    if (pType == 'talk') {
+      tProps = this.getTalkProps(match.params.id);
+      return <ReviewContainer Comp={Comp} {...shared} {...tProps} />;
     }
   };
 
