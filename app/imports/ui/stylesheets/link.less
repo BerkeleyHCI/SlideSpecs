@@ -4,20 +4,19 @@ a {
   color: @color-primary;
   cursor: pointer;
   text-decoration: none;
-
+  &:active {
+    color: @color-primary;
+    text-decoration: none;
+  }
+  &:focus {
+    color: @color-primary;
+    text-decoration: none;
+    outline: none;
+  } //removes FF dotted outline
   &:hover {
     color: darken(@color-primary, 15%);
     text-decoration: none;
   }
-  &:active {
-    color: @color-secondary;
-    text-decoration: none;
-  }
-  &:focus {
-    color: @color-secondary;
-    text-decoration: none;
-    outline: none;
-  } //removes FF dotted outline
 
   // for back arrows
   .black {

@@ -144,10 +144,8 @@ export default class SessionPage extends BaseComponent {
         <h1>{name}</h1>
 
         <div className="alert">
-          share this session |
           <a className="black" href={shareLink} target="_blank">
-            {' '}
-            {shareLink}
+            share this session with a public link
             <button className="pull-right btn-menu btn-primary">open</button>
           </a>
         </div>

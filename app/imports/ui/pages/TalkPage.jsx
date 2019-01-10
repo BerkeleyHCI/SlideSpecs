@@ -88,9 +88,9 @@ class TalkPage extends BaseComponent {
                 </button>
               </a>
 
-              <Link to={`/comment/${session._id}`}>
+              <a href={`/comment/${talkId}`}>
                 <button className="btn btn-menu">view comments</button>
-              </Link>
+              </a>
             </div>
           </div>
 
