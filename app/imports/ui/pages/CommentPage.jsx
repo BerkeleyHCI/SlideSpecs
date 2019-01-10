@@ -374,7 +374,7 @@ class CommentPage extends BaseComponent {
           <button
             className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
             onClick={authSort}>
-            auth
+            author
           </button>
           <button
             className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
@@ -473,9 +473,9 @@ class CommentPage extends BaseComponent {
   };
 
   goToTop = () => {
-    const view = document.getElementsByClassName('nav-head');
+    const view = document.getElementsByClassName('comments-head');
     if (view[0]) {
-      view[0].scrollIntoView();
+      view[0].scrollIntoView({block: 'center', inline: 'center'});
     }
   };
 
@@ -567,7 +567,7 @@ class CommentPage extends BaseComponent {
 
       return (
         <div>
-          <h2> comments </h2>
+          <h2 className="comments-head"> comments </h2>
           <div id="comments-list" className="alert">
             {items.map(i => (
               <Comment {...i} />
@@ -578,7 +578,7 @@ class CommentPage extends BaseComponent {
               <button
                 onClick={this.goToTop}
                 className="btn center btn-menu btn-round">
-                <i className={'fa fa-arrow-up'} />
+                <i className={'fa fa-arrow-up no-padding'} />
               </button>
               <div className="v-pad" />
             </div>
@@ -592,10 +592,20 @@ class CommentPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderFiles();
     const {image, hoverImage, filtered, bySlide} = this.state;
+    const {name, session, reviewer} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
+        <h2 className="alert clearfix no-margin">
+          <Link to={`/share/${session._id}`}>
+            <span className="black"> ‹ </span>
+            {name}
+          </Link>
+          <small onClick={this.clearReviewer} className="pull-right clear-icon">
+            {reviewer}
+          </small>
+        </h2>
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
@@ -621,7 +631,7 @@ class CommentPage extends BaseComponent {
   };
 
   render() {
-    const {files, name, session, reviewer, userId} = this.props;
+    const {files, userId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
@@ -631,18 +641,6 @@ class CommentPage extends BaseComponent {
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">
-          <h2 className="nav-head clearfix">
-            <Link to={`/share/${session._id}`}>
-              <span className="white"> ‹ </span>
-              <span className="gray">{name}</span>
-            </Link>
-            <small
-              onClick={this.clearReviewer}
-              className="pull-right clear-icon">
-              {reviewer}
-            </small>
-          </h2>
-
           <div
             id="review-view"
             onMouseDown={this.clearButtonBG}

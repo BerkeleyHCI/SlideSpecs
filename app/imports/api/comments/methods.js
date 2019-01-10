@@ -37,6 +37,7 @@ export const createComment = new ValidatedMethod({
         slides,
         agree,
         discuss,
+        userOwn,
       };
       //console.log({type: 'comment.create', ...data});
       return Comments.insert(data);

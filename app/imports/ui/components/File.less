@@ -193,9 +193,9 @@ div.reviewView {
   kbd {
     line-height: initial;
     display: inline-block;
-    background-color: @color-danger;
+    background-color: lighten(@color-danger, 20%);
     &:hover {
-      background-color: @color-note;
+      background-color: @color-note !important;
       color: @color-full;
     }
   }
@@ -229,7 +229,11 @@ div.reviewView {
 
   .btn.center {
     margin: auto;
-    padding: 0.3em;
+    padding: 0.4em;
+  }
+
+  .btn-round {
+    padding: 0.5em 1em !important;
   }
 
   .tag-group {
@@ -318,8 +322,8 @@ div.reviewView {
   }
 
   .btn-menu.pull-right {
-    padding: initial;
-    padding-right: 2px;
+    padding: 1px 4px;
+    margin-right: 2px;
   }
 
   .filterer.no-submit {
