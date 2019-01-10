@@ -22,37 +22,26 @@ export const createComment = new ValidatedMethod({
     slides: {type: [SlideSchema]},
     agree: {type: [String], optional: true},
     discuss: {type: [String], optional: true},
-    addressed: {type: Boolean, optional: true},
     userOwn: {type: Boolean, optional: true},
   }).validator(),
-  run({
-    author,
-    userOwn,
-    content,
-    session,
-    talk,
-    slides,
-    addressed,
-    discuss,
-    agree,
-  }) {
+  run({session, talk, author, content, slides, agree, discuss, userOwn}) {
     const sess = Sessions.findOne(session);
     const uTalk = Talks.findOne(talk);
-    if (sess && talk && talk.session === sess._id) {
+    if (sess && uTalk && uTalk.session === sess._id) {
       const data = {
         created: Date.now(),
-        userOwn,
-        content,
-        author,
         session,
-        slides,
         talk,
-        discuss,
-        addressed,
+        author,
+        content,
+        slides,
         agree,
+        discuss,
       };
-      console.log({type: 'comment.create', ...data});
+      //console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
+    } else {
+      console.error('Session and Talk data does not match.', sess, uTalk);
     }
   },
 });
@@ -163,7 +152,26 @@ export const updateComment = new ValidatedMethod({
   run({author, commentId, newContent}) {
     const comment = Comments.findOne(commentId);
     if (comment && comment.author == author) {
-      Comments.update(commentId, {$set: {content: newContent}});
+      const newOwn = comment.userOwn || newContent.includes('#private');
+      Comments.update(commentId, {
+        $set: {content: newContent, userOwn: newOwn},
+      });
+    }
+  },
+});
+
+export const toggleVisibility = new ValidatedMethod({
+  name: 'comments.toggleVisibility',
+  validate: new SimpleSchema({
+    author: {type: String},
+    commentId: {type: String},
+  }).validator(),
+  run({author, commentId}) {
+    const comment = Comments.findOne(commentId);
+    if (comment && comment.author == author) {
+      Comments.update(commentId, {
+        $set: {userOwn: !comment.userOwn},
+      });
     }
   },
 });

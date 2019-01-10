@@ -343,18 +343,20 @@ div.reviewView {
     }
     textarea {
       animation: pulse 3s infinite ease-in-out;
-      background: darken(@color-empty, 4%);
+      background: lighten(@color-primary, 45%);
       padding: 15px 15px 5px 15px;
       &:hover {
         border-left: 0.5em solid @color-danger;
         transition: border-width 0.1s ease;
-        background: darken(@color-empty, 2%);
+        transition: background 0.1s ease;
+        background: lighten(@color-primary, 35%);
       }
       &:focus {
         box-shadow: 0 4px 2px -2px @color-ancillary;
         border-left: 1em solid @color-ancillary;
         transition: border-width 0.1s ease;
         transition: border-color 0.1s ease;
+        transition: background 0.1s ease;
         background: @color-empty;
         animation: none;
       }

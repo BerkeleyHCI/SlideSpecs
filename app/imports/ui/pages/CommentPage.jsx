@@ -113,7 +113,6 @@ class CommentPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
-
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
@@ -211,8 +210,7 @@ class CommentPage extends BaseComponent {
 
   updateImage = id => {
     try {
-      const link = Images.findOne(id).link('original', '//');
-      this.setState({image: link});
+      this.setState({image: Images.findOne(id).link('original', '//')});
     } catch (e) {
       console.error(e);
     }
@@ -220,8 +218,7 @@ class CommentPage extends BaseComponent {
 
   updateHoverImage = id => {
     try {
-      const link = Images.findOne(id).link('original', '//');
-      this.setState({hoverImage: link});
+      this.setState({hoverImage: Images.findOne(id).link('original', '//')});
     } catch (e) {
       console.error(e);
     }
@@ -509,6 +506,7 @@ class CommentPage extends BaseComponent {
       }
 
       // Filtering 'reply' comments into array. HATE.
+      // TODO - make it so this seperates on punctuation
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
       const replies = csort.filter(isReply).map(c => {
@@ -623,7 +621,7 @@ class CommentPage extends BaseComponent {
   };
 
   render() {
-    const {files, sessionId, session, reviewer, userId} = this.props;
+    const {files, name, session, reviewer, userId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
@@ -634,7 +632,10 @@ class CommentPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h2 className="nav-head clearfix">
-            <Link to={`/share/${sessionId}`}>‹ slidespecs</Link>
+            <Link to={`/share/${session._id}`}>
+              <span className="white"> ‹ </span>
+              <span className="gray">{name}</span>
+            </Link>
             <small
               onClick={this.clearReviewer}
               className="pull-right clear-icon">

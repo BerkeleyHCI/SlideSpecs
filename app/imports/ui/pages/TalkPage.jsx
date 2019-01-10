@@ -80,11 +80,18 @@ class TalkPage extends BaseComponent {
               <li>comments: {comments.length}</li>
             </ul>
             <hr />
-            <a download href={talkFile}>
-              <button className="btn btn-menu btn-primary">
-                download original
-              </button>
-            </a>
+
+            <div className="btns-menu-space">
+              <a download href={talkFile}>
+                <button className="btn btn-menu btn-primary">
+                  download original
+                </button>
+              </a>
+
+              <Link to={`/comment/${session._id}`}>
+                <button className="btn btn-menu">view comments</button>
+              </Link>
+            </div>
           </div>
 
           <div id="grid">{imageSet}</div>
