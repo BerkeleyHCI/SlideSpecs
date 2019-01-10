@@ -12,10 +12,7 @@ import App from '../layouts/App.jsx';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 export default withTracker(() => {
-  let reviewer = Session.get('reviewer');
-  let session = Session.get('session');
-  let talk = Session.get('talk');
-
+  const reviewer = Session.get('reviewer');
   let data = {
     connected: Meteor.status().connected,
     user: Meteor.user(),
@@ -28,35 +25,15 @@ export default withTracker(() => {
     images: [],
   };
 
-  let sessions, talks, comments, files, images;
-  if (Meteor.userId()) {
-    sessions = Meteor.subscribe('sessions.all');
+  const sub = Session.get('subscription');
+  if (sub) {
+    const sessions = Meteor.subscribe(`sessions.${sub.type}`, sub._id);
+    const talks = Meteor.subscribe(`talks.${sub.type}`, sub._id);
+    const comments = Meteor.subscribe(`comments.${sub.type}`, sub._id);
+    const files = Meteor.subscribe(`files.${sub.type}`, sub._id);
+    const images = Meteor.subscribe(`images.${sub.type}`, sub._id);
     data = Object.assign(data, {
-      loading: !sessions.ready(),
-      sessions: Sessions.find(
-        {userId: Meteor.userId()},
-        {sort: {created: -1}},
-      ).fetch(),
-    });
-  }
-
-  if (session) {
-    talks = Meteor.subscribe('talks', session);
-    files = Meteor.subscribe('files.session', session);
-    images = Meteor.subscribe('images.session', session);
-    data = Object.assign(data, {
-      talks: Talks.find({}, {sort: {created: -1}}).fetch(),
-      files: Files.find({}, {sort: {name: 1}}).fetch(),
-      images: Images.find({}, {sort: {name: 1}}).fetch(),
-    });
-  }
-
-  if (talk && reviewer) {
-    sessions = Meteor.subscribe('sessions.all');
-    comments = Meteor.subscribe('comments', talk);
-    files = Meteor.subscribe('files.talk', talk);
-    images = Meteor.subscribe('images.talk', talk);
-    data = Object.assign(data, {
+      loading: [sessions, talks, comments, files, images].some(s => !s.ready()),
       sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
       talks: Talks.find({}, {sort: {created: -1}}).fetch(),
       comments: Comments.find({}, {sort: {name: 1}}).fetch(),

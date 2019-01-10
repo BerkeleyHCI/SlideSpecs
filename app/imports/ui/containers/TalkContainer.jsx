@@ -5,6 +5,11 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
 
 export default class TalkContainer extends BaseComponent {
+  renewSubscription = sid => {
+    const sub = Session.get('subscription');
+    return sid && sub && (sub.type != 'talk' || sub._id != sid);
+  };
+
   controlFilter = comment => {
     const auth = ['system', this.props.reviewer];
     return (
@@ -13,15 +18,15 @@ export default class TalkContainer extends BaseComponent {
   };
 
   getTalkProps = tid => {
-    const storedTalk = Session.get('talk');
-    Session.set('session', null);
     const {sessions, talks, reviewer, files, images, comments} = this.props;
-    if (tid && (!storedTalk || storedTalk !== tid)) {
+    if (tid && (!storedTalk || storedTalk != tid)) {
       Session.set('talk', tid);
     }
     const talk = talks.find(t => t._id === tid) || {};
-    console.log(talks, tid, talk);
-    Session.set('session', talk.session);
+    console.log(talk);
+    if (talk && talk.session && (!storedSess || storedSess != talk.session)) {
+      Session.set('session', talk.session);
+    }
 
     let props = {};
     props.talk = talk;

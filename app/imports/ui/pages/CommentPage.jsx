@@ -626,14 +626,7 @@ class CommentPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView">
           <h2 className="nav-head clearfix">
-            {sessionOwner ? (
-              <Link to={`/share/${sessionId}`}>
-                <span className="black"> ‹ </span>
-                slidespecs
-              </Link>
-            ) : (
-              <span> slidespecs </span>
-            )}
+            <Link to={`/share/${sessionId}`}>‹ slidespecs</Link>
             <small
               onClick={this.clearReviewer}
               className="pull-right clear-icon">

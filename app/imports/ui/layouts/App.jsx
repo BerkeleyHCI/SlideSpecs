@@ -1,17 +1,15 @@
 import React, {Component} from 'react';
-import {Session} from 'meteor/session.js';
-import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
+import PropTypes from 'prop-types';
+import {Session} from 'meteor/session.js';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
-
-import {Sessions} from '../../api/sessions/sessions.js';
-import {Talks} from '../../api/talks/talks.js';
 
 import AppModal from '../components/AppModal.jsx';
 import Loading from '../components/Loading.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
+import UserContainer from '../containers/UserContainer.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
 import TalkContainer from '../containers/TalkContainer.jsx';
 
@@ -20,12 +18,10 @@ import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import SessionPage from '../pages/SessionPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
+import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';
-import DiscussPage from '../pages/DiscussPage.jsx';
-import FeedbackPage from '../pages/FeedbackPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ForbiddenPage from '../pages/ForbiddenPage.jsx';
-import SharePage from '../pages/SharePage.jsx';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
@@ -66,7 +62,9 @@ export default class App extends BaseComponent {
 
   preRender = (match, Comp, pType) => {
     const shared = this.getSharedProps();
-    if (pType == 'session') {
+    if (pType == 'user') {
+      return <UserContainer Comp={Comp} {...shared} id={Meteor.userId()} />;
+    } else if (pType == 'session') {
       return <SessionContainer Comp={Comp} {...shared} id={match.params.id} />;
     } else if (pType == 'talk') {
       return <TalkContainer Comp={Comp} {...shared} id={match.params.id} />;
@@ -75,20 +73,16 @@ export default class App extends BaseComponent {
     }
   };
 
+  renderSessionList = ({match}) => {
+    return this.preRender(match, SessionListPage, 'user');
+  };
+
   renderSession = ({match}) => {
     return this.preRender(match, SessionPage, 'session');
   };
 
   renderTalk = ({match}) => {
     return this.preRender(match, TalkPage, 'talk');
-  };
-
-  renderDiscuss = ({match}) => {
-    return this.preRender(match, DiscussPage, 'talk');
-  };
-
-  renderFeedback = ({match}) => {
-    return this.preRender(match, FeedbackPage, 'talk');
   };
 
   renderShare = ({match}) => {
@@ -140,7 +134,7 @@ export default class App extends BaseComponent {
               exact
               path="/"
               user={user}
-              render={() => <SessionListPage sessions={sessions} {...shared} />}
+              render={this.renderSessionList}
             />
 
             <PrivateRoute
@@ -152,18 +146,6 @@ export default class App extends BaseComponent {
             <PrivateRoute
               path="/slides/:id"
               render={this.renderTalk}
-              user={user}
-            />
-
-            <Route
-              path="/discuss/:id"
-              render={this.renderDiscuss}
-              user={user}
-            />
-
-            <PrivateRoute
-              path="/feedback/:id"
-              render={this.renderFeedback}
               user={user}
             />
 
@@ -212,17 +194,21 @@ const PrivateRoute = ({user, render, ...other}) => {
 };
 
 App.propTypes = {
-  user: PropTypes.object, // current meteor user
   connected: PropTypes.bool.isRequired, // server connection status
   loading: PropTypes.bool.isRequired, // subscription status
-  sessions: PropTypes.array, // all visible files
+  user: PropTypes.object, // current meteor user
+  sessions: PropTypes.array,
+  comments: PropTypes.array,
   talks: PropTypes.array,
-  files: PropTypes.array, // all visible files
+  files: PropTypes.array,
+  images: PropTypes.array,
 };
 
 App.defaultProps = {
   user: null,
   sessions: [],
+  comments: [],
   talks: [],
   files: [],
+  images: [],
 };

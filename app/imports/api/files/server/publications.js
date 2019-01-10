@@ -4,6 +4,11 @@ import {Files} from '../files.js';
 
 Files.allowClient();
 
+Meteor.publish('files.user', x => {
+  check(x, String);
+  return Files.find({'meta.userId': x}).cursor;
+});
+
 Meteor.publish('files.session', function(session) {
   check(session, String);
   if (!session) {

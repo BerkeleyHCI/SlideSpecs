@@ -4,6 +4,11 @@ import {Images} from '../images.js';
 
 Images.allowClient();
 
+Meteor.publish('images.user', x => {
+  check(x, String);
+  return Images.find({'meta.userId': x}).cursor;
+});
+
 Meteor.publish('images.session', function(session) {
   check(session, String);
   if (!session) {
