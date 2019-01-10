@@ -327,7 +327,7 @@ class Comment extends BaseComponent {
           data-toggle="tooltip"
           data-placement="top"
           onClick={handleClick}
-          className={`btn btn-empty ${master && 'btn-user'}`}>
+          className={`btn btn-empty btn-list-item ${master && 'btn-user'}`}>
           <i className={'fa fa-' + icon} />
         </button>
       )
@@ -455,7 +455,11 @@ class Comment extends BaseComponent {
           {!last && <hr />}
         </div>
 
-        <div>{replyProps.map(rp => <Comment {...this.props} {...rp} />)}</div>
+        <div>
+          {replyProps.map(rp => (
+            <Comment {...this.props} {...rp} />
+          ))}
+        </div>
       </div>
     );
   };
