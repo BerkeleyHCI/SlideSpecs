@@ -27,7 +27,7 @@ class SharePage extends BaseComponent {
               key={talk._id}
               talk={talk}
               images={images}
-              sharing={true}
+              linkPre="comment"
             />
           ))}
         </ul>

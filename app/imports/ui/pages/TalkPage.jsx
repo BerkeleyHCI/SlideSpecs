@@ -12,7 +12,8 @@ import {Images} from '../../api/images/images.js';
 
 import BaseComponent from '../components/BaseComponent.jsx';
 import SlideFile from '../components/SlideFile.jsx';
-import {Message} from '../components/Message.jsx';
+import TalkListItem from '../components/TalkListItem.jsx';
+import {FullMessage} from '../components/Message.jsx';
 
 class TalkPage extends BaseComponent {
   updateMason = () => {
@@ -62,6 +63,15 @@ class TalkPage extends BaseComponent {
       />
     ));
 
+    const talkPropLoading = {
+      name: (
+        <FullMessage
+          title="processing slides..."
+          subtitle="generating images"
+        />
+      ),
+    };
+
     return (
       this.renderRedirect() || (
         <div className="main-content">
@@ -93,6 +103,10 @@ class TalkPage extends BaseComponent {
               </Link>
             </div>
           </div>
+
+          {images.length == 0 && (
+              <TalkListItem talk={talkPropLoading} images={[]} sharing={true} />
+          )}
 
           <div id="grid">{imageSet}</div>
         </div>

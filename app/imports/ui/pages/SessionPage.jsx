@@ -127,10 +127,6 @@ export default class SessionPage extends BaseComponent {
     const {uploading} = this.state;
     const {sessionId, name, talks, files, images} = this.props;
     const shareLink = window.location.origin + '/share/' + sessionId;
-    const discussLink = window.location.origin + '/review/' + sessionId;
-    const uLink = `/slides/${sessionId}`;
-    const dLink = `/discuss/${sessionId}`;
-    const fLink = `/feedback/${sessionId}`;
 
     if (uploading) {
       return <Message title="uploading..." subtitle={<Loading />} />;
@@ -159,6 +155,7 @@ export default class SessionPage extends BaseComponent {
                   talk={talk}
                   images={images}
                   files={files}
+                  linkPre="slides"
                   sessionOwner={this.props.sessionOwner}
                 />
               ))}

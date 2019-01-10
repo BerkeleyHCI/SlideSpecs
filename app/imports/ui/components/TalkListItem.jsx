@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
+import Loading from '../components/Loading.jsx';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
 
@@ -26,10 +27,10 @@ class TalkListItem extends Component {
   };
 
   render() {
-    const {talk, sharing, images, session, sessionOwner} = this.props;
-    const linkPrefix = sharing ? '/comment/' : '/slides/';
-    const talkLink = linkPrefix + talk._id;
-    let iLink = '/error';
+    const {talk, linkPre, images, session, sessionOwner} = this.props;
+    const talkLink = `/${linkPre}/${talk._id}`;
+    let iLink = '/loading.svg';
+    // TODO - adding a timeout with session.created to show error after 3 min
     const tImages = images.filter(i => i.meta.talkId === talk._id);
     if (tImages.length > 0) {
       try {
@@ -51,12 +52,16 @@ class TalkListItem extends Component {
         <div className="table no-margin">
           <div className="row">
             <div className="col-sm-3">
-              <Link to={talkLink}>
-                <Img className="preview" source={iLink} />
-              </Link>
+              {!linkPre && <Img className="preview" source={iLink} />}
+              {linkPre && (
+                <Link to={talkLink}>
+                  <Img className="preview" source={iLink} />
+                </Link>
+              )}
             </div>
             <div className="col-sm-9 padded">
-              <Link to={talkLink}>{talk.name}</Link>
+              {!linkPre && talk.name}
+              {linkPre && <Link to={talkLink}>{talk.name}</Link>}
               {sessionOwner && (
                 <div className="btn-m-group pull-right">
                   <button onClick={this.renameTalk} className="btn-menu">
@@ -77,13 +82,13 @@ class TalkListItem extends Component {
 
 TalkListItem.propTypes = {
   images: PropTypes.array,
-  sharing: PropTypes.bool,
+  linkPre: PropTypes.string,
   sessionOwner: PropTypes.bool,
 };
 
 TalkListItem.defaultProps = {
   images: [],
-  sharing: false,
+  linkPre: '',
   sessionOwner: false,
 };
 
