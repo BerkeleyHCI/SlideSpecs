@@ -44,10 +44,13 @@ class TalkPage extends BaseComponent {
 
   render() {
     const {session, talkId, name, files, images, comments} = this.props;
-    let talkFile = Files.findOne({'meta.talkId': talkId}).link(
-      'original',
-      '//',
-    );
+    let talkFile;
+    try {
+      let fileParams = {'meta.talkId': talkId};
+      talkFile = Files.findOne(fileParams).link('original', '//');
+    } catch (e) {
+      talkFile = '/404';
+    }
     let imageSet = images.map((i, key) => (
       <SlideFile
         key={'file-' + key}

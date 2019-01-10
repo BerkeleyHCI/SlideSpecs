@@ -31,10 +31,10 @@ export const createComment = new ValidatedMethod({
     content,
     session,
     talk,
+    slides,
     addressed,
     discuss,
     agree,
-    slides,
   }) {
     const sess = Sessions.findOne(session);
     const uTalk = Talks.findOne(talk);
@@ -42,13 +42,14 @@ export const createComment = new ValidatedMethod({
       const data = {
         created: Date.now(),
         userOwn,
+        content,
         author,
+        session,
+        slides,
+        talk,
         discuss,
         addressed,
         agree,
-        content,
-        session,
-        slides,
       };
       console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
@@ -63,9 +64,7 @@ export const addressComment = new ValidatedMethod({
   }).validator(),
   run({commentId}) {
     const comment = Comments.findOne(commentId);
-    if (!comment) {
-      return false;
-    } else {
+    if (comment) {
       const newAddress = !comment.addressed;
       return Comments.update(commentId, {$set: {addressed: newAddress}});
     }

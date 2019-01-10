@@ -5,9 +5,9 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
 
 export default class TalkContainer extends BaseComponent {
-  renewSubscription = sid => {
+  renewSubscription = _id => {
     const sub = Session.get('subscription');
-    return sid && sub && (sub.type != 'talk' || sub._id != sid);
+    return _id && (!sub || sub.type != 'user' || sub._id != _id);
   };
 
   controlFilter = comment => {
@@ -17,27 +17,23 @@ export default class TalkContainer extends BaseComponent {
     );
   };
 
-  getTalkProps = tid => {
-    const {sessions, talks, reviewer, files, images, comments} = this.props;
-    if (tid && (!storedTalk || storedTalk != tid)) {
-      Session.set('talk', tid);
-    }
-    const talk = talks.find(t => t._id === tid) || {};
-    console.log(talk);
-    if (talk && talk.session && (!storedSess || storedSess != talk.session)) {
-      Session.set('session', talk.session);
+  getTalkProps = _id => {
+    if (this.renewSubscription(_id)) {
+      Session.set('subscription', {type: 'talk', _id});
     }
 
     let props = {};
-    props.talk = talk;
-    props.sessionId = talk.session;
-    props.session = sessions.find(s => s._id === talk.sessionId);
-    props.tComments = comments.filter(c => c.talk === tid);
+    const {sessions, talks, reviewer, files, images, comments} = this.props;
+    props.talk = talks.find(t => t._id === _id) || {};
+    props.session = sessions.find(s => s._id === props.talk.session) || {};
+    props.tComments = comments.filter(c => c.talk === _id);
     props.comments = props.tComments.filter(this.controlFilter);
-    props.files = files.filter(f => f.meta.talkId === tid);
-    props.images = images.filter(f => f.meta.talkId === tid);
+    props.files = files.filter(f => f.meta.talkId === _id);
+    props.images = images.filter(f => f.meta.talkId === _id);
+    props.sessionId = props.session._id;
+    props.name = props.talk.name;
     props.reviewer = reviewer;
-    props.talkId = tid;
+    props.talkId = _id;
     return props;
   };
 

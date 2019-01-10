@@ -51,9 +51,8 @@ class CommentPage extends BaseComponent {
 
   handleLoad = () => {
     const grid = document.getElementById('grid');
-    const mason = new Masonry(grid, {
-      itemSelector: '.file-item',
-    });
+    const itemSel = {itemSelector: '.file-item'};
+    const mason = new Masonry(grid, itemSel);
     mason.on('layoutComplete', this.handleSelectable);
   };
 
@@ -211,15 +210,21 @@ class CommentPage extends BaseComponent {
   };
 
   updateImage = id => {
-    console.log(Images, id);
-    //const link = Images.findOne(id).link('original', '//');
-    //this.setState({image: link});
+    try {
+      const link = Images.findOne(id).link('original', '//');
+      this.setState({image: link});
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   updateHoverImage = id => {
-    //const link = Images.findOne(id).link('original', '//');
-    const link = 'original';
-    this.setState({hoverImage: link});
+    try {
+      const link = Images.findOne(id).link('original', '//');
+      this.setState({hoverImage: link});
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   handleSlideIn = e => {
@@ -287,7 +292,6 @@ class CommentPage extends BaseComponent {
       slides,
     };
 
-    console.log(commentFields);
     createComment.call(commentFields, (err, res) => {
       if (err) {
         console.error(err);
@@ -412,8 +416,12 @@ class CommentPage extends BaseComponent {
   renderFiles = () => {
     const {images} = this.props;
     return images.map((f, key) => {
-      //let link = Images.findOne({_id: f._id}).link('original', '//');
-      let link = 'original';
+      let link = '404';
+      try {
+        link = Images.findOne({_id: f._id}).link('original', '//');
+      } catch (e) {
+        console.error(e);
+      }
       return (
         <FileReview
           key={'file-' + key}

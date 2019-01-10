@@ -4,23 +4,23 @@ import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 
 export default class UserContainer extends BaseComponent {
-  renewSubscription = uid => {
+  renewSubscription = _id => {
     const sub = Session.get('subscription');
-    return uid && (!sub || sub.type != 'user' || sub._id != uid);
+    return _id && (!sub || sub.type != 'user' || sub._id != _id);
   };
 
-  getUserProps = uid => {
-    if (this.renewSubscription(uid)) {
-      Session.set('subscription', {type: 'user', _id: uid});
+  getUserProps = _id => {
+    if (this.renewSubscription(_id)) {
+      Session.set('subscription', {type: 'user', _id});
     }
 
     let props = {};
     const {sessions, talks, files, images, comments} = this.props;
-    props.sessions = sessions.filter(s => s.userId === sid);
-    props.talks = talks.filter(f => f.userId === uid);
-    props.comments = comments.filter(f => f.userId === uid);
-    props.files = files.filter(f => f.meta.userId === uid);
-    props.images = images.filter(f => f.meta.userId === uid);
+    props.sessions = sessions.filter(s => s.userId === _id);
+    props.talks = talks.filter(f => f.userId === _id);
+    props.comments = comments.filter(f => f.userId === _id);
+    props.files = files.filter(f => f.meta.userId === _id);
+    props.images = images.filter(f => f.meta.userId === _id);
     return props;
   };
 
