@@ -159,6 +159,7 @@ export default class SessionPage extends BaseComponent {
                   talk={talk}
                   images={images}
                   files={files}
+                  sessionOwner={this.props.sessionOwner}
                 />
               ))}
             </ul>

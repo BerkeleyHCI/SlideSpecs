@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
+import {Images} from '../../api/images/images.js';
+import Img from '../components/Image.jsx';
 
 class TalkListItem extends Component {
   renameTalk = () => {
@@ -24,19 +26,49 @@ class TalkListItem extends Component {
   };
 
   render() {
-    const {talk, files, images} = this.props;
-    const talkLink = `/slides/${talk._id}`;
+    const {talk, sharing, images, session, sessionOwner} = this.props;
+    const linkPrefix = sharing ? '/comment/' : '/slides/';
+    const talkLink = linkPrefix + talk._id;
+    let iLink = '/error';
+    const tImages = images.filter(i => i.meta.talkId === talk._id);
+    if (tImages.length > 0) {
+      try {
+        const image = _.sortBy(tImages, x => Number(x.meta.slideNo))[0];
+        const testImage = Images.findOne(image._id);
+        if (testImage) iLink = testImage.link('original', '//');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // TODO - adding a grabber for ordering
+    //<div className="col-sm-1">
+    //<span>*</span>
+    //</div>
 
     return (
       <li className="list-group-item clearfix">
-        <Link to={talkLink}>{talk.name}</Link>
-        <div className="btn-m-group pull-right">
-          <button onClick={this.renameTalk} className="btn-menu">
-            rename
-          </button>
-          <button onClick={this.deleteTalk} className="btn-menu">
-            delete
-          </button>
+        <div className="table no-margin">
+          <div className="row">
+            <div className="col-sm-3">
+              <Link to={talkLink}>
+                <Img className="preview" source={iLink} />
+              </Link>
+            </div>
+            <div className="col-sm-9 padded">
+              <Link to={talkLink}>{talk.name}</Link>
+              {sessionOwner && (
+                <div className="btn-m-group pull-right">
+                  <button onClick={this.renameTalk} className="btn-menu">
+                    rename
+                  </button>
+                  <button onClick={this.deleteTalk} className="btn-menu">
+                    delete
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </li>
     );
@@ -44,13 +76,15 @@ class TalkListItem extends Component {
 }
 
 TalkListItem.propTypes = {
-  files: PropTypes.array,
   images: PropTypes.array,
+  sharing: PropTypes.bool,
+  sessionOwner: PropTypes.bool,
 };
 
 TalkListItem.defaultProps = {
-  files: [],
   images: [],
+  sharing: false,
+  sessionOwner: false,
 };
 
 export default TalkListItem;

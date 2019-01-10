@@ -5,19 +5,10 @@ import {Link} from 'react-router-dom';
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import {FullMessage} from '../components/Message.jsx';
+import TalkListItem from '../components/TalkListItem.jsx';
 import NameSet from '../components/NameSet.jsx';
 
 class SharePage extends BaseComponent {
-  renderTalk = (talk, i) => {
-    return (
-      <li key={talk._id} className="list-group-item clearfix">
-        <Link to={`/comment/${talk._id}`}>
-          {i + 1}. {talk.name}
-        </Link>
-      </li>
-    );
-  };
-
   renderName = () => {
     if (Session.get('reviewer')) {
       return null;
@@ -26,18 +17,31 @@ class SharePage extends BaseComponent {
     }
   };
 
+  renderTalks = () => {
+    const {talks, images} = this.props;
+    return (
+      <div>
+        <ul className="v-pad list-group">
+          {talks.map(talk => (
+            <TalkListItem
+              key={talk._id}
+              talk={talk}
+              images={images}
+              sharing={true}
+            />
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   render() {
     const {name, talks} = this.props;
-    const renderedTalks = talks.map(this.renderTalk);
     const content = this.renderName() || (
       <div className="main-content">
         <h1>{name}</h1>
         {talks.length == 0 && <div className="alert">no talks yet</div>}
-        {talks.length > 0 && (
-          <div>
-            <ul className="v-pad list-group">{renderedTalks}</ul>
-          </div>
-        )}
+        {talks.length > 0 && this.renderTalks()}
       </div>
     );
 

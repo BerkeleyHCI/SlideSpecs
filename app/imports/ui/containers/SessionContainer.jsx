@@ -20,6 +20,7 @@ export default class SessionContainer extends BaseComponent {
     props.talks = talks.filter(f => f.session === _id);
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
+    props.sessionOwner = Meteor.userId() === props.session.userId;
     props.name = props.session.name;
     props.sessionId = _id;
     return props;
