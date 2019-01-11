@@ -31,8 +31,9 @@ class TalkListItem extends Component {
     const talkLink = `/${linkPre}/${talk._id}`;
     let iLink = '/loading.svg';
     // TODO - adding a timeout with session.created to show error after 3 min
+    const hasImages = images && images.length > 0;
     const tImages = images.filter(i => i.meta.talkId === talk._id);
-    if (tImages.length > 0) {
+    if (hasImages) {
       try {
         const image = _.sortBy(tImages, x => Number(x.meta.slideNo))[0];
         const testImage = Images.findOne(image._id);
@@ -47,10 +48,14 @@ class TalkListItem extends Component {
     //<span>*</span>
     //</div>
 
+    // TODO - add a notification if over three minutes have passed since the
+    // talks.created field and then say that the file likely needs to be
+    // reuploaded
+
     return (
       <li className="list-group-item clearfix">
         <div className="table no-margin">
-          <div className="row">
+          <div className="row equal">
             <div className="col-sm-3">
               {!linkPre && <Img className="preview" source={iLink} />}
               {linkPre && (
@@ -62,6 +67,11 @@ class TalkListItem extends Component {
             <div className="col-sm-9 padded">
               {!linkPre && talk.name}
               {linkPre && <Link to={talkLink}>{talk.name}</Link>}
+              {!hasImages && (
+                <i>
+                  <br /> generating slide images{' '}
+                </i>
+              )}
               {sessionOwner && (
                 <div className="btn-m-group pull-right">
                   <button onClick={this.renameTalk} className="btn-menu">

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-# TODO - also export files/images
+# TODO - also export files/images (non-hardcoded path way)
 
-data=../data
+# Mongo Collections to export.
 declare -a arr=("users" "Sessions" "Talks" "Comments" "files" "images")
-mkdir -p $data
+
+data="../data $(date)"
+mkdir -p "$data"
 for i in "${arr[@]}"; do
     mongoexport --port 3001 --db meteor --collection "$i" --out "$data/$i.json"
 done
