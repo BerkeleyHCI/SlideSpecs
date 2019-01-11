@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
 import Loading from '../components/Loading.jsx';
 import {Images} from '../../api/images/images.js';
+import {FullMessage} from '../components/Message.jsx';
 import Img from '../components/Image.jsx';
 
 class TalkListItem extends Component {
@@ -31,12 +32,13 @@ class TalkListItem extends Component {
     const talkLink = `/${linkPre}/${talk._id}`;
     let iLink = '/loading.svg';
     // TODO - adding a timeout with session.created to show error after 3 min
-    const hasImages = images && images.length > 0;
     const tImages = images.filter(i => i.meta.talkId === talk._id);
+    const hasImages = tImages && tImages.length > 0;
     if (hasImages) {
       try {
+        let testImage;
         const image = _.sortBy(tImages, x => Number(x.meta.slideNo))[0];
-        const testImage = Images.findOne(image._id);
+        if (image) testImage = Images.findOne(image._id);
         if (testImage) iLink = testImage.link('original', '//');
       } catch (e) {
         console.error(e);
@@ -65,13 +67,6 @@ class TalkListItem extends Component {
               )}
             </div>
             <div className="col-sm-9 padded">
-              {!linkPre && talk.name}
-              {linkPre && <Link to={talkLink}>{talk.name}</Link>}
-              {!hasImages && (
-                <i>
-                  <br /> generating slide images{' '}
-                </i>
-              )}
               {sessionOwner && (
                 <div className="btn-m-group pull-right">
                   <button onClick={this.renameTalk} className="btn-menu">
@@ -82,6 +77,14 @@ class TalkListItem extends Component {
                   </button>
                 </div>
               )}
+              {!linkPre && talk.name}
+              {linkPre && <Link to={talkLink}>{talk.name}</Link>}
+              {!hasImages && (
+                <i>
+                  <br />
+                  <br /> generating slide images...
+                </i>
+              )}
             </div>
           </div>
         </div>
@@ -91,12 +94,14 @@ class TalkListItem extends Component {
 }
 
 TalkListItem.propTypes = {
+  talk: PropTypes.object,
   images: PropTypes.array,
   linkPre: PropTypes.string,
   sessionOwner: PropTypes.bool,
 };
 
 TalkListItem.defaultProps = {
+  talk: {name: ''},
   images: [],
   linkPre: '',
   sessionOwner: false,

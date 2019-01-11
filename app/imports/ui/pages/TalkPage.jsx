@@ -63,15 +63,6 @@ class TalkPage extends BaseComponent {
       />
     ));
 
-    const talkPropLoading = {
-      name: (
-        <FullMessage
-          title="processing slides..."
-          subtitle="generating images"
-        />
-      ),
-    };
-
     return (
       this.renderRedirect() || (
         <div className="main-content">
@@ -104,9 +95,7 @@ class TalkPage extends BaseComponent {
             </div>
           </div>
 
-          {images.length == 0 && (
-              <TalkListItem talk={talkPropLoading} images={[]} sharing={true} />
-          )}
+          {images.length == 0 && <TalkListItem images={[]} />}
 
           <div id="grid">{imageSet}</div>
         </div>
