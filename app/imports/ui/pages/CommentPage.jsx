@@ -32,6 +32,7 @@ class CommentPage extends BaseComponent {
       defaultPriv: false,
       following: true,
       focusing: false,
+      userOwn: false,
       redirectTo: null,
       activeComment: null,
       sorter: 'created',
@@ -285,7 +286,7 @@ class CommentPage extends BaseComponent {
       content: cText,
       session: sessionId,
       talk: talkId,
-      userOwn: defaultPriv || priv,
+      userOwn: false, // defaultPriv || priv,
       slides,
     };
 
@@ -314,24 +315,34 @@ class CommentPage extends BaseComponent {
     this.setState({focusing});
   };
 
+  toggleUserOwn = () => {
+    const userOwn = !this.state.userOwn;
+    this.setState({userOwn});
+  };
+
   renderCommentHead = () => {
-    const {defaultPriv, following, focusing} = this.state;
+    const {defaultPriv, following, focusing, userOwn} = this.state;
     return (
       <span className="comment-config pull-right">
-        <span className="comment-option" onClick={this.togglePrivate}>
-          <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
-          {defaultPriv ? 'private' : 'public'}
-        </span>{' '}
-        |{' '}
         <span className="comment-option" onClick={this.toggleFocus}>
           <i className={'fa fa-' + (focusing ? 'eye' : 'comments')} />{' '}
-          {focusing ? 'focus' : 'all'}
+          {focusing ? 'focus' : 'share'}
+        </span>{' '}
+        |{' '}
+        <span className="comment-option" onClick={this.toggleUserOwn}>
+          <i className={'fa fa-' + (userOwn ? 'user' : 'globe')} />{' '}
+          {userOwn ? 'mine' : 'all'}
         </span>
       </span>
     );
   };
 
   /*
+<span className="comment-option" onClick={this.togglePrivate}>
+  <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
+  {defaultPriv ? 'private' : 'public'}
+</span>{' '}
+|{' '}
 {' '}|{' '}
 <span className="comment-option" onClick={this.toggleFollow}>
 <i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
@@ -486,6 +497,7 @@ class CommentPage extends BaseComponent {
       filtered,
       activeComment,
       focusing,
+      userOwn,
       byAuth,
       bySlide,
       byTag,
@@ -501,7 +513,7 @@ class CommentPage extends BaseComponent {
       );
 
       // Focus view filtering - omit replies.
-      if (focusing) {
+      if (userOwn) {
         csort = csort.filter(c => c.author === reviewer);
       }
 

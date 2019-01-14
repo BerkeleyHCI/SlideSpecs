@@ -7,7 +7,7 @@ import ReviewContainer from '../containers/ReviewContainer.jsx';
 export default class TalkContainer extends BaseComponent {
   renewSubscription = _id => {
     const sub = Session.get('subscription');
-    return _id && (!sub || sub.type != 'user' || sub._id != _id);
+    return _id && (!sub || sub.type != 'talk' || sub._id != _id);
   };
 
   controlFilter = comment => {
@@ -26,8 +26,8 @@ export default class TalkContainer extends BaseComponent {
     const {sessions, talks, reviewer, files, images, comments} = this.props;
     props.talk = talks.find(t => t._id === _id) || {};
     props.session = sessions.find(s => s._id === props.talk.session) || {};
-    props.tComments = comments.filter(c => c.talk === _id);
-    props.comments = props.tComments.filter(this.controlFilter);
+    props.comments = comments.filter(c => c.talk === _id);
+    //props.comments = props.comments.filter(this.controlFilter);
     props.files = files.filter(f => f.meta.talkId === _id);
     props.images = images.filter(f => f.meta.talkId === _id);
     props.sessionId = props.session._id;

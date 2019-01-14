@@ -156,14 +156,6 @@ export default class App extends BaseComponent {
     );
   };
 
-  render() {
-    return (
-      <BrowserRouter>
-        <Route render={this.renderContent} />
-      </BrowserRouter>
-    );
-  }
-
   showConnection = () => {
     const {showConnectionIssue} = this.state;
     const {connected} = this.props;
@@ -177,6 +169,14 @@ export default class App extends BaseComponent {
       ));
     }
   };
+
+  render() {
+    return (
+      <BrowserRouter>
+        <Route render={this.renderContent} />
+      </BrowserRouter>
+    );
+  }
 }
 
 const PrivateRoute = ({user, render, ...other}) => {
@@ -198,8 +198,8 @@ App.propTypes = {
   loading: PropTypes.bool.isRequired, // subscription status
   user: PropTypes.object, // current meteor user
   sessions: PropTypes.array,
-  comments: PropTypes.array,
   talks: PropTypes.array,
+  comments: PropTypes.array,
   files: PropTypes.array,
   images: PropTypes.array,
 };
@@ -207,8 +207,8 @@ App.propTypes = {
 App.defaultProps = {
   user: null,
   sessions: [],
-  comments: [],
   talks: [],
+  comments: [],
   files: [],
   images: [],
 };

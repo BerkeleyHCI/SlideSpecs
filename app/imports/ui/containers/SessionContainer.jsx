@@ -6,7 +6,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 export default class SessionContainer extends BaseComponent {
   renewSubscription = _id => {
     const sub = Session.get('subscription');
-    return _id && (!sub || sub.type != 'user' || sub._id != _id);
+    return _id && (!sub || sub.type != 'session' || sub._id != _id);
   };
 
   getSessionProps = _id => {
