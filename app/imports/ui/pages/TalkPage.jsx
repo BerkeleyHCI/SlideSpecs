@@ -1,11 +1,6 @@
-import {Meteor} from 'meteor/meteor';
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import {_} from 'lodash';
-import {toast} from 'react-toastify';
-
-import {Talks} from '../../api/images/images.js';
 import {deleteTalk} from '../../api/talks/methods.js';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
@@ -13,13 +8,13 @@ import {Images} from '../../api/images/images.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import SlideFile from '../components/SlideFile.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
-import {FullMessage} from '../components/Message.jsx';
 
 class TalkPage extends BaseComponent {
   updateMason = () => {
     if (this.props.images) {
       const grid = document.getElementById('grid');
       const mason = new Masonry(grid, {itemSelector: '.file-item'});
+      this.setState({mason})
     }
   };
 
@@ -44,7 +39,7 @@ class TalkPage extends BaseComponent {
   };
 
   render() {
-    const {session, talkId, name, files, images, comments} = this.props;
+    const {session, talkId, name, images, comments} = this.props;
     let talkFile;
     try {
       let fileParams = {'meta.talkId': talkId};
@@ -88,7 +83,6 @@ class TalkPage extends BaseComponent {
                   download original
                 </button>
               </a>
-
               <Link to={`/comment/${talkId}`}>
                 <button className="btn btn-menu">view comments</button>
               </Link>

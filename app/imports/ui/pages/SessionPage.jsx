@@ -1,7 +1,7 @@
 import React from 'react';
+import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
-import {Link} from 'react-router-dom';
 
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
@@ -12,7 +12,6 @@ import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
-import SlideFile from '../components/SlideFile.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
 import {createTalk} from '../../api/talks/methods.js';
 
@@ -44,13 +43,12 @@ export default class SessionPage extends BaseComponent {
   };
 
   handleUpload = files => {
-    let uploadCount, uploadGroup;
+    let uploadCount;
     const startProg = () => this.setState({uploading: true});
-    let {sessionId, talks, fileLocator} = this.props;
+    let {sessionId, fileLocator} = this.props;
     if (files) {
       startProg();
       uploadCount = files.length;
-      uploadGroup = files.length;
       files.map(file => {
         // Make a new talk object for each slide presentation.
         const talkId = createTalk.call({
@@ -82,10 +80,12 @@ export default class SessionPage extends BaseComponent {
 
         uploadInstance.on('end', function(error, fileObj) {
           uploadCount -= 1;
+          return {error, fileObj};
         });
 
         uploadInstance.on('error', function(error, fileObj) {
-          console.log(`Error during upload: ${error}`);
+          console.error(`Error during upload: ${error}`);
+          return {error, fileObj};
         });
 
         uploadInstance.start();
@@ -139,7 +139,11 @@ export default class SessionPage extends BaseComponent {
         <h1>{name}</h1>
 
         <div className="alert">
-          <a className="black" href={shareLink} target="_blank">
+          <a
+            className="black"
+            href={shareLink}
+            target="_blank"
+            rel="noopener noreferrer">
             share this session with a public link
             <button className="pull-right btn-menu btn-primary">open</button>
           </a>

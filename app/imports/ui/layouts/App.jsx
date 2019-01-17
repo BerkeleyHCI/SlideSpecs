@@ -15,7 +15,7 @@ import TalkContainer from '../containers/TalkContainer.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
-  import SessionPage from '../pages/SessionPage.jsx';
+import SessionPage from '../pages/SessionPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';

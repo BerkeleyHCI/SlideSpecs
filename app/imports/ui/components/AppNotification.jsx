@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const AppNotification = ({icon, msg, desc}) => (
   <div className="notifications">
@@ -11,5 +12,11 @@ const AppNotification = ({icon, msg, desc}) => (
     </div>
   </div>
 );
+
+AppNotification.propTypes = {
+  icon: PropTypes.string,
+  msg: PropTypes.string,
+  desc: PropTypes.string,
+};
 
 export default AppNotification;

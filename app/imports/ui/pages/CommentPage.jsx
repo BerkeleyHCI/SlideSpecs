@@ -275,7 +275,7 @@ class CommentPage extends BaseComponent {
     }
   };
 
-  addComment = e => {
+  addComment = () => {
     const {defaultPriv} = this.state;
     const {reviewer, talkId, sessionId} = this.props;
     const slides = this.state.filtered;
@@ -580,7 +580,7 @@ class CommentPage extends BaseComponent {
         <div>
           <h2 className="comments-head"> comments </h2>
           <div id="comments-list" className="alert">
-            {items.map((i, iter)  => (
+            {items.map((i, iter) => (
               <Comment key={`comment-${iter}`} {...i} />
             ))}
           </div>

@@ -1,10 +1,7 @@
-import {Meteor} from 'meteor/meteor';
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
-
+import React from 'react';
+import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
-import {FullMessage} from '../components/Message.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import NameSet from '../components/NameSet.jsx';
 
