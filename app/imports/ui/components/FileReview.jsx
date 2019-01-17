@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Img from '../components/Image.jsx';
 import PropTypes from 'prop-types';

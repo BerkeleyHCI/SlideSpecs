@@ -1,4 +1,3 @@
-import {Meteor} from 'meteor/meteor';
 import {FilesCollection} from 'meteor/ostrio:files';
 
 // TODO make save folder dynamic, or relative?...

@@ -9,10 +9,12 @@ export const Message = ({title, subtitle}) => (
 );
 
 Message.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
 };
 
 Message.defaultProps = {
+  title: '',
   subtitle: '',
 };
 
@@ -26,9 +28,11 @@ export const FullMessage = ({title, subtitle}) => (
 );
 
 FullMessage.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
 };
 
 FullMessage.defaultProps = {
+  title: '',
   subtitle: '',
 };

@@ -18,6 +18,7 @@ export default class SessionContainer extends BaseComponent {
     const {sessions, talks, files, images, comments} = this.props;
     props.session = sessions.find(s => s._id === _id) || {};
     props.talks = talks.filter(f => f.session === _id);
+    // TODO - filter out comments by specific talk for preview
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
     props.sessionOwner = Meteor.userId() === props.session.userId;

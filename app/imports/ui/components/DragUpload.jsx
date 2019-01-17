@@ -1,13 +1,8 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import DropToUpload from 'react-drop-to-upload';
 import BaseComponent from './BaseComponent.jsx';
-import TextArea from './TextArea.jsx';
-import AppNotification from './AppNotification.jsx';
-import SlideTags from './SlideTags.jsx';
-import {FullMessage, Message} from './Message.jsx';
-import Markdown from 'react-markdown';
-import {toast} from 'react-toastify';
+import {FullMessage} from './Message.jsx';
 
 class DragUpload extends BaseComponent {
   constructor(props) {

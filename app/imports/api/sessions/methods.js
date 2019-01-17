@@ -20,7 +20,7 @@ import {Images} from '../images/images.js';
 export const createSession = new ValidatedMethod({
   name: 'sessions.create',
   validate: new SimpleSchema({}).validator(),
-  run({}) {
+  run() {
     if (!this.userId) {
       throw new Meteor.Error(
         'api.sessions.create.accessDenied',

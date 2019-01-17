@@ -3,7 +3,7 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 export const Comments = new Mongo.Collection('Comments');
 
-// Deny all client-side updates since we will be using methods to manage this collection
+// Deny all client-side updates since we use methods to manage this collection
 
 Comments.deny({
   insert() {
@@ -17,7 +17,7 @@ Comments.deny({
   },
 });
 
-SlideSchema = new SimpleSchema({
+const SlideSchema = new SimpleSchema({
   slideNo: {type: String},
   slideId: {type: String},
 });

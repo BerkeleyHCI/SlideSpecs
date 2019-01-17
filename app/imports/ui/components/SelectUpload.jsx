@@ -1,18 +1,17 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from './BaseComponent.jsx';
 
 class SelectUpload extends BaseComponent {
   render() {
-    const uploading = this.props.inProgress;
-    const {handleUpload, labelText, className} = this.props;
+    const {handleUpload, labelText, className, inProgress} = this.props;
     return (
-      <label className={'btn ' + className}>
+      <label className={`btn ${className}`}>
         {labelText}
         <input
           type="file"
           id="fileinput"
-          disabled={uploading}
+          disabled={inProgress}
           ref="fileinput"
           onChange={handleUpload}
           multiple

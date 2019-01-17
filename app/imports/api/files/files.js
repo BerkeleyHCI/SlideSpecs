@@ -1,4 +1,3 @@
-import {Meteor} from 'meteor/meteor';
 import {FilesCollection} from 'meteor/ostrio:files';
 import {Images} from '../images/images.js';
 
@@ -29,7 +28,7 @@ export const Files = new FilesCollection({
       script = 'convert-slides';
     }
 
-    var util = Npm.require('util'),
+    const util = Npm.require('util'),
       spawn = Npm.require('child_process').spawn,
       convert = spawn(`${process.env.PWD}/private/${script}`, [
         file.path,

@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor';
-import React, {Component} from 'react';
+import React from 'react';
 import {Session} from 'meteor/session.js';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
@@ -232,7 +232,7 @@ class CommentPage extends BaseComponent {
     }
   };
 
-  handleSlideOut = e => {
+  handleSlideOut = () => {
     this.setState({hoverImage: false});
   };
 
@@ -242,7 +242,7 @@ class CommentPage extends BaseComponent {
     textarea.focus();
   };
 
-  clearSelection = e => {
+  clearSelection = () => {
     this.setState({filtered: [], selected: []});
   };
 
@@ -258,7 +258,7 @@ class CommentPage extends BaseComponent {
     }
   };
 
-  clearButton = e => {
+  clearButton = () => {
     this.clearSelection();
     const {ds} = this.state;
     if (ds) {
@@ -276,7 +276,7 @@ class CommentPage extends BaseComponent {
   };
 
   addComment = e => {
-    const {defaultPriv, following} = this.state;
+    const {defaultPriv} = this.state;
     const {reviewer, talkId, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
@@ -353,7 +353,6 @@ class CommentPage extends BaseComponent {
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
-    const {files} = this.props;
     const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
@@ -581,8 +580,8 @@ class CommentPage extends BaseComponent {
         <div>
           <h2 className="comments-head"> comments </h2>
           <div id="comments-list" className="alert">
-            {items.map(i => (
-              <Comment {...i} />
+            {items.map((i, iter)  => (
+              <Comment key={`comment-${iter}`} {...i} />
             ))}
           </div>
           {items.length >= 5 && (
@@ -648,8 +647,6 @@ class CommentPage extends BaseComponent {
     const comments = this.renderComments();
     const context = this.renderContext();
 
-    const mu = Meteor.user();
-    const sessionOwner = mu && mu._id == userId;
     return files ? (
       this.renderRedirect() || (
         <div className="reviewView">

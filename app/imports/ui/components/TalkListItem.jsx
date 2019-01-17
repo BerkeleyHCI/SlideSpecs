@@ -5,13 +5,12 @@ import {Link} from 'react-router-dom';
 import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
 import Loading from '../components/Loading.jsx';
 import {Images} from '../../api/images/images.js';
-import {FullMessage} from '../components/Message.jsx';
 import Img from '../components/Image.jsx';
 
 class TalkListItem extends Component {
   renameTalk = () => {
     const {talk} = this.props;
-    let validName = /[^a-zA-Z0-9 \.:\+()\-_%!&]/gi;
+    let validName = /[^a-zA-Z0-9 .:+()\-_%!&]/gi;
     let prompt = window.prompt('New talk name?', talk.name);
     if (prompt) {
       prompt = prompt.replace(validName, '-');
@@ -28,7 +27,7 @@ class TalkListItem extends Component {
   };
 
   render() {
-    const {talk, linkPre, images, session, sessionOwner} = this.props;
+    const {talk, linkPre, images,  sessionOwner} = this.props;
     const talkLink = `/${linkPre}/${talk._id}`;
     let iLink = '/loading.svg';
     // TODO - adding a timeout with session.created to show error after 3 min

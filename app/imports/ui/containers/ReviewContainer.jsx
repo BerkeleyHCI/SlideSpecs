@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import NameSet from '../components/NameSet.jsx';
 

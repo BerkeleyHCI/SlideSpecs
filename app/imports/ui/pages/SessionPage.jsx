@@ -11,7 +11,6 @@ import {Files} from '../../api/files/files.js';
 import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
-import ConvertInstructions from '../components/ConvertInstructions.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import SlideFile from '../components/SlideFile.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';

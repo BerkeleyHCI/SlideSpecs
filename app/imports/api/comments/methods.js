@@ -1,13 +1,9 @@
-import {Meteor} from 'meteor/meteor';
-import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
-import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
-
 import {Sessions} from '../sessions/sessions.js';
 import {Talks} from '../talks/talks.js';
 import {Comments} from './comments.js';
 
-SlideSchema = new SimpleSchema({
+const SlideSchema = new SimpleSchema({
   slideNo: {type: String},
   slideId: {type: String},
 });

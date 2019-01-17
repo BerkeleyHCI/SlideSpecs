@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
@@ -6,12 +6,10 @@ import AppNotification from '../components/AppNotification.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 import Markdown from 'react-markdown';
 import {toast} from 'react-toastify';
-import {Comments} from '../../api/comments/comments.js';
 import {setRespondingComment} from '../../api/sessions/methods.js';
 import {
   agreeComment,
   discussComment,
-  createComment,
   updateComment,
   deleteComment,
   addressComment,
@@ -59,7 +57,7 @@ class Comment extends BaseComponent {
         );
       } else {
         return (
-          <a href={props.href} target="_blank">
+          <a href={props.href} target="_blank" rel="noopener noreferrer">
             {props.children}
           </a>
         );
@@ -132,7 +130,7 @@ class Comment extends BaseComponent {
     this.props.clearModal();
   };
 
-  handleEdit = e => {
+  handleEdit = () => {
     const newContent = this.editRef.current.value.trim();
     const {author, discuss, reviewer, _id} = this.props;
     const sysDiscuss = discuss.includes('system');
@@ -456,8 +454,8 @@ class Comment extends BaseComponent {
         </div>
 
         <div>
-          {replyProps.map(rp => (
-            <Comment {...this.props} {...rp} />
+          {replyProps.map((rp, i) => (
+            <Comment key={`comment-${i}`} {...this.props} {...rp} />
           ))}
         </div>
       </div>
@@ -465,7 +463,7 @@ class Comment extends BaseComponent {
   };
 
   renderEditor = () => {
-    const {_id, author, content} = this.props;
+    const {author} = this.props;
     return (
       <div onBlur={this.clearEdit} className="clearfix comment editing">
         <strong>{author}</strong> · <i> editing... </i>
