@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
-import Loading from '../components/Loading.jsx';
+import { renameTalk, deleteTalk} from '../../api/talks/methods.js';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
 

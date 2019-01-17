@@ -9,10 +9,10 @@ class SelectUpload extends BaseComponent {
       <label className={`btn ${className}`}>
         {labelText}
         <input
-          type="file"
-          id="fileinput"
+          type={"file"}
+          id={"fileinput"}
           disabled={inProgress}
-          ref="fileinput"
+          ref={"fileinput"}
           onChange={handleUpload}
           multiple
         />

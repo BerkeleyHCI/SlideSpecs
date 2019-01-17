@@ -1,3 +1,4 @@
+import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Sessions} from '../sessions/sessions.js';
 import {Talks} from '../talks/talks.js';

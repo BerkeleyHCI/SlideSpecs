@@ -1,7 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import {Session} from 'meteor/session.js';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 
@@ -16,7 +15,7 @@ import TalkContainer from '../containers/TalkContainer.jsx';
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
-import SessionPage from '../pages/SessionPage.jsx';
+  import SessionPage from '../pages/SessionPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';
@@ -181,6 +180,7 @@ export default class App extends BaseComponent {
 
 const PrivateRoute = ({user, render, ...other}) => {
   const matchId = other.computedMatch.params.id;
+  // TODO - look up and see if session/talk exists
   let out,
     loc = window.location.pathname;
 
