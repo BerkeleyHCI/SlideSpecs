@@ -15,6 +15,7 @@
     "lodash": "^4.17.10",
     "meteor-node-stubs": "^0.4.1",
     "prop-types": "^15.6.1",
+    "query-string": "^6.2.0",
     "react": "^16.4.2",
     "react-addons-pure-render-mixin": "^15.6.2",
     "react-bootstrap": "^0.32.3",

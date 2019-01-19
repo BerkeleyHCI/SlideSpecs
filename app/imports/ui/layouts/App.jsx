@@ -1,6 +1,7 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
+import queryString from 'query-string';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 
@@ -109,9 +110,9 @@ export default class App extends BaseComponent {
   };
 
   renderContent = ({location, ...other}) => {
-    //console.log(other);
     this.renderSecure(); // http -> https
     const {user, sessions, files, loading} = this.props;
+    const params = queryString.parse(location.search);
     const shared = this.getSharedProps();
     const {modal} = this.state;
     this.showConnection();

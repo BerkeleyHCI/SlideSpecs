@@ -1,5 +1,6 @@
 import {Mongo} from 'meteor/mongo';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+import {Random} from 'meteor/random';
 
 class SessionsCollection extends Mongo.Collection {
   insert(session, callback) {
