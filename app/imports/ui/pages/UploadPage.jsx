@@ -48,8 +48,8 @@ export default class UploadPage extends BaseComponent {
   };
 
   handleUpload = allfiles => {
-    // Only allow for uploading one file per talk.
     let {sessionId, fileLocator} = this.props;
+    // Only allow for uploading one file per talk.
     const file = allfiles[0];
     if (!file) {
       return false;
@@ -128,6 +128,7 @@ export default class UploadPage extends BaseComponent {
               text={'view all talks for this session'}
               bText={'open link'}
               link={shareLink}
+              blank={false}
             />
           </div>
         )}

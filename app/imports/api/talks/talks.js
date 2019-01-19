@@ -18,6 +18,7 @@ Talks.deny({
 Talks.schema = new SimpleSchema({
   name: {type: String},
   created: {type: Date},
+  ordering: {type: Number},
   userId: {type: String, regEx: SimpleSchema.RegEx.Id},
   session: {type: String, regEx: SimpleSchema.RegEx.Id},
 });
