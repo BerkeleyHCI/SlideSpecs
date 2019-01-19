@@ -27,6 +27,18 @@ To lint:
 meteor npm run lint
 ```
 
+Configuration options (`.eslintrc`)
+
+```json
+{
+        "extends": [
+            "eslint:recommended",
+            "plugin:react/recommended",
+            "@meteorjs/eslint-config-meteor",
+        ],
+}
+```
+
 ### Configuration
 
 - current cert: /usr/local/etc/dehydrated

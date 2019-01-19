@@ -21,7 +21,6 @@
         "extends": [
             "eslint:recommended",
             "plugin:react/recommended",
-            "@meteorjs/eslint-config-meteor",
         ],
         "rules": {
             "react/display-name": "off",
