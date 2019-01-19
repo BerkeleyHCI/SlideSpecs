@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+import {Random} from 'meteor/random';
 
 import {Sessions} from './sessions.js';
 import {Talks} from '../talks/talks.js';
@@ -20,18 +21,26 @@ import {Images} from '../images/images.js';
 export const createSession = new ValidatedMethod({
   name: 'sessions.create',
   validate: new SimpleSchema({}).validator(),
-  run() {
+  run({name}) {
     if (!this.userId) {
       throw new Meteor.Error(
         'api.sessions.create.accessDenied',
         'You must log in to create a session.',
       );
-    } else {
-      return Sessions.insert({
-        userId: this.userId,
-        created: Date.now(),
-      });
     }
+
+    if (!name) {
+      const basename = 'session ';
+      let iter = new Date().toLocaleDateString();
+      name = `${basename} ${iter}`;
+    }
+
+    return Sessions.insert({
+      userId: this.userId,
+      created: Date.now(),
+      secret: Random.id(),
+      name,
+    });
   },
 });
 

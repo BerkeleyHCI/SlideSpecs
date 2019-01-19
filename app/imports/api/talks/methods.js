@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+import {Random} from 'meteor/random';
 
 import {Sessions} from '../sessions/sessions.js';
 import {Talks} from './talks.js';
@@ -28,6 +29,7 @@ export const createTalk = new ValidatedMethod({
         name: name,
         userId: this.userId,
         created: Date.now(),
+        secret: Random.id(),
         session: sessionId,
       });
     }
