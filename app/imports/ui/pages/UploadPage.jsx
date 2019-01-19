@@ -31,9 +31,9 @@ export default class UploadPage extends BaseComponent {
   }
 
   deleteTalkFile = () => {
-    // TODO implement this
-    const {sessionId} = this.props;
-    if (confirm('Delete your talk?')) deleteTalkFile.call({sessionId});
+    const {talk} = this.props;
+    if (confirm('Delete the uploaded file for your talk?'))
+      deleteTalkFile.call({talkId: talk._id});
   };
 
   handleDropUpload = files => {
@@ -47,14 +47,15 @@ export default class UploadPage extends BaseComponent {
   };
 
   handleUpload = allfiles => {
-    let {sessionId, fileLocator} = this.props;
     // Only allow for uploading one file per talk.
+    let {sessionId, fileLocator} = this.props;
     const file = allfiles[0];
     if (!file) {
       return false;
+    } else {
+      this.setState({uploading: true});
     }
-    this.setState({uploading: true});
-    // Make a new talk object for each slide presentation.
+
     const talkId = createTalk.call({
       sessionId,
       name: file.name.replace(/\.[^/.]+$/, ''),
@@ -84,16 +85,11 @@ export default class UploadPage extends BaseComponent {
         ),
         {autoClose: 2000},
       );
-      this.setState({
-        uploading: false,
-        progress: 0,
-      });
-      return {error, fileObj};
+      this.setState({uploading: false});
     });
 
     uploadInstance.on('error', function(error, fileObj) {
-      console.error(`Error during upload: ${error}`);
-      return {error, fileObj};
+      console.error(`Error during upload.`, error);
     });
 
     uploadInstance.start();
@@ -101,43 +97,32 @@ export default class UploadPage extends BaseComponent {
 
   render() {
     const {uploading} = this.state;
-    const {sessionId, name, talks, files, images} = this.props;
-    const shareLink = window.location.origin + '/share/' + sessionId;
+    const {name, talk, files, images} = this.props;
 
     if (uploading) {
       return <Message title="uploading..." subtitle={<Loading />} />;
-      //<Message title="uploading..." subtitle={this.state.progress + '%'} />
     }
-
-    //<h3> <small>{talks.length} talks</small> </h3>
 
     const content = (
       <div className="main-content">
         <h1>{name}</h1>
 
-        {talks.length > 0 && (
+        {talk && (
           <div>
             <ul className="v-pad list-group">
-              {talks.map(talk => (
-                <TalkListItem
-                  key={talk._id}
-                  talk={talk}
-                  images={images}
-                  files={files}
-                  linkPre="slides"
-                  sessionOwner={this.props.sessionOwner}
-                />
-              ))}
+              <TalkListItem
+                key={talk._id}
+                talk={talk}
+                images={images}
+                files={files}
+                linkPre="slides"
+                sessionOwner={true}
+              />
             </ul>
-            <div className=" no-margin alert btns-group">
-              <button onClick={this.deleteTalkFile} className="btn btn-empty">
-                delete talk
-              </button>
-            </div>
           </div>
         )}
 
-        {talks.length == 0 && (
+        {!talk && (
           <div className="alert">
             add your presentation here.
             <SelectUpload
@@ -159,12 +144,11 @@ export default class UploadPage extends BaseComponent {
 UploadPage.propTypes = {
   user: PropTypes.object,
   sessionId: PropTypes.string,
-  talks: PropTypes.array,
   files: PropTypes.array,
+  talk: PropTypes.object,
 };
 
 UploadPage.defaultProps = {
   user: null,
-  talks: [],
   files: [],
 };

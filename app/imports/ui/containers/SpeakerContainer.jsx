@@ -7,16 +7,14 @@ import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 
 export default class SpeakerContainer extends BaseComponent {
-  handleUserLoggedIn = () => {
-    if (!Meteor.user()) {
-      return <AuthPageJoin home={window.location.origin} />;
-    } else {
-      return false;
+  handleNoUser = () => {
+    if (!Meteor.user() || Meteor.loggingIn()) {
+      //return this.redirectTo(`/join?next=${window.location.origin}`);
     }
   };
 
-  componentDidMount = this.handleUserLoggedIn;
-  componentDidUpdate = this.handleUserLoggedIn;
+  componentDidMount = this.handleNoUser;
+  componentDidUpdate = this.handleNoUser;
 
   renewSubscription = _id => {
     const sub = Session.get('subscription');
@@ -32,9 +30,8 @@ export default class SpeakerContainer extends BaseComponent {
     const {sessions, talks, files, images, comments} = this.props;
     props.session = sessions.find(s => s._id === _id) || {};
     //props.session = sessions.find(s => s.secret === _id) || {};
-    props.talks = talks.filter(
-      f => f.session === _id && f.userId === Meteor.userId,
-    );
+    const uTalk = f => f.session == _id && f.userId == Meteor.userId;
+    props.talk = talks.find(uTalk) || {};
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
     props.sessionOwner = Meteor.userId() === props.session.userId;

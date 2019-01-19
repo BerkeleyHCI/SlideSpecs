@@ -109,7 +109,7 @@ export default class App extends BaseComponent {
   };
 
   renderContent = ({location, ...other}) => {
-    console.log(other);
+    //console.log(other);
     this.renderSecure(); // http -> https
     const {user, sessions, files, loading} = this.props;
     const shared = this.getSharedProps();

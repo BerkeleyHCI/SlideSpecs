@@ -1,5 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -12,8 +13,9 @@ class SignInPage extends BaseComponent {
   }
 
   redirectHomeIfUser = () => {
+    const {home} = this.props;
     if (Meteor.user() && !Meteor.loggingIn()) {
-      this.redirectTo('/');
+      this.redirectTo(home);
     }
   };
 
@@ -103,5 +105,13 @@ class SignInPage extends BaseComponent {
     );
   }
 }
+
+SignInPage.propTypes = {
+  home: PropTypes.string,
+};
+
+SignInPage.defaultProps = {
+  home: '/',
+};
 
 export default SignInPage;
