@@ -12,6 +12,7 @@ import {Message} from '../components/Message.jsx';
 import {Files} from '../../api/files/files.js';
 import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
+import AlertLink from '../components/AlertLink.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import {deleteTalkFile} from '../../api/files/methods.js';
@@ -78,14 +79,14 @@ export default class UploadPage extends BaseComponent {
       false,
     );
 
+    const endUpload = () => this.setState({uploading: false});
+    const toastDone = (
+      <AppNotification msg="success" desc="upload complete" icon="check" />
+    );
+
     uploadInstance.on('end', function(error, fileObj) {
-      toast(
-        () => (
-          <AppNotification msg="success" desc="upload complete" icon="check" />
-        ),
-        {autoClose: 2000},
-      );
-      this.setState({uploading: false});
+      endUpload();
+      toast(() => toastDone, {autoClose: 2000});
     });
 
     uploadInstance.on('error', function(error, fileObj) {
@@ -97,7 +98,8 @@ export default class UploadPage extends BaseComponent {
 
   render() {
     const {uploading} = this.state;
-    const {name, talk, files, images} = this.props;
+    const {sessionId, name, talk, files, images} = this.props;
+    const shareLink = window.location.origin + '/share/' + sessionId;
 
     if (uploading) {
       return <Message title="uploading..." subtitle={<Loading />} />;
@@ -106,19 +108,27 @@ export default class UploadPage extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1>{name}</h1>
+        <h3>speaker slide management</h3>
 
         {talk && (
           <div>
-            <ul className="v-pad list-group">
-              <TalkListItem
-                key={talk._id}
-                talk={talk}
-                images={images}
-                files={files}
-                linkPre="slides"
-                sessionOwner={true}
-              />
-            </ul>
+            <div>
+              <ul className="v-pad list-group">
+                <TalkListItem
+                  key={talk._id}
+                  talk={talk}
+                  images={images}
+                  files={files}
+                  linkPre="slides"
+                  sessionOwner={true}
+                />
+              </ul>
+            </div>
+            <AlertLink
+              text={'view all talks for this session'}
+              bText={'open link'}
+              link={shareLink}
+            />
           </div>
         )}
 

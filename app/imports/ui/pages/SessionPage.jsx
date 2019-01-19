@@ -6,6 +6,7 @@ import {toast} from 'react-toastify';
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import AppNotification from '../components/AppNotification.jsx';
+import AlertLink from '../components/AlertLink.jsx';
 import {Message} from '../components/Message.jsx';
 import {Files} from '../../api/files/files.js';
 import Loading from '../components/Loading.jsx';
@@ -23,8 +24,6 @@ export default class SessionPage extends BaseComponent {
       progress: 0,
     };
   }
-
-  componentDidMount = () => {};
 
   deleteFiles = () => {
     const {sessionId} = this.props;
@@ -139,31 +138,17 @@ export default class SessionPage extends BaseComponent {
       <div className="main-content">
         <h1>{name}</h1>
 
-        <div className="alert">
-          <a
-            className="black"
-            href={shareLink}
-            target="_blank"
-            rel="noopener noreferrer">
-            share this session with a public link
-            <button className="pull-right btn-menu btn-primary">
-              open link
-            </button>
-          </a>
-        </div>
+        <AlertLink
+          text={'share this session with a public link'}
+          bText={'open link'}
+          link={shareLink}
+        />
 
-        <div className="alert">
-          <a
-            className="black"
-            href={uploadLink}
-            target="_blank"
-            rel="noopener noreferrer">
-            let presenters add their own slides
-            <button className="pull-right btn-menu btn-primary">
-              open link
-            </button>
-          </a>
-        </div>
+        <AlertLink
+          text={'let presenters add their own slides'}
+          bText={'open link'}
+          link={uploadLink}
+        />
 
         {talks.length > 0 && (
           <div>

@@ -42,18 +42,23 @@ export const renameTalk = new ValidatedMethod({
   }).validator(),
   run({talkId, newName}) {
     const talk = Talks.findOne(talkId);
-    if (talk.userId !== this.userId) {
+    if (!talk) {
       throw new Meteor.Error(
-        'api.talks.rename.accessDenied',
-        "You don't have permission to edit this talk.",
+        'api.talks.delete.talkNotFound',
+        'This talk does not exist.',
       );
-      return false;
     }
 
     // Talk owner or session owner should be able to edit/delete talk
     const sess = Sessions.findOne(talk.session);
     if (talk.userId === this.userId || sess.userId === this.userId) {
       return Talks.update(talkId, {$set: {name: newName}});
+    } else {
+      throw new Meteor.Error(
+        'api.talks.rename.accessDenied',
+        "You don't have permission to edit this talk.",
+      );
+      return false;
     }
   },
 });

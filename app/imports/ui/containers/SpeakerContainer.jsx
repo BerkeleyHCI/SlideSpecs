@@ -28,10 +28,11 @@ export default class SpeakerContainer extends BaseComponent {
 
     let props = {};
     const {sessions, talks, files, images, comments} = this.props;
-    props.session = sessions.find(s => s._id === _id) || {};
     //props.session = sessions.find(s => s.secret === _id) || {};
-    const uTalk = f => f.session == _id && f.userId == Meteor.userId;
-    props.talk = talks.find(uTalk) || {};
+    props.session = sessions.find(s => s._id === _id) || {};
+    props.talk = talks.find(
+      f => f.session == _id && f.userId == Meteor.userId(),
+    );
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
     props.sessionOwner = Meteor.userId() === props.session.userId;
