@@ -126,6 +126,7 @@ export default class SessionPage extends BaseComponent {
     const {uploading} = this.state;
     const {sessionId, name, talks, files, images} = this.props;
     const shareLink = window.location.origin + '/share/' + sessionId;
+    const uploadLink = window.location.origin + '/upload/' + sessionId;
 
     if (uploading) {
       return <Message title="uploading..." subtitle={<Loading />} />;
@@ -145,7 +146,22 @@ export default class SessionPage extends BaseComponent {
             target="_blank"
             rel="noopener noreferrer">
             share this session with a public link
-            <button className="pull-right btn-menu btn-primary">open</button>
+            <button className="pull-right btn-menu btn-primary">
+              open link
+            </button>
+          </a>
+        </div>
+
+        <div className="alert">
+          <a
+            className="black"
+            href={uploadLink}
+            target="_blank"
+            rel="noopener noreferrer">
+            let presenters add their own slides
+            <button className="pull-right btn-menu btn-primary">
+              open link
+            </button>
           </a>
         </div>
 

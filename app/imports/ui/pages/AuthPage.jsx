@@ -19,7 +19,7 @@ class AuthPage extends BaseComponent {
   };
 
   render = () => {
-    const content = this.renderAuthPage()
+    const content = this.renderAuthPage();
     return <MenuContainer {...this.props} content={content} />;
   };
 }

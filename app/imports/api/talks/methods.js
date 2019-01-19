@@ -2,6 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
+import {Sessions} from '../sessions/sessions.js';
 import {Talks} from './talks.js';
 import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';
@@ -46,8 +47,13 @@ export const renameTalk = new ValidatedMethod({
         'api.talks.rename.accessDenied',
         "You don't have permission to edit this talk.",
       );
-    } else {
-      Talks.update(talkId, {$set: {name: newName}});
+      return false;
+    }
+
+    // Talk owner or session owner should be able to edit/delete talk
+    const sess = Sessions.findOne(talk.session);
+    if (talk.userId === this.userId || sess.userId === this.userId) {
+      return Talks.update(talkId, {$set: {name: newName}});
     }
   },
 });
@@ -64,21 +70,26 @@ export const deleteTalk = new ValidatedMethod({
         'api.talks.delete.talkNotFound',
         'This talk does not exist.',
       );
-    } else if (talk.userId !== this.userId) {
-      throw new Meteor.Error(
-        'api.talks.delete.accessDenied',
-        "You don't have permission to delete this talk.",
-      );
-    } else {
+    }
+
+    // Talk owner or session owner should be able to edit/delete talk
+    const sess = Sessions.findOne(talk.session);
+    if (talk.userId === this.userId || sess.userId === this.userId) {
       try {
         // deleting related files
         Files.remove({'meta.talkId': talkId});
         Images.remove({'meta.talkId': talkId});
         Comments.remove({talk: talkId});
-        Talks.remove(talkId);
+        return Talks.remove(talkId);
       } catch (e) {
         console.error(e);
       }
+    } else {
+      throw new Meteor.Error(
+        'api.talks.delete.accessDenied',
+        "You don't have permission to delete this talk.",
+      );
+      return false;
     }
   },
 });

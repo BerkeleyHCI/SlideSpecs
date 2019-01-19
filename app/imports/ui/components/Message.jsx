@@ -8,11 +8,6 @@ export const Message = ({title, subtitle}) => (
   </div>
 );
 
-Message.propTypes = {
-  title: PropTypes.string,
-  subtitle: PropTypes.string,
-};
-
 Message.defaultProps = {
   title: '',
   subtitle: '',
@@ -26,11 +21,6 @@ export const FullMessage = ({title, subtitle}) => (
     {subtitle ? <div className="subtitle-message">{subtitle}</div> : null}
   </div>
 );
-
-FullMessage.propTypes = {
-  title: PropTypes.string,
-  subtitle: PropTypes.string,
-};
 
 FullMessage.defaultProps = {
   title: '',

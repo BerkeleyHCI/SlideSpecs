@@ -10,12 +10,14 @@ import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import UserContainer from '../containers/UserContainer.jsx';
 import SessionContainer from '../containers/SessionContainer.jsx';
+import SpeakerContainer from '../containers/SpeakerContainer.jsx';
 import TalkContainer from '../containers/TalkContainer.jsx';
 
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import SessionPage from '../pages/SessionPage.jsx';
+import UploadPage from '../pages/UploadPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';
@@ -65,6 +67,8 @@ export default class App extends BaseComponent {
       return <UserContainer Comp={Comp} {...shared} id={Meteor.userId()} />;
     } else if (pType == 'session') {
       return <SessionContainer Comp={Comp} {...shared} id={match.params.id} />;
+    } else if (pType == 'speaker') {
+      return <SpeakerContainer Comp={Comp} {...shared} id={match.params.id} />;
     } else if (pType == 'talk') {
       return <TalkContainer Comp={Comp} {...shared} id={match.params.id} />;
     } else {
@@ -78,6 +82,10 @@ export default class App extends BaseComponent {
 
   renderSession = ({match}) => {
     return this.preRender(match, SessionPage, 'session');
+  };
+
+  renderUpload = ({match}) => {
+    return this.preRender(match, UploadPage, 'speaker');
   };
 
   renderTalk = ({match}) => {
@@ -100,7 +108,8 @@ export default class App extends BaseComponent {
     }
   };
 
-  renderContent = ({location}) => {
+  renderContent = ({location, ...other}) => {
+    console.log(other);
     this.renderSecure(); // http -> https
     const {user, sessions, files, loading} = this.props;
     const shared = this.getSharedProps();
@@ -126,6 +135,7 @@ export default class App extends BaseComponent {
           <Switch location={location}>
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
+            <Route path="/upload/:id" render={this.renderUpload} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
 
@@ -185,6 +195,7 @@ const PrivateRoute = ({user, render, ...other}) => {
     loc = window.location.pathname;
 
   if (!user) {
+    // TODO add optional params for redirecting to after logging in.
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else {
     out = render;

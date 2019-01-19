@@ -9,6 +9,10 @@ class SessionsCollection extends Mongo.Collection {
       let iter = new Date().toLocaleDateString();
       ourSess.name = `${basename} ${iter}`;
     }
+
+    // TODO create random unique Id and assign to secret, use that instead of
+    // regular item ID. to be used for the presenter talk additions URL.
+
     return super.insert(ourSess, callback);
   }
 }
