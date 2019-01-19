@@ -1,6 +1,5 @@
 import {Mongo} from 'meteor/mongo';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
-import {Random} from 'meteor/random';
 
 export const Sessions = new Mongo.Collection('Sessions');
 
@@ -20,6 +19,7 @@ Sessions.schema = new SimpleSchema({
   name: {type: String},
   created: {type: Date},
   talks: {type: [String]},
+  secret: {type: String, regEx: SimpleSchema.RegEx.Id},
   userId: {type: String, regEx: SimpleSchema.RegEx.Id},
 });
 

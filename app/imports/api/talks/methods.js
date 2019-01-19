@@ -24,15 +24,14 @@ export const createTalk = new ValidatedMethod({
         'api.talks.create.accessDenied',
         'You must log in to create a talk.',
       );
-    } else {
-      return Talks.insert({
-        name: name,
-        userId: this.userId,
-        created: Date.now(),
-        secret: Random.id(),
-        session: sessionId,
-      });
     }
+    return Talks.insert({
+      name: name,
+      userId: this.userId,
+      created: Date.now(),
+      secret: Random.id(),
+      session: sessionId,
+    });
   },
 });
 
