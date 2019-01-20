@@ -160,6 +160,7 @@ export default class SessionPage extends BaseComponent {
                   images={images}
                   files={files}
                   linkPre="slides"
+                  ordering={true}
                   sessionOwner={this.props.sessionOwner}
                 />
               ))}

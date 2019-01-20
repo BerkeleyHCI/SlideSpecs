@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import { renameTalk, deleteTalk} from '../../api/talks/methods.js';
+import {renameTalk, deleteTalk} from '../../api/talks/methods.js';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
 
@@ -25,8 +25,18 @@ class TalkListItem extends Component {
     deleteTalk.call({talkId: this.props.talk._id});
   };
 
+  renderOrdering = () => {
+    const {session, talk} = this.props;
+    return (
+      <div>
+        <i className="fa fa-angle-up upper-left" />
+        <i className="fa fa-angle-down lower-left" />
+      </div>
+    );
+  };
+
   render() {
-    const {talk, linkPre, images,  sessionOwner} = this.props;
+    const {talk, ordering, linkPre, images, sessionOwner} = this.props;
     const talkLink = `/${linkPre}/${talk._id}`;
     let iLink = '/loading.svg';
     // TODO - adding a timeout with session.created to show error after 3 min
@@ -52,10 +62,13 @@ class TalkListItem extends Component {
     // talks.created field and then say that the file likely needs to be
     // reuploaded
 
+    const orderControls = this.renderOrdering();
+
     return (
       <li className="list-group-item clearfix">
         <div className="table no-margin">
           <div className="row equal">
+            {ordering && orderControls}
             <div className="col-sm-3">
               {!linkPre && <Img className="preview" source={iLink} />}
               {linkPre && (
@@ -96,6 +109,7 @@ TalkListItem.propTypes = {
   images: PropTypes.array,
   linkPre: PropTypes.string,
   sessionOwner: PropTypes.bool,
+  ordering: PropTypes.bool,
 };
 
 TalkListItem.defaultProps = {
@@ -103,6 +117,7 @@ TalkListItem.defaultProps = {
   images: [],
   linkPre: '',
   sessionOwner: false,
+  ordering: false,
 };
 
 export default TalkListItem;
