@@ -9,9 +9,6 @@ import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';
 import {Images} from '../images/images.js';
 
-// common pattern for checking permission
-//const talkCheck = talkId => { }
-
 export const createTalk = new ValidatedMethod({
   name: 'talks.create',
   validate: new SimpleSchema({
@@ -24,7 +21,9 @@ export const createTalk = new ValidatedMethod({
         'api.talks.create.accessDenied',
         'You must log in to create a talk.',
       );
+      return false;
     }
+
     return Talks.insert({
       name: name,
       userId: this.userId,

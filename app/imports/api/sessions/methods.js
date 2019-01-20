@@ -39,6 +39,7 @@ export const createSession = new ValidatedMethod({
       userId: this.userId,
       created: Date.now(),
       secret: Random.id(),
+      talks: [],
       name,
     });
   },
@@ -59,6 +60,48 @@ export const renameSession = new ValidatedMethod({
       );
     } else {
       Sessions.update(sessionId, {$set: {name: newName}});
+    }
+  },
+});
+
+export const addSessionTalk = new ValidatedMethod({
+  name: 'sessions.addTalk',
+  validate: new SimpleSchema({
+    sessionId: {type: String},
+    talkId: {type: String},
+  }).validator(),
+  run({sessionId, talkId}) {
+    const session = Sessions.findOne(sessionId);
+    if (!session || session.userId !== this.userId) {
+      throw new Meteor.Error(
+        'api.sessions.addTalk.accessDenied',
+        "You don't have permission to edit this session.",
+      );
+    } else {
+      const newTalks = [...session.talks, talkId];
+      Sessions.update(sessionId, {$set: {talks: newTalks}});
+    }
+  },
+});
+
+export const moveSessionTalk = new ValidatedMethod({
+  name: 'sessions.moveTalk',
+  validate: new SimpleSchema({
+    sessionId: {type: String},
+    talkId: {type: String},
+    position: {type: Number},
+  }).validator(),
+  run({sessionId, talkId, position}) {
+    const session = Sessions.findOne(sessionId);
+    if (!session || session.userId !== this.userId) {
+      throw new Meteor.Error(
+        'api.sessions.moveTalk.accessDenied',
+        "You don't have permission to edit this session.",
+      );
+    } else {
+      // TODO - overwrite specific position of talk
+      const newTalks = [...session.talks, talkId];
+      Sessions.update(sessionId, {$set: {talks: newTalks}});
     }
   },
 });

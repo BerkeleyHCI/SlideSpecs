@@ -37,7 +37,7 @@ AlertLink.defaultProps = {
   link: '/',
   text: 'link',
   bText: 'open',
-  blank: true,
+  blank: false,
 };
 
 export default AlertLink;

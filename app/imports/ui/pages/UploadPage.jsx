@@ -2,6 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
+import {Link} from 'react-router-dom';
 
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
@@ -98,8 +99,8 @@ export default class UploadPage extends BaseComponent {
 
   render() {
     const {uploading} = this.state;
-    const {sessionId, name, talk, files, images} = this.props;
-    const shareLink = window.location.origin + '/share/' + sessionId;
+    const {session, name, talk, files, images, sessionOwner} = this.props;
+    const shareLink = window.location.origin + '/share/' + session._id;
 
     if (uploading) {
       return <Message title="uploading..." subtitle={<Loading />} />;
@@ -108,6 +109,22 @@ export default class UploadPage extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1>{name}</h1>
+        {sessionOwner && (
+          <div className="alert">
+            <small className="pull-right">
+              <i>You own this session; only you see this message.</i>
+            </small>
+            Share this link to let speakers upload their own slides.
+            <hr />
+            <code>{window.location.href}</code>
+            <hr />
+            <Link to={`/sessions/${session._id}`}>
+              <span className="black"> ‹ </span>
+              Go back to the session management panel.
+            </Link>
+          </div>
+        )}
+
         <h3>speaker slide management</h3>
 
         {talk && (
@@ -128,7 +145,6 @@ export default class UploadPage extends BaseComponent {
               text={'view all talks for this session'}
               bText={'open link'}
               link={shareLink}
-              blank={false}
             />
           </div>
         )}
