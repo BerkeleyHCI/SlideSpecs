@@ -27,11 +27,6 @@ import {createTalk} from '../../api/talks/methods.js';
  */
 
 export default class UploadPage extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.state = {uploading: false};
-  }
-
   deleteTalkFile = () => {
     const {talk} = this.props;
     if (confirm('Delete the uploaded file for your talk?'))
@@ -54,8 +49,6 @@ export default class UploadPage extends BaseComponent {
     const file = allfiles[0];
     if (!file) {
       return false;
-    } else {
-      this.setState({uploading: true});
     }
 
     const talkId = createTalk.call({
@@ -80,13 +73,11 @@ export default class UploadPage extends BaseComponent {
       false,
     );
 
-    const endUpload = () => this.setState({uploading: false});
     const toastDone = (
       <AppNotification msg="success" desc="upload complete" icon="check" />
     );
 
     uploadInstance.on('end', function(error, fileObj) {
-      endUpload();
       toast(() => toastDone, {autoClose: 2000});
     });
 
@@ -98,13 +89,8 @@ export default class UploadPage extends BaseComponent {
   };
 
   render() {
-    const {uploading} = this.state;
     const {session, name, talk, files, images, sessionOwner} = this.props;
     const shareLink = window.location.origin + '/share/' + session._id;
-
-    if (uploading) {
-      return <Message title="uploading..." subtitle={<Loading />} />;
-    }
 
     const content = (
       <div className="main-content">

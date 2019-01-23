@@ -155,9 +155,9 @@ export default class SessionPage extends BaseComponent {
             <ul className="v-pad list-group">
               {talks.map((talk, i) => (
                 <TalkListItem
+                  iter={i}
                   key={talk._id}
                   talk={talk}
-                  iter={i}
                   images={images}
                   files={files}
                   linkPre="slides"

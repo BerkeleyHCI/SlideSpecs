@@ -134,7 +134,6 @@ export const moveSessionTalk = new ValidatedMethod({
     const after = oTalks.slice(position);
     const newTalks = [...before, talk._id, ...after];
 
-    //console.log(oTalks, before, after, newTalks);
     Sessions.update(talk.session, {$set: {talks: newTalks}});
   },
 });
@@ -174,7 +173,6 @@ export const deleteTalk = new ValidatedMethod({
         'api.talks.delete.accessDenied',
         "You don't have permission to delete this talk.",
       );
-      return false;
     }
   },
 });

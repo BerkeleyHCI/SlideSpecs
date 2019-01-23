@@ -82,7 +82,7 @@ class TalkListItem extends Component {
     return (
       <li className="list-group-item clearfix">
         <div className="table no-margin">
-          <div className="row equal">
+          <div className="row row-eq-height equal">
             <div className="col-sm-3">
               {!linkPre && <Img className="preview" source={iLink} />}
               {linkPre && (
