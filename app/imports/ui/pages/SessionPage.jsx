@@ -7,28 +7,20 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import AlertLink from '../components/AlertLink.jsx';
-import {Message} from '../components/Message.jsx';
+import {Message, FullMessage} from '../components/Message.jsx';
 import {Files} from '../../api/files/files.js';
 import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import {deleteSessionFiles} from '../../api/files/methods.js';
-import {createTalk} from '../../api/talks/methods.js';
+import {createTalk, setTalkProgress} from '../../api/talks/methods.js';
 
 export default class SessionPage extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      uploading: false,
-      progress: 0,
-    };
-  }
-
   deleteFiles = () => {
-    const {sessionId} = this.props;
+    const {session} = this.props;
     if (confirm('Delete ALL talks for this session?'))
-      deleteSessionFiles.call({sessionId});
+      deleteSessionFiles.call({sessionId: session._id});
   };
 
   handleDropUpload = files => {
@@ -42,17 +34,33 @@ export default class SessionPage extends BaseComponent {
   };
 
   handleUpload = files => {
-    let uploadCount;
-    const startProg = () => this.setState({uploading: true});
     let {sessionId, fileLocator} = this.props;
+
+    const handleToast = ({msg, desc, icon, closeTime}) => {
+      if (!closeTime) closeTime = 4000;
+      toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
+        autoClose: closeTime,
+      });
+    };
+
     if (files) {
-      startProg();
-      uploadCount = files.length;
       files.map(file => {
-        // Make a new talk object for each slide presentation.
+        // Allow uploading files under 30MB for now.
+        const goodSize = file.size <= 30985760;
+        const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
+        if (!goodSize || !goodType) {
+          this.handleToast({
+            msg: 'error',
+            icon: 'times',
+            desc:
+              'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
+          });
+          return; // skip this file.
+        }
+
         const talkId = createTalk.call({
           sessionId,
-          name: file.name.replace(/\.[^/.]+$/, ''),
+          name: file.name,
         });
 
         let uploadInstance = Files.insert(
@@ -69,70 +77,56 @@ export default class SessionPage extends BaseComponent {
             chunkSize: 'dynamic',
             allowWebWorkers: true,
           },
-          false,
+          false, // dont autostart the uploadg
         );
 
-        //uploadInstance.on('start', function() {});
-        //uploadInstance.on('uploaded', function(error, fileObj) {});
-        //uploadInstance.on('progress', function(progress, fileObj) {});
-        // TODO merge the progress for all uploads, creating single number percent.
-
-        uploadInstance.on('end', function(error, fileObj) {
-          uploadCount -= 1;
-          return {error, fileObj};
+        uploadInstance.on('start', (err, file) => {
+          //console.log('started', file.name);
         });
 
-        uploadInstance.on('error', function(error, fileObj) {
-          console.error(`Error during upload: ${error}`);
-          return {error, fileObj};
+        // TODO set the percent of the specific talk item for upload
+        uploadInstance.on('progress', function(progress, file) {
+          setTalkProgress.call({talkId, progress});
+        });
+
+        // TODO set the percent of the specific talk item for upload
+        uploadInstance.on('uploaded', (err, file) => {
+          //console.log('uploaded', file.name);
+          setTalkProgress.call({talkId, progress: 100});
+        });
+
+        // TODO set status on talk item that uploading is done.
+        uploadInstance.on('end', (err, file) => {
+          //console.log('file:', file);
+          handleToast({
+            msg: file.name,
+            icon: 'check',
+            desc: 'upload complete',
+          });
+        });
+
+        uploadInstance.on('error', (err, file) => {
+          if (err) console.error(err);
+          handleToast({
+            msg: file.name,
+            icon: 'times',
+            desc: `Error uploading: ${err}`,
+          });
         });
 
         uploadInstance.start();
       });
-
-      let uploadInterval = setInterval(() => {
-        if (uploadCount === 0) {
-          // DONE WITH ALL UPLOADS
-          clearInterval(uploadInterval);
-          toast(
-            () => (
-              <AppNotification
-                msg="success"
-                desc="upload complete"
-                icon="check"
-              />
-            ),
-            {autoClose: 2000},
-          );
-
-          this.setState({
-            uploading: false,
-            progress: 0,
-          });
-        } else {
-          // UPLOADING NOW
-          this.setState({
-            progress: Math.round(
-              (100 * (files.length - uploadCount)) / files.length,
-            ),
-          });
-        }
-      }, 50);
     }
   };
 
   render() {
     const {uploading} = this.state;
-    const {sessionId, name, talks, files, images} = this.props;
-    const shareLink = window.location.origin + '/share/' + sessionId;
-    const uploadLink = window.location.origin + '/upload/' + sessionId;
-
-    if (uploading) {
-      return <Message title="uploading..." subtitle={<Loading />} />;
-      //<Message title="uploading..." subtitle={this.state.progress + '%'} />
-    }
+    const {session, name, talks, files, images} = this.props;
+    const shareLink = window.location.origin + '/share/' + session._id;
+    const uploadLink = window.location.origin + '/upload/' + session._id;
 
     //<h3> <small>{talks.length} talks</small> </h3>
+    //<Message title="uploading..." subtitle={this.state.progress + '%'} />
 
     const content = (
       <div className="main-content">
@@ -150,13 +144,20 @@ export default class SessionPage extends BaseComponent {
           link={uploadLink}
         />
 
+        {uploading && (
+          <div className="padded alert">
+            <FullMessage title="uploading..." />
+          </div>
+        )}
+
         {talks.length > 0 && (
           <div>
             <ul className="v-pad list-group">
-              {talks.map(talk => (
+              {talks.map((talk, i) => (
                 <TalkListItem
                   key={talk._id}
                   talk={talk}
+                  iter={i}
                   images={images}
                   files={files}
                   linkPre="slides"

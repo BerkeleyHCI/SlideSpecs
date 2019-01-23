@@ -14,7 +14,7 @@ class TalkPage extends BaseComponent {
     if (this.props.images) {
       const grid = document.getElementById('grid');
       const mason = new Masonry(grid, {itemSelector: '.file-item'});
-      this.setState({mason})
+      this.setState({mason});
     }
   };
 
@@ -39,10 +39,10 @@ class TalkPage extends BaseComponent {
   };
 
   render() {
-    const {session, talkId, name, images, comments} = this.props;
+    const {session, talk, name, images, comments} = this.props;
     let talkFile;
     try {
-      let fileParams = {'meta.talkId': talkId};
+      let fileParams = {'meta.talkId': talk._id};
       talkFile = Files.findOne(fileParams).link('original', '//');
     } catch (e) {
       talkFile = '/404';
@@ -83,13 +83,13 @@ class TalkPage extends BaseComponent {
                   download original
                 </button>
               </a>
-              <Link to={`/comment/${talkId}`}>
+              <Link to={`/comment/${talk._id}`}>
                 <button className="btn btn-menu">view comments</button>
               </Link>
             </div>
           </div>
 
-          {images.length == 0 && <TalkListItem images={[]} />}
+          {images.length == 0 && <TalkListItem talk={talk} />}
 
           <div id="grid">{imageSet}</div>
         </div>

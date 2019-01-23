@@ -14,7 +14,10 @@ export const Files = new FilesCollection({
     if (file.size <= 30985760 && /pdf|ppt|pptx|key/i.test(file.extension)) {
       return true;
     } else {
-      return 'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.';
+      console.error(
+        'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
+      );
+      return false;
     }
   },
 
@@ -22,7 +25,7 @@ export const Files = new FilesCollection({
     console.log(file);
 
     let script;
-    if (/pdf/i.test(file.extension)) {
+    if (/pdf$/i.test(file.extension)) {
       script = 'convert-pdf';
     } else {
       script = 'convert-slides';
@@ -45,7 +48,9 @@ export const Files = new FilesCollection({
           .map(i => {
             console.log('adding image file: ' + i);
             const fileName = i.substring(i.lastIndexOf('/') + 1);
-            const slideNo = i.match(/\d+/g).slice(-1)[0]; // get slide number from image title
+            const slideMatch = i.match(/\d+/g);
+            if (!slideMatch) console.error('no slide matched', i);
+            const slideNo = slideMatch.slice(-1)[0]; // get slide number from image title
             Images.addFile(i, {
               fileName,
               type: 'image/png',

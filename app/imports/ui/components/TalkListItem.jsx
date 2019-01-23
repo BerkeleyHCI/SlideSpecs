@@ -2,7 +2,11 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {renameTalk, deleteTalk} from '../../api/talks/methods.js';
+import {
+  renameTalk,
+  deleteTalk,
+  moveSessionTalk,
+} from '../../api/talks/methods.js';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
 
@@ -21,25 +25,40 @@ class TalkListItem extends Component {
     }
   };
 
+  moveTalkUp = e => {
+    const {iter, talk} = this.props;
+    moveSessionTalk.call({talkId: talk._id, position: iter - 1});
+  };
+
+  moveTalkDown = e => {
+    const {iter, talk} = this.props;
+    moveSessionTalk.call({talkId: talk._id, position: iter + 1});
+  };
+
   deleteTalk = () => {
-    deleteTalk.call({talkId: this.props.talk._id});
+    const {talk} = this.props;
+    deleteTalk.call({talkId: talk._id});
   };
 
   renderOrdering = () => {
-    const {session, talk} = this.props;
     return (
-      <div>
-        <i className="fa fa-angle-up upper-left" />
-        <i className="fa fa-angle-down lower-left" />
+      <div className="move-tag btns-empty">
+        <button onClick={this.moveTalkUp} className="btn-empty btn-menu">
+          <i className="fa fa-angle-up upper-left" />
+        </button>
+        <button onClick={this.moveTalkDown} className="btn-empty btn-menu">
+          <i className="fa fa-angle-down lower-left" />
+        </button>
       </div>
     );
   };
 
   render() {
     const {talk, ordering, linkPre, images, sessionOwner} = this.props;
+    const orderControls = this.renderOrdering();
     const talkLink = `/${linkPre}/${talk._id}`;
     let iLink = '/loading.svg';
-    // TODO - adding a timeout with session.created to show error after 3 min
+
     const tImages = images.filter(i => i.meta.talkId === talk._id);
     const hasImages = tImages && tImages.length > 0;
     if (hasImages) {
@@ -53,22 +72,17 @@ class TalkListItem extends Component {
       }
     }
 
-    // TODO - adding a grabber for ordering
-    //<div className="col-sm-1">
-    //<span>*</span>
-    //</div>
+    const timedOutState = <span>generating slide images</span>;
+    const timedOut = !hasImages && Date.now() - talk.created > 180 * 1000; // 3 minutes
+    if (timedOut) iLink = '/x.svg';
 
-    // TODO - add a notification if over three minutes have passed since the
-    // talks.created field and then say that the file likely needs to be
-    // reuploaded
-
-    const orderControls = this.renderOrdering();
+    const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
+    const uploadState = <span>uploading: {talk.progress}%</span>;
 
     return (
       <li className="list-group-item clearfix">
         <div className="table no-margin">
           <div className="row equal">
-            {ordering && orderControls}
             <div className="col-sm-3">
               {!linkPre && <Img className="preview" source={iLink} />}
               {linkPre && (
@@ -77,7 +91,9 @@ class TalkListItem extends Component {
                 </Link>
               )}
             </div>
+
             <div className="col-sm-9 padded">
+              {ordering && orderControls}
               {sessionOwner && (
                 <div className="btn-m-group pull-right">
                   <button onClick={this.renameTalk} className="btn-menu">
@@ -93,7 +109,10 @@ class TalkListItem extends Component {
               {!hasImages && (
                 <i>
                   <br />
-                  <br /> generating slide images...
+                  <br />
+                  {uploading && uploadState}
+                  {!uploading && !timedOut && timedOutState}
+                  {timedOut && <span>processing error - please reupload</span>}
                 </i>
               )}
             </div>
@@ -114,6 +133,7 @@ TalkListItem.propTypes = {
 
 TalkListItem.defaultProps = {
   talk: {name: ''},
+  iter: 0,
   images: [],
   linkPre: '',
   sessionOwner: false,

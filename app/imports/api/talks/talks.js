@@ -18,6 +18,7 @@ Talks.deny({
 Talks.schema = new SimpleSchema({
   name: {type: String},
   created: {type: Date},
+  progress: {type: Number}, // for uploads
   secret: {type: String, regEx: SimpleSchema.RegEx.Id},
   userId: {type: String, regEx: SimpleSchema.RegEx.Id},
   session: {type: String, regEx: SimpleSchema.RegEx.Id},

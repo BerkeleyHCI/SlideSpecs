@@ -64,48 +64,6 @@ export const renameSession = new ValidatedMethod({
   },
 });
 
-export const addSessionTalk = new ValidatedMethod({
-  name: 'sessions.addTalk',
-  validate: new SimpleSchema({
-    sessionId: {type: String},
-    talkId: {type: String},
-  }).validator(),
-  run({sessionId, talkId}) {
-    const session = Sessions.findOne(sessionId);
-    if (!session || session.userId !== this.userId) {
-      throw new Meteor.Error(
-        'api.sessions.addTalk.accessDenied',
-        "You don't have permission to edit this session.",
-      );
-    } else {
-      const newTalks = [...session.talks, talkId];
-      Sessions.update(sessionId, {$set: {talks: newTalks}});
-    }
-  },
-});
-
-export const moveSessionTalk = new ValidatedMethod({
-  name: 'sessions.moveTalk',
-  validate: new SimpleSchema({
-    sessionId: {type: String},
-    talkId: {type: String},
-    position: {type: Number},
-  }).validator(),
-  run({sessionId, talkId, position}) {
-    const session = Sessions.findOne(sessionId);
-    if (!session || session.userId !== this.userId) {
-      throw new Meteor.Error(
-        'api.sessions.moveTalk.accessDenied',
-        "You don't have permission to edit this session.",
-      );
-    } else {
-      // TODO - overwrite specific position of talk
-      const newTalks = [...session.talks, talkId];
-      Sessions.update(sessionId, {$set: {talks: newTalks}});
-    }
-  },
-});
-
 export const deleteSession = new ValidatedMethod({
   name: 'sessions.delete',
   validate: new SimpleSchema({

@@ -5,8 +5,6 @@
 # requirements
 # convert -- brew install imagemagick
 
-# todo - make the name-saved-as more unique
-
 full=$(basename -- "$1")
 base="${full%.*}"
 extn="${full##*.}"
@@ -14,5 +12,3 @@ convert -density 100 "$1" "$2/$base-%04d.jpg"
 find "$2" -type f -iname "*$base*jpg"
 echo "convert-pdf complete."
 exit 0
-
-# x600\> "$full"

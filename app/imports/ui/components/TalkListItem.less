@@ -2,3 +2,24 @@
   display: inline-block;
   margin-right: 1em;
 }
+
+.list-group-item:hover {
+  .move-tag {
+    border-color: @color-rare;
+    .btn-menu {
+      color: @color-well;
+    }
+  }
+}
+
+.move-tag {
+  border-color: @color-empty;
+  position: absolute;
+  bottom: 0.5em;
+  right: 1em;
+  .btn-menu {
+    color: @color-rare;
+    padding: 6px;
+    .font-m1;
+  }
+}

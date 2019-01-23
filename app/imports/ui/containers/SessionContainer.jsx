@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
 import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
+import _ from 'lodash';
 
 export default class SessionContainer extends BaseComponent {
   renewSubscription = _id => {
@@ -15,15 +16,19 @@ export default class SessionContainer extends BaseComponent {
       Session.set('subscription', {type: 'session', _id});
     }
 
+    // TODO - filter out comments by specific talk for preview
+    // e.g. showing (number of comments/talk)
+
     let props = {};
     const {sessions, talks, files, images, comments} = this.props;
-    props.session = sessions.find(s => s._id === _id) || {};
-    props.talks = talks.filter(f => f.session === _id);
-    // TODO - filter out comments by specific talk for preview
+    const session = sessions.find(s => s._id === _id) || {};
+    const unsortedTalks = talks.filter(f => f.session === _id);
+    props.talks = _.sortBy(unsortedTalks, t => session.talks.indexOf(t._id));
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
-    props.sessionOwner = Meteor.userId() === props.session.userId;
-    props.name = props.session.name;
+    props.sessionOwner = Meteor.userId() === session.userId;
+    props.name = session.name;
+    props.session = session;
     props.sessionId = _id;
     return props;
   };
