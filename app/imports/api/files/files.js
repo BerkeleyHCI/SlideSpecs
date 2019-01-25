@@ -31,6 +31,7 @@ export const Files = new FilesCollection({
       script = 'convert-slides';
     }
 
+    console.log(file.path, imagePath);
     const util = Npm.require('util'),
       spawn = Npm.require('child_process').spawn,
       convert = spawn(`${process.env.PWD}/private/${script}`, [
@@ -48,9 +49,12 @@ export const Files = new FilesCollection({
           .map(i => {
             console.log('adding image file: ' + i);
             const fileName = i.substring(i.lastIndexOf('/') + 1);
+
+            // get slide number from image title
             const slideMatch = i.match(/\d+/g);
             if (!slideMatch) console.error('no slide matched', i);
-            const slideNo = slideMatch.slice(-1)[0]; // get slide number from image title
+            const slideNo = slideMatch.slice(-1)[0];
+
             Images.addFile(i, {
               fileName,
               type: 'image/png',
