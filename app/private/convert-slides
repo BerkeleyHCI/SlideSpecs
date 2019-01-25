@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # convert-slides [file.pptx] [/out/dir/]
+# will output in /out/dir/images and
+# use /out/dir/temp for processing
 
 # requirements
 # convert -- brew install imagemagick
@@ -13,13 +15,14 @@
 # see: https://codelabs.developers.google.com/codelabs/slides-api/
 
 full=$(basename -- "$1")
-temp="$2/../temp"
+images="$2/images"
+temp="$2/temp"
 base="${full%.*}"
 extn="${full##*.}"
 
-mkdir -pv "$2/$temp"
+mkdir -pv "$temp"
 soffice --headless --invisible --convert-to pdf "$full" --outdir "$temp"
-convert -density 100 "$temp/$base.pdf" "$2/$base-%04d.png"
-find "$2" -type f -iname "*$base*png"
+convert -density 100 "$temp/$base.pdf" "$images/$base-%04d.png"
+find "$temp" -type f -iname "*$base*png"
 echo "convert-slides complete."
 exit 0

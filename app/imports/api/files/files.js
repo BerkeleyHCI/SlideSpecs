@@ -1,13 +1,11 @@
 import {FilesCollection} from 'meteor/ostrio:files';
 import {Images} from '../images/images.js';
 
-// TODO make save folder dynamic//relative?...
-const storagePath = '/Users/jwrnr/Downloads/slidespecs/files';
-const imagePath = '/Users/jwrnr/Downloads/slidespecs/images';
+const storagePath = '/Users/jwrnr/Downloads/slidespecs';
 
 export const Files = new FilesCollection({
   collectionName: 'files',
-  storagePath: storagePath, // persist in this spot
+  storagePath: `${storagePath}/files`, // persist in this spot
   allowClientCode: false, // Disallow remove files from Client
   onBeforeUpload(file) {
     // Allow uploading files under 30MB for now.
@@ -31,12 +29,11 @@ export const Files = new FilesCollection({
       script = 'convert-slides';
     }
 
-    //console.log(file.path, imagePath);
     const util = Npm.require('util'),
       spawn = Npm.require('child_process').spawn,
       convert = spawn(`${process.env.PWD}/private/${script}`, [
         file.path,
-        imagePath,
+        storagePath,
       ]);
 
     // reference: https://github.com/VeliovGroup/Meteor-Files/wiki/addFile

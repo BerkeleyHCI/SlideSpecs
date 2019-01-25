@@ -8,8 +8,9 @@
 full=$(basename -- "$1")
 base="${full%.*}"
 extn="${full##*.}"
-echo "$1" "$2"
-convert -density 100 "$1" "$2/$base-%04d.png"
-find "$2" -type f -iname "*$base*png"
+images="$2/images"
+
+convert -density 100 "$1" "$images/$base-%04d.png"
+find "$images" -type f -iname "*$base*png"
 echo "convert-pdf complete."
 exit 0
