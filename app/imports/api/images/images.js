@@ -1,11 +1,11 @@
 import {FilesCollection} from 'meteor/ostrio:files';
 
 // TODO make save folder dynamic, or relative?...
-const storagePath = '/Users/jwrnr/Downloads/peer-feedback/images/';
+const imagePath = '/Users/jwrnr/Downloads/slidespecs/images';
 
 export const Images = new FilesCollection({
   collectionName: 'images',
-  storagePath: storagePath, // persist in this spot
+  storagePath: imagePath, // persist in this spot
   allowClientCode: false, // Disallow remove files from Client
   onBeforeUpload(file) {
     // Allow uploading images under 3MB for now.

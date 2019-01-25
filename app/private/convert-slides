@@ -19,7 +19,7 @@ extn="${full##*.}"
 
 mkdir -pv "$2/$temp"
 soffice --headless --invisible --convert-to pdf "$full" --outdir "$temp"
-convert -density 100 "$temp/$base.pdf" "$2/$base-%04d.jpg"
-find "$2" -type f -iname "*$base*jpg"
+convert -density 100 "$temp/$base.pdf" "$2/$base-%04d.png"
+find "$2" -type f -iname "*$base*png"
 echo "convert-slides complete."
 exit 0

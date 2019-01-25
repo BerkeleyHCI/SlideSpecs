@@ -2,8 +2,8 @@ import {FilesCollection} from 'meteor/ostrio:files';
 import {Images} from '../images/images.js';
 
 // TODO make save folder dynamic//relative?...
-const storagePath = '/Users/jwrnr/Downloads/peer-feedback/files/';
-const imagePath = '/Users/jwrnr/Downloads/peer-feedback/images/';
+const storagePath = '/Users/jwrnr/Downloads/slidespecs/files';
+const imagePath = '/Users/jwrnr/Downloads/slidespecs/images';
 
 export const Files = new FilesCollection({
   collectionName: 'files',
@@ -22,7 +22,7 @@ export const Files = new FilesCollection({
   },
 
   onAfterUpload(file) {
-    console.log(file);
+    //console.log(file);
 
     let script;
     if (/pdf$/i.test(file.extension)) {
@@ -31,7 +31,7 @@ export const Files = new FilesCollection({
       script = 'convert-slides';
     }
 
-    console.log(file.path, imagePath);
+    //console.log(file.path, imagePath);
     const util = Npm.require('util'),
       spawn = Npm.require('child_process').spawn,
       convert = spawn(`${process.env.PWD}/private/${script}`, [

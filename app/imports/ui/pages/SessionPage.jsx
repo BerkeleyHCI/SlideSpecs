@@ -35,7 +35,6 @@ export default class SessionPage extends BaseComponent {
 
   handleUpload = files => {
     let {sessionId, fileLocator} = this.props;
-
     const handleToast = ({msg, desc, icon, closeTime}) => {
       if (!closeTime) closeTime = 4000;
       toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
@@ -49,7 +48,7 @@ export default class SessionPage extends BaseComponent {
         const goodSize = file.size <= 30985760;
         const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
         if (!goodSize || !goodType) {
-          this.handleToast({
+          handleToast({
             msg: 'error',
             icon: 'times',
             desc:
@@ -91,13 +90,13 @@ export default class SessionPage extends BaseComponent {
 
         // TODO set the percent of the specific talk item for upload
         uploadInstance.on('uploaded', (err, file) => {
-          //console.log('uploaded', file.name);
+          console.log('uploaded', file.name);
           setTalkProgress.call({talkId, progress: 100});
         });
 
         // TODO set status on talk item that uploading is done.
         uploadInstance.on('end', (err, file) => {
-          //console.log('file:', file);
+          console.log('file:', file);
           handleToast({
             msg: file.name,
             icon: 'check',
@@ -106,7 +105,7 @@ export default class SessionPage extends BaseComponent {
         });
 
         uploadInstance.on('error', (err, file) => {
-          if (err) console.error(err);
+          if (err) console.error(err, file);
           handleToast({
             msg: file.name,
             icon: 'times',
@@ -123,6 +122,8 @@ export default class SessionPage extends BaseComponent {
     const {uploading} = this.state;
     const {session, name, talks, files, images} = this.props;
     const shareLink = window.location.origin + '/share/' + session._id;
+
+    // TODO update this into the secret session field instead of rthe regular // id
     const uploadLink = window.location.origin + '/upload/' + session._id;
 
     //<h3> <small>{talks.length} talks</small> </h3>
