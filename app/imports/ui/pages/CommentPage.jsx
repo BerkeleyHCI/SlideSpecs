@@ -123,7 +123,7 @@ class CommentPage extends BaseComponent {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
-    }, 2000); // set larger to clear issues of slide selection
+    }, 5000); // set larger to clear issues of slide selection
 
     // set image to link of the first slide
     const {images} = this.props;
@@ -209,6 +209,7 @@ class CommentPage extends BaseComponent {
   };
 
   clearReviewer = () => {
+    localStorage.setItem('feedbacks.referringLink', null);
     localStorage.setItem('feedbacks.reviewer', null);
     Session.set('reviewer', null);
     Meteor.logout(); // clear

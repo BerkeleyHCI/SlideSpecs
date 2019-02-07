@@ -22,7 +22,7 @@ export default class SessionContainer extends BaseComponent {
     const unsortedTalks = talks.filter(f => f.session === _id);
     const indexSort = t => session.talks.indexOf(t._id);
     props.talks = _.sortBy(unsortedTalks, indexSort).map(t => {
-      t.comments = comments.filter(c => c.talk === t._id);
+      t.comments = comments.filter(c => c.talk === t._id) || [];
       return t;
     });
 

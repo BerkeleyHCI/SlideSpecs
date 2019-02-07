@@ -13,6 +13,7 @@ export default class UserMenu extends BaseComponent {
 
   logout = e => {
     e.preventDefault();
+    localStorage.setItem('feedbacks.referringLink', null);
     Session.set('reviewer', null);
     Session.set('session', null);
     Session.set('talk', null);
