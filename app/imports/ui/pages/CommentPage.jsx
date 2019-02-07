@@ -76,28 +76,32 @@ class CommentPage extends BaseComponent {
   };
 
   handleSelectable = items => {
-    const area = document.getElementById('grid');
-    const elements = items.map(i => i.element);
-    let {ds, selected} = this.state;
-    const updateSelection = () => {
-      const s = ds.getSelection();
-      if (s.length > 0) {
-        const filtered = s.map(this.extractFileData);
-        this.setState({selected: s, filtered});
-      }
-    };
+    try {
+      const area = document.getElementById('grid');
+      const elements = items.map(i => i.element);
+      let {ds, selected} = this.state;
+      const updateSelection = () => {
+        const s = ds.getSelection();
+        if (s.length > 0) {
+          const filtered = s.map(this.extractFileData);
+          this.setState({selected: s, filtered});
+        }
+      };
 
-    if (!_.isEmpty(ds)) {
-      ds.selectables = elements;
-    } else {
-      ds = new DragSelect({
-        selectables: elements,
-        onDragMove: updateSelection,
-        callback: updateSelection,
-        autoScrollSpeed: 12,
-        area: area,
-      });
-      this.setState({ds});
+      if (!_.isEmpty(ds)) {
+        ds.selectables = elements;
+      } else {
+        ds = new DragSelect({
+          selectables: elements,
+          onDragMove: updateSelection,
+          callback: updateSelection,
+          autoScrollSpeed: 12,
+          area: area,
+        });
+        this.setState({ds});
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -118,7 +122,7 @@ class CommentPage extends BaseComponent {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
-    }, 500);
+    }, 2500); // set larger to clear issues of slide selection
 
     // set image to link of the first slide
     const {images} = this.props;
