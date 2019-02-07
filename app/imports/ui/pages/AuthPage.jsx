@@ -12,15 +12,12 @@ class AuthPage extends BaseComponent {
     const {content, link} = this.props;
     const loggingIn = Meteor.loggingIn();
     const loggingOut = Meteor.loggingOut();
-    const changing = loggingOut || loggingOut;
     return (
       <div className="page auth main-content">
         <div className="main-content">
           {loggingIn && <Message title="logging in..." />}
-
           {loggingOut && <Message title="logging out..." />}
-
-          {!changing && (
+          {!loggingIn && !loggingOut && (
             <div>
               {content}
               <h2>{link}</h2>
