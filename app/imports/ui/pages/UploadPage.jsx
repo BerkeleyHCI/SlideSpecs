@@ -17,7 +17,7 @@ import AlertLink from '../components/AlertLink.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import {deleteTalkFile} from '../../api/files/methods.js';
-import {createTalk} from '../../api/talks/methods.js';
+import {createTalk, setTalkProgress} from '../../api/talks/methods.js';
 
 /*
  * This page is for the presenters to add their own slides, rather than
@@ -76,6 +76,15 @@ export default class UploadPage extends BaseComponent {
     const toastDone = (
       <AppNotification msg="success" desc="upload complete" icon="check" />
     );
+
+    uploadInstance.on('progress', function(progress, file) {
+      setTalkProgress.call({talkId, progress});
+    });
+
+    uploadInstance.on('uploaded', (err, file) => {
+      console.log('uploaded', file.name);
+      setTalkProgress.call({talkId, progress: 100});
+    });
 
     uploadInstance.on('end', function(error, fileObj) {
       toast(() => toastDone, {autoClose: 2000});
