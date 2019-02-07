@@ -12,6 +12,7 @@ export default class SessionContainer extends BaseComponent {
   };
 
   getSessionProps = _id => {
+    console.log(_id);
     if (this.renewSubscription(_id)) {
       Session.set('subscription', {type: 'session', _id});
     }

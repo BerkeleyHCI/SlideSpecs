@@ -44,12 +44,24 @@ export default class App extends BaseComponent {
     this.state = {showConnectionIssue: false, modal: {isOpen: false}};
   }
 
-  componentDidMount() {
+  renewSubscription = () => {
+    const {user, sub} = this.props;
+    if (user && !sub) {
+      Session.set('subscription', {type: 'user', _id: user._id});
+    }
+  };
+
+  componentDidMount = () => {
+    this.renewSubscription();
     setTimeout(() => {
       /* eslint-disable react/no-did-mount-set-state */
       this.setState({showConnectionIssue: true});
     }, CONNECTION_ISSUE_TIMEOUT);
-  }
+  };
+
+  componentDidUpdate = () => {
+    this.renewSubscription();
+  };
 
   getSharedProps = () => {
     return {
@@ -198,7 +210,6 @@ const PrivateRoute = ({render, ...other}) => {
     localStorage.setItem('feedbacks.referringLink', loc);
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else if (!permitted) {
-    localStorage.setItem('feedbacks.referringLink', loc);
     out = () => <ForbiddenPage user={user} />;
   }
 

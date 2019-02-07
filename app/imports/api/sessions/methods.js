@@ -51,8 +51,8 @@ export const checkUserSession = new ValidatedMethod({
     matchId: {type: String},
   }).validator(),
   run({matchId}) {
+    //console.log(matchId, sess, this.userId);
     const sess = Sessions.findOne(matchId);
-    console.log(matchId, sess, this.userId);
     if (sess && sess.userId === this.userId) {
       return true; // user owns session
     } else {
