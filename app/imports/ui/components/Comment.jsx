@@ -300,7 +300,8 @@ class Comment extends BaseComponent {
     //master: true,
   };
 
-  privButtons = [this.editButton, this.trashButton, this.talkButton];
+  //privButtons = [this.editButton, this.trashButton, this.talkButton];
+  privButtons = [this.editButton, this.trashButton];
 
   renderMeta = (tag, users) => {
     return (
