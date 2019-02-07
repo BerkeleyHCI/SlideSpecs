@@ -46,13 +46,15 @@ export default class SessionPage extends BaseComponent {
       files.map(file => {
         // Allow uploading files under 30MB for now.
         const goodSize = file.size <= 30985760;
-        const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
+        //const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
+        const goodType = /(pdf)$/i.test(file.name);
         if (!goodSize || !goodType) {
           handleToast({
             msg: 'error',
             icon: 'times',
             desc:
-              'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
+              //'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
+              'Please only upload pdf files, with size equal or less than 30MB.',
           });
           return; // skip this file.
         }

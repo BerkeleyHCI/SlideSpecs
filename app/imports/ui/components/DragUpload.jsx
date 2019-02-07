@@ -43,12 +43,14 @@ class DragUpload extends BaseComponent {
         <FullMessage
           className={dClass}
           title="drop files here"
-          subtitle="PDF or PowerPoint"
+          subtitle="PDF only"
         />
       </DropToUpload>
     );
   }
 }
+
+//subtitle="PDF or PowerPoint"
 
 DragUpload.propTypes = {
   handleUpload: PropTypes.func.isRequired,
