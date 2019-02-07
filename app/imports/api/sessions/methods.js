@@ -45,6 +45,21 @@ export const createSession = new ValidatedMethod({
   },
 });
 
+export const checkUserSession = new ValidatedMethod({
+  name: 'session.checkUser',
+  validate: new SimpleSchema({
+    matchId: {type: String},
+  }).validator(),
+  run({matchId}) {
+    const sess = Sessions.findOne(matchId);
+    if (sess && sess.userId === this.userId) {
+      return true; // user owns session
+    } else {
+      return false; // refuse access
+    }
+  },
+});
+
 export const renameSession = new ValidatedMethod({
   name: 'sessions.rename',
   validate: new SimpleSchema({

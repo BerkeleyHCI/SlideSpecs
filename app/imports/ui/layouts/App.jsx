@@ -25,6 +25,9 @@ import CommentPage from '../pages/CommentPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ForbiddenPage from '../pages/ForbiddenPage.jsx';
 
+import {checkUserSession} from '../../api/sessions/methods.js';
+import {checkUserTalk} from '../../api/talks/methods.js';
+
 const CONNECTION_ISSUE_TIMEOUT = 5000;
 
 const Fade = cssTransition({
@@ -190,13 +193,21 @@ export default class App extends BaseComponent {
 }
 
 const PrivateRoute = ({user, render, ...other}) => {
-  const matchId = other.computedMatch.params.id;
-  // TODO - look up and see if session/talk exists
-  let out,
-    loc = window.location.pathname;
+  const matchId = other.computedMatch.params.id || '';
+  let loc = window.location.pathname;
+  let out;
 
-  if (!user) {
-    // TODO add optional params for redirecting to after logging in.
+  console.log(other.path, matchId);
+
+  const sharedPaths = ['/', '/share/:id'];
+  const permitted =
+    sharedPaths.includes(other.path) ||
+    checkUserTalk.call({matchId}) ||
+    checkUserSession.call({matchId});
+
+  if (!permitted) {
+    out = () => <ForbiddenPage user={user} />;
+  } else if (!user) {
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else {
     out = render;

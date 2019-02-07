@@ -107,6 +107,29 @@ export const setTalkProgress = new ValidatedMethod({
   },
 });
 
+export const checkUserTalk = new ValidatedMethod({
+  name: 'talk.checkUser',
+  validate: new SimpleSchema({
+    matchId: {type: String},
+  }).validator(),
+  run({matchId}) {
+    const talk = Talks.findOne(matchId);
+    if (!talk) {
+      return false; // talk does not exist
+    } else if (talk.userId === this.userId) {
+      return true; // user owns talk
+    }
+
+    // check if user owns session in talk
+    const sess = Sessions.findOne(talk.session);
+    if (sess && sess.userId === this.userId) {
+      return true; // not talk owner but session owner
+    } else {
+      return false; // refuse to let see talk.
+    }
+  },
+});
+
 export const moveSessionTalk = new ValidatedMethod({
   name: 'talk.moveSessionTalk',
   validate: new SimpleSchema({
