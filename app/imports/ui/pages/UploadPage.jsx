@@ -2,7 +2,7 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
@@ -98,10 +98,10 @@ export default class UploadPage extends BaseComponent {
   };
 
   render() {
-    const {session, name, talk, files, images, sessionOwner} = this.props;
+    const {user, session, name, talk, files, images, sessionOwner} = this.props;
     const shareLink = window.location.origin + '/share/' + session._id;
 
-    const content = (
+    let content = (
       <div className="main-content">
         <h1>{name}</h1>
         {sessionOwner && (
@@ -159,12 +159,16 @@ export default class UploadPage extends BaseComponent {
       </div>
     );
 
+    //if (!this.props.user) {
+    ////content = <Redirect to="/join" />;
+    //}
+
     return <MenuContainer {...this.props} content={content} />;
   }
 }
 
 UploadPage.propTypes = {
-  user: PropTypes.object,
+  user: PropTypes.object.isRequired,
   sessionId: PropTypes.string,
   files: PropTypes.array,
   talk: PropTypes.object,

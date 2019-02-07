@@ -14,7 +14,8 @@ class JoinPage extends BaseComponent {
   }
 
   redirectHomeIfUser = () => {
-    const {home} = this.props;
+    const saved = localStorage.getItem('feedbacks.referringLink');
+    const home = saved || '/';
     if (Meteor.user() && !Meteor.loggingIn()) {
       this.redirectTo(home);
     }
@@ -124,13 +125,5 @@ class JoinPage extends BaseComponent {
     );
   }
 }
-
-JoinPage.propTypes = {
-  home: PropTypes.string,
-};
-
-JoinPage.defaultProps = {
-  home: '/',
-};
 
 export default JoinPage;

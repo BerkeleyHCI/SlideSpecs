@@ -1,3 +1,5 @@
+/* eslint max-len: 120 */
+
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
@@ -139,29 +141,29 @@ export default class App extends BaseComponent {
           <Switch location={location}>
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
-            <Route path="/upload/:id" render={this.renderUpload} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
-
             <PrivateRoute
               exact
               path="/"
-              user={user}
               render={this.renderSessionList}
+              user={user}
             />
-
             <PrivateRoute
               path="/sessions/:id"
               render={this.renderSession}
               user={user}
             />
-
+            <PrivateRoute
+              path="/upload/:id"
+              render={this.renderUpload}
+              user={user}
+            />
             <PrivateRoute
               path="/slides/:id"
               render={this.renderTalk}
               user={user}
             />
-
             <PrivateRoute user={user} render={() => <NotFoundPage />} />
           </Switch>
         )}
@@ -197,18 +199,19 @@ const PrivateRoute = ({user, render, ...other}) => {
   let loc = window.location.pathname;
   let out;
 
-  console.log(other.path, matchId);
-
-  const sharedPaths = ['/', '/share/:id'];
+  //console.log(user, other.path, matchId, loc);
+  const sharedPaths = ['/', '/upload/:id'];
   const permitted =
     sharedPaths.includes(other.path) ||
     checkUserTalk.call({matchId}) ||
     checkUserSession.call({matchId});
 
-  if (!permitted) {
-    out = () => <ForbiddenPage user={user} />;
-  } else if (!user) {
+  if (!user) {
+    localStorage.setItem('feedbacks.referringLink', loc);
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
+  } else if (!permitted) {
+    localStorage.setItem('feedbacks.referringLink', loc);
+    out = () => <ForbiddenPage user={user} />;
   } else {
     out = render;
   }

@@ -13,7 +13,8 @@ class SignInPage extends BaseComponent {
   }
 
   redirectHomeIfUser = () => {
-    const {home} = this.props;
+    const saved = localStorage.getItem('feedbacks.referringLink');
+    const home = saved || '/';
     if (Meteor.user() && !Meteor.loggingIn()) {
       this.redirectTo(home);
     }
@@ -105,13 +106,5 @@ class SignInPage extends BaseComponent {
     );
   }
 }
-
-SignInPage.propTypes = {
-  home: PropTypes.string,
-};
-
-SignInPage.defaultProps = {
-  home: '/',
-};
 
 export default SignInPage;
