@@ -143,28 +143,11 @@ export default class App extends BaseComponent {
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
-            <PrivateRoute
-              exact
-              path="/"
-              render={this.renderSessionList}
-              user={user}
-            />
-            <PrivateRoute
-              path="/sessions/:id"
-              render={this.renderSession}
-              user={user}
-            />
-            <PrivateRoute
-              path="/upload/:id"
-              render={this.renderUpload}
-              user={user}
-            />
-            <PrivateRoute
-              path="/slides/:id"
-              render={this.renderTalk}
-              user={user}
-            />
-            <PrivateRoute user={user} render={() => <NotFoundPage />} />
+            <PrivateRoute exact path="/" render={this.renderSessionList} />
+            <PrivateRoute path="/sessions/:id" render={this.renderSession} />
+            <PrivateRoute path="/upload/:id" render={this.renderUpload} />
+            <PrivateRoute path="/slides/:id" render={this.renderTalk} />
+            <PrivateRoute render={() => <NotFoundPage />} />
           </Switch>
         )}
       </div>
@@ -194,26 +177,29 @@ export default class App extends BaseComponent {
   }
 }
 
-const PrivateRoute = ({user, render, ...other}) => {
+const PrivateRoute = ({render, ...other}) => {
+  const user = Meteor.user();
   const matchId = other.computedMatch.params.id || '';
   let loc = window.location.pathname;
   let out;
 
-  //console.log(user, other.path, matchId, loc);
   const sharedPaths = ['/', '/upload/:id'];
-  const permitted =
-    sharedPaths.includes(other.path) ||
-    checkUserTalk.call({matchId}) ||
-    checkUserSession.call({matchId});
+  const talkPermit = checkUserTalk.call({matchId});
+  const sessPermit = checkUserSession.call({matchId});
+  const shared = sharedPaths.includes(other.path);
+  const permitted = shared || talkPermit || sessPermit;
 
-  if (!user) {
+  //console.log(Meteor.loggingIn(), user, other.path, matchId, loc);
+  //console.log(talkPermit, sessPermit);
+
+  if (user && permitted) {
+    out = render;
+  } else if (!user) {
     localStorage.setItem('feedbacks.referringLink', loc);
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else if (!permitted) {
     localStorage.setItem('feedbacks.referringLink', loc);
     out = () => <ForbiddenPage user={user} />;
-  } else {
-    out = render;
   }
 
   return <Route {...other} render={out} />;

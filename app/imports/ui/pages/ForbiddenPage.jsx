@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import MenuContainer from '../containers/MenuContainer.jsx';
+import BaseComponent from '../components/BaseComponent.jsx';
 import {Message} from '../components/Message.jsx';
 
-class ForbiddenPage extends Component {
+class ForbiddenPage extends BaseComponent {
   render() {
     const content = (
       <div className="page not-found">

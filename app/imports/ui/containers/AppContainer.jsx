@@ -12,20 +12,23 @@ import App from '../layouts/App.jsx';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 export default withTracker(() => {
+  const sub = Session.get('subscription');
   const reviewer = Session.get('reviewer');
   let data = {
     connected: Meteor.status().connected,
     user: Meteor.user(),
-    reviewer: reviewer,
     loading: false,
     sessions: [],
     talks: [],
     comments: [],
     files: [],
     images: [],
+
+    // Session data.
+    reviewer,
+    sub,
   };
 
-  const sub = Session.get('subscription');
   if (sub) {
     const sessions = Meteor.subscribe(`sessions.${sub.type}`, sub._id);
     const talks = Meteor.subscribe(`talks.${sub.type}`, sub._id);
