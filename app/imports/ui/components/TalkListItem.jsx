@@ -79,6 +79,9 @@ class TalkListItem extends Component {
     const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
     const uploadState = <span>uploading: {talk.progress}%</span>;
 
+    const comments = talk.comments.length;
+    const hasComments = comments > 1;
+
     return (
       <li className="list-group-item clearfix">
         <div className="table no-margin">
@@ -122,6 +125,9 @@ class TalkListItem extends Component {
     );
   }
 }
+
+// todo: add comment and slide notes as a tag overlay
+//{hasComments && ( <i> <br /> {comments} comments </i>)}
 
 TalkListItem.propTypes = {
   talk: PropTypes.object,
