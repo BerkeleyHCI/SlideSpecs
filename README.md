@@ -22,3 +22,4 @@ meteor bundle (future deploy option)
     cd app && meteor build --server-only ../output
     # TODO - move this to server, install reqs, run
 
+[more instructions here](/app)
