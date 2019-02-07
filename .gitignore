@@ -4,3 +4,5 @@ data
 *bz2
 *zip
 log/
+build/
+output/
