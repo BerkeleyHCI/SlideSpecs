@@ -251,14 +251,12 @@ class CommentPage extends BaseComponent {
   };
 
   clearButtonBG = e => {
+    //console.log(e, e.target);
     this.clearActiveComment();
-    const {following} = this.state;
-    if (!following) {
-      const base = e.target.className.split()[0];
-      const matches = [/col-/, /review-table/];
-      if (matches.some(x => base.match(x))) {
-        this.clearButton();
-      }
+    const base = e.target.className.split()[0];
+    const matches = [/col-/, /review-table/, /row/, /reviewView/];
+    if (matches.some(x => base.match(x))) {
+      this.clearButton();
     }
   };
 
@@ -653,11 +651,8 @@ class CommentPage extends BaseComponent {
 
     return files ? (
       this.renderRedirect() || (
-        <div className="reviewView">
-          <div
-            id="review-view"
-            onMouseDown={this.clearButtonBG}
-            className="table review-table">
+        <div className="reviewView" onMouseDown={this.clearButtonBG}>
+          <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
