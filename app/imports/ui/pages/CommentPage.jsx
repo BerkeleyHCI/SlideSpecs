@@ -30,7 +30,7 @@ class CommentPage extends BaseComponent {
     this.inRef = React.createRef();
     this.state = {
       defaultPriv: false,
-      following: true,
+      following: false,
       focusing: false,
       userOwn: false,
       redirectTo: null,
@@ -85,6 +85,7 @@ class CommentPage extends BaseComponent {
         if (s.length > 0) {
           const filtered = s.map(this.extractFileData);
           this.setState({selected: s, filtered});
+          this.updateImage(filtered[0].slideId);
         }
       };
 
@@ -307,11 +308,6 @@ class CommentPage extends BaseComponent {
     this.setState({defaultPriv});
   };
 
-  toggleFollow = () => {
-    const following = !this.state.following;
-    this.setState({following});
-  };
-
   toggleFocus = () => {
     const focusing = !this.state.focusing;
     this.setState({focusing});
@@ -323,7 +319,7 @@ class CommentPage extends BaseComponent {
   };
 
   renderCommentHead = () => {
-    const {defaultPriv, following, focusing, userOwn} = this.state;
+    const {defaultPriv, focusing, userOwn} = this.state;
     return (
       <span className="comment-config pull-right">
         <span className="comment-option" onClick={this.toggleFocus}>
@@ -518,8 +514,9 @@ class CommentPage extends BaseComponent {
         csort = csort.filter(c => c.author === reviewer);
       }
 
-      // Filtering 'reply' comments into array. HATE.
       // TODO - make it so this seperates on punctuation
+
+      // Filtering 'reply' comments into array.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
       const replies = csort.filter(isReply).map(c => {
@@ -607,6 +604,13 @@ class CommentPage extends BaseComponent {
     const {image, hoverImage, filtered, bySlide} = this.state;
     const {name, session, reviewer} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
+    try {
+      if (hoverImage && hoverImage != image && filtered.length == 0) {
+        this.setState({image: hoverImage});
+      }
+    } catch (e) {
+      console.log(e);
+    }
 
     return (
       <div className="context-filter float-at-top">
