@@ -23,7 +23,11 @@ export default class SessionContainer extends BaseComponent {
     const {sessions, talks, files, images, comments} = this.props;
     const session = sessions.find(s => s._id === _id) || {talks: []};
     const unsortedTalks = talks.filter(f => f.session === _id);
-    props.talks = _.sortBy(unsortedTalks, t => session.talks.indexOf(t._id));
+    const indexSort = t => session.talks.indexOf(t._id);
+    const addComments = t =>
+      (t.comments = comments.filter(c => c.talkId === t._id));
+
+    props.talks = _.sortBy(unsortedTalks, indexSort).map(addComments);
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
     props.sessionOwner = Meteor.userId() === session.userId;
