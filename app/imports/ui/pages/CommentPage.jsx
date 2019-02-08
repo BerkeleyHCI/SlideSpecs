@@ -209,7 +209,7 @@ class CommentPage extends BaseComponent {
   };
 
   clearReviewer = () => {
-    localStorage.setItem('feedbacks.referringLink', null);
+    localStorage.setItem('feedbacks.referringLink', '');
     localStorage.setItem('feedbacks.reviewer', null);
     Session.set('reviewer', null);
     Meteor.logout(); // clear

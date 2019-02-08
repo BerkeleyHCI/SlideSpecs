@@ -17,7 +17,7 @@ class JoinPage extends BaseComponent {
     const saved = localStorage.getItem('feedbacks.referringLink');
     const home = saved || '/';
     if (saved) {
-      localStorage.setItem('feedbacks.referringLink', null);
+      localStorage.setItem('feedbacks.referringLink', '');
     }
 
     if (Meteor.user() && !Meteor.loggingIn()) {
