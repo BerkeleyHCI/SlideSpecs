@@ -16,10 +16,6 @@ class JoinPage extends BaseComponent {
   redirectHomeIfUser = () => {
     const saved = localStorage.getItem('feedbacks.referringLink');
     const home = saved || '/';
-    if (saved) {
-      localStorage.setItem('feedbacks.referringLink', '');
-    }
-
     if (Meteor.user() && !Meteor.loggingIn()) {
       this.redirectTo(home);
     }

@@ -15,10 +15,6 @@ class SignInPage extends BaseComponent {
   redirectHomeIfUser = () => {
     const saved = localStorage.getItem('feedbacks.referringLink');
     const home = saved || '/';
-    if (saved) {
-      localStorage.setItem('feedbacks.referringLink', ''); // empty
-    }
-
     if (Meteor.user() && !Meteor.loggingIn()) {
       this.redirectTo(home);
     }
