@@ -209,10 +209,11 @@ class CommentPage extends BaseComponent {
   };
 
   clearReviewer = () => {
-    localStorage.setItem('feedbacks.referringLink', '');
-    localStorage.setItem('feedbacks.reviewer', null);
-    Session.set('reviewer', null);
-    Meteor.logout(); // clear
+    Meteor.logout(() => {
+      localStorage.setItem('feedbacks.referringLink', '');
+      localStorage.setItem('feedbacks.reviewer', null);
+      Session.set('reviewer', null);
+    }); // clear
   };
 
   updateImage = id => {

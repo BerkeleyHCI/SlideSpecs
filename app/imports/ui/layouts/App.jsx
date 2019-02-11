@@ -203,10 +203,12 @@ const PrivateRoute = ({render, ...other}) => {
 
   //console.log(Meteor.loggingIn(), user, other.path, matchId, loc);
   //console.log(talkPermit, sessPermit);
+  const saved = localStorage.getItem('feedbacks.referringLink');
+  console.log(saved, Meteor.loggingOut(), loc);
 
   if (user && permitted) {
     out = render;
-  } else if (!user) {
+  } else if (!user && !Meteor.loggingOut()) {
     localStorage.setItem('feedbacks.referringLink', loc);
     out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else if (!permitted) {

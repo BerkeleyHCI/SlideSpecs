@@ -79,6 +79,7 @@ class TalkListItem extends Component {
     const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
     const uploadState = <span>uploading: {talk.progress}%</span>;
 
+    console.log(talk);
     const comments = talk.comments.length;
     const hasComments = comments > 1;
 
@@ -138,7 +139,7 @@ TalkListItem.propTypes = {
 };
 
 TalkListItem.defaultProps = {
-  talk: {name: ''},
+  talk: {name: '', comments: []},
   iter: 0,
   images: [],
   linkPre: '',

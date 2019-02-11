@@ -23,10 +23,13 @@ export default class SpeakerContainer extends BaseComponent {
     let props = {};
     const {sessions, talks, files, images, comments} = this.props;
     props.session = sessions.find(s => s._id === _id) || {};
-    props.talk = talks.find(
-      f => f.session == _id && f.userId == Meteor.userId(),
-    );
-    props.talk.comments = comments.filter(c => c.talk === props.talk._id) || [];
+    const sFilter = f => f.session == _id && f.userId == Meteor.userId();
+    const talk = talks.find(sFilter);
+    if (talk) {
+    props.talk = 
+      talk.comments = comments.filter(c => c.talk === props.talk._id);
+    }
+    props
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
     props.sessionOwner = Meteor.userId() === props.session.userId;
