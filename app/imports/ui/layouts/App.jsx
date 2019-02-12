@@ -21,6 +21,7 @@ import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import SessionListPage from '../pages/SessionListPage.jsx';
 import SessionPage from '../pages/SessionPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
+import GuidePage from '../pages/GuidePage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';
@@ -153,6 +154,7 @@ export default class App extends BaseComponent {
           <Switch location={location}>
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
+            <Route path="/guide" component={GuidePage} {...shared} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
             <PrivateRoute exact path="/" render={this.renderSessionList} />
