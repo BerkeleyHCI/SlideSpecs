@@ -85,6 +85,9 @@ export default class SessionListPage extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1>sessions</h1>
+        <Link to={'/guide'} className="btn btn-empty pull-right">
+          user guide
+        </Link>
         <button onClick={this.addSession} className="btn btn-primary">
           + new session
         </button>

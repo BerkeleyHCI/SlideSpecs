@@ -10,105 +10,108 @@ class GuidePage extends BaseComponent {
   render() {
     const content = (
       <div className="main-content" id="guide-container">
-        <h1>Presenter</h1>
-        <div class="alert">
-          <h3>Uploading slides</h3>
-          <img class="gif" src="guide/join_add_presenter_slides.gif" />
-          <hr />
-          <h3>Reviewing Comments</h3>
+        <h3 className="pull-right">
+          <Link to={`/`}>
+            <span className="black"> ‹ </span> back
+          </Link>
+        </h3>
+        <h1>User Guide</h1>
+        <div className="alert">
+          for:
+          <a href="#presenters"> presenters</a> |{' '}
+          <a href="#audience">audience members</a> |{' '}
+          <a href="#managers">session owners</a>
         </div>
 
-        <h1>Audience Member</h1>
-        <div class="alert">
+        <h2 id="presenters">For Presenters</h2>
+        <div className="alert">
+          <h3>Upload slides</h3>
+          <img className="gif" src="guide/join_add_presenter_slides.gif" />
+          Create an account or log in. Drag and drop a PDF of your presentation.
+        </div>
+
+        <h2 id="audience">For Audience Members</h2>
+        <div className="alert">
           <h3>Commenting and attaching to slides</h3>
-          <img class="gif" src="guide/attachfeedbacktoslide.gif" />
+          <img className="gif" src="guide/attachfeedbacktoslide.gif" />
           <p>
             You can use this interface to provide comments and feedback to the
             presenters during the talk.
           </p>
-
-          <h5>Selecting Slides for Comment Tagging</h5>
+          <hr />
+          <h4>Attach Comments to Specific Slides</h4>
           <ul>
-            <li>To select single slides, hover over them and click</li>
-            <li>
-              To select multiple slides, click and drag over the slides you want
-              to select or shift and click on the slides you want to select.
-            </li>
+            <li>To select a single slide, hover over and click it.</li>
+            <li>or multiple slides, drag a box over the target slides.</li>
+            <li>Shift-click any slide to toggle attachment.</li>
           </ul>
           <hr />
-          <h3>Marking comments</h3>
-          <h5>Agree with a comment</h5>
-          <h5>Mark a comment for discussion</h5>
+
+          <h3>Toggle View Modes</h3>
+          <h4>Share Mode</h4>
+          <img src="guide/share-mode.png" />
+          <p>
+            In Share Mode, you can hover over comments to reply, or agree. You
+            can also edit and delete comments that you have authored.
+          </p>
           <hr />
-          <h3>Deleting comments</h3>
-          <hr />
-          <h3>View Modes</h3>
-          <h5>Focus Mode</h5>
+          <h4>Focus Mode</h4>
           <img src="guide/focus-mode.png" />
           <p>
             When focus mode is on, comments are focused and do not display
             interaction options.
           </p>
-          <h5>Share Mode</h5>
-          <img src="guide/share-mode.png" />
-          <p>
-            When share mode is on, users can cover over comments to reply,
-            agree, or mark comments for discussion.
-          </p>
-          <p>
-            If users are editing their own comments, they can also edit or
-            delete.
-          </p>
         </div>
 
-        <h1>For Session Owners</h1>
-        <div class="alert">
+        <h2 id="managers">For Session Owners</h2>
+        <div className="alert">
           <h3>Logging in</h3>
-          <img class="gif" src="guide/logging_in_session_owner.gif" />
+          <img className="gif" src="guide/logging_in_session_owner.gif" />
           <p>Login by simply typing in your password and username.</p>
           <hr />
           <h3>Creating an account</h3>
-          <p>Click on the create an account button.</p>
           <img src="guide/create_acc.png" />
+          <p>Click on the create an account button.</p>
           <hr />
           <h3>View all sessions</h3>
           <img src="guide/session_home_screen.png" />
           <p>
-            The first page will display all created sessions or allow you to
-            create a new session.
+            The home page lists all your sessions. You can also create new
+            sessions here.
           </p>
           <hr />
           <h3>Creating a session</h3>
-          <img class="gif" src="guide/new-session.png" />
+          <img className="gif" src="guide/new-session.png" />
           <p>Click on "New Session" to upload slides.</p>
           <hr />
           <h3>Uploading slides</h3>
-          <img class="gif" src="guide/add_presentations.gif" />
+          <img className="gif" src="guide/add_presentations.gif" />
           <p>
-            Drag and drop PDFs or Powerpoints into the highlighted region to add
-            presentations or click on “+ new” to select a file from your
-            computer.
+            Drag and drop PDFs into the highlighted box to add presentations.
+            Alternatively, click on “+ new” to select files from your computer.
           </p>
           <hr />
-          <h3>Organizing Slides</h3>
-          <h5>Changing Slide Order</h5>
-          <img class="gif" src="guide/changing_order_of_slides.gif" />
-          <h5>Renaming Slides</h5>
-          <img class="gif" src="guide/rename_slides_2.gif" />
-          <h5>Removing Slides</h5>
+          <h3>Organizing Talks</h3>
+          <h4>Changing Talk Order</h4>
+          <img className="gif" src="guide/changing_order_of_slides.gif" />
+          After uploading multiple talks, you can use the arrows to shift the
+          order of talks.
+          <h4>Renaming Talks</h4>
+          <img className="gif" src="guide/rename_slides_2.gif" />
           <hr />
           <h3>Sharing a session</h3>
-          <div class="subsection">
-            <h5>Allowing presenters to add their own slides</h5>
-            <img class="gif" src="guide/share_presenter_link_working.gif" />
+          <div className="subsection">
+            <h4>Allowing presenters to add their own slides</h4>
+            <img className="gif" src="guide/share_presenter_link_working.gif" />
             <p>
               To allow presenters to add their own slides click on “open link.”
               <ul>
                 <li>Home > Selected Session > Open Link</li>
               </ul>
             </p>
-            <h5>Sharing presentation link with audience members</h5>
-            <img class="gif" src="guide/share_slides_with_audience_2.gif" />
+            <hr />
+            <h4>Sharing presentation link with audience members</h4>
+            <img className="gif" src="guide/share_slides_with_audience_2.gif" />
             <p>
               To share the presentation click on “open link.”
               <ul>
@@ -120,11 +123,17 @@ class GuidePage extends BaseComponent {
               </ul>
             </p>
           </div>
-
           <hr />
           <h3>Entering a Session</h3>
-          <img class="gif" src="guide/entering_session.gif" />
+          <img className="gif" src="guide/entering_session.gif" />
         </div>
+        <h2>
+          <Link to={`/`}>
+            <span className="black"> ‹ </span> back
+          </Link>
+        </h2>
+        <br />
+        <br />
       </div>
     );
 

@@ -32,6 +32,9 @@ export default class UserMenu extends BaseComponent {
         <a className="btn-secondary" onClick={this.logout}>
           log out
         </a>
+        <Link to="/guide" className="btn-secondary">
+          guide
+        </Link>
       </div>
     );
   };
@@ -40,10 +43,13 @@ export default class UserMenu extends BaseComponent {
     return (
       <div className="user-menu">
         <Link to="/signin" className="btn-secondary">
-          sign in
+          login
         </Link>
         <Link to="/join" className="btn-secondary">
           join
+        </Link>
+        <Link to="/guide" className="btn-secondary">
+          guide
         </Link>
       </div>
     );

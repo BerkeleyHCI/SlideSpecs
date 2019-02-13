@@ -26,10 +26,10 @@ export default class SpeakerContainer extends BaseComponent {
     const sFilter = f => f.session == _id && f.userId == Meteor.userId();
     const talk = talks.find(sFilter);
     if (talk) {
-    props.talk = 
       talk.comments = comments.filter(c => c.talk === props.talk._id);
+      props.talk = talk;
     }
-    props
+
     props.files = files.filter(f => f.meta.sessionId === _id);
     props.images = images.filter(f => f.meta.sessionId === _id);
     props.sessionOwner = Meteor.userId() === props.session.userId;

@@ -95,6 +95,10 @@ export default class App extends BaseComponent {
     }
   };
 
+  renderGuidePage = ({match}) => {
+    return this.preRender(match, GuidePage, 'user');
+  };
+
   renderSessionList = ({match}) => {
     return this.preRender(match, SessionListPage, 'user');
   };
@@ -154,7 +158,7 @@ export default class App extends BaseComponent {
           <Switch location={location}>
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
-            <Route path="/guide" component={GuidePage} {...shared} />
+            <Route path="/guide" render={this.renderGuidePage} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
             <PrivateRoute exact path="/" render={this.renderSessionList} />
