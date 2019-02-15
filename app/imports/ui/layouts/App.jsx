@@ -1,7 +1,8 @@
-/* eslint max-len: 120 */
+/* eslint max-len 0 */
 
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
+import {Session} from 'meteor/session.js';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import {ToastContainer, toast, cssTransition} from 'react-toastify';

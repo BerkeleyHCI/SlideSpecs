@@ -1,9 +1,6 @@
 import React from 'react';
-import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
-import TalkListItem from '../components/TalkListItem.jsx';
-import NameSet from '../components/NameSet.jsx';
 import {Link} from 'react-router-dom';
 
 class GuidePage extends BaseComponent {
@@ -82,7 +79,7 @@ class GuidePage extends BaseComponent {
           <hr />
           <h3>Creating a session</h3>
           <img className="gif" src="guide/new-session.png" />
-          <p>Click on "New Session" to upload slides.</p>
+          <p>Click on 'New Session' to upload slides.</p>
           <hr />
           <h3>Uploading slides</h3>
           <img className="gif" src="guide/add_presentations.gif" />
@@ -104,7 +101,7 @@ class GuidePage extends BaseComponent {
             <h4>Allowing presenters to add their own slides</h4>
             <img className="gif" src="guide/share_presenter_link_working.gif" />
             <p>
-              To allow presenters to add their own slides click on “open link.”
+              To allow presenters to add their own slides click on 'open link.'
               <ul>
                 <li>Home > Selected Session > Open Link</li>
               </ul>
@@ -113,7 +110,7 @@ class GuidePage extends BaseComponent {
             <h4>Sharing presentation link with audience members</h4>
             <img className="gif" src="guide/share_slides_with_audience_2.gif" />
             <p>
-              To share the presentation click on “open link.”
+              To share the presentation click on 'open link.'
               <ul>
                 <li> Home > Selected Session > Open Link </li>
                 <li>

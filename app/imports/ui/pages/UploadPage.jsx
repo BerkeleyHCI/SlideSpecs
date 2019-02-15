@@ -2,16 +2,12 @@ import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
-import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
-import AuthPageJoin from '../pages/AuthPageJoin.jsx';
 import AppNotification from '../components/AppNotification.jsx';
-import {Message} from '../components/Message.jsx';
 import {Files} from '../../api/files/files.js';
-import Loading from '../components/Loading.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import AlertLink from '../components/AlertLink.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
@@ -98,7 +94,7 @@ export default class UploadPage extends BaseComponent {
   };
 
   render() {
-    const {user, session, name, talk, files, images, sessionOwner} = this.props;
+    const {session, name, talk, files, images, sessionOwner} = this.props;
     const shareLink = window.location.origin + '/share/' + session._id;
 
     let content = (

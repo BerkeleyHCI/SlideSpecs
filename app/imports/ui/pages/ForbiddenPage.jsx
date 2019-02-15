@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import {Message} from '../components/Message.jsx';

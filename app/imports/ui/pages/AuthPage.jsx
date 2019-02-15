@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import {Message} from '../components/Message.jsx';
-import Loading from '../components/Loading.jsx';
 
 // a common layout wrapper for auth pages
 
