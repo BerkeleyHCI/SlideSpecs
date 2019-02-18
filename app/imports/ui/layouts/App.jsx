@@ -210,8 +210,8 @@ const PrivateRoute = ({render, ...other}) => {
 
   //console.log(Meteor.loggingIn(), user, other.path, matchId, loc);
   //console.log(talkPermit, sessPermit);
+  //console.log(saved, Meteor.loggingOut(), loc);
   const saved = localStorage.getItem('feedbacks.referringLink');
-  console.log(saved, Meteor.loggingOut(), loc);
 
   if (user && permitted) {
     out = render;

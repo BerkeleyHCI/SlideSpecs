@@ -26,7 +26,7 @@ export default class SpeakerContainer extends BaseComponent {
     const sFilter = f => f.session == _id && f.userId == Meteor.userId();
     const talk = talks.find(sFilter);
     if (talk) {
-      talk.comments = comments.filter(c => c.talk === props.talk._id);
+      talk.comments = comments.filter(c => c.talk === talk._id);
       props.talk = talk;
     }
 
