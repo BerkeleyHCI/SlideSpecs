@@ -79,7 +79,7 @@ class TalkListItem extends Component {
     const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
     const uploadState = <span>uploading: {talk.progress}%</span>;
 
-    const comments = talk.comments.length;
+    const comments = talk.comments ? talk.comments.length : 0;
     const hasComments = comments > 1;
 
     return (
@@ -113,7 +113,7 @@ class TalkListItem extends Component {
                 <i>
                   <br />
                   <br />
-                  {uploading && uploadState}
+                  {uploading && !timedOut && uploadState}
                   {!uploading && !timedOut && timedOutState}
                   {timedOut && <span>processing error - please reupload</span>}
                 </i>
