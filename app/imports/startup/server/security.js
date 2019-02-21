@@ -1,5 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
+import {BrowserPolicy} from 'meteor/browser-policy-common';
 import _ from 'lodash';
 
 // Don't let people write arbitrary data to their 'profile' field from the client
@@ -27,20 +28,21 @@ const AUTH_METHODS = [
   'ATResendVerificationEmail',
 ];
 
-if (Meteor.isServer) {
-  // Only allow 2 login attempts per connection per 5 seconds
-  DDPRateLimiter.addRule(
-    {
-      name(name) {
-        return _.includes(AUTH_METHODS, name);
-      },
+// allowing blobs to run
+BrowserPolicy.content.allowOriginForAll('blob:');
 
-      // Rate limit per connection ID
-      connectionId() {
-        return true;
-      },
+// Only allow 2 login attempts per connection per 5 seconds
+DDPRateLimiter.addRule(
+  {
+    name(name) {
+      return _.includes(AUTH_METHODS, name);
     },
-    2,
-    5000,
-  );
-}
+
+    // Rate limit per connection ID
+    connectionId() {
+      return true;
+    },
+  },
+  2,
+  5000,
+);
