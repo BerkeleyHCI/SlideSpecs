@@ -14,6 +14,7 @@
     "enzyme": "^3.8.0",
     "faker": "^4.1.0",
     "history": "^4.7.2",
+    "imagesloaded": "^4.1.4",
     "lodash": "^4.17.10",
     "meteor-node-stubs": "^0.4.1",
     "prop-types": "^15.6.1",
