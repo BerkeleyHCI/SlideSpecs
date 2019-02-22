@@ -220,7 +220,7 @@ class CommentPage extends BaseComponent {
 
   updateImage = id => {
     try {
-      this.setState({image: Images.findOne(id).link()});
+      this.setState({image: Images.findOne(id).link('original', '//')});
     } catch (e) {
       console.error(e);
     }
@@ -229,7 +229,7 @@ class CommentPage extends BaseComponent {
   updateHoverImage = id => {
     try {
       const {image, filtered} = this.state;
-      const hoverImage = Images.findOne(id).link();
+      const hoverImage = Images.findOne(id).link('original', '//');
       this.setState({hoverImage});
       if (hoverImage && hoverImage !== image && filtered.length === 0) {
         this.setState({image: hoverImage});
@@ -438,7 +438,7 @@ class CommentPage extends BaseComponent {
     return images.map((f, key) => {
       let link = '404';
       try {
-        link = Images.findOne({_id: f._id}).link();
+        link = Images.findOne({_id: f._id}).link('original', '//');
       } catch (e) {
         console.error(e);
       }

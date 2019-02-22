@@ -43,7 +43,7 @@ class TalkPage extends BaseComponent {
     let talkFile;
     try {
       let fileParams = {'meta.talkId': talk._id};
-      talkFile = Files.findOne(fileParams).link();
+      talkFile = Files.findOne(fileParams).link('original', '//');
     } catch (e) {
       talkFile = '/404';
     }
@@ -51,7 +51,7 @@ class TalkPage extends BaseComponent {
       <SlideFile
         key={'file-' + key}
         iter={key + 1}
-        fileUrl={Images.findOne(i._id).link()}
+        fileUrl={Images.findOne(i._id).link('original', '//')}
         handleLoad={this.updateMason}
         fileId={i._id}
         fileName={i.name}
