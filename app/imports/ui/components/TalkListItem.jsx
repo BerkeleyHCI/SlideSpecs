@@ -66,7 +66,7 @@ class TalkListItem extends Component {
         let testImage;
         const image = _.sortBy(tImages, x => Number(x.meta.slideNo))[0];
         if (image) testImage = Images.findOne(image._id);
-        if (testImage) iLink = testImage.link('original', '//');
+        if (testImage) iLink = testImage.link();
       } catch (e) {
         console.error(e);
       }

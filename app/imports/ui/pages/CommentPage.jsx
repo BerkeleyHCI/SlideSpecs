@@ -1,6 +1,7 @@
 import {Meteor} from 'meteor/meteor';
 import React from 'react';
 import {Session} from 'meteor/session.js';
+import imagesLoaded from 'imagesloaded';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
@@ -119,11 +120,12 @@ class CommentPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
-    setTimeout(() => {
+
+    imagesLoaded('#grid-holder', () => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
-    }, 5000); // set larger to clear issues of slide selection
+    });
 
     // set image to link of the first slide
     const {images} = this.props;
@@ -218,7 +220,7 @@ class CommentPage extends BaseComponent {
 
   updateImage = id => {
     try {
-      this.setState({image: Images.findOne(id).link('original', '//')});
+      this.setState({image: Images.findOne(id).link()});
     } catch (e) {
       console.error(e);
     }
@@ -227,7 +229,7 @@ class CommentPage extends BaseComponent {
   updateHoverImage = id => {
     try {
       const {image, filtered} = this.state;
-      const hoverImage = Images.findOne(id).link('original', '//');
+      const hoverImage = Images.findOne(id).link();
       this.setState({hoverImage});
       if (hoverImage && hoverImage !== image && filtered.length === 0) {
         this.setState({image: hoverImage});
@@ -259,7 +261,6 @@ class CommentPage extends BaseComponent {
   };
 
   clearButtonBG = e => {
-    console.log(e.target);
     this.clearActiveComment();
     const base = e.target.className.split()[0];
     const matches = [
@@ -437,7 +438,7 @@ class CommentPage extends BaseComponent {
     return images.map((f, key) => {
       let link = '404';
       try {
-        link = Images.findOne({_id: f._id}).link('original', '//');
+        link = Images.findOne({_id: f._id}).link();
       } catch (e) {
         console.error(e);
       }
