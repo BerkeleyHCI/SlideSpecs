@@ -23,6 +23,7 @@ import SessionListPage from '../pages/SessionListPage.jsx';
 import SessionPage from '../pages/SessionPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 import GuidePage from '../pages/GuidePage.jsx';
+import AboutPage from '../pages/AboutPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';
@@ -100,6 +101,10 @@ export default class App extends BaseComponent {
     return this.preRender(match, GuidePage, 'user');
   };
 
+  renderAboutPage = ({match}) => {
+    return this.preRender(match, AboutPage, 'user');
+  };
+
   renderSessionList = ({match}) => {
     return this.preRender(match, SessionListPage, 'user');
   };
@@ -160,6 +165,7 @@ export default class App extends BaseComponent {
             <Route path="/join" component={AuthPageJoin} {...shared} />
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/guide" render={this.renderGuidePage} />
+            <Route path="/about" render={this.renderAboutPage} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
             <PrivateRoute exact path="/" render={this.renderSessionList} />

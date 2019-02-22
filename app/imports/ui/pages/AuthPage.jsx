@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import {Message} from '../components/Message.jsx';
+import {Link} from 'react-router-dom';
 
 // a common layout wrapper for auth pages
 
@@ -14,6 +15,13 @@ class AuthPage extends BaseComponent {
     return (
       <div className="page auth main-content">
         <div className="main-content">
+          <Link to={`/about`}>
+            <div className="alert">
+              <span className="black"> [ </span>
+              about SlideSpecs
+              <span className="black"> ] </span>
+            </div>
+          </Link>
           {loggingIn && <Message title="logging in..." />}
           {loggingOut && <Message title="logging out..." />}
           {!loggingIn && !loggingOut && (
