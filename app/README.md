@@ -41,8 +41,8 @@ Configuration options (`.eslintrc`)
 
 ### Configuration
 
-- current cert: /usr/local/etc/dehydrated
-- renew cert: sudo dehydrated -cron -x
+- current cert: `/usr/local/etc/dehydrated`
+- renew cert: `sudo dehydrated --cron -x`
 - todo: https://github.com/tozd/docker-meteor
 
 ##### Server
@@ -60,10 +60,10 @@ server {
     listen       80;
     listen       8081;
     listen       443 ssl;
-    #server_name  bayscope2.eecs.berkeley.edu;
+    server_name  slidespecs.berkeley.edu;
 
-    ssl_certificate /usr/local/etc/dehydrated/certs/bayscope2.eecs.berkeley.edu/fullchain.pem;
-    ssl_certificate_key  /usr/local/etc/dehydrated/certs/bayscope2.eecs.berkeley.edu/privkey.pem;
+    ssl_certificate /usr/local/etc/dehydrated/certs/slidespecs.berkeley.edu/fullchain.pem;
+    ssl_certificate_key  /usr/local/etc/dehydrated/certs/slidespecs.berkeley.edu/privkey.pem;
 
     ssl_stapling on;
     ssl_stapling_verify on;
