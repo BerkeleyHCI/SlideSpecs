@@ -14,10 +14,11 @@ class AboutPage extends BaseComponent {
           </Link>
         </h3>
 
-        <h1>About SlideSpecs</h1>
+        <h1>About</h1>
         <div className="alert">
-          SlideSpecs is a collaborative presentation feedback platform. Check
-          out the <Link to="/guide"> user guide </Link>
+          SlideSpecs is a collaborative presentation feedback platform.
+          <hr />
+          Check out the <Link to="/guide"> user guide </Link>
           to see what SlideSpecs can do.
         </div>
 
@@ -50,8 +51,7 @@ class AboutPage extends BaseComponent {
         <div className="alert">
           <p>
             Please email Jeremy Warner (first.last at berkeley.edu) with
-            feedback/questions, or if you are interested in using in SlideSpecs
-            in your own teaching practice.
+            feedback or questions.
           </p>
         </div>
 
