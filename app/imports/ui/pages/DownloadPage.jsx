@@ -337,10 +337,63 @@ class CommentPage extends BaseComponent {
     }
   };
 
+  // renderCommentArray = () => {
+  //   const comments = this.renderComments();
+  //   const commentsList = comments.props.children[0].props.children;
+
+  //   // Array to append all the comment contents 
+  //   var commentsContent = [];
+  //   var i;
+
+  //   // Loops through all the comments and appends to array
+  //   for (i = 0; i < commentsList.length; i++) {
+  //     commentsContent.push(comments.props.children[0].props.children[i].props.content);
+  //   }
+  //   // Reverses order so that the most recent comments are at the bottom
+  //   commentsContent.reverse();
+  //   console.log(commentsContent);
+
+  //   return (
+  //     <div>
+  //       <div id="comments-list" className="alert">
+  //         {items.map((i, iter) => (
+  //           <Comment key={`comment-${iter}`} {...i} />
+  //         ))}
+  //       </div>
+  //       {items.length >= 5 && (
+  //         <div className="padded full-width">
+  //           <button
+  //             onClick={this.goToTop}
+  //             className="btn center btn-menu btn-round">
+  //             <i className={'fa fa-arrow-up no-padding'} />
+  //           </button>
+  //           <div className="v-pad" />
+  //         </div>
+  //       )}
+  //       {items.length == 0 && <div className="alert"> no comments</div>}
+  //     </div>
+  //   );
+    
+  // };
+
+
   render() {
     const {files, userId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
+    const commentsList = comments.props.children[0].props.children;
+    var commentsContent = [];
+    var i;
+
+    // Loops through all the comments and appends to array
+    for (i = 0; i < commentsList.length; i++) {
+      commentsContent.push(comments.props.children[0].props.children[i].props.content);
+    }
+    // Reverses order so that the most recent comments are at the bottom
+    commentsContent.reverse();
+    console.log(commentsContent);
+
+
 
     return files ? (
       this.renderRedirect() || (
@@ -351,7 +404,16 @@ class CommentPage extends BaseComponent {
             <div className="row">
               <div className="col-sm-12">
                 {cmtHead}
-                {comments}
+                {comments}  
+                    <div className="alert">
+                      <div className="btns-menu-space">
+                        <a download href={commentsContent}>
+                          <button className="btn btn-menu btn-primary">
+                            Download Comments
+                          </button>
+                        </a>
+                      </div>
+                    </div>
               </div>
             </div>
           </div>
