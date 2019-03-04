@@ -380,23 +380,16 @@ class CommentPage extends BaseComponent {
   // };
  
   _downloadTxtFile = () => {
-    const comments = this.renderComments();
-    const commentsList = comments.props.children[0].props.children;
-    var commentsContent = [];
-    var i;
-    // Loops through all the comments and appends to array
-    for (i = 0; i < commentsList.length; i++) {
-      commentsContent.push(comments.props.children[0].props.children[i].props.content.toString());
-      commentsContent.push(" ");
-    }
-    // Reverses order so that the most recent comments are at the bottom
-    commentsContent.reverse();
-    console.log(commentsContent);
+    const {comments, name} = this.props;
+    const filtered = comments.map(({author, content, created, agree, discuss, replies}) => {
+      return {author, content, created, agree, discuss, replies}
+    })
 
+    const content = JSON.stringify(filtered, null, 2)
+    var file = new Blob(content, {type: 'application/json'});
     var element = document.createElement("a");
-    var file = new Blob(commentsContent, {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "comments.txt";
+    element.download = `${name}_comments.json`;
     element.click();
   }
 
@@ -406,16 +399,6 @@ class CommentPage extends BaseComponent {
     const {files, userId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
-    const commentsList = comments.props.children[0].props.children;
-    var commentsContent = [];
-    var i;
-    // Loops through all the comments and appends to array
-    for (i = 0; i < commentsList.length; i++) {
-      commentsContent.push(comments.props.children[0].props.children[i].props.content);
-    }
-    // Reverses order so that the most recent comments are at the bottom
-    commentsContent.reverse();
-    console.log(commentsContent);
 
     return files ? (
       this.renderRedirect() || (
