@@ -1,235 +1,176 @@
+import React from 'react';
 import {Meteor} from 'meteor/meteor';
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
-import {_} from 'lodash';
-
+import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
-import {Files} from '../../api/files/files.js';
-import AppNotification from '../components/AppNotification.jsx';
-import Loading from '../components/Loading.jsx';
-import ConvertInstructions from '../components/ConvertInstructions.jsx';
+import {Link} from 'react-router-dom';
+
 import BaseComponent from '../components/BaseComponent.jsx';
-import FileUpload from '../components/FileUpload.jsx';
-import Message from '../components/Message.jsx';
-import {deleteSessionFiles} from '../../api/files/methods.js';
+import MenuContainer from '../containers/MenuContainer.jsx';
+import AppNotification from '../components/AppNotification.jsx';
+import {Files} from '../../api/files/files.js';
+import DragUpload from '../components/DragUpload.jsx';
+import AlertLink from '../components/AlertLink.jsx';
+import SelectUpload from '../components/SelectUpload.jsx';
+import TalkListItem from '../components/TalkListItem.jsx';
+import {deleteTalkFile} from '../../api/files/methods.js';
+import {createTalk, setTalkProgress} from '../../api/talks/methods.js';
 
-class UploadPage extends BaseComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      uploading: false,
-      progress: 0,
-    };
-  }
+/*
+ * This page is for the presenters to add their own slides, rather than
+ * the default session manager slide which can upload multiple slides at one
+ * time.
+ *
+ */
 
-  componentDidMount() {
-    new Masonry('.grid', {itemSelector: '.file-item'});
-  }
-
-  componentDidUpdate() {
-    new Masonry('.grid', {itemSelector: '.file-item'});
-  }
-
-  componentWillUnmount() {
-    //const mason = new Masonry('.grid', {itemSelector: '.file-item'});
-    //mason.destroy();
-  }
-
-  humanFileSize(bytes) {
-    let fileSizeInBytes = bytes;
-    var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-    do {
-      fileSizeInBytes = fileSizeInBytes / 1024;
-      i++;
-    } while (fileSizeInBytes > 1024);
-    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
-  }
-
-  deleteFiles = () => {
-    const {sessionId} = this.props;
-    deleteSessionFiles.call({sessionId});
+export default class UploadPage extends BaseComponent {
+  deleteTalkFile = () => {
+    const {talk} = this.props;
+    if (confirm('Delete the uploaded file for your talk?'))
+      deleteTalkFile.call({talkId: talk._id});
   };
 
-  // TODO merge the progress for all uploads, creating single number percent.
+  handleDropUpload = files => {
+    this.handleUpload(files);
+  };
 
-  uploadIt = e => {
-    let uploadCount;
-    let uploadGroup;
-    const startProg = () => this.setState({uploading: true});
+  handleSelectUpload = e => {
     e.preventDefault();
-    let {sessionId, fileLocator} = this.props;
     const files = [...e.currentTarget.files];
-    if (files) {
-      startProg();
-      uploadCount = files.length;
-      uploadGroup = files.length;
-      files.map(file => {
-        let uploadInstance = Files.insert(
-          {
-            file,
-            meta: {
-              locator: fileLocator,
-              userId: Meteor.userId(),
-              sessionId,
-            },
-            streams: 'dynamic',
-            chunkSize: 'dynamic',
-            allowWebWorkers: true,
-          },
-          false,
-        );
-
-        //uploadInstance.on('start', function() {});
-        //uploadInstance.on('uploaded', function(error, fileObj) {});
-        //uploadInstance.on('progress', function(progress, fileObj) {});
-
-        uploadInstance.on('end', function(error, fileObj) {
-          uploadCount -= 1;
-        });
-
-        uploadInstance.on('error', function(error, fileObj) {
-          console.log(`Error during upload: ${error}`);
-        });
-
-        uploadInstance.start();
-      });
-
-      let uploadInterval = setInterval(() => {
-        if (uploadCount === 0) {
-          // DONE WITH ALL UPLOADS
-          clearInterval(uploadInterval);
-          const timeout = 3000;
-          toast(
-            () => (
-              <AppNotification
-                msg="success"
-                desc="upload complete"
-                icon="check"
-              />
-            ),
-            {autoClose: timeout},
-          );
-
-          this.setState({
-            uploading: false,
-            progress: 0,
-          });
-          //setTimeout(() => {
-          //this.redirectTo(`/sessions/${sessionId}`);
-          //}, timeout);
-        } else {
-          // UPLOADING NOW
-          this.setState({
-            progress: Math.round(
-              100 * (files.length - uploadCount) / files.length,
-            ),
-          });
-        }
-      }, 50);
-    }
+    this.handleUpload(files);
   };
 
-  // This is our progress bar, bootstrap styled
-  // Remove this function if not needed
-  //<Message title="uploading..." subtitle={this.state.progress + '%'} />
-
-  showUploads() {
-    if (this.state.uploading) {
-      return <Message title="uploading..." subtitle={<Loading />} />;
+  handleUpload = allfiles => {
+    let {sessionId, fileLocator} = this.props;
+    // Only allow for uploading one file per talk.
+    const file = allfiles[0];
+    if (!file) {
+      return false;
     }
-  }
 
-  handleLoad = () => {
-    new Masonry('.grid', {itemSelector: '.file-item'});
-  };
+    const talkId = createTalk.call({
+      sessionId,
+      name: file.name.replace(/\.[^/.]+$/, ''),
+    });
 
-  goHome = e => {
-    e.preventDefault();
-    this.redirectTo('/');
+    let uploadInstance = Files.insert(
+      {
+        file,
+        meta: {
+          locator: fileLocator,
+          userId: Meteor.userId(),
+          sessionId,
+          talkId,
+        },
+        //transport: 'http',
+        streams: 'dynamic',
+        chunkSize: 'dynamic',
+        allowWebWorkers: true,
+      },
+      false,
+    );
+
+    const toastDone = (
+      <AppNotification msg="success" desc="upload complete" icon="check" />
+    );
+
+    uploadInstance.on('progress', function(progress, file) {
+      setTalkProgress.call({talkId, progress});
+    });
+
+    uploadInstance.on('uploaded', (err, file) => {
+      console.log('uploaded', file.name);
+      setTalkProgress.call({talkId, progress: 100});
+    });
+
+    uploadInstance.on('end', function(error, fileObj) {
+      toast(() => toastDone, {autoClose: 2000});
+    });
+
+    uploadInstance.on('error', function(error, fileObj) {
+      console.error(`Error during upload.`, error);
+    });
+
+    uploadInstance.start();
   };
 
   render() {
-    const {sessionId, name, files} = this.props;
-    if (files) {
-      let fileCursors = files;
-      let uploads = this.showUploads();
-      let display =
-        (!this.state.uploading &&
-          fileCursors.map((aFile, key) => {
-            let link = Files.findOne({_id: aFile._id}).link('original', '//');
-            return (
-              <FileUpload
-                iter={key + 1}
-                key={'file' + key}
-                fileId={aFile._id}
-                fileName={aFile.name}
-                fileUrl={link}
-                fileSize={this.humanFileSize(aFile.size)}
-                handleLoad={this.handleLoad}
-              />
-            );
-          })) ||
-        null;
+    const {session, name, talk, files, images, sessionOwner} = this.props;
+    const shareLink = window.location.origin + '/share/' + session._id;
 
-      return (
-        this.renderRedirect() || (
-          <div className="main-content">
-            <h1>
-              {files.length > 0 ? (
-                <Link to={`/sessions/${sessionId}`}>
-                  <span className="black"> ‹ </span>
-                  {name}
-                </Link>
-              ) : (
-                <span>{name}</span>
-              )}
-            </h1>
-
-            <div className="custom-upload">
-              {!this.state.uploading &&
-                display.length > 0 && (
-                  <div>
-                    <h2>manage slides</h2>
-                    <button
-                      onClick={this.deleteFiles}
-                      className="btn btn-danger">
-                      delete all
-                    </button>
-                  </div>
-                )}
-              {!this.state.uploading &&
-                display.length === 0 && (
-                  <div className="alert">
-                    <h3>slide upload</h3>
-                    <ConvertInstructions />
-                    <hr />
-                    then, select and upload all the images at once.
-                    <hr />
-                    <label className="btn btn-primary">
-                      + upload slides
-                      <input
-                        type="file"
-                        id="fileinput"
-                        disabled={this.state.inProgress}
-                        ref="fileinput"
-                        onChange={this.uploadIt}
-                        multiple
-                      />
-                    </label>
-                    <button onClick={this.goHome} className="btn btn-danger">
-                      cancel
-                    </button>
-                  </div>
-                )}
-              {uploads}
-            </div>
-            <div className="v-pad grid">{display}</div>
+    let content = (
+      <div className="main-content">
+        <h1>{name}</h1>
+        {sessionOwner && (
+          <div className="alert">
+            <small className="pull-right">
+              <i>You own this session; only you see this message.</i>
+            </small>
+            Share this link to let speakers upload their own slides.
+            <hr />
+            <code>{window.location.href}</code>
+            <hr />
+            <Link to={`/sessions/${session._id}`}>
+              <span className="black"> ‹ </span>
+              Go back to the session management panel.
+            </Link>
           </div>
-        )
-      );
-    } else return <div>loading file list...</div>;
+        )}
+
+        <h3>speaker slide management</h3>
+
+        {talk && (
+          <div>
+            <div>
+              <ul className="v-pad list-group">
+                <TalkListItem
+                  key={talk._id}
+                  talk={talk}
+                  images={images}
+                  files={files}
+                  linkPre="slides"
+                  sessionOwner={true}
+                />
+              </ul>
+            </div>
+            <AlertLink
+              text={'view all talks for this session'}
+              bText={'open link'}
+              link={shareLink}
+            />
+          </div>
+        )}
+
+        {!talk && (
+          <div className="alert">
+            add your presentation here.
+            <SelectUpload
+              labelText="+ new"
+              className="pull-right btn-menu btn-primary"
+              handleUpload={this.handleSelectUpload}
+            />
+            <hr />
+            <DragUpload handleUpload={this.handleDropUpload} />
+          </div>
+        )}
+      </div>
+    );
+
+    //if (!this.props.user) {
+    ////content = <Redirect to="/join" />;
+    //}
+
+    return <MenuContainer {...this.props} content={content} />;
   }
 }
 
-export default UploadPage;
+UploadPage.propTypes = {
+  user: PropTypes.object.isRequired,
+  sessionId: PropTypes.string,
+  files: PropTypes.array,
+  talk: PropTypes.object,
+};
+
+UploadPage.defaultProps = {
+  user: null,
+  files: [],
+};

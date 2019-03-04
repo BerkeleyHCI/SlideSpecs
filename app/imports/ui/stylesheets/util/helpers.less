@@ -18,12 +18,11 @@
 }
 
 .yes-select() {
-  -webkit-touch-callout: auto; /* iOS Safari */
-  -webkit-user-select: auto; /* Safari */
-  -khtml-user-select: auto; /* Konqueror HTML */
-  -moz-user-select: auto; /* Firefox */
-  -ms-user-select: auto; /* Internet Explorer/Edge */
-  user-select: auto; /* Non-prefixed version, currently supported by Chrome and Opera */
+  -moz-user-select: text !important;
+  -khtml-user-select: text !important;
+  -webkit-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }
 
 .select-text() {
@@ -32,6 +31,15 @@
   -webkit-user-select: text;
   -ms-user-select: text;
   user-select: text;
+}
+
+.auto-select() {
+  -webkit-touch-callout: auto; /* iOS Safari */
+  -webkit-user-select: auto; /* Safari */
+  -khtml-user-select: auto; /* Konqueror HTML */
+  -moz-user-select: auto; /* Firefox */
+  -ms-user-select: auto; /* Internet Explorer/Edge */
+  user-select: auto; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
 .no-drag() {

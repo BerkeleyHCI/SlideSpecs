@@ -18,17 +18,20 @@
   display: inline-block;
   position: relative;
   text-align: center;
-  border-radius: 0px;
+  border-radius: 4px;
   text-decoration: none !important; //prevents global <a> styles from applying
   vertical-align: middle;
   white-space: nowrap;
 
   &[class*='menu'] {
-    background-color: @color-danger;
+    background-color: lighten(@color-danger, 25%);
     color: @color-empty;
-    padding: 0.2em;
+    padding: 0.2em 0.4em;
+    letter-spacing: initial;
+    text-transform: none;
+    text-indent: initial;
     &:hover {
-      background-color: darken(@color-ancillary, 5%);
+      background-color: lighten(@color-danger, 10%);
     }
   }
 
@@ -48,14 +51,14 @@
 
   &[class*='secondary'] {
     transition: all 300ms ease-in;
-    box-shadow: lighten(#517096, 5%) 0 0 0 1px inset;
-    color: @color-empty;
+    box-shadow: lighten(#111, 5%) 0 0 0 1px inset;
+    color: @color-medium !important;
 
     &:hover {
-      color: @color-rare;
+      color: @color-empty !important;
     }
     &.active {
-      box-shadow: lighten(#517096, 25%) 0 0 0 1px inset;
+      box-shadow: lighten(#111, 25%) 0 0 0 1px inset;
     }
   }
 
@@ -75,16 +78,20 @@
   &[class*='group'] {
     padding: 0em;
   }
-
   &[class*='round'] {
     border-radius: 2em;
     padding: 1em;
+  }
+  &[class*='user'] {
+    /*background-color: darken(@color-primary, 5%) !important;*/
+  }
+  &[class*='list-item'] {
+    padding: 5px 10px;
   }
 
   &[class*='empty'] {
     background-color: @color-empty;
     color: @color-danger !important;
-    padding: 0.2em;
     &:hover {
       background-color: darken(@color-empty, 5%);
     }
@@ -106,6 +113,12 @@
   border-radius: 4px;
   .btn:not(:last-child) {
     border-right: 1px solid @color-rare;
+  }
+}
+
+.btns-menu-space {
+  *:not(:last-child) {
+    margin-right: 1em;
   }
 }
 

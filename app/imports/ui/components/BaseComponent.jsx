@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unused-state */
 
-import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 

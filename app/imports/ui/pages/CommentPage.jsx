@@ -1,20 +1,18 @@
 import {Meteor} from 'meteor/meteor';
-import React, {Component} from 'react';
+import React from 'react';
 import {Session} from 'meteor/session.js';
-import {withTracker} from 'meteor/react-meteor-data';
+import imagesLoaded from 'imagesloaded';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
-import {Files} from '../../api/files/files.js';
+import {Images} from '../../api/images/images.js';
 import BaseComponent from '../components/BaseComponent.jsx';
-import Input from '../components/Input.jsx';
 import TextArea from '../components/TextArea.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
-import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
 
@@ -33,11 +31,11 @@ class CommentPage extends BaseComponent {
     this.inRef = React.createRef();
     this.state = {
       defaultPriv: false,
-      following: true,
+      following: false,
       focusing: false,
+      userOwn: false,
       redirectTo: null,
       activeComment: null,
-      activeSlide: null,
       sorter: 'created',
       filter: 'time',
       invert: true,
@@ -55,9 +53,8 @@ class CommentPage extends BaseComponent {
 
   handleLoad = () => {
     const grid = document.getElementById('grid');
-    const mason = new Masonry(grid, {
-      itemSelector: '.file-item',
-    });
+    const itemSel = {itemSelector: '.file-item'};
+    const mason = new Masonry(grid, itemSel);
     mason.on('layoutComplete', this.handleSelectable);
   };
 
@@ -80,28 +77,33 @@ class CommentPage extends BaseComponent {
   };
 
   handleSelectable = items => {
-    const area = document.getElementById('grid');
-    const elements = items.map(i => i.element);
-    let {ds, selected} = this.state;
-    const updateSelection = () => {
-      const s = ds.getSelection();
-      if (s.length > 0) {
-        const filtered = s.map(this.extractFileData);
-        this.setState({selected: s, filtered});
-      }
-    };
+    try {
+      const area = document.getElementById('grid');
+      const elements = items.map(i => i.element);
+      let {ds, selected} = this.state;
+      const updateSelection = () => {
+        const s = ds.getSelection();
+        if (s.length > 0) {
+          const filtered = s.map(this.extractFileData);
+          this.setState({selected: s, filtered});
+          this.updateImage(filtered[0].slideId);
+        }
+      };
 
-    if (!_.isEmpty(ds)) {
-      ds.selectables = elements;
-    } else {
-      ds = new DragSelect({
-        selectables: elements,
-        onDragMove: updateSelection,
-        callback: updateSelection,
-        autoScrollSpeed: 12,
-        area: area,
-      });
-      this.setState({ds});
+      if (!_.isEmpty(ds)) {
+        ds.selectables = elements;
+      } else {
+        ds = new DragSelect({
+          selectables: elements,
+          onDragMove: updateSelection,
+          callback: updateSelection,
+          autoScrollSpeed: 12,
+          area: area,
+        });
+        this.setState({ds});
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -119,24 +121,21 @@ class CommentPage extends BaseComponent {
   componentDidMount = () => {
     this.handleLoad();
 
-    setTimeout(() => {
+    imagesLoaded('#grid-holder', () => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
-      this.handleActiveSlide();
-    }, 500);
+    });
 
     // set image to link of the first slide
-    const {files} = this.props;
-    if (files.length > 0) {
-      this.handleActive(); // active
-      this.updateImage(files[0]._id);
+    const {images} = this.props;
+    if (images.length > 0) {
+      this.updateImage(images[0]._id);
     }
   };
 
   componentDidUpdate = () => {
     this.handleLoad();
-    this.handleActive();
   };
 
   componentWillUnmount = () => {
@@ -212,22 +211,31 @@ class CommentPage extends BaseComponent {
   };
 
   clearReviewer = () => {
-    localStorage.setItem('feedbacks.reviewer', null);
-    Session.set('reviewer', null);
-    Meteor.logout(); // clear
+    Meteor.logout(() => {
+      localStorage.setItem('feedbacks.referringLink', '');
+      localStorage.setItem('feedbacks.reviewer', null);
+      Session.set('reviewer', null);
+    }); // clear
   };
 
-  updateImage = fid => {
-    const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({image: link});
+  updateImage = id => {
+    try {
+      this.setState({image: Images.findOne(id).link('original', '//')});
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  updateHoverImage = fid => {
-    const {activeSlide} = this.state;
-    const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({hoverImage: link});
-    if (!activeSlide) {
-      this.setState({image: link});
+  updateHoverImage = id => {
+    try {
+      const {image, filtered} = this.state;
+      const hoverImage = Images.findOne(id).link('original', '//');
+      this.setState({hoverImage});
+      if (hoverImage && hoverImage !== image && filtered.length === 0) {
+        this.setState({image: hoverImage});
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -238,7 +246,7 @@ class CommentPage extends BaseComponent {
     }
   };
 
-  handleSlideOut = e => {
+  handleSlideOut = () => {
     this.setState({hoverImage: false});
   };
 
@@ -248,23 +256,27 @@ class CommentPage extends BaseComponent {
     textarea.focus();
   };
 
-  clearSelection = e => {
+  clearSelection = () => {
     this.setState({filtered: [], selected: []});
   };
 
   clearButtonBG = e => {
     this.clearActiveComment();
-    const {following} = this.state;
-    if (!following) {
-      const base = e.target.className.split()[0];
-      const matches = [/col-/, /review-table/];
-      if (matches.some(x => base.match(x))) {
-        this.clearButton();
-      }
+    const base = e.target.className.split()[0];
+    const matches = [
+      /col-/,
+      /review-table/,
+      /row/,
+      /reviewView/,
+      /clearComment/,
+    ].some(x => base.match(x));
+
+    if (matches) {
+      this.clearButton();
     }
   };
 
-  clearButton = e => {
+  clearButton = () => {
     this.clearSelection();
     const {ds} = this.state;
     if (ds) {
@@ -281,9 +293,9 @@ class CommentPage extends BaseComponent {
     }
   };
 
-  addComment = e => {
-    const {defaultPriv, following} = this.state;
-    const {reviewer, sessionId} = this.props;
+  addComment = () => {
+    const {defaultPriv} = this.state;
+    const {reviewer, talkId, sessionId} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
     const priv = cText.includes('#private');
@@ -291,7 +303,8 @@ class CommentPage extends BaseComponent {
       author: reviewer,
       content: cText,
       session: sessionId,
-      userOwn: defaultPriv || priv,
+      talk: talkId,
+      userOwn: false, // defaultPriv || priv,
       slides,
     };
 
@@ -301,9 +314,6 @@ class CommentPage extends BaseComponent {
       } else {
         this.clearButton();
         this.clearText();
-        if (following) {
-          this.handleActiveSlide();
-        }
       }
     });
   };
@@ -313,34 +323,39 @@ class CommentPage extends BaseComponent {
     this.setState({defaultPriv});
   };
 
-  toggleFollow = () => {
-    const following = !this.state.following;
-    this.setState({following});
-  };
-
   toggleFocus = () => {
     const focusing = !this.state.focusing;
     this.setState({focusing});
   };
 
+  toggleUserOwn = () => {
+    const userOwn = !this.state.userOwn;
+    this.setState({userOwn});
+  };
+
   renderCommentHead = () => {
-    const {defaultPriv, following, focusing} = this.state;
+    const {defaultPriv, focusing, userOwn} = this.state;
     return (
       <span className="comment-config pull-right">
-        <span className="comment-option" onClick={this.togglePrivate}>
-          <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
-          {defaultPriv ? 'private' : 'public'}
-        </span>{' '}
-        |{' '}
         <span className="comment-option" onClick={this.toggleFocus}>
           <i className={'fa fa-' + (focusing ? 'eye' : 'comments')} />{' '}
-          {focusing ? 'focus' : 'all'}
+          {focusing ? 'focus' : 'share'}
+        </span>{' '}
+        |{' '}
+        <span className="comment-option" onClick={this.toggleUserOwn}>
+          <i className={'fa fa-' + (userOwn ? 'user' : 'globe')} />{' '}
+          {userOwn ? 'mine' : 'all'}
         </span>
       </span>
     );
   };
 
   /*
+<span className="comment-option" onClick={this.togglePrivate}>
+  <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
+  {defaultPriv ? 'private' : 'public'}
+</span>{' '}
+|{' '}
 {' '}|{' '}
 <span className="comment-option" onClick={this.toggleFollow}>
 <i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
@@ -351,7 +366,6 @@ class CommentPage extends BaseComponent {
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
-    const {files} = this.props;
     const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
@@ -383,7 +397,7 @@ class CommentPage extends BaseComponent {
           <button
             className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
             onClick={authSort}>
-            auth
+            author
           </button>
           <button
             className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
@@ -420,10 +434,14 @@ class CommentPage extends BaseComponent {
   };
 
   renderFiles = () => {
-    const {files} = this.props;
-    const {activeSlide} = this.state;
-    return files.map((f, key) => {
-      let link = Files.findOne({_id: f._id}).link('original', '//');
+    const {images} = this.props;
+    return images.map((f, key) => {
+      let link = '404';
+      try {
+        link = Images.findOne({_id: f._id}).link('original', '//');
+      } catch (e) {
+        console.error(e);
+      }
       return (
         <FileReview
           key={'file-' + key}
@@ -431,7 +449,7 @@ class CommentPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          active={parseInt(activeSlide) - 1 == key}
+          active={false}
           handleMouse={this.handleSlideIn}
           handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
@@ -478,40 +496,10 @@ class CommentPage extends BaseComponent {
   };
 
   goToTop = () => {
-    const view = document.getElementsByClassName('nav-head');
+    const view = document.getElementsByClassName('comments-head');
     if (view[0]) {
-      view[0].scrollIntoView();
+      view[0].scrollIntoView({block: 'center', inline: 'center'});
     }
-  };
-
-  // Updating the current slide.
-  handleActive = () => {
-    let {activeSlide} = this.state;
-    const {active, files} = this.props;
-    if (active && activeSlide !== active.slideNo) {
-      this.handleActiveSlide();
-      // assume 1 index, subtract 1
-      activeSlide = active.slideNo;
-      this.setState({activeSlide});
-      const fId = files[activeSlide - 1]._id;
-      this.updateImage(fId);
-    }
-  };
-
-  handleActiveSlide = () => {
-    let text = this.inRef.current.value.trim();
-    const {ds, following} = this.state;
-    const {active} = this.props;
-    try {
-      if (following && !text) {
-        this.clearButton();
-        const slideNo = active.slideNo.toString();
-        const filtered = [{slideId: active._id, slideNo}];
-        const slide = document.querySelectorAll(`[data-iter='${slideNo}']`);
-        ds.addSelection(slide);
-        this.setState({selected: slide, filtered});
-      }
-    } catch (e) {}
   };
 
   renderComments = () => {
@@ -521,6 +509,7 @@ class CommentPage extends BaseComponent {
       filtered,
       activeComment,
       focusing,
+      userOwn,
       byAuth,
       bySlide,
       byTag,
@@ -536,11 +525,13 @@ class CommentPage extends BaseComponent {
       );
 
       // Focus view filtering - omit replies.
-      if (focusing) {
+      if (userOwn) {
         csort = csort.filter(c => c.author === reviewer);
       }
 
-      // Filtering 'reply' comments into array. HATE.
+      // TODO - make it so this seperates on punctuation
+
+      // Filtering 'reply' comments into array.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
       const replies = csort.filter(isReply).map(c => {
@@ -601,18 +592,20 @@ class CommentPage extends BaseComponent {
 
       return (
         <div>
-          <h2> comments </h2>
+          <span className="comments-head" />
           <div id="comments-list" className="alert">
-            {items.map(i => <Comment {...i} />)}
+            {items.map((i, iter) => (
+              <Comment key={`comment-${iter}`} {...i} />
+            ))}
           </div>
           {items.length >= 5 && (
-            <div className="padded full-width">
+            <div className="clearComment padded full-width">
               <button
                 onClick={this.goToTop}
                 className="btn center btn-menu btn-round">
-                <i className={'fa fa-arrow-up'} />
+                <i className={'fa fa-arrow-up no-padding'} />
               </button>
-              <div className="v-pad" />
+              <div className="clearComment v-pad" />
             </div>
           )}
           {items.length == 0 && <div className="alert"> no comments</div>}
@@ -624,10 +617,20 @@ class CommentPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderFiles();
     const {image, hoverImage, filtered, bySlide} = this.state;
+    const {name, session, reviewer} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
+        <h2 className="alert clearfix no-margin">
+          <Link to={`/share/${session._id}`}>
+            <span className="black"> ‹ </span>
+            {name}
+          </Link>
+          <small onClick={this.clearReviewer} className="pull-right clear-icon">
+            {reviewer}
+          </small>
+        </h2>
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
@@ -653,36 +656,15 @@ class CommentPage extends BaseComponent {
   };
 
   render() {
-    const {files, sessionId, session, reviewer, userId} = this.props;
+    const {files, userId} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
 
-    const mu = Meteor.user();
-    const sessionOwner = mu && mu._id == userId;
     return files ? (
       this.renderRedirect() || (
-        <div className="reviewView">
-          <h2 className="nav-head clearfix">
-            {sessionOwner ? (
-              <Link to={`/sessions/${sessionId}`}>
-                <span className="black"> ‹ </span>
-                share feedback
-              </Link>
-            ) : (
-              <span> share feedback </span>
-            )}
-            <small
-              onClick={this.clearReviewer}
-              className="pull-right clear-icon">
-              {reviewer}
-            </small>
-          </h2>
-
-          <div
-            id="review-view"
-            onMouseDown={this.clearButtonBG}
-            className="table review-table">
+        <div className="reviewView" onMouseDown={this.clearButtonBG}>
+          <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">

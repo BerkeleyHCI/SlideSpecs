@@ -1,12 +1,9 @@
-import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
-import {DDPRateLimiter} from 'meteor/ddp-rate-limiter';
-
-import {Sessions} from '../sessions/sessions.js';
+import {Talks} from '../talks/talks.js';
 import {Comments} from './comments.js';
 
-SlideSchema = new SimpleSchema({
+const SlideSchema = new SimpleSchema({
   slideNo: {type: String},
   slideId: {type: String},
 });
@@ -14,31 +11,31 @@ SlideSchema = new SimpleSchema({
 export const createComment = new ValidatedMethod({
   name: 'comments.create',
   validate: new SimpleSchema({
-    session: {type: String},
+    talk: {type: SimpleSchema.RegEx.Id},
     author: {type: String, min: 1},
     content: {type: String, min: 1},
     slides: {type: [SlideSchema]},
     agree: {type: [String], optional: true},
     discuss: {type: [String], optional: true},
-    addressed: {type: Boolean, optional: true},
     userOwn: {type: Boolean, optional: true},
   }).validator(),
-  run({author, userOwn, content, session, addressed, discuss, agree, slides}) {
-    const sess = Sessions.findOne(session);
-    if (sess) {
+  run({talk, author, content, slides, agree, discuss, userOwn}) {
+    const uTalk = Talks.findOne(talk);
+    if (uTalk) {
       const data = {
         created: Date.now(),
-        userOwn,
+        talk,
         author,
-        discuss,
-        addressed,
-        agree,
         content,
-        session,
         slides,
+        agree,
+        discuss,
+        userOwn,
       };
-      console.log({type: 'comment.create', ...data});
+      //console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
+    } else {
+      console.error('Talk data does not match.', sess, uTalk);
     }
   },
 });
@@ -50,9 +47,7 @@ export const addressComment = new ValidatedMethod({
   }).validator(),
   run({commentId}) {
     const comment = Comments.findOne(commentId);
-    if (!comment) {
-      return false;
-    } else {
+    if (comment) {
       const newAddress = !comment.addressed;
       return Comments.update(commentId, {$set: {addressed: newAddress}});
     }
@@ -151,7 +146,26 @@ export const updateComment = new ValidatedMethod({
   run({author, commentId, newContent}) {
     const comment = Comments.findOne(commentId);
     if (comment && comment.author == author) {
-      Comments.update(commentId, {$set: {content: newContent}});
+      const newOwn = comment.userOwn || newContent.includes('#private');
+      Comments.update(commentId, {
+        $set: {content: newContent, userOwn: newOwn},
+      });
+    }
+  },
+});
+
+export const toggleVisibility = new ValidatedMethod({
+  name: 'comments.toggleVisibility',
+  validate: new SimpleSchema({
+    author: {type: String},
+    commentId: {type: String},
+  }).validator(),
+  run({author, commentId}) {
+    const comment = Comments.findOne(commentId);
+    if (comment && comment.author == author) {
+      Comments.update(commentId, {
+        $set: {userOwn: !comment.userOwn},
+      });
     }
   },
 });

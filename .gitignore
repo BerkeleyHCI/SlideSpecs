@@ -1,6 +1,13 @@
 dump*
-data
+data*
+
 *tar
 *bz2
 *zip
+*log
+
 log/
+data/
+build/
+datalogs/
+output/

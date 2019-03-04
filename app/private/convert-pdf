@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# convert-pdf [file.pdf] [/out/dir]
+
+# requirements
+# convert -- brew install imagemagick
+
+full=$(basename -- "$1")
+base="${full%.*}"
+extn="${full##*.}"
+images="$2/images"
+
+convert -density 100 "$1" "$images/$base-%04d.png"
+find "$images" -type f -iname "*$base*png"
+echo "convert-pdf complete."
+exit 0

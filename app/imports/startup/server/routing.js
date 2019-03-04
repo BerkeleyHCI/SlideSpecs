@@ -1,7 +1,7 @@
-import {createEvent} from '../../api/events/methods.js';
-
 // Listen to incoming HTTP requests (can only be used on the server).
 
+/*
+// cancelled because no longer am streaming the most recent active slide.
 WebApp.connectHandlers.use('/event', (request, response) => {
   let data = {};
   data.session = request.body.session || '';
@@ -27,3 +27,4 @@ WebApp.connectHandlers.use('/event', (request, response) => {
     }
   });
 });
+*/

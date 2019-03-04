@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Meteor} from 'meteor/meteor';
 import {Link} from 'react-router-dom';
 import BaseComponent from './BaseComponent.jsx';
 import {Session} from 'meteor/session.js';
@@ -12,7 +13,12 @@ export default class UserMenu extends BaseComponent {
 
   logout = e => {
     e.preventDefault();
-    Meteor.logout();
+    Meteor.logout(() => {
+      localStorage.setItem('feedbacks.referringLink', '');
+      Session.set('reviewer', null);
+      Session.set('session', null);
+      Session.set('talk', null);
+    });
   };
 
   renderOpen = () => {
@@ -26,6 +32,9 @@ export default class UserMenu extends BaseComponent {
         <a className="btn-secondary" onClick={this.logout}>
           log out
         </a>
+        <Link to="/guide" className="btn-secondary">
+          guide
+        </Link>
       </div>
     );
   };
@@ -34,10 +43,13 @@ export default class UserMenu extends BaseComponent {
     return (
       <div className="user-menu">
         <Link to="/signin" className="btn-secondary">
-          sign in
+          login
         </Link>
         <Link to="/join" className="btn-secondary">
           join
+        </Link>
+        <Link to="/guide" className="btn-secondary">
+          guide
         </Link>
       </div>
     );
@@ -50,7 +62,7 @@ export default class UserMenu extends BaseComponent {
       this.renderRedirect() || (
         <section className="clearfix" id="menu">
           <h1>
-            <Link to="/">feedback</Link>
+            <Link to="/">SlideSpecs</Link>
           </h1>
           {content}
         </section>

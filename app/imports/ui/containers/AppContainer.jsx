@@ -1,59 +1,47 @@
 import {Meteor} from 'meteor/meteor';
 import {Session} from 'meteor/session.js';
 import {withTracker} from 'meteor/react-meteor-data';
+
 import {Sessions} from '../../api/sessions/sessions.js';
+import {Talks} from '../../api/talks/talks.js';
 import {Comments} from '../../api/comments/comments.js';
 import {Files} from '../../api/files/files.js';
-import {Events} from '../../api/events/events.js';
+import {Images} from '../../api/images/images.js';
 
 import App from '../layouts/App.jsx';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 export default withTracker(() => {
-  let reviewer = Session.get('reviewer');
+  const sub = Session.get('subscription');
+  const reviewer = Session.get('reviewer');
   let data = {
-    user: Meteor.user(),
-    reviewer,
     connected: Meteor.status().connected,
+    user: Meteor.user(),
     loading: false,
-    comments: [],
     sessions: [],
-    events: [],
+    talks: [],
+    comments: [],
     files: [],
+    images: [],
+
+    // Session data.
+    reviewer,
+    sub,
   };
 
-  let sessions, files, comments, events;
-  if (Meteor.user() || reviewer) {
-    sessions = Meteor.subscribe('sessions');
+  if (sub) {
+    const sessions = Meteor.subscribe(`sessions.${sub.type}`, sub._id);
+    const talks = Meteor.subscribe(`talks.${sub.type}`, sub._id);
+    const comments = Meteor.subscribe(`comments.${sub.type}`, sub._id);
+    const files = Meteor.subscribe(`files.${sub.type}`, sub._id);
+    const images = Meteor.subscribe(`images.${sub.type}`, sub._id);
     data = Object.assign(data, {
-      loading: !sessions.ready(),
-      sessions: Sessions.find(
-        {userId: Meteor.userId()},
-        {sort: {created: -1}},
-      ).fetch(),
-    });
-  }
-
-  let session = Session.get('session');
-  if (session) {
-    // TODO - filter files by active session
-    files = Meteor.subscribe('files');
-    comments = Meteor.subscribe('comments', session);
-    events = Meteor.subscribe('events', session);
-    data = Object.assign(data, {
-      events: Events.find({}, {sort: {created: -1}}).fetch(),
-      comments: Comments.find({}, {sort: {created: 1}}).fetch(),
+      loading: [sessions, talks, comments, files, images].some(s => !s.ready()),
+      sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
+      talks: Talks.find({}, {sort: {created: -1}}).fetch(),
+      comments: Comments.find({}, {sort: {name: 1}}).fetch(),
       files: Files.find({}, {sort: {name: 1}}).fetch(),
-      sessions: Sessions.find(
-        {userId: Meteor.userId()},
-        {sort: {created: -1}},
-      ).fetch(),
-    });
-  }
-
-  if (session && (Meteor.user() || reviewer)) {
-    data = Object.assign(data, {
-      loading: ![sessions, comments, files, events].every(x => x && x.ready()),
+      images: Images.find({}, {sort: {name: 1}}).fetch(),
     });
   }
 

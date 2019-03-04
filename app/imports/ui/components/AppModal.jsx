@@ -30,6 +30,7 @@ AppModal.propTypes = {
   mtext: PropTypes.string,
   accept: PropTypes.func,
   deny: PropTypes.func,
+  act: PropTypes.string,
 };
 
 AppModal.defaultProps = {

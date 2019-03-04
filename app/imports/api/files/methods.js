@@ -1,10 +1,13 @@
-import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Files} from './files.js';
+import {Images} from '../images/images.js';
+import {Talks} from '../talks/talks.js';
+import {Comments} from '../comments/comments.js';
 
 // TODO - include file creation method here
 // TODO - restrict these operations to file owner
+// TODO - delete the files from a presentation
 
 export const renameFile = new ValidatedMethod({
   name: 'files.rename',
@@ -41,6 +44,9 @@ export const deleteSessionFiles = new ValidatedMethod({
   run({sessionId}) {
     try {
       Files.remove({'meta.sessionId': sessionId});
+      Images.remove({'meta.sessionId': sessionId});
+      Talks.remove({session: sessionId});
+      Comments.remove({session: sessionId});
     } catch (e) {
       console.error(e);
     }

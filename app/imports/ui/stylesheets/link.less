@@ -1,27 +1,41 @@
 @import './utils.less';
 
-a {
-  color: @color-secondary;
+a,
+a:visited {
+  color: @color-primary;
   cursor: pointer;
   text-decoration: none;
-
-  &:hover {
-    color: darken(@color-primary, 10%);
-    text-decoration: none;
-  }
   &:active {
-    color: @color-secondary;
+    color: @color-primary;
     text-decoration: none;
   }
   &:focus {
-    color: @color-secondary;
+    color: @color-primary;
     text-decoration: none;
     outline: none;
   } //removes FF dotted outline
+  &:hover {
+    color: darken(@color-primary, 15%);
+    text-decoration: none;
+  }
 
+  // for back arrows
   .black {
-    // for back arrow
     color: black !important;
+  }
+  .gray {
+    color: gray;
+  }
+  .white {
+    color: white !important;
+  }
+}
+
+a.link-alert {
+  /*.font-m1;*/
+  color: @color-danger;
+  &:hover {
+    color: @color-primary;
   }
 }
 

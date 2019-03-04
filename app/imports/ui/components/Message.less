@@ -1,6 +1,11 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
 // Empty states and 404 messages
+.rel-wrapper {
+  .position(relative, 50%, 0, auto, 0) !important;
+  transform: translate3d(0, -50%, 0);
+}
+
 .wrapper-message {
   .position(absolute, 45%, 0, auto, 0);
   transform: translate3d(0, -50%, 0);

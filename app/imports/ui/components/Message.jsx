@@ -1,20 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Message = ({ title, subtitle }) => (
+export const Message = ({title, subtitle}) => (
   <div className="wrapper-message">
-    {title ? <div className="title-message">{title}</div> : null}
+    <div className="title-message">{title}</div>
     {subtitle ? <div className="subtitle-message">{subtitle}</div> : null}
   </div>
 );
 
-Message.propTypes = {
-  title: PropTypes.string.isRequired,
-  subtitle: PropTypes.string,
-};
-
 Message.defaultProps = {
+  title: '',
   subtitle: '',
 };
 
-export default Message;
+// Spacing alternative.
+
+export const FullMessage = ({title, subtitle}) => (
+  <div className="rel-wrapper wrapper-message">
+    <div className="title-message">{title}</div>
+    {subtitle ? <div className="subtitle-message">{subtitle}</div> : null}
+  </div>
+);
+
+FullMessage.defaultProps = {
+  title: '',
+  subtitle: '',
+};

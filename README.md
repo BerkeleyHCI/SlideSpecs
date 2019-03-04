@@ -1,7 +1,5 @@
 # SlideSpecs
 
-### startup
-
 cloning:
 
     git clone https://github.com/berkeleyhci/SlideSpecs
@@ -19,8 +17,9 @@ deploying
     cd Desktop/peer-feedback
     git pull
 
-### reference
+meteor bundle (future deploy option)
 
-- tesseract, ocr library: https://github.com/tesseract-ocr/tesseract/wiki
-    - faq: https://github.com/tesseract-ocr/tesseract/wiki/FAQ
+    cd app && meteor build --server-only ../output
+    # TODO - move this to server, install reqs, run
 
+[more instructions here](/app)

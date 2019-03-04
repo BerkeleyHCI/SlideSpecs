@@ -4,9 +4,25 @@ import {Files} from '../files.js';
 
 Files.allowClient();
 
-Meteor.publish('files', function() {
-  return Files.find().cursor;
+Meteor.publish('files.user', x => {
+  check(x, String);
+  return Files.find({'meta.userId': x}).cursor;
 });
 
-// todo update per session
-// Meteor.publish('comments', session => Comments.find({session: session}));
+Meteor.publish('files.session', function(session) {
+  check(session, String);
+  if (!session) {
+    return this.ready();
+  } else {
+    return Files.find({'meta.sessionId': session}).cursor;
+  }
+});
+
+Meteor.publish('files.talk', function(talk) {
+  check(talk, String);
+  if (!talk) {
+    return this.ready();
+  } else {
+    return Files.find({'meta.talkId': talk}).cursor;
+  }
+});

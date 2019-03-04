@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
-import AppNotification from '../components/AppNotification.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
-import {toast} from 'react-toastify';
-import Message from '../components/Message.jsx';
 import {
   createSession,
   renameSession,
@@ -18,7 +15,7 @@ import {
 class SessionItem extends BaseComponent {
   renameSession = () => {
     const {_id, name} = this.props;
-    let validName = /[^a-zA-Z0-9 \.:\+()\-_%!&]/gi;
+    let validName = /[^a-zA-Z0-9 .:+()\-_%!&]/gi;
     let prompt = window.prompt('New session name?', name);
 
     if (prompt) {
@@ -32,7 +29,9 @@ class SessionItem extends BaseComponent {
   };
 
   deleteSession = () => {
-    deleteSession.call({sessionId: this.props._id});
+    const {name} = this.props;
+    if (confirm(`Delete ${name}?`))
+      deleteSession.call({sessionId: this.props._id});
   };
 
   render() {
@@ -41,9 +40,12 @@ class SessionItem extends BaseComponent {
     return (
       <li className="list-group-item clearfix">
         <Link to={sessLink}>{name}</Link>
-        <div className="pull-right">
+        <div className="btn-m-group pull-right">
           <button onClick={this.renameSession} className="btn-menu">
             rename
+          </button>
+          <button onClick={this.deleteSession} className="btn-menu">
+            delete
           </button>
         </div>
       </li>
@@ -75,7 +77,7 @@ export default class SessionListPage extends BaseComponent {
 
     let Sessions;
     if (!sessions || !sessions.length) {
-      Sessions = <Message title="no sessions yet" subtitle="add above" />;
+      Sessions = <div className="alert">no sessions yet</div>;
     } else {
       Sessions = sessions.map(sess => <SessionItem key={sess._id} {...sess} />);
     }
@@ -83,6 +85,9 @@ export default class SessionListPage extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1>sessions</h1>
+        <Link to={'/guide'} className="btn btn-empty pull-right">
+          user guide
+        </Link>
         <button onClick={this.addSession} className="btn btn-primary">
           + new session
         </button>

@@ -14,17 +14,21 @@
 
 div.file-item {
   position: absolute;
-  margin-bottom: 2em;
-  margin-right: 2em;
+  margin-bottom: 1em;
   min-height: 50px;
-  max-width: 320px;
-  @media only screen and (min-width: 992px) {
-    width: calc(21%);
+  max-width: 350px;
+  width: calc(20%);
+  @media only screen and (max-width: 1100px) {
+    width: calc(25%);
   }
-  @media only screen and (max-width: 992px) {
-    margin-bottom: 1em;
-    margin-right: 1em;
-    width: calc(29%);
+  @media only screen and (max-width: 800px) {
+    width: calc(33%);
+  }
+  @media only screen and (max-width: 650px) {
+    width: calc(50%);
+  }
+  @media only screen and (max-width: 500px) {
+    width: calc(100%);
   }
 
   img.slide {
@@ -138,7 +142,7 @@ div.file-item.file-item-review {
 }
 
 div.reviewView {
-  min-height: calc(~'100vh - 145px');
+  min-height: calc(~'100vh - 25px');
   margin: 0px;
 
   .slide-tags {
@@ -189,9 +193,9 @@ div.reviewView {
   kbd {
     line-height: initial;
     display: inline-block;
-    background-color: @color-danger;
+    background-color: lighten(@color-danger, 20%);
     &:hover {
-      background-color: @color-note;
+      background-color: @color-note !important;
       color: @color-full;
     }
   }
@@ -225,7 +229,11 @@ div.reviewView {
 
   .btn.center {
     margin: auto;
-    padding: 0.3em;
+    padding: 0.4em;
+  }
+
+  .btn-round {
+    padding: 0.5em 1em !important;
   }
 
   .tag-group {
@@ -314,8 +322,8 @@ div.reviewView {
   }
 
   .btn-menu.pull-right {
-    padding: initial;
-    padding-right: 2px;
+    padding: 1px 4px;
+    margin-right: 2px;
   }
 
   .filterer.no-submit {
@@ -339,18 +347,20 @@ div.reviewView {
     }
     textarea {
       animation: pulse 3s infinite ease-in-out;
-      background: darken(@color-empty, 4%);
+      background: lighten(@color-primary, 45%);
       padding: 15px 15px 5px 15px;
       &:hover {
         border-left: 0.5em solid @color-danger;
         transition: border-width 0.1s ease;
-        background: darken(@color-empty, 2%);
+        transition: background 0.1s ease;
+        background: lighten(@color-primary, 35%);
       }
       &:focus {
         box-shadow: 0 4px 2px -2px @color-ancillary;
         border-left: 1em solid @color-ancillary;
         transition: border-width 0.1s ease;
         transition: border-color 0.1s ease;
+        transition: background 0.1s ease;
         background: @color-empty;
         animation: none;
       }

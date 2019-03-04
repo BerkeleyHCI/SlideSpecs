@@ -1,15 +1,19 @@
-import React, {Component} from 'react';
-import Message from '../components/Message.jsx';
+import React from 'react';
+import MenuContainer from '../containers/MenuContainer.jsx';
+import BaseComponent from '../components/BaseComponent.jsx';
+import {Message} from '../components/Message.jsx';
 
-class ForbiddenPage extends Component {
+class ForbiddenPage extends BaseComponent {
   render() {
-    return (
+    const content = (
       <div className="page not-found">
         <div className="main-content">
-          <Message title="forbidden" />
+          <Message title="Forbidden Access" />
         </div>
       </div>
     );
+
+    return <MenuContainer {...this.props} content={content} />;
   }
 }
 

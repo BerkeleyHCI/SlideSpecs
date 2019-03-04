@@ -1,6 +1,5 @@
 import {Meteor} from 'meteor/meteor';
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -13,8 +12,10 @@ class SignInPage extends BaseComponent {
   }
 
   redirectHomeIfUser = () => {
+    const saved = localStorage.getItem('feedbacks.referringLink');
+    const home = saved || '/';
     if (Meteor.user() && !Meteor.loggingIn()) {
-      this.redirectTo('/');
+      this.redirectTo(home);
     }
   };
 

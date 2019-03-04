@@ -7,6 +7,11 @@ class Img extends Component {
     this.state = {fail: false};
   }
 
+  handleLoad = () => {
+    const {source} = this.props;
+    this.setState({source});
+  };
+
   handleError = () => {
     this.setState({fail: true});
   };
@@ -15,7 +20,7 @@ class Img extends Component {
     const {fail} = this.state;
     const {source, err, ...o} = this.props;
     const file = fail ? err : source;
-    return <img src={file} {...o} onError={this.handleError} />;
+    return <img src={file} onError={this.handleError} {...o} />;
   }
 }
 

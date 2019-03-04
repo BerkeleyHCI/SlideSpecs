@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {Meteor} from 'meteor/meteor';
 import {Link} from 'react-router-dom';
 import {Accounts} from 'meteor/accounts-base';
 
@@ -13,8 +13,10 @@ class JoinPage extends BaseComponent {
   }
 
   redirectHomeIfUser = () => {
+    const saved = localStorage.getItem('feedbacks.referringLink');
+    const home = saved || '/';
     if (Meteor.user() && !Meteor.loggingIn()) {
-      this.redirectTo('/');
+      this.redirectTo(home);
     }
   };
 
