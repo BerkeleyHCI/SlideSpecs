@@ -384,9 +384,9 @@ class CommentPage extends BaseComponent {
     const filtered = comments.map(({author, content, created, agree, discuss, replies}) => {
       return {author, content, created, agree, discuss, replies}
     })
-
-    const content = JSON.stringify(filtered, null, 2)
-    var file = new Blob(content, {type: 'application/json'});
+    const content = JSON.stringify(filtered, null, 2);
+    const content_array = [content];
+    var file = new File(content_array, {type: 'application/json'});
     var element = document.createElement("a");
     element.href = URL.createObjectURL(file);
     element.download = `${name}_comments.json`;
