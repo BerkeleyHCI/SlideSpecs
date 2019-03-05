@@ -1,25 +1,37 @@
-import {ValidatedMethod} from 'meteor/mdg:validated-method';
-import {SimpleSchema} from 'meteor/aldeed:simple-schema';
-import {Talks} from '../talks/talks.js';
-import {Comments} from './comments.js';
+import { ValidatedMethod } from "meteor/mdg:validated-method";
+import { SimpleSchema } from "meteor/aldeed:simple-schema";
+import { Talks } from "../talks/talks.js";
+import { Comments } from "./comments.js";
 
 const SlideSchema = new SimpleSchema({
-  slideNo: {type: String},
-  slideId: {type: String},
+  slideNo: { type: String },
+  slideId: { type: String }
 });
 
 export const createComment = new ValidatedMethod({
-  name: 'comments.create',
+  name: "comments.create",
   validate: new SimpleSchema({
-    talk: {type: SimpleSchema.RegEx.Id},
-    author: {type: String, min: 1},
-    content: {type: String, min: 1},
-    slides: {type: [SlideSchema]},
-    agree: {type: [String], optional: true},
-    discuss: {type: [String], optional: true},
-    userOwn: {type: Boolean, optional: true},
+    talk: { type: SimpleSchema.RegEx.Id },
+    author: { type: String, min: 1 },
+    content: { type: String, min: 1 },
+    slides: { type: [SlideSchema] },
+    agree: { type: [String], optional: true },
+    discuss: { type: [String], optional: true },
+    userOwn: { type: Boolean, optional: true },
+    addressed: { type: Boolean, optional: true },
+    completed: { type: Boolean, optional: true }
   }).validator(),
-  run({talk, author, content, slides, agree, discuss, userOwn}) {
+  run({
+    talk,
+    author,
+    content,
+    slides,
+    agree,
+    discuss,
+    userOwn,
+    addressed,
+    completed
+  }) {
     const uTalk = Talks.findOne(talk);
     if (uTalk) {
       const data = {
@@ -30,56 +42,56 @@ export const createComment = new ValidatedMethod({
         slides,
         agree,
         discuss,
-        userOwn,
+        userOwn
       };
       //console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
     } else {
-      console.error('Talk data does not match.', sess, uTalk);
+      console.error("Talk data does not match.", sess, uTalk);
     }
-  },
+  }
 });
 
 export const addressComment = new ValidatedMethod({
-  name: 'comments.address',
+  name: "comments.address",
   validate: new SimpleSchema({
-    commentId: {type: String},
+    commentId: { type: String }
   }).validator(),
-  run({commentId}) {
+  run({ commentId }) {
     const comment = Comments.findOne(commentId);
     if (comment) {
       const newAddress = !comment.addressed;
-      return Comments.update(commentId, {$set: {addressed: newAddress}});
+      return Comments.update(commentId, { $set: { addressed: newAddress } });
     }
-  },
+  }
 });
 
 // Ugh... this is naming for addressing a comment in the review pane.
 // Probably should name these similarly to their associated pages.
 
 export const completeComment = new ValidatedMethod({
-  name: 'comments.complete',
+  name: "comments.complete",
   validate: new SimpleSchema({
-    commentId: {type: String},
+    commentId: { type: String }
   }).validator(),
-  run({commentId}) {
+  run({ commentId }) {
     const comment = Comments.findOne(commentId);
     if (!comment) {
       return false;
     } else {
       const newComplete = !comment.completed;
-      return Comments.update(commentId, {$set: {completed: newComplete}});
+      return Comments.update(commentId, { $set: { completed: newComplete } });
     }
-  },
+  }
 });
 
 export const agreeComment = new ValidatedMethod({
-  name: 'comments.agree',
+  name: "comments.agree",
   validate: new SimpleSchema({
-    commentId: {type: String},
-    author: {type: String},
+    commentId: { type: String },
+    author: { type: String }
   }).validator(),
-  run({author, commentId}) {
+  run({ author, commentId }) {
     author = author.trim();
     const comment = Comments.findOne(commentId);
     if (!comment) {
@@ -102,17 +114,17 @@ export const agreeComment = new ValidatedMethod({
       newAgree = data.concat([author]);
     }
 
-    Comments.update(commentId, {$set: {agree: newAgree}});
-  },
+    Comments.update(commentId, { $set: { agree: newAgree } });
+  }
 });
 
 export const discussComment = new ValidatedMethod({
-  name: 'comments.discuss',
+  name: "comments.discuss",
   validate: new SimpleSchema({
-    commentId: {type: String},
-    author: {type: String},
+    commentId: { type: String },
+    author: { type: String }
   }).validator(),
-  run({author, commentId}) {
+  run({ author, commentId }) {
     author = author.trim();
     const comment = Comments.findOne(commentId);
     if (!comment) {
@@ -132,55 +144,55 @@ export const discussComment = new ValidatedMethod({
       newDiscuss = comment.discuss.concat([author]);
     }
 
-    Comments.update(commentId, {$set: {discuss: newDiscuss}});
-  },
+    Comments.update(commentId, { $set: { discuss: newDiscuss } });
+  }
 });
 
 export const updateComment = new ValidatedMethod({
-  name: 'comments.update',
+  name: "comments.update",
   validate: new SimpleSchema({
-    author: {type: String},
-    commentId: {type: String},
-    newContent: {type: String, min: 1},
+    author: { type: String },
+    commentId: { type: String },
+    newContent: { type: String, min: 1 }
   }).validator(),
-  run({author, commentId, newContent}) {
+  run({ author, commentId, newContent }) {
     const comment = Comments.findOne(commentId);
     if (comment && comment.author == author) {
-      const newOwn = comment.userOwn || newContent.includes('#private');
+      const newOwn = comment.userOwn || newContent.includes("#private");
       Comments.update(commentId, {
-        $set: {content: newContent, userOwn: newOwn},
+        $set: { content: newContent, userOwn: newOwn }
       });
     }
-  },
+  }
 });
 
 export const toggleVisibility = new ValidatedMethod({
-  name: 'comments.toggleVisibility',
+  name: "comments.toggleVisibility",
   validate: new SimpleSchema({
-    author: {type: String},
-    commentId: {type: String},
+    author: { type: String },
+    commentId: { type: String }
   }).validator(),
-  run({author, commentId}) {
+  run({ author, commentId }) {
     const comment = Comments.findOne(commentId);
     if (comment && comment.author == author) {
       Comments.update(commentId, {
-        $set: {userOwn: !comment.userOwn},
+        $set: { userOwn: !comment.userOwn }
       });
     }
-  },
+  }
 });
 
 export const deleteComment = new ValidatedMethod({
-  name: 'comments.delete',
+  name: "comments.delete",
   validate: new SimpleSchema({
-    author: {type: String},
-    commentId: {type: String},
+    author: { type: String },
+    commentId: { type: String }
   }).validator(),
-  run({author, commentId}) {
+  run({ author, commentId }) {
     const comment = Comments.findOne(commentId);
     if (comment && comment.author == author) {
-      console.log({type: 'comment.delete', ...comment});
+      console.log({ type: "comment.delete", ...comment });
       Comments.remove(commentId);
     }
-  },
+  }
 });

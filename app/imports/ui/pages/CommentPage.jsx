@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import _ from "lodash";
 
 import { Images } from "../../api/images/images.js";
+import AlertLink from "../components/AlertLink.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import TextArea from "../components/TextArea.jsx";
 import SlideTags from "../components/SlideTags.jsx";
@@ -652,6 +653,11 @@ class CommentPage extends BaseComponent {
             />
           </div>
         )}
+        <AlertLink
+          center={true}
+          text={"enter discussion here"}
+          link={`/discuss/${talk._id}`}
+        />
       </div>
     );
   };

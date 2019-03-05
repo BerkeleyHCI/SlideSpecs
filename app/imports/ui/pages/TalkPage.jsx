@@ -240,13 +240,15 @@ export default class TalkPage extends BaseComponent {
 
         {file && images.length == 0 && <TalkListItem talk={talk} />}
 
-        <div id="grid">{imageSet}</div>
+        <div id="grid" />
       </div>
     );
 
     return <MenuContainer {...this.props} content={content} />;
   }
 }
+
+// <div id="grid">{imageSet}</div>
 
 TalkPage.propTypes = {
   user: PropTypes.object,

@@ -22,6 +22,7 @@ import TalkPage from "../pages/TalkPage.jsx";
 import GuidePage from "../pages/GuidePage.jsx";
 import AboutPage from "../pages/AboutPage.jsx";
 import CommentPage from "../pages/CommentPage.jsx";
+import DiscussPage from "../pages/DiscussPage.jsx";
 import ReviewPage from "../pages/ReviewPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import ForbiddenPage from "../pages/ForbiddenPage.jsx";
@@ -100,12 +101,16 @@ export default class App extends BaseComponent {
     return this.preRender(match, TalkListPage, "user");
   };
 
-  renderTalk = ({ match }) => {
-    return this.preRender(match, TalkPage, "talk");
-  };
-
   renderComment = ({ match }) => {
     return this.preRender(match, CommentPage, "talk");
+  };
+
+  renderDiscuss = ({ match }) => {
+    return this.preRender(match, DiscussPage, "talk");
+  };
+
+  renderTalk = ({ match }) => {
+    return this.preRender(match, TalkPage, "talk");
   };
 
   renderReview = ({ match }) => {

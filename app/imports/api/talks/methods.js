@@ -51,7 +51,7 @@ export const renameTalk = new ValidatedMethod({
       );
     }
 
-    // Talk owner or session owner should be able to edit/delete talk
+    // Talk owner should be able to edit/delete talk
     if (talk.userId === this.userId) {
       return Talks.update(talkId, {$set: {name: newName}});
     } else {
@@ -80,7 +80,7 @@ export const setTalkProgress = new ValidatedMethod({
       );
     }
 
-    // Talk owner or session owner should be able to edit/delete talk
+    // Talk owner should be able to edit/delete talk
     if (talk.userId === this.userId) {
       return Talks.update(talkId, {$set: {progress: progress}});
     } else {
@@ -88,6 +88,22 @@ export const setTalkProgress = new ValidatedMethod({
         'api.talks.rename.accessDenied',
         "You don't have permission to edit this talk.",
       );
+    }
+  },
+});
+
+export const setRespondingComment = new ValidatedMethod({
+  name: 'talks.setRespondingComment',
+  validate: new SimpleSchema({
+    talkId: {type: String},
+    commentId: {type: String},
+  }).validator(),
+  run({talkId, commentId}) {
+    const talk = Talks.findOne(talkId);
+    if (talk) {
+      Talks.update(talkId, {$set: {active: commentId}});
+    } else {
+      throw new Meteor.Error('api.sessions', 'Talk does not exist.');
     }
   },
 });
