@@ -1,28 +1,28 @@
-import {Meteor} from 'meteor/meteor';
-import React, {Component} from 'react';
-import {Session} from 'meteor/session.js';
-import {withTracker} from 'meteor/react-meteor-data';
-import {Link} from 'react-router-dom';
-import _ from 'lodash';
+import { Meteor } from "meteor/meteor";
+import React, { Component } from "react";
+import { Session } from "meteor/session.js";
+import { withTracker } from "meteor/react-meteor-data";
+import { Link } from "react-router-dom";
+import _ from "lodash";
 
-import {Files} from '../../api/files/files.js';
-import BaseComponent from '../components/BaseComponent.jsx';
-import Input from '../components/Input.jsx';
-import ClearingDiv from '../components/ClearingDiv.jsx';
-import TextArea from '../components/TextArea.jsx';
-import FileReview from '../components/FileReview.jsx';
-import Clock from '../components/Clock.jsx';
-import Img from '../components/Image.jsx';
-import Message from '../components/Message.jsx';
-import Comment from '../components/Comment.jsx';
-import {createComment, completeComment} from '../../api/comments/methods.js';
-import {Transition} from 'react-spring';
+import { Images } from "../../api/images/images.js";
+import BaseComponent from "../components/BaseComponent.jsx";
+import Input from "../components/Input.jsx";
+import ClearingDiv from "../components/ClearingDiv.jsx";
+import TextArea from "../components/TextArea.jsx";
+import FileReview from "../components/FileReview.jsx";
+import Clock from "../components/Clock.jsx";
+import Img from "../components/Image.jsx";
+import Message from "../components/Message.jsx";
+import Comment from "../components/Comment.jsx";
+import { createComment, completeComment } from "../../api/comments/methods.js";
+import { Transition } from "react-spring";
 
 // Control-log.
-import {Logger} from 'meteor/ostrio:logger';
-import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
+import { Logger } from "meteor/ostrio:logger";
+import { LoggerConsole } from "meteor/ostrio:loggerconsole";
 
-class FeedbackPage extends BaseComponent {
+class ReviewPage extends BaseComponent {
   constructor(props) {
     super(props);
 
@@ -36,56 +36,56 @@ class FeedbackPage extends BaseComponent {
       redirectTo: null,
       activeComment: null,
       commentsShown: 0,
-      sorter: 'created',
-      filter: 'time',
+      sorter: "created",
+      filter: "time",
       invert: true,
       filtered: [],
       tags: [],
       bySlide: [], // array for this version of the interface
-      byAuth: '',
-      byTag: '',
-      hoverImage: '',
-      image: '',
-      ds: {},
+      byAuth: "",
+      byTag: "",
+      hoverImage: "",
+      image: "",
+      ds: {}
     };
   }
 
   handleLoad = () => {
-    const grid = document.getElementById('grid');
+    const grid = document.getElementById("grid");
     const mason = new Masonry(grid, {
-      itemSelector: '.file-item',
+      itemSelector: ".file-item"
     });
-    mason.on('layoutComplete', this.handleSelectable);
+    mason.on("layoutComplete", this.handleSelectable);
   };
 
   log = data => {
     //console.log(data);
-    const {reviewer, sessionId} = this.props;
-    if (typeof data === 'string') {
+    const { reviewer, talk } = this.props;
+    if (typeof data === "string") {
       this.logger.info(
-        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+        JSON.stringify({ data, reviewer, talk, time: Date.now() })
       );
     } else if (Object.keys.length > 0) {
       this.logger.info(
-        JSON.stringify({...data, reviewer, sessionId, time: Date.now()}),
+        JSON.stringify({ ...data, reviewer, talk, time: Date.now() })
       );
     } else {
       this.logger.info(
-        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+        JSON.stringify({ data, reviewer, talk, time: Date.now() })
       );
     }
   };
 
   handleSelectable = items => {
-    const area = document.getElementById('grid');
+    const area = document.getElementById("grid");
     const elements = items.map(i => i.element);
-    let {ds} = this.state;
+    let { ds } = this.state;
     const updateSelection = () => {
       const s = ds.getSelection();
       if (s.length > 0) {
         const filtered = s.map(this.extractFileData);
         const bySlide = filtered.map(s => s.slideNo);
-        this.setState({filtered, bySlide});
+        this.setState({ filtered, bySlide });
       }
     };
 
@@ -97,35 +97,35 @@ class FeedbackPage extends BaseComponent {
         onDragMove: updateSelection,
         callback: updateSelection,
         autoScrollSpeed: 12,
-        area: area,
+        area: area
       });
-      this.setState({ds});
+      this.setState({ ds });
     }
   };
 
   elementize = x => {
-    return {element: x};
+    return { element: x };
   };
 
   extractFileData = x => {
     return {
-      slideId: x.getAttribute('data-file-id'),
-      slideNo: x.getAttribute('data-iter'),
+      slideId: x.getAttribute("data-file-id"),
+      slideNo: x.getAttribute("data-iter")
     };
   };
 
   componentDidMount = () => {
     this.handleLoad();
     setTimeout(() => {
-      const items = document.querySelectorAll('.file-item');
+      const items = document.querySelectorAll(".file-item");
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
     }, 500);
 
     // set image to link of the first slide
-    const {files} = this.props;
-    if (files.length > 0) {
-      this.updateImage(files[0]._id);
+    const { images } = this.props;
+    if (images.length > 0) {
+      this.updateImage(images[0]._id);
     }
   };
 
@@ -134,40 +134,40 @@ class FeedbackPage extends BaseComponent {
   };
 
   componentWillUnmount = () => {
-    let {ds} = this.state;
+    let { ds } = this.state;
     if (ds && ds.stop) {
       ds.stop(); // no drag
     }
   };
 
   setActiveComment = ac => {
-    this.setState({activeComment: ac});
+    this.setState({ activeComment: ac });
   };
 
   clearActiveComment = () => {
-    this.setState({activeComment: ''});
+    this.setState({ activeComment: "" });
   };
 
   setByAuth = e => {
-    const {byAuth} = this.state;
-    const newAuth = e.target.getAttribute('data-auth');
+    const { byAuth } = this.state;
+    const newAuth = e.target.getAttribute("data-auth");
     if (newAuth && byAuth === newAuth) {
-      this.setState({byAuth: ''});
+      this.setState({ byAuth: "" });
     } else if (newAuth) {
-      this.setState({byAuth: newAuth});
+      this.setState({ byAuth: newAuth });
     }
   };
 
   clearByAuth = () => {
-    this.setState({byAuth: ''});
+    this.setState({ byAuth: "" });
   };
 
   setBySlide = e => {
-    const {ds} = this.state;
+    const { ds } = this.state;
     const slideId = e.target.dataset.fileId;
     const newSlide = e.target.innerText.trim();
-    const filtered = [{slideNo: newSlide, slideId}];
-    this.setState({bySlide: [newSlide], filtered});
+    const filtered = [{ slideNo: newSlide, slideId }];
+    this.setState({ bySlide: [newSlide], filtered });
     const slide = document.querySelectorAll(`[data-iter='${newSlide}']`);
     if (ds) {
       const sel = ds.getSelection();
@@ -178,23 +178,23 @@ class FeedbackPage extends BaseComponent {
 
   clearBySlide = () => {
     // clearing internal grid
-    const {ds} = this.state;
+    const { ds } = this.state;
     if (ds) {
       const sel = ds.getSelection();
       ds.removeSelection(sel);
     }
-    this.setState({filtered: [], bySlide: []});
+    this.setState({ filtered: [], bySlide: [] });
   };
 
   // click on tag in comment
   setByTag = e => {
     e.preventDefault();
-    const {byTag} = this.state;
+    const { byTag } = this.state;
     const newTag = e.target.innerText.trim();
     if (newTag && byTag === newTag) {
-      this.setState({byTag: ''});
+      this.setState({ byTag: "" });
     } else if (newTag) {
-      this.setState({byTag: newTag});
+      this.setState({ byTag: newTag });
     }
   };
 
@@ -203,7 +203,7 @@ class FeedbackPage extends BaseComponent {
     e.preventDefault();
     const tag = e.target.innerText.trim();
     const textarea = this.inRef.current;
-    if (textarea.value === '') {
+    if (textarea.value === "") {
       textarea.value = `${tag} `;
     } else if (!textarea.value.includes(tag)) {
       textarea.value += ` ${tag} `;
@@ -212,22 +212,22 @@ class FeedbackPage extends BaseComponent {
   };
 
   clearByTag = () => {
-    this.setState({byTag: ''});
+    this.setState({ byTag: "" });
   };
 
   clearReviewer = () => {
-    localStorage.setItem('feedbacks.reviewer', null);
-    Session.set('reviewer', null);
+    localStorage.setItem("feedbacks.reviewer", null);
+    Session.set("reviewer", null);
   };
 
   updateImage = fid => {
-    const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({image: link});
+    const link = Images.findOne({ _id: fid }).link("original", "//");
+    this.setState({ image: link });
   };
 
   updateHoverImage = fid => {
-    const link = Files.findOne({_id: fid}).link('original', '//');
-    this.setState({hoverImage: link, image: link});
+    const link = Images.findOne({ _id: fid }).link("original", "//");
+    this.setState({ hoverImage: link, image: link });
   };
 
   handleSlideIn = e => {
@@ -238,7 +238,7 @@ class FeedbackPage extends BaseComponent {
   };
 
   handleSlideOut = e => {
-    this.setState({hoverImage: false});
+    this.setState({ hoverImage: false });
   };
 
   clearButtonBG = e => {
@@ -257,11 +257,11 @@ class FeedbackPage extends BaseComponent {
   };
 
   renderSlideTags = (filtered, done: false) => {
-    const {bySlide} = this.state;
-    const active = sn => (bySlide.includes(sn) ? 'active' : '');
+    const { bySlide } = this.state;
+    const active = sn => (bySlide.includes(sn) ? "active" : "");
     if (filtered.length === 0) {
       return done ? (
-        <kbd className={active('general')} onClick={this.setBySlide}>
+        <kbd className={active("general")} onClick={this.setBySlide}>
           general
         </kbd>
       ) : null;
@@ -276,7 +276,8 @@ class FeedbackPage extends BaseComponent {
           data-file-id={s.slideId}
           onMouseOver={this.handleSlideIn}
           onMouseOut={this.handleSlideOut}
-          onClick={this.setBySlide}>
+          onClick={this.setBySlide}
+        >
           {s.slideNo}
         </kbd>
       ));
@@ -291,20 +292,20 @@ class FeedbackPage extends BaseComponent {
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
-    const {files} = this.props;
-    const {control, invert, filter} = this.state;
-    const invFn = () => this.setState({invert: !invert});
+    const { images } = this.props;
+    const { control, invert, filter } = this.state;
+    const invFn = () => this.setState({ invert: !invert });
     const setSort = (s, f) => {
-      return () => this.setState({sorter: s, filter: f});
+      return () => this.setState({ sorter: s, filter: f });
     };
 
-    const timeSort = setSort('created', 'time');
-    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
-    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
-    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
+    const timeSort = setSort("created", "time");
+    const authSort = setSort(x => x.author.toLowerCase(), "auth");
+    const agreeSort = setSort(x => (x.agree || []).length, "agree");
+    const flagSort = setSort(x => (x.discuss || []).length, "flag");
     const slideSort = setSort(
       x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
-      'slide',
+      "slide"
     );
 
     return (
@@ -312,31 +313,36 @@ class FeedbackPage extends BaseComponent {
         <div className="btn-m-group btns-group">
           <button
             onClick={timeSort}
-            className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
+            className={"btn btn-menu" + (filter === "time" ? " active" : "")}
+          >
             time
           </button>
           <button
-            className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
-            onClick={slideSort}>
+            className={"btn btn-menu" + (filter === "slide" ? " active" : "")}
+            onClick={slideSort}
+          >
             slide
           </button>
           <button
-            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-            onClick={authSort}>
+            className={"btn btn-menu" + (filter === "auth" ? " active" : "")}
+            onClick={authSort}
+          >
             auth
           </button>
           <button
-            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
-            onClick={agreeSort}>
+            className={"btn btn-menu" + (filter === "agree" ? " active" : "")}
+            onClick={agreeSort}
+          >
             agree
           </button>
           <button
-            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
-            onClick={flagSort}>
+            className={"btn btn-menu" + (filter === "flag" ? " active" : "")}
+            onClick={flagSort}
+          >
             discuss
           </button>
-          <button className={'btn btn-menu'} onClick={invFn}>
-            {invert ? '▼' : '▲'}
+          <button className={"btn btn-menu"} onClick={invFn}>
+            {invert ? "▼" : "▲"}
           </button>
         </div>
         {filterer}
@@ -344,13 +350,13 @@ class FeedbackPage extends BaseComponent {
     );
   };
 
-  renderFiles = () => {
-    const {files, sComments} = this.props;
-    return files.map((f, key) => {
-      let link = Files.findOne({_id: f._id}).link('original', '//');
-      let count = sComments.filter(c => {
+  renderImages = () => {
+    const { images, comments } = this.props;
+    return images.map((f, key) => {
+      let link = Images.findOne({ _id: f._id }).link("original", "//");
+      let count = comments.filter(c => {
         // speed up by not computing this in a loop, precompute and index.
-        const general = [{slideNo: 'general'}];
+        const general = [{ slideNo: "general" }];
         const slides = c.slides.length > 0 ? c.slides : general;
         const slideNos = slides.map(x => x.slideNo);
         return slideNos.includes((key + 1).toString());
@@ -358,7 +364,7 @@ class FeedbackPage extends BaseComponent {
 
       return (
         <FileReview
-          key={'file-' + key}
+          key={"file-" + key}
           iter={key + 1}
           fileUrl={link}
           fileId={f._id}
@@ -374,16 +380,16 @@ class FeedbackPage extends BaseComponent {
   };
 
   renderFilter = () => {
-    let {sComments} = this.props;
-    let {byAuth, bySlide, byTag, filtered, commentsShown} = this.state;
+    let { comments } = this.props;
+    let { byAuth, bySlide, byTag, filtered, commentsShown } = this.state;
     const tagList = this.renderTags();
     const slideKeys = this.renderSlideTags(filtered);
-    const sType = bySlide === ['general'] ? 'scope' : 'slide';
+    const sType = bySlide === ["general"] ? "scope" : "slide";
     return (
       <div className="filterer alert no-submit border-bottom">
         <p>
           <kbd className="pull-right">
-            {commentsShown}/{sComments.length}
+            {commentsShown}/{comments.length}
           </kbd>
           <Clock />
           {tagList}
@@ -396,15 +402,15 @@ class FeedbackPage extends BaseComponent {
   };
 
   renderTags = () => {
-    const {byTag} = this.state;
-    const {sComments} = this.props;
-    const getTag = t => t.split(/\s/).filter(t => t[0] == '#' && t.length > 1);
-    const alltags = _.flatten(sComments.map(c => getTag(c.content)));
+    const { byTag } = this.state;
+    const { comments } = this.props;
+    const getTag = t => t.split(/\s/).filter(t => t[0] == "#" && t.length > 1);
+    const alltags = _.flatten(comments.map(c => getTag(c.content)));
     const tagCount = _.countBy(alltags); // object
     const unique = _.orderBy(
       _.toPairs(tagCount),
       [x => x[1], x => [0]],
-      ['desc', 'asc'],
+      ["desc", "asc"]
     ); // array
 
     return unique.map((tag, i) => {
@@ -412,7 +418,8 @@ class FeedbackPage extends BaseComponent {
       return (
         <span
           key={tag + i}
-          className={'tag-group ' + (active ? 'tag-active' : '')}>
+          className={"tag-group " + (active ? "tag-active" : "")}
+        >
           <a onClick={this.setByTag} className="tag-link ">
             {tag[0]}
           </a>
@@ -423,7 +430,7 @@ class FeedbackPage extends BaseComponent {
   };
 
   goToTop = () => {
-    const view = document.getElementsByClassName('nav-head');
+    const view = document.getElementsByClassName("nav-head");
     if (view[0]) {
       view[0].scrollIntoView();
     }
@@ -438,16 +445,16 @@ class FeedbackPage extends BaseComponent {
       byAuth,
       bySlide,
       byTag,
-      control,
+      control
     } = this.state;
-    const {sComments, reviewer, setModal, clearModal} = this.props;
-    if (!sComments || !sComments.length) {
+    const { comments, reviewer, setModal, clearModal } = this.props;
+    if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
       let csort = _.orderBy(
-        sComments,
-        [sorter, 'created'],
-        [invert ? 'desc' : 'asc', 'asc'],
+        comments,
+        [sorter, "created"],
+        [invert ? "desc" : "asc", "asc"]
       );
 
       if (byAuth) {
@@ -456,7 +463,7 @@ class FeedbackPage extends BaseComponent {
 
       if (bySlide.length > 0) {
         csort = csort.filter(c => {
-          const general = [{slideNo: 'general'}];
+          const general = [{ slideNo: "general" }];
           const slides = c.slides.length > 0 ? c.slides : general;
           const slideNos = slides.map(x => x.slideNo);
           return bySlide.some(sn => slideNos.includes(sn));
@@ -468,7 +475,7 @@ class FeedbackPage extends BaseComponent {
       }
 
       if (commentsShown !== csort.length) {
-        this.setState({commentsShown: csort.length});
+        this.setState({ commentsShown: csort.length });
       }
 
       const items = csort.map((c, i) => {
@@ -491,7 +498,7 @@ class FeedbackPage extends BaseComponent {
           handleSlideIn: this.handleSlideIn,
           handleSlideOut: this.handleSlideOut,
           setActive: this.setActiveComment,
-          unsetActive: this.clearActiveComment,
+          unsetActive: this.clearActiveComment
         };
       });
 
@@ -504,7 +511,9 @@ class FeedbackPage extends BaseComponent {
             <div>
               <h2>to address</h2>
               <div id="comments-list" className="alert">
-                {incomplete.map(i => <Comment {...i} />)}
+                {incomplete.map(i => (
+                  <Comment {...i} />
+                ))}
               </div>
             </div>
           )}
@@ -513,7 +522,9 @@ class FeedbackPage extends BaseComponent {
             <div>
               <h2>addressed</h2>
               <div id="comments-list" className="alert">
-                {completed.map(i => <Comment {...i} />)}
+                {completed.map(i => (
+                  <Comment {...i} />
+                ))}
               </div>
             </div>
           )}
@@ -522,8 +533,9 @@ class FeedbackPage extends BaseComponent {
             <div className="padded full-width">
               <button
                 onClick={this.goToTop}
-                className="btn center btn-menu btn-round">
-                <i className={'fa fa-arrow-up'} />
+                className="btn center btn-menu btn-round"
+              >
+                <i className={"fa fa-arrow-up"} />
               </button>
               <div className="v-pad" />
             </div>
@@ -536,15 +548,25 @@ class FeedbackPage extends BaseComponent {
   };
 
   renderContext = () => {
-    const {image, hoverImage, filtered} = this.state;
-    const fileList = this.renderFiles();
+    const fileList = this.renderImages();
+    const { image, hoverImage, filtered } = this.state;
+    const { talk, name } = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
+
     return (
       <div className="context-filter float-at-top">
+        <h2 className="alert clearfix no-margin">
+          <Link to={`/talks/${talk._id}`}>
+            <span className="black"> ‹ </span>
+            {name} 
+          </Link> / <small> comment review </small>
+        </h2>
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
+            <div className="v-pad" />
             {fileList}
+            <div className="v-pad" />
           </div>
         </div>
       </div>
@@ -552,23 +574,15 @@ class FeedbackPage extends BaseComponent {
   };
 
   render() {
-    const {files, sessionId} = this.props;
+    const { images } = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
-    return files ? (
+
+    return images ? (
       this.renderRedirect() || (
-        <div className="main-content no-pad reviewView">
-          <h2 className="nav-head clearfix">
-            <Link to={`/Talks/${sessionId}`}>
-              <span className="black"> ‹ </span>
-              review feedback
-            </Link>
-          </h2>
-          <div
-            id="review-view"
-            onMouseDown={this.clearButtonBG}
-            className="table review-table">
+        <div className="reviewView" onMouseDown={this.clearButtonBG}>
+          <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
@@ -580,9 +594,9 @@ class FeedbackPage extends BaseComponent {
         </div>
       )
     ) : (
-      <div>loading file list...</div>
+      <div>waiting for slides...</div>
     );
   }
 }
 
-export default FeedbackPage;
+export default ReviewPage;

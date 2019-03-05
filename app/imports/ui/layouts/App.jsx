@@ -22,6 +22,7 @@ import TalkPage from "../pages/TalkPage.jsx";
 import GuidePage from "../pages/GuidePage.jsx";
 import AboutPage from "../pages/AboutPage.jsx";
 import CommentPage from "../pages/CommentPage.jsx";
+import ReviewPage from "../pages/ReviewPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import ForbiddenPage from "../pages/ForbiddenPage.jsx";
 
@@ -108,7 +109,7 @@ export default class App extends BaseComponent {
   };
 
   renderReview = ({ match }) => {
-    return this.preRender(match, CommentPage, "talk");
+    return this.preRender(match, ReviewPage, "talk");
   };
 
   renderSecure = () => {
@@ -149,6 +150,7 @@ export default class App extends BaseComponent {
             <Route path="/guide" render={this.renderGuidePage} />
             <Route path="/about" render={this.renderAboutPage} />
             <Route path="/comment/:id" render={this.renderComment} />
+            <Route path="/discuss/:id" render={this.renderDiscuss} />      
             <PrivateRoute exact path="/" render={this.renderTalkList} />
             <PrivateRoute path="/talks/:id" render={this.renderTalk} />
             <PrivateRoute path="/review/:id" render={this.renderReview} />

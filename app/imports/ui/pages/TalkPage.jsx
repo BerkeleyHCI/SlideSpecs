@@ -147,7 +147,7 @@ export default class TalkPage extends BaseComponent {
   render() {
     const { uploading } = this.state;
     const { talk, name, file, images, comments } = this.props;
-    const commentLink = window.location.origin + "/comment/" + talk._id;
+    const hasComments = comments.length > 0;
 
     let talkFile;
     try {
@@ -168,7 +168,9 @@ export default class TalkPage extends BaseComponent {
     ));
 
     // TODO update this into the secret talk field instead of the regular // id
+    const commentLink = window.location.origin + "/comment/" + talk._id;
     const uploadLink = window.location.origin + "/upload/" + talk._id;
+    const reviewLink = window.location.origin + "/review/" + talk._id;
 
     const content = (
       <div className="main-content">
@@ -179,30 +181,38 @@ export default class TalkPage extends BaseComponent {
           </Link>
         </h1>
 
-      {!file && (
-        <div className="alert">
-          add your presentation here.
-          <SelectUpload
-            labelText="+ new"
-            className="pull-right btn-menu btn-primary"
-            handleUpload={this.handleSelectUpload}
-          />
-          <hr />
-          <DragUpload handleUpload={this.handleDropUpload} />
-        </div>
+        {!file && (
+          <div className="alert">
+            add your presentation here.
+            <SelectUpload
+              labelText="+ new"
+              className="pull-right btn-menu btn-primary"
+              handleUpload={this.handleSelectUpload}
+            />
+            <hr />
+            <DragUpload handleUpload={this.handleDropUpload} />
+          </div>
         )}
-      
+
         {uploading && (
           <div className="padded alert">
             <FullMessage title="uploading..." />
           </div>
         )}
 
+        <AlertLink
+          text={"share this talk with a public link"}
+          bText={"open link"}
+          link={commentLink}
+        />
+
+        {hasComments && (
           <AlertLink
-            text={"share this talk with a public link"}
+            text={"review comments and feedback"}
             bText={"open link"}
-            link={commentLink}
+            link={reviewLink}
           />
+        )}
 
         {file && (
           <div className="alert">
@@ -218,14 +228,11 @@ export default class TalkPage extends BaseComponent {
                   download original
                 </button>
               </a>
-              <Link to={`/review/${talk._id}`}>
-                <button className="btn btn-menu">review comments</button>
-              </Link>
               <button
                 onClick={this.deleteTalkFiles}
                 className="btn btn-menu pull-right"
               >
-                delete presentation
+                delete slides
               </button>
             </div>
           </div>
