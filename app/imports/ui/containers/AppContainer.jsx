@@ -2,7 +2,6 @@ import {Meteor} from 'meteor/meteor';
 import {Session} from 'meteor/session.js';
 import {withTracker} from 'meteor/react-meteor-data';
 
-;
 import {Talks} from '../../api/talks/talks.js';
 import {Comments} from '../../api/comments/comments.js';
 import {Files} from '../../api/files/files.js';
@@ -18,7 +17,6 @@ export default withTracker(() => {
     connected: Meteor.status().connected,
     user: Meteor.user(),
     loading: false,
-    sessions: [],
     talks: [],
     comments: [],
     files: [],
@@ -30,14 +28,12 @@ export default withTracker(() => {
   };
 
   if (sub) {
-    const sessions = Meteor.subscribe(`sessions.${sub.type}`, sub._id);
     const talks = Meteor.subscribe(`talks.${sub.type}`, sub._id);
     const comments = Meteor.subscribe(`comments.${sub.type}`, sub._id);
     const files = Meteor.subscribe(`files.${sub.type}`, sub._id);
     const images = Meteor.subscribe(`images.${sub.type}`, sub._id);
     data = Object.assign(data, {
-      loading: [sessions, talks, comments, files, images].some(s => !s.ready()),
-      sessions: Sessions.find({}, {sort: {created: -1}}).fetch(),
+      loading: [talks, comments, files, images].some(s => !s.ready()),
       talks: Talks.find({}, {sort: {created: -1}}).fetch(),
       comments: Comments.find({}, {sort: {name: 1}}).fetch(),
       files: Files.find({}, {sort: {name: 1}}).fetch(),

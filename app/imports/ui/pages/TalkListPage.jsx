@@ -5,18 +5,18 @@ import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 import {
-  createSession,
-  renameSession,
-  deleteSession,
+  createTalk,
+  renameTalk,
+  deleteTalk,
 } from '../../api/talks/methods.js';
 
 // Helper class for individual file items.
 
-class SessionItem extends BaseComponent {
-  renameSession = () => {
+class TalkItem extends BaseComponent {
+  renameTalk = () => {
     const {_id, name} = this.props;
     let validName = /[^a-zA-Z0-9 .:+()\-_%!&]/gi;
-    let prompt = window.prompt('New session name?', name);
+    let prompt = window.prompt('New Talk name?', name);
 
     if (prompt) {
       prompt = prompt.replace(validName, '-');
@@ -24,27 +24,27 @@ class SessionItem extends BaseComponent {
     }
 
     if (!_.isEmpty(prompt)) {
-      renameSession.call({sessionId: _id, newName: prompt});
+      renameTalk.call({TalkId: _id, newName: prompt});
     }
   };
 
-  deleteSession = () => {
+  deleteTalk = () => {
     const {name} = this.props;
     if (confirm(`Delete ${name}?`))
-      deleteSession.call({sessionId: this.props._id});
+      deleteTalk.call({TalkId: this.props._id});
   };
 
   render() {
     const {_id, name} = this.props;
-    const sessLink = `/sessions/${_id}`;
+    const talkLink = `/talks/${_id}`;
     return (
       <li className="list-group-item clearfix">
-        <Link to={sessLink}>{name}</Link>
+        <Link to={talkLink}>{name}</Link>
         <div className="btn-m-group pull-right">
-          <button onClick={this.renameSession} className="btn-menu">
+          <button onClick={this.renameTalk} className="btn-menu">
             rename
           </button>
-          <button onClick={this.deleteSession} className="btn-menu">
+          <button onClick={this.deleteTalk} className="btn-menu">
             delete
           </button>
         </div>
@@ -55,43 +55,41 @@ class SessionItem extends BaseComponent {
 
 // too dangerous for user study
 // also TODO confirm w/ modal
-//<button onClick={this.deleteSession} className="btn-menu">
+//<button onClick={this.deleteTalk} className="btn-menu">G
 //delete
 //</button>
 
-SessionItem.propTypes = {id: PropTypes.string};
+TalkItem.propTypes = {id: PropTypes.string};
 
-export default class SessionListPage extends BaseComponent {
-  addSession = () => {
-    createSession.call({}, (err, res) => {
+export default class TalkListPage extends BaseComponent {
+  addTalk = () => {
+    createTalk.call({}, (err, res) => {
       if (err) {
         console.error(err);
       } else {
-        this.redirectTo(`/sessions/${res}`);
+        this.redirectTo(`/talks/${res}`);
       }
     });
   };
 
   render() {
-    const {sessions} = this.props;
-
-    let Sessions;
-    if (!sessions || !sessions.length) {
-      Sessions = <div className="alert">no sessions yet</div>;
+    let {Talks} = this.props;
+    if (!Talks || !Talks.length) {
+      Talks = <div className="alert">no talks yet</div>;
     } else {
-      Sessions = sessions.map(sess => <SessionItem key={sess._id} {...sess} />);
+      Talks = Talks.map(talk => <TalkItem key={talk._id} {...talk} />);
     }
 
     const content = (
       <div className="main-content">
-        <h1>sessions</h1>
+        <h1>Talks</h1>
         <Link to={'/guide'} className="btn btn-empty pull-right">
           user guide
         </Link>
-        <button onClick={this.addSession} className="btn btn-primary">
-          + new session
+        <button onClick={this.addTalk} className="btn btn-primary">
+          + new Talk
         </button>
-        <ul className="v-pad list-group">{Sessions}</ul>
+        <ul className="v-pad list-group">{Talks}</ul>
       </div>
     );
 
@@ -103,4 +101,4 @@ export default class SessionListPage extends BaseComponent {
   }
 }
 
-SessionListPage.propTypes = {sessions: PropTypes.array};
+TalkListPage.propTypes = {Talks: PropTypes.array};

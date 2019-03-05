@@ -23,9 +23,9 @@ export default class TalkContainer extends BaseComponent {
     }
 
     let props = {};
-    const {sessions, talks, reviewer, files, images, comments} = this.props;
+    const {Talks, talks, reviewer, files, images, comments} = this.props;
     props.talk = talks.find(t => t._id === _id) || {};
-    props.session = sessions.find(s => s._id === props.talk.session) || {};
+    props.session = Talks.find(s => s._id === props.talk.session) || {};
     props.comments = comments.filter(c => c.talk === _id);
     //props.comments = props.comments.filter(this.controlFilter);
     props.files = files.filter(f => f.meta.talkId === _id);

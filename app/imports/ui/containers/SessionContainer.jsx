@@ -17,8 +17,8 @@ export default class SessionContainer extends BaseComponent {
     }
 
     let props = {};
-    const {sessions, talks, files, images, comments} = this.props;
-    const session = sessions.find(s => s._id === _id) || {talks: []};
+    const {Talks, talks, files, images, comments} = this.props;
+    const session = Talks.find(s => s._id === _id) || {talks: []};
     const unsortedTalks = talks.filter(f => f.session === _id);
     const indexSort = t => session.talks.indexOf(t._id);
     props.talks = _.sortBy(unsortedTalks, indexSort).map(t => {

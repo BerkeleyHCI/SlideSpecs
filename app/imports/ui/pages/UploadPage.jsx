@@ -109,7 +109,7 @@ export default class UploadPage extends BaseComponent {
             <hr />
             <code>{window.location.href}</code>
             <hr />
-            <Link to={`/sessions/${session._id}`}>
+            <Link to={`/Talks/${session._id}`}>
               <span className="black"> ‹ </span>
               Go back to the session management panel.
             </Link>

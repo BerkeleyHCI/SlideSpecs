@@ -905,7 +905,7 @@ class DiscussPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="reviewView main-content no-pad">
           <h2 className="nav-head clearfix">
-            <Link to={`/sessions/${sessionId}`}>
+            <Link to={`/Talks/${sessionId}`}>
               <span className="black"> ‹ </span>
               discuss feedback
             </Link>

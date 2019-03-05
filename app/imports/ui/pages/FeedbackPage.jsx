@@ -560,7 +560,7 @@ class FeedbackPage extends BaseComponent {
       this.renderRedirect() || (
         <div className="main-content no-pad reviewView">
           <h2 className="nav-head clearfix">
-            <Link to={`/sessions/${sessionId}`}>
+            <Link to={`/Talks/${sessionId}`}>
               <span className="black"> ‹ </span>
               review feedback
             </Link>

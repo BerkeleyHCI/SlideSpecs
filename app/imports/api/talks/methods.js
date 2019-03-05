@@ -3,7 +3,6 @@ import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Random} from 'meteor/random';
 
-;
 import {Talks} from './talks.js';
 import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';
@@ -12,40 +11,28 @@ import _ from 'lodash';
 
 export const createTalk = new ValidatedMethod({
   name: 'talks.create',
-  validate: new SimpleSchema({
-    sessionId: {type: String},
-    name: {type: String},
-  }).validator(),
-  run({sessionId, name}) {
+  validate: new SimpleSchema({}).validator(),
+  run({name}) {
     if (!this.userId) {
       throw new Meteor.Error(
-        'api.talks.create.accessDenied',
-        'You must log in to create a talk.',
+        'api.sessions.create.accessDenied',
+        'You must log in to create a session.',
       );
-      return false;
     }
 
-    const talkId = Talks.insert({
-      name: name.replace(/\.[^/.]+$/, ''),
+    if (!name) {
+      const basename = 'session ';
+      let iter = new Date().toLocaleDateString();
+      name = `${basename} ${iter}`;
+    }
+
+    return Talks.insert({
       userId: this.userId,
       created: Date.now(),
       secret: Random.id(),
-      session: sessionId,
-      progress: 0,
+      talks: [],
+      name,
     });
-
-    const session = Sessions.findOne(sessionId);
-    if (!session) {
-      throw new Meteor.Error(
-        'api.talks.addTalk.sessionNotFound',
-        'This session for the talk does not exist.',
-      );
-    } else {
-      const newTalks = [...session.talks, talkId];
-      Sessions.update(sessionId, {$set: {talks: newTalks}});
-    }
-
-    return talkId;
   },
 });
 
@@ -65,8 +52,7 @@ export const renameTalk = new ValidatedMethod({
     }
 
     // Talk owner or session owner should be able to edit/delete talk
-    const sess = Sessions.findOne(talk.session);
-    if (talk.userId === this.userId || sess.userId === this.userId) {
+    if (talk.userId === this.userId) {
       return Talks.update(talkId, {$set: {name: newName}});
     } else {
       throw new Meteor.Error(
@@ -95,8 +81,7 @@ export const setTalkProgress = new ValidatedMethod({
     }
 
     // Talk owner or session owner should be able to edit/delete talk
-    const sess = Sessions.findOne(talk.session);
-    if (talk.userId === this.userId || sess.userId === this.userId) {
+    if (talk.userId === this.userId) {
       return Talks.update(talkId, {$set: {progress: progress}});
     } else {
       throw new Meteor.Error(
@@ -119,45 +104,6 @@ export const checkUserTalk = new ValidatedMethod({
     } else if (talk.userId === this.userId) {
       return true; // user owns talk
     }
-
-    // check if user owns session in talk
-    const sess = Sessions.findOne(talk.session);
-    if (sess && sess.userId === this.userId) {
-      return true; // not talk owner but session owner
-    } else {
-      return false; // refuse to let see talk.
-    }
-  },
-});
-
-export const moveSessionTalk = new ValidatedMethod({
-  name: 'talk.moveSessionTalk',
-  validate: new SimpleSchema({
-    talkId: {type: String},
-    position: {type: Number},
-  }).validator(),
-  run({talkId, position}) {
-    const talk = Talks.findOne(talkId);
-    if (!talk) {
-      throw new Meteor.Error('api.talks.noTalk', 'There is no talk.');
-    }
-
-    const sess = Sessions.findOne(talk.session);
-    if (!sess || sess.userId !== this.userId) {
-      throw new Meteor.Error(
-        'api.talks.addTalk.sessionNotEditable',
-        'You cannot edit this session.',
-      );
-    }
-
-    // move element from one array position to another
-    const oldIdx = sess.talks.findIndex(t => t == talk._id);
-    const oTalks = sess.talks.filter(t => t != talk._id);
-    const before = oTalks.slice(0, position);
-    const after = oTalks.slice(position);
-    const newTalks = [...before, talk._id, ...after];
-
-    Sessions.update(talk.session, {$set: {talks: newTalks}});
   },
 });
 
@@ -176,13 +122,8 @@ export const deleteTalk = new ValidatedMethod({
     }
 
     // Talk owner or session owner should be able to edit/delete talk
-    const sess = Sessions.findOne(talk.session);
-    if (talk.userId === this.userId || sess.userId === this.userId) {
+    if (talk.userId === this.userId) {
       try {
-        // Remove id from the session object
-        const newTalks = _.remove(sess.talks, t => t == talk._id);
-        Sessions.update(talk.session, {$set: {talks: newTalks}});
-
         // deleting related files
         Files.remove({'meta.talkId': talkId});
         Images.remove({'meta.talkId': talkId});

@@ -19,7 +19,7 @@ import TalkContainer from '../containers/TalkContainer.jsx';
 
 import AuthPageSignIn from '../pages/AuthPageSignIn.jsx';
 import AuthPageJoin from '../pages/AuthPageJoin.jsx';
-import SessionListPage from '../pages/SessionListPage.jsx';
+import TalkListPage from '../pages/TalkListPage.jsx';
 import SessionPage from '../pages/SessionPage.jsx';
 import UploadPage from '../pages/UploadPage.jsx';
 import GuidePage from '../pages/GuidePage.jsx';
@@ -104,8 +104,8 @@ export default class App extends BaseComponent {
     return this.preRender(match, AboutPage, 'user');
   };
 
-  renderSessionList = ({match}) => {
-    return this.preRender(match, SessionListPage, 'user');
+  renderTalkList = ({match}) => {
+    return this.preRender(match, TalkListPage, 'user');
   };
 
   renderSession = ({match}) => {
@@ -138,7 +138,7 @@ export default class App extends BaseComponent {
 
   renderContent = ({location, ...other}) => {
     this.renderSecure(); // http -> https
-    const {user, sessions, files, loading} = this.props;
+    const {user, Talks, files, loading} = this.props;
     const params = queryString.parse(location.search);
     const shared = this.getSharedProps();
     const {modal} = this.state;
@@ -167,8 +167,8 @@ export default class App extends BaseComponent {
             <Route path="/about" render={this.renderAboutPage} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
-            <PrivateRoute exact path="/" render={this.renderSessionList} />
-            <PrivateRoute path="/sessions/:id" render={this.renderSession} />
+            <PrivateRoute exact path="/" render={this.renderTalkList} />
+            <PrivateRoute path="/Talks/:id" render={this.renderSession} />
             <PrivateRoute path="/upload/:id" render={this.renderUpload} />
             <PrivateRoute path="/slides/:id" render={this.renderTalk} />
             <PrivateRoute render={() => <NotFoundPage />} />
@@ -210,10 +210,9 @@ const PrivateRoute = ({render, ...other}) => {
   const sharedPaths = ['/', '/upload/:id'];
   const talkPermit = checkUserTalk.call({matchId});
   const shared = sharedPaths.includes(other.path);
-  const permitted = shared || talkPermit || sessPermit;
+  const permitted = shared || talkPermit;
 
   //console.log(Meteor.loggingIn(), user, other.path, matchId, loc);
-  //console.log(talkPermit, sessPermit);
   //console.log(saved, Meteor.loggingOut(), loc);
   const saved = localStorage.getItem('feedbacks.referringLink');
 
@@ -233,7 +232,7 @@ App.propTypes = {
   connected: PropTypes.bool.isRequired, // server connection status
   loading: PropTypes.bool.isRequired, // subscription status
   user: PropTypes.object, // current meteor user
-  sessions: PropTypes.array,
+  Talks: PropTypes.array,
   talks: PropTypes.array,
   comments: PropTypes.array,
   files: PropTypes.array,
@@ -242,7 +241,7 @@ App.propTypes = {
 
 App.defaultProps = {
   user: null,
-  sessions: [],
+  Talks: [],
   talks: [],
   comments: [],
   files: [],

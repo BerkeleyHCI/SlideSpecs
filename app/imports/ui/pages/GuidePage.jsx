@@ -70,11 +70,11 @@ class GuidePage extends BaseComponent {
           <img src="guide/create_acc.png" />
           <p>Click on the create an account button.</p>
           <hr />
-          <h3>View all sessions</h3>
+          <h3>View all Talks</h3>
           <img src="guide/session_home_screen.png" />
           <p>
-            The home page lists all your sessions. You can also create new
-            sessions here.
+            The home page lists all your Talks. You can also create new
+            Talks here.
           </p>
           <hr />
           <h3>Creating a session</h3>

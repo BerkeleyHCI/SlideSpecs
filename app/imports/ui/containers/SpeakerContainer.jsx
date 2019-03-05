@@ -18,11 +18,11 @@ export default class SpeakerContainer extends BaseComponent {
     }
 
     // TODO switch over to secret.
-    //props.session = sessions.find(s => s.secret === _id) || {};
+    //props.session = Talks.find(s => s.secret === _id) || {};
 
     let props = {};
-    const {sessions, talks, files, images, comments} = this.props;
-    props.session = sessions.find(s => s._id === _id) || {};
+    const {Talks, talks, files, images, comments} = this.props;
+    props.session = Talks.find(s => s._id === _id) || {};
     const sFilter = f => f.session == _id && f.userId == Meteor.userId();
     const talk = talks.find(sFilter);
     if (talk) {

@@ -2,19 +2,19 @@ import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
-;
+import {Talks} from '../talks/talks.js';
 import {Files} from '../files/files.js';
 import {Events} from './events.js';
 
 export const createEvent = new ValidatedMethod({
   name: 'events.create',
   validate: new SimpleSchema({
-    session: {type: String},
+    talk: {type: String},
     slideNo: {type: Number},
   }).validator(),
-  run({session, slideNo}) {
-    const totalSlides = Files.find({'meta.sessionId': session});
-    const realSess = Sessions.findOne(session);
+  run({talk, slideNo}) {
+    const totalSlides = Files.find({'meta.talkId': talk});
+    const realSess = Talks.findOne(session);
 
     if (!realSess) {
       throw new Error('This session pair is not valid.');
