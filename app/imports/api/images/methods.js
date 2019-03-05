@@ -29,14 +29,14 @@ export const deleteImage = new ValidatedMethod({
   },
 });
 
-export const deleteSessionImages = new ValidatedMethod({
-  name: 'images.deleteSessionImages',
+export const deleteTalkImages = new ValidatedMethod({
+  name: 'images.deleteTalkImages',
   validate: new SimpleSchema({
-    sessionId: {type: String},
+    talkId: {type: String},
   }).validator(),
-  run({sessionId}) {
+  run({talkId}) {
     try {
-      Images.remove({'meta.sessionId': sessionId});
+      Images.remove({'meta.talkId': talkId});
     } catch (e) {
       console.error(e);
     }

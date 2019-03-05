@@ -89,7 +89,7 @@ export default class TalkListPage extends BaseComponent {
         <button onClick={this.addTalk} className="btn btn-primary">
           + new talk
         </button>
-        <ul className="v-pad list-group">{Talks}</ul>
+        <ul className="v-pad list-group">{talkList}</ul>
       </div>
     );
 

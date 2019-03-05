@@ -5,10 +5,6 @@ import {Images} from '../images/images.js';
 import {Talks} from '../talks/talks.js';
 import {Comments} from '../comments/comments.js';
 
-// TODO - include file creation method here
-// TODO - restrict these operations to file owner
-// TODO - delete the files from a presentation
-
 export const renameFile = new ValidatedMethod({
   name: 'files.rename',
   validate: new SimpleSchema({
@@ -36,17 +32,17 @@ export const deleteFile = new ValidatedMethod({
   },
 });
 
-export const deleteSessionFiles = new ValidatedMethod({
-  name: 'files.deleteSessionFiles',
+export const deleteTalkFiles = new ValidatedMethod({
+  name: 'files.deleteTalkFiles',
   validate: new SimpleSchema({
-    sessionId: {type: String},
+    talkId: {type: String},
   }).validator(),
-  run({sessionId}) {
+  run({talkId}) {
     try {
-      Files.remove({'meta.sessionId': sessionId});
-      Images.remove({'meta.sessionId': sessionId});
-      Talks.remove({session: sessionId});
-      Comments.remove({session: sessionId});
+      Files.remove({'meta.talkId': talkId});
+      Images.remove({'meta.talkId': talkId});
+      Talks.remove({talk: talkId});
+      Comments.remove({talk: talkId});
     } catch (e) {
       console.error(e);
     }

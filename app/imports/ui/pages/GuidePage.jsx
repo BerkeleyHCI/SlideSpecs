@@ -1,7 +1,7 @@
-import React from 'react';
-import BaseComponent from '../components/BaseComponent.jsx';
-import MenuContainer from '../containers/MenuContainer.jsx';
-import {Link} from 'react-router-dom';
+import React from "react";
+import BaseComponent from "../components/BaseComponent.jsx";
+import MenuContainer from "../containers/MenuContainer.jsx";
+import { Link } from "react-router-dom";
 
 class GuidePage extends BaseComponent {
   render() {
@@ -15,16 +15,8 @@ class GuidePage extends BaseComponent {
         <h1>User Guide</h1>
         <div className="alert">
           for:
-          <a href="#presenters"> presenters</a> |{' '}
-          <a href="#audience">audience members</a> |{' '}
-          <a href="#managers">session owners</a>
-        </div>
-
-        <h2 id="presenters">For Presenters</h2>
-        <div className="alert">
-          <h3>Upload slides</h3>
-          <img className="gif" src="guide/join_add_presenter_slides.gif" />
-          Create an account or log in. Drag and drop a PDF of your presentation.
+          <a href="#presenters"> the presenter</a> |{" "}
+          <a href="#audience">the audience</a>
         </div>
 
         <h2 id="audience">For Audience Members</h2>
@@ -60,8 +52,12 @@ class GuidePage extends BaseComponent {
           </p>
         </div>
 
-        <h2 id="managers">For Session Owners</h2>
+        <h2 id="presenters">For Presenters</h2>
         <div className="alert">
+          <h3>Upload slides</h3>
+          <img className="gif" src="guide/join_add_presenter_slides.gif" />
+          Create an account or log in. Drag and drop a PDF of your presentation.
+          <hr />
           <h3>Logging in</h3>
           <img className="gif" src="guide/logging_in_session_owner.gif" />
           <p>Login by simply typing in your password and username.</p>
@@ -73,13 +69,13 @@ class GuidePage extends BaseComponent {
           <h3>View all Talks</h3>
           <img src="guide/session_home_screen.png" />
           <p>
-            The home page lists all your Talks. You can also create new
-            Talks here.
+            The home page lists all your Talks. You can also create new Talks
+            here.
           </p>
           <hr />
           <h3>Creating a session</h3>
           <img className="gif" src="guide/new-session.png" />
-          <p>Click on 'New Session' to upload slides.</p>
+          <p>Click on 'New Talk' to upload slides.</p>
           <hr />
           <h3>Uploading slides</h3>
           <img className="gif" src="guide/add_presentations.gif" />
@@ -102,26 +98,24 @@ class GuidePage extends BaseComponent {
             <img className="gif" src="guide/share_presenter_link_working.gif" />
             <p>
               To allow presenters to add their own slides click on 'open link.'
-              <ul>
-                <li>Home > Selected Session > Open Link</li>
-              </ul>
             </p>
+            <ul>
+              <li>Home > Selected Talk > Open Link</li>
+            </ul>
             <hr />
             <h4>Sharing presentation link with audience members</h4>
             <img className="gif" src="guide/share_slides_with_audience_2.gif" />
-            <p>
-              To share the presentation click on 'open link.'
-              <ul>
-                <li> Home > Selected Session > Open Link </li>
-                <li>
-                  Sharing this link will allow audience members to join in on
-                  the session.
-                </li>
-              </ul>
-            </p>
+            <p>To share the presentation click on 'open link.'</p>
+            <ul>
+              <li> Home > Selected Talk > Open Link </li>
+              <li>
+                Sharing this link will allow audience members to join in on the
+                session.
+              </li>
+            </ul>
           </div>
           <hr />
-          <h3>Entering a Session</h3>
+          <h3>Entering a Talk</h3>
           <img className="gif" src="guide/entering_session.gif" />
         </div>
         <h2>

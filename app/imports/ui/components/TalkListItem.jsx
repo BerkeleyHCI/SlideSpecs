@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 import {
   renameTalk,
   deleteTalk,
-  moveSessionTalk,
+  moveTalkTalk,
 } from '../../api/talks/methods.js';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
@@ -27,12 +27,12 @@ class TalkListItem extends Component {
 
   moveTalkUp = e => {
     const {iter, talk} = this.props;
-    moveSessionTalk.call({talkId: talk._id, position: iter - 1});
+    moveTalkTalk.call({talkId: talk._id, position: iter - 1});
   };
 
   moveTalkDown = e => {
     const {iter, talk} = this.props;
-    moveSessionTalk.call({talkId: talk._id, position: iter + 1});
+    moveTalkTalk.call({talkId: talk._id, position: iter + 1});
   };
 
   deleteTalk = () => {

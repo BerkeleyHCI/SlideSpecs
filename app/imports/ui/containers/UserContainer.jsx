@@ -15,8 +15,7 @@ export default class UserContainer extends BaseComponent {
     }
 
     let props = {};
-    const {Talks, talks, files, images, comments} = this.props;
-    props.Talks = Talks.filter(s => s.userId === _id);
+    const {talks, files, images, comments} = this.props;
     props.talks = talks.filter(f => f.userId === _id);
     props.comments = comments.filter(f => f.userId === _id);
     props.files = files.filter(f => f.meta.userId === _id);

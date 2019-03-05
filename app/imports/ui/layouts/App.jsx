@@ -13,18 +13,14 @@ import Loading from "../components/Loading.jsx";
 import AppNotification from "../components/AppNotification.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import UserContainer from "../containers/UserContainer.jsx";
-import SessionContainer from "../containers/SessionContainer.jsx";
-import SpeakerContainer from "../containers/SpeakerContainer.jsx";
 import TalkContainer from "../containers/TalkContainer.jsx";
 
 import AuthPageSignIn from "../pages/AuthPageSignIn.jsx";
 import AuthPageJoin from "../pages/AuthPageJoin.jsx";
 import TalkListPage from "../pages/TalkListPage.jsx";
-import UploadPage from "../pages/UploadPage.jsx";
+import TalkPage from "../pages/TalkPage.jsx";
 import GuidePage from "../pages/GuidePage.jsx";
 import AboutPage from "../pages/AboutPage.jsx";
-import TalkPage from "../pages/TalkPage.jsx";
-import SharePage from "../pages/SharePage.jsx";
 import CommentPage from "../pages/CommentPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import ForbiddenPage from "../pages/ForbiddenPage.jsx";
@@ -84,10 +80,6 @@ export default class App extends BaseComponent {
     const shared = this.getSharedProps();
     if (pType == "user") {
       return <UserContainer Comp={Comp} {...shared} id={Meteor.userId()} />;
-    } else if (pType == "session") {
-      return <SessionContainer Comp={Comp} {...shared} id={match.params.id} />;
-    } else if (pType == "speaker") {
-      return <SpeakerContainer Comp={Comp} {...shared} id={match.params.id} />;
     } else if (pType == "talk") {
       return <TalkContainer Comp={Comp} {...shared} id={match.params.id} />;
     } else {
@@ -107,20 +99,15 @@ export default class App extends BaseComponent {
     return this.preRender(match, TalkListPage, "user");
   };
 
-  renderUpload = ({ match }) => {
-    return this.preRender(match, UploadPage, "speaker");
-  };
-
   renderTalk = ({ match }) => {
     return this.preRender(match, TalkPage, "talk");
   };
 
-  renderShare = ({ match }) => {
-    
-    return this.preRender(match, SharePage, "session");
+  renderComment = ({ match }) => {
+    return this.preRender(match, CommentPage, "talk");
   };
 
-  renderComment = ({ match }) => {
+  renderReview = ({ match }) => {
     return this.preRender(match, CommentPage, "talk");
   };
 
@@ -161,11 +148,10 @@ export default class App extends BaseComponent {
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/guide" render={this.renderGuidePage} />
             <Route path="/about" render={this.renderAboutPage} />
-            <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
             <PrivateRoute exact path="/" render={this.renderTalkList} />
             <PrivateRoute path="/talks/:id" render={this.renderTalk} />
-            <PrivateRoute path="/upload/:id" render={this.renderUpload} />
+            <PrivateRoute path="/review/:id" render={this.renderReview} />
             <PrivateRoute render={() => <NotFoundPage />} />
           </Switch>
         )}

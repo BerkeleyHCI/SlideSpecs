@@ -23,17 +23,14 @@ export default class TalkContainer extends BaseComponent {
     }
 
     let props = {};
-    const {Talks, talks, reviewer, files, images, comments} = this.props;
+    const {talks, reviewer, files, images, comments} = this.props;
     props.talk = talks.find(t => t._id === _id) || {};
-    props.session = Talks.find(s => s._id === props.talk.session) || {};
+    props.file = files.find(f => f.meta.talkId === _id);
     props.comments = comments.filter(c => c.talk === _id);
     //props.comments = props.comments.filter(this.controlFilter);
-    props.files = files.filter(f => f.meta.talkId === _id);
     props.images = images.filter(f => f.meta.talkId === _id);
-    props.sessionId = props.session._id;
     props.name = props.talk.name;
     props.reviewer = reviewer;
-    props.talkId = _id;
     return props;
   };
 

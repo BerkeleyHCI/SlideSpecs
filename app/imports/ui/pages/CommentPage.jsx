@@ -60,18 +60,18 @@ class CommentPage extends BaseComponent {
 
   log = data => {
     //console.log(data);
-    const {reviewer, sessionId} = this.props;
+    const {reviewer, talk} = this.props;
     if (typeof data === 'string') {
       this.logger.info(
-        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+        JSON.stringify({data, reviewer, talk, time: Date.now()}),
       );
     } else if (Object.keys.length > 0) {
       this.logger.info(
-        JSON.stringify({...data, reviewer, sessionId, time: Date.now()}),
+        JSON.stringify({...data, reviewer, talk, time: Date.now()}),
       );
     } else {
       this.logger.info(
-        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+        JSON.stringify({data, reviewer, talk, time: Date.now()}),
       );
     }
   };
@@ -95,9 +95,9 @@ class CommentPage extends BaseComponent {
       } else {
         ds = new DragSelect({
           selectables: elements,
-          onDragMove: updateSelection,
           callback: updateSelection,
           autoScrollSpeed: 12,
+          onDragMove: updateSelection,
           area: area,
         });
         this.setState({ds});
@@ -295,15 +295,14 @@ class CommentPage extends BaseComponent {
 
   addComment = () => {
     const {defaultPriv} = this.state;
-    const {reviewer, talkId, sessionId} = this.props;
+    const {reviewer, talk} = this.props;
     const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
     const priv = cText.includes('#private');
     const commentFields = {
       author: reviewer,
       content: cText,
-      session: sessionId,
-      talk: talkId,
+      talk: talk._id,
       userOwn: false, // defaultPriv || priv,
       slides,
     };
@@ -514,7 +513,7 @@ class CommentPage extends BaseComponent {
       bySlide,
       byTag,
     } = this.state;
-    const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
+    const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
@@ -570,7 +569,6 @@ class CommentPage extends BaseComponent {
           key: c._id,
           reviewer,
           setModal,
-          sessionId,
           clearModal,
           activeComment,
           log: this.log,
@@ -617,16 +615,13 @@ class CommentPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderFiles();
     const {image, hoverImage, filtered, bySlide} = this.state;
-    const {name, session, reviewer} = this.props;
+    const {name, talk, reviewer} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
         <h2 className="alert clearfix no-margin">
-          <Link to={`/share/${session._id}`}>
-            <span className="black"> ‹ </span>
             {name}
-          </Link>
           <small onClick={this.clearReviewer} className="pull-right clear-icon">
             {reviewer}
           </small>
