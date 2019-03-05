@@ -16,7 +16,7 @@ class TalkItem extends BaseComponent {
   renameTalk = () => {
     const {_id, name} = this.props;
     let validName = /[^a-zA-Z0-9 .:+()\-_%!&]/gi;
-    let prompt = window.prompt('New Talk name?', name);
+    let prompt = window.prompt('New talk name?', name);
 
     if (prompt) {
       prompt = prompt.replace(validName, '-');
@@ -24,14 +24,14 @@ class TalkItem extends BaseComponent {
     }
 
     if (!_.isEmpty(prompt)) {
-      renameTalk.call({TalkId: _id, newName: prompt});
+      renameTalk.call({talkId: _id, newName: prompt});
     }
   };
 
   deleteTalk = () => {
     const {name} = this.props;
     if (confirm(`Delete ${name}?`))
-      deleteTalk.call({TalkId: this.props._id});
+      deleteTalk.call({talkId: this.props._id});
   };
 
   render() {
@@ -73,21 +73,21 @@ export default class TalkListPage extends BaseComponent {
   };
 
   render() {
-    let {Talks} = this.props;
-    if (!Talks || !Talks.length) {
-      Talks = <div className="alert">no talks yet</div>;
+    let {talks} = this.props, talkList;
+    if (!talks || !talks.length) {
+      talkList = <div className="alert">no talks yet</div>;
     } else {
-      Talks = Talks.map(talk => <TalkItem key={talk._id} {...talk} />);
+      talkList = talks.map(talk => <TalkItem key={talk._id} {...talk} />);
     }
 
     const content = (
       <div className="main-content">
-        <h1>Talks</h1>
+        <h1>talks</h1>
         <Link to={'/guide'} className="btn btn-empty pull-right">
           user guide
         </Link>
         <button onClick={this.addTalk} className="btn btn-primary">
-          + new Talk
+          + new talk
         </button>
         <ul className="v-pad list-group">{Talks}</ul>
       </div>
@@ -101,4 +101,4 @@ export default class TalkListPage extends BaseComponent {
   }
 }
 
-TalkListPage.propTypes = {Talks: PropTypes.array};
+TalkListPage.propTypes = {talks: PropTypes.array};

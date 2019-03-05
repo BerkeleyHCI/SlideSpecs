@@ -21,7 +21,7 @@ export const createTalk = new ValidatedMethod({
     }
 
     if (!name) {
-      const basename = 'session ';
+      const basename = 'talk ';
       let iter = new Date().toLocaleDateString();
       name = `${basename} ${iter}`;
     }
