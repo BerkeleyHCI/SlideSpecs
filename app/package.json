@@ -15,7 +15,7 @@
     "faker": "^4.1.0",
     "history": "^4.7.2",
     "imagesloaded": "^4.1.4",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "meteor-node-stubs": "^0.4.1",
     "prop-types": "^15.6.1",
     "query-string": "^6.2.0",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
     "babel-eslint": "^8.2.6",
-    "eslint": "^5.12.0",
+    "eslint": "^5.15.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-import-resolver-meteor": "^0.4.0",
     "eslint-plugin-import": "^2.14.0",
