@@ -32,5 +32,5 @@ export default class UserContainer extends BaseComponent {
 }
 
 UserContainer.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
 };

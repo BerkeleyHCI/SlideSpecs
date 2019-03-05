@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {Session} from 'meteor/session.js';
 import {withTracker} from 'meteor/react-meteor-data';
 
-import {Sessions} from '../../api/sessions/sessions.js';
+;
 import {Talks} from '../../api/talks/talks.js';
 import {Comments} from '../../api/comments/comments.js';
 import {Files} from '../../api/files/files.js';

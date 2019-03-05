@@ -3,7 +3,7 @@ import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Random} from 'meteor/random';
 
-import {Sessions} from '../sessions/sessions.js';
+;
 import {Talks} from './talks.js';
 import {Comments} from '../comments/comments.js';
 import {Files} from '../files/files.js';

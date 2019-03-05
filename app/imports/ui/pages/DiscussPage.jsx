@@ -22,7 +22,7 @@ import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {Comments} from '../../api/comments/comments.js';
 import {createComment, addressComment} from '../../api/comments/methods.js';
-import {setRespondingComment} from '../../api/sessions/methods.js';
+import {setRespondingComment} from '../../api/talks/methods.js';
 import {Transition} from 'react-spring';
 
 // Control-log.

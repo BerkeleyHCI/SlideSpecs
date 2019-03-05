@@ -2,7 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
-import {Sessions} from '../sessions/sessions.js';
+;
 import {Files} from '../files/files.js';
 import {Events} from './events.js';
 

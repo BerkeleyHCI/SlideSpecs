@@ -30,7 +30,6 @@ import CommentPage from '../pages/CommentPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ForbiddenPage from '../pages/ForbiddenPage.jsx';
 
-import {checkUserSession} from '../../api/sessions/methods.js';
 import {checkUserTalk} from '../../api/talks/methods.js';
 
 const CONNECTION_ISSUE_TIMEOUT = 5000;
@@ -210,7 +209,6 @@ const PrivateRoute = ({render, ...other}) => {
 
   const sharedPaths = ['/', '/upload/:id'];
   const talkPermit = checkUserTalk.call({matchId});
-  const sessPermit = checkUserSession.call({matchId});
   const shared = sharedPaths.includes(other.path);
   const permitted = shared || talkPermit || sessPermit;
 

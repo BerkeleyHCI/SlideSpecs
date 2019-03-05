@@ -8,7 +8,7 @@ import {
   createSession,
   renameSession,
   deleteSession,
-} from '../../api/sessions/methods.js';
+} from '../../api/talks/methods.js';
 
 // Helper class for individual file items.
 
