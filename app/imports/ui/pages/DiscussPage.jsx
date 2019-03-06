@@ -47,8 +47,7 @@ class DiscussPage extends BaseComponent {
       byAuth: "",
       byTag: "",
       hoverImage: "",
-      image: "",
-      ds: {}
+      image: ""
     };
   }
 
@@ -57,6 +56,32 @@ class DiscussPage extends BaseComponent {
     const mason = new Masonry(grid, {
       itemSelector: ".file-item"
     });
+  };
+
+  extractFileData = x => {
+    return {
+      slideId: x.getAttribute("data-file-id"),
+      slideNo: x.getAttribute("data-iter")
+    };
+  };
+
+  handleTagIn = e => {
+    if (e.target === e.currentTarget) {
+      const data = this.extractFileData(e.target);
+      const id = data.slideId;
+      try {
+        const { image, hoverImage } = this.state;
+        const newhoverImage = Images.findOne(id).link("original", "//");
+        if (newhoverImage) {
+          if (newhoverImage !== image)
+            this.setState({ image: newhoverImage });
+          if (newhoverImage !== hoverImage)
+            this.setState({ hoverImage: newhoverImage });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   log = data => {
@@ -83,13 +108,6 @@ class DiscussPage extends BaseComponent {
     const { images } = this.props;
     if (images.length > 0) {
       this.updateImage(images[0]._id);
-    }
-  };
-
-  componentWillUnmount = () => {
-    let { ds } = this.state;
-    if (ds && ds.stop) {
-      ds.stop(); // no drag
     }
   };
 
@@ -133,26 +151,8 @@ class DiscussPage extends BaseComponent {
     }
   };
 
-  // click on tag in filter
-  insertTag = e => {
-    e.preventDefault();
-    const tag = e.target.innerText.trim();
-    const textarea = this.inRef.current;
-    if (textarea.value === "") {
-      textarea.value = `${tag} `;
-    } else if (!textarea.value.includes(tag)) {
-      textarea.value += ` ${tag} `;
-    }
-    textarea.focus();
-  };
-
   clearByTag = () => {
     this.setState({ byTag: "" });
-  };
-
-  clearReviewer = () => {
-    localStorage.setItem("feedbacks.reviewer", null);
-    Session.set("reviewer", null);
   };
 
   updateImage = fid => {
@@ -288,7 +288,7 @@ class DiscussPage extends BaseComponent {
       handleAuthor: this.setByAuth,
       startRecord: this.resumeTranscript,
       bySlide: bySlide,
-      handleSlideIn: this.handleSlideIn,
+      handleSlideIn: this.handleTagIn,
       handleSlideOut: this.handleSlideOut,
       clearButton: this.clearButton,
       clearBySlide: this.clearBySlide,
@@ -362,7 +362,7 @@ class DiscussPage extends BaseComponent {
               <h2>to discuss</h2>
               <div id="comments-list" className="alert">
                 {items.map(i => (
-                  <Comment {...i} />
+                  <Comment focused={true} {...i} />
                 ))}
               </div>
             </div>
@@ -373,7 +373,7 @@ class DiscussPage extends BaseComponent {
               <h2>discussed</h2>
               <div id="comments-list" className="alert">
                 {addressedItems.map(i => (
-                  <Comment {...i} />
+                  <Comment focused={true} {...i} />
                 ))}
               </div>
             </div>
@@ -393,9 +393,7 @@ class DiscussPage extends BaseComponent {
       <div className="context-filter float-at-top">
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
-          <div id="grid" onMouseDown={this.clearGrid}>
-            {fileList}
-          </div>
+          <div id="grid">{fileList}</div>
         </div>
         <div id="v-pad" />
         <AlertLink
@@ -421,7 +419,7 @@ class DiscussPage extends BaseComponent {
       <div>
         <h2> discussing </h2>
         <div id="comments-list" className="alert">
-          <Comment {...respond} feedback={true} last={true} />
+          <Comment {...respond} focused={true} last={true} />
         </div>
       </div>
     );
@@ -436,7 +434,7 @@ class DiscussPage extends BaseComponent {
 
     return images ? (
       this.renderRedirect() || (
-        <div onMouseDown={this.clearButtonBG} className="reviewView">
+        <div className="reviewView">
           <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
