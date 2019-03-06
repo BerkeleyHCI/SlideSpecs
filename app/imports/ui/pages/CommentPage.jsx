@@ -639,25 +639,31 @@ class CommentPage extends BaseComponent {
             {fileList}
           </div>
         </div>
-        <div className="v-pad" />
+
         {filtered.length > 0 && (
-          <div className="no-margin clearfix alert bottom">
-            <SlideTags
-              slides={filtered}
-              bySlide={bySlide}
-              handleSlideIn={this.handleSlideIn}
-              handleSlideOut={this.handleSlideOut}
-              clearButton={this.clearButton}
-              clearBySlide={this.clearBySlide}
-              setBySlide={this.setBySlide}
-            />
+          <div>
+            <div className="v-pad" />
+            <div className="no-margin clearfix alert bottom">
+              <SlideTags
+                slides={filtered}
+                bySlide={bySlide}
+                handleSlideIn={this.handleSlideIn}
+                handleSlideOut={this.handleSlideOut}
+                clearButton={this.clearButton}
+                clearBySlide={this.clearBySlide}
+                setBySlide={this.setBySlide}
+              />
+            </div>
           </div>
         )}
-        <AlertLink
-          center={true}
-          text={"enter discussion here"}
-          link={`/discuss/${talk._id}`}
-        />
+
+        {filtered.length == 0 && (
+          <AlertLink
+            center={true}
+            text={"enter discussion here"}
+            link={`/discuss/${talk._id}`}
+          />
+        )}
       </div>
     );
   };

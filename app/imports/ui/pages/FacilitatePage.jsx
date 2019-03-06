@@ -29,7 +29,7 @@ import { setRespondingComment } from "../../api/talks/methods.js";
 import { Logger } from "meteor/ostrio:logger";
 import { LoggerConsole } from "meteor/ostrio:loggerconsole";
 
-class DiscussPage extends BaseComponent {
+class FacilitatePage extends BaseComponent {
   constructor(props) {
     super(props);
 
@@ -455,4 +455,4 @@ class DiscussPage extends BaseComponent {
   }
 }
 
-export default DiscussPage;
+export default FacilitatePage;

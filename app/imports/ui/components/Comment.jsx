@@ -233,34 +233,6 @@ class Comment extends BaseComponent {
     ));
   };
 
-  handleSpeech = () => {
-    const { discuss, sessionId, _id } = this.props;
-    const commentFields = {
-      sessionId,
-      commentId: _id
-    };
-
-    if (sessionId && _id) {
-      setRespondingComment.call(commentFields);
-    }
-
-    if (this.props.startRecord) {
-      this.props.startRecord();
-    }
-
-    if (discuss.length == 0) {
-      this.handleDiscuss();
-    }
-
-    toast(() => (
-      <AppNotification
-        msg="Ready"
-        desc="Discuss comment with microphone."
-        icon="microphone"
-      />
-    ));
-  };
-
   extractCommentData = x => {
     return {
       _id: x.getAttribute("data-id"),
@@ -312,13 +284,6 @@ class Comment extends BaseComponent {
     master: true,
     icon: this.props.addressed ? "times" : "check",
     txt: this.props.addressed ? "undo" : "finish"
-  };
-
-  talkButton = {
-    handleClick: this.handleSpeech,
-    master: true,
-    icon: "microphone",
-    txt: "speak"
   };
 
   completeButton = {
@@ -380,6 +345,7 @@ class Comment extends BaseComponent {
       replies,
       isReply,
       userOwn,
+      activeComment,
       allReplies,
       discussView,
       addressed,
