@@ -9,3 +9,5 @@ import '../../api/files/methods.js';
 import '../../api/files/server/publications.js';
 import '../../api/images/methods.js';
 import '../../api/images/server/publications.js';
+import '../../api/sounds/methods.js';
+import '../../api/sounds/server/publications.js';

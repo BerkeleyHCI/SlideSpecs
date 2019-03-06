@@ -1,0 +1,44 @@
+import {ValidatedMethod} from 'meteor/mdg:validated-method';
+import {SimpleSchema} from 'meteor/aldeed:simple-schema';
+import {Sounds} from './sounds.js';
+
+export const renameSound = new ValidatedMethod({
+  name: 'sounds.rename',
+  validate: new SimpleSchema({
+    soundId: {type: String},
+    newName: {type: String},
+  }).validator(),
+  run({soundId, newName}) {
+    this.unblock(); // <-- Use to make this method asynchronous
+    const good = Sounds.collection.update(soundId, {$set: {name: newName}});
+    return good;
+  },
+});
+
+export const deleteSound = new ValidatedMethod({
+  name: 'sounds.delete',
+  validate: new SimpleSchema({
+    soundId: {type: String},
+  }).validator(),
+  run({soundId}) {
+    try {
+      Sounds.remove(soundId);
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
+
+export const deleteTalkSounds = new ValidatedMethod({
+  name: 'sounds.deleteTalkSounds',
+  validate: new SimpleSchema({
+    talkId: {type: String},
+  }).validator(),
+  run({talkId}) {
+    try {
+      Sounds.remove({'meta.talkId': talkId});
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
