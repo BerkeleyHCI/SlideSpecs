@@ -5,6 +5,7 @@ import {deleteTalk} from '../../api/talks/methods.js';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
 
+import AlertLink from '../components/AlertLink.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import SlideFile from '../components/SlideFile.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
@@ -58,6 +59,8 @@ class TalkPage extends BaseComponent {
       />
     ));
 
+const downloadLink = `/download/${talk._id}`
+
     return (
       this.renderRedirect() || (
         <div className="main-content">
@@ -70,6 +73,12 @@ class TalkPage extends BaseComponent {
             <small> / {name}</small>
           </h1>
 
+        <AlertLink
+          text={'download all comments for this talk'}
+          link={downloadLink}
+        />
+
+
           <div className="alert">
             <ul>
               <li>slides: {images.length}</li>
@@ -78,14 +87,14 @@ class TalkPage extends BaseComponent {
             <hr />
 
             <div className="btns-menu-space">
+              <Link to={`/comment/${talk._id}`}>
+                <button className="btn btn-menu">add comments</button>
+              </Link>
               <a download href={talkFile}>
-                <button className="btn btn-menu btn-primary">
+                <button className="btn btn-menu btn-primary pull-right">
                   download original
                 </button>
               </a>
-              <Link to={`/comment/${talk._id}`}>
-                <button className="btn btn-menu">view comments</button>
-              </Link>
             </div>
           </div>
 

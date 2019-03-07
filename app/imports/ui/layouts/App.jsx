@@ -27,6 +27,7 @@ import AboutPage from '../pages/AboutPage.jsx';
 import TalkPage from '../pages/TalkPage.jsx';
 import SharePage from '../pages/SharePage.jsx';
 import CommentPage from '../pages/CommentPage.jsx';
+import DownloadPage from '../pages/DownloadPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import ForbiddenPage from '../pages/ForbiddenPage.jsx';
 
@@ -129,6 +130,10 @@ export default class App extends BaseComponent {
     return this.preRender(match, CommentPage, 'talk');
   };
 
+  renderDownload = ({match}) => {
+    return this.preRender(match, DownloadPage, 'talk');
+  };
+
   renderSecure = () => {
     if (location.protocol === 'http:' && location.hostname !== 'localhost') {
       console.log('moving to https...');
@@ -168,6 +173,7 @@ export default class App extends BaseComponent {
             <Route path="/about" render={this.renderAboutPage} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
+                        <Route path="/download/:id" render={this.renderDownload} />
             <PrivateRoute exact path="/" render={this.renderSessionList} />
             <PrivateRoute path="/sessions/:id" render={this.renderSession} />
             <PrivateRoute path="/upload/:id" render={this.renderUpload} />
