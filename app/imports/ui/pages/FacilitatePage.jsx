@@ -435,21 +435,33 @@ class FacilitatePage extends BaseComponent {
     );
   };
 
+  renderSounds = () => {
+        return (
+      <div>
+        <h2> audio </h2>
+      </div>
+    );
+  };
+
   render() {
     const { images } = this.props;
-    const context = this.renderContext();
-    const cmtHead = this.renderCommentFilter();
+    const context = this.renderSounds();
     const respond = this.renderRespond();
     const comments = this.renderComments();
+
+    /*
+    const context = this.renderContext();
+    const cmtHead = this.renderCommentFilter();
+                {cmtHead}
+*/
 
     return images ? (
       this.renderRedirect() || (
         <div className="reviewView">
           <div id="review-view" className="table review-table">
             <div className="row">
-              <div className="col-sm-5 full-height-md no-float">{context}</div>
+              <div className="col-sm-5 no-float">{context}</div>
               <div className="col-sm-7">
-                {cmtHead}
                 {respond}
                 {comments}
               </div>
