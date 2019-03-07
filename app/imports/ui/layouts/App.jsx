@@ -163,7 +163,7 @@ export default class App extends BaseComponent {
             <Route path="/discuss/:id" render={this.renderDiscuss} />    
             <Route path="/facilitate/:id" render={this.renderFacilitate} />      
             <PrivateRoute exact path="/" render={this.renderTalkList} />
-            <PrivateRoute path="/talks/:id" render={this.renderTalk} />
+            <PrivateRoute path="/talk/:id" render={this.renderTalk} />
             <PrivateRoute path="/review/:id" render={this.renderReview} />
             <PrivateRoute render={() => <NotFoundPage />} />
           </Switch>

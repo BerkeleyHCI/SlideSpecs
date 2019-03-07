@@ -36,7 +36,7 @@ class TalkItem extends BaseComponent {
 
   render() {
     const {_id, name} = this.props;
-    const talkLink = `/talks/${_id}`;
+    const talkLink = `/talk/${_id}`;
     return (
       <li className="list-group-item clearfix">
         <Link to={talkLink}>{name}</Link>
@@ -67,7 +67,7 @@ export default class TalkListPage extends BaseComponent {
       if (err) {
         console.error(err);
       } else {
-        this.redirectTo(`/talks/${res}`);
+        this.redirectTo(`/talk/${res}`);
       }
     });
   };

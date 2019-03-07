@@ -556,7 +556,7 @@ class ReviewPage extends BaseComponent {
     return (
       <div className="context-filter float-at-top">
         <h2 className="alert clearfix no-margin">
-          <Link to={`/talks/${talk._id}`}>
+          <Link to={`/talk/${talk._id}`}>
             <span className="black"> ‹ </span>
             {name} 
           </Link> / <small> comment review </small>
