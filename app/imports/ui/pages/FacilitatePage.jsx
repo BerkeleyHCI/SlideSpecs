@@ -39,49 +39,16 @@ class FacilitatePage extends BaseComponent {
 
     this.inRef = React.createRef();
     this.state = {
+      recording: false,
       redirectTo: null,
       sorter: "flag",
       filter: "flag",
       invert: true,
       bySlide: "",
       byAuth: "",
-      byTag: "",
-      hoverImage: "",
-      image: ""
+      byTag: ""
     };
   }
-
-  handleLoad = () => {
-    const grid = document.getElementById("grid");
-    const mason = new Masonry(grid, {
-      itemSelector: ".file-item"
-    });
-  };
-
-  extractFileData = x => {
-    return {
-      slideId: x.getAttribute("data-file-id"),
-      slideNo: x.getAttribute("data-iter")
-    };
-  };
-
-  handleTagIn = e => {
-    if (e.target === e.currentTarget) {
-      const data = this.extractFileData(e.target);
-      const id = data.slideId;
-      try {
-        const { image, hoverImage } = this.state;
-        const newhoverImage = Images.findOne(id).link("original", "//");
-        if (newhoverImage) {
-          if (newhoverImage !== image) this.setState({ image: newhoverImage });
-          if (newhoverImage !== hoverImage)
-            this.setState({ hoverImage: newhoverImage });
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
 
   log = data => {
     //console.log(data);
@@ -102,12 +69,36 @@ class FacilitatePage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    // set image to link of the first slide
-    this.handleLoad(); // masonry
-    const { images } = this.props;
-    if (images.length > 0) {
-      this.updateImage(images[0]._id);
-    }
+    if (!navigator.getUserMedia)
+      navigator.getUserMedia =
+        navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    if (!navigator.cancelAnimationFrame)
+      navigator.cancelAnimationFrame =
+        navigator.webkitCancelAnimationFrame ||
+        navigator.mozCancelAnimationFrame;
+    if (!navigator.requestAnimationFrame)
+      navigator.requestAnimationFrame =
+        navigator.webkitRequestAnimationFrame ||
+        navigator.mozRequestAnimationFrame;
+
+    navigator.getUserMedia(
+      {
+        audio: {
+          mandatory: {
+            googEchoCancellation: "false",
+            googAutoGainControl: "false",
+            googNoiseSuppression: "false",
+            googHighpassFilter: "false"
+          },
+          optional: []
+        }
+      },
+      gotStream,
+      function(e) {
+        alert("Error getting audio");
+        console.log(e);
+      }
+    );
   };
 
   setByAuth = e => {
@@ -436,11 +427,36 @@ class FacilitatePage extends BaseComponent {
   };
 
   renderSounds = () => {
-        return (
+    const { recording } = this.state;
+    const classRecord = recording ? "recording" : "waiting";
+    return (
       <div>
         <h2> audio </h2>
+        <div id="viz">
+          <canvas id="analyser" width="1024" height="500" />
+          <canvas id="wavedisplay" width="1024" height="500" />
+        </div>
+        <div id="controls">
+          <img
+            id="record"
+            className={classRecord}
+            src="/img/mic128.png"
+            onClick={this.toggleRecording}
+          />
+          <img id="save" src="/img/save.svg" onClick={this.toggleUpload} />
+        </div>
       </div>
     );
+  };
+
+  toggleRecording = () => {
+    const { recording } = this.state;
+    window.toggleRecording(recording);
+    this.setState({ recording: !recording });
+  };
+
+  toggleUpload = el => {
+    console.log(el);
   };
 
   render() {
@@ -453,17 +469,20 @@ class FacilitatePage extends BaseComponent {
     const context = this.renderContext();
     const cmtHead = this.renderCommentFilter();
                 {cmtHead}
+}
 */
 
     return images ? (
       this.renderRedirect() || (
-        <div className="reviewView">
-          <div id="review-view" className="table review-table">
-            <div className="row">
-              <div className="col-sm-5 no-float">{context}</div>
-              <div className="col-sm-7">
-                {respond}
-                {comments}
+        <div className="main-content">
+          <div className="reviewView">
+            <div id="review-view" className="table review-table">
+              <div className="row">
+                <div className="col-sm-5 no-float">{context}</div>
+                <div className="col-sm-7">
+                  {respond}
+                  {comments}
+                </div>
               </div>
             </div>
           </div>
