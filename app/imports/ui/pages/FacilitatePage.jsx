@@ -401,7 +401,6 @@ class FacilitatePage extends BaseComponent {
     };
 
     let file = this.blobToFile(blob);
-    console.log(blob, file);
 
     // Allow uploading files under 50MB for now.
     const goodSize = file.size <= 50985760;
