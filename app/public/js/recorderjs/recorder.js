@@ -74,7 +74,6 @@ DEALINGS IN THE SOFTWARE.
 
     this.getBuffers = function(cb) {
       currCallback = cb || config.callback;
-      console.log(worker, currCallback)
       worker.postMessage({ command: 'getBuffers' })
     }
 

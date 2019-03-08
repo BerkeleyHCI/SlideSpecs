@@ -23,8 +23,6 @@ let  recLength = 0,
   sampleRate;
 
 this.onmessage = function(e){
-  console.log(e)
-  debugger
   switch(e.data.command){
     case 'init':
       init(e.data.config);
@@ -79,7 +77,6 @@ function getBuffers() {
   let  buffers = [];
   buffers.push( mergeBuffers(recBuffersL, recLength) );
   buffers.push( mergeBuffers(recBuffersR, recLength) );
-  console.log(buffers)
   this.postMessage(buffers);
 }
 

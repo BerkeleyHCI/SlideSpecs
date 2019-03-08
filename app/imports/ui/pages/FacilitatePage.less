@@ -14,8 +14,11 @@ canvas {
   justify-content: space-around;
   width: 100%;
 }
-#save, #record { height: 8em;
+#save, #record { 
+margin: 1em;
 padding: 1em;
+border-radius: 2px;
+height: 8em;
 filter: brightness(80%);
 &:hover {
   filter: brightness(100%);
@@ -27,8 +30,6 @@ filter: brightness(80%);
   background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
   background: radial-gradient(center, ellipse cover, #ff0000 0%,lightgrey 75%,lightgrey 100%,#7db9e8 100%); 
 }
-#save { opacity: 0.25;}
-#save[download] { opacity: 1;}
 #viz {
   height: 80%;
   width: 100%;

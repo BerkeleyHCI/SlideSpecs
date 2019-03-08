@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
+import { Sounds } from "../../api/sounds/sounds.js";
 import { Images } from "../../api/images/images.js";
 import BaseComponent from "../components/BaseComponent.jsx";
 import AlertLink from "../components/AlertLink.jsx";
@@ -390,6 +391,74 @@ class FacilitatePage extends BaseComponent {
     }
   };
 
+  handleUpload = blob => {
+    let { talk, fileLocator } = this.props;
+    const handleToast = ({ msg, desc, icon, closeTime }) => {
+      if (!closeTime) closeTime = 4000;
+      toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
+        autoClose: closeTime
+      });
+    };
+
+    let file = this.blobToFile(blob);
+    console.log(blob, file);
+
+    // Allow uploading files under 50MB for now.
+    const goodSize = file.size <= 50985760;
+    const goodType = /(wav)$/i.test(file.name);
+    if (!goodSize || !goodType) {
+      handleToast({
+        msg: "error",
+        icon: "times",
+        desc: "Error saving media."
+      });
+      return; // skip this file.
+    }
+
+    let uploadInstance = Sounds.insert(
+      {
+        file,
+        meta: {
+          locator: fileLocator,
+          userId: Meteor.userId(),
+          talkId: talk._id
+        },
+        //transport: 'http',
+        streams: "dynamic",
+        chunkSize: "dynamic",
+        allowWebWorkers: true
+      },
+      false // dont autostart the uploadg
+    );
+
+    uploadInstance.on("start", (err, file) => {
+      //console.log('started', file.name);
+    });
+
+    // TODO set status on talk item that uploading is done.
+    uploadInstance.on("end", (err, file) => {
+      console.log("file:", file);
+      if (!err) {
+        handleToast({
+          msg: file.name,
+          icon: "check",
+          desc: "upload complete"
+        });
+      }
+    });
+
+    uploadInstance.on("error", (err, file) => {
+      if (err) console.error(err, file);
+      handleToast({
+        msg: file.name,
+        icon: "times",
+        desc: `Error uploading: ${err}`
+      });
+    });
+
+    uploadInstance.start();
+  };
+
   renderContext = () => {
     const fileList = this.renderFiles();
     const { talk } = this.props;
@@ -455,8 +524,15 @@ class FacilitatePage extends BaseComponent {
     this.setState({ recording: !recording });
   };
 
-  toggleUpload = el => {
-    console.log(el);
+  blobToFile = blob => {
+    const { talk } = this.props;
+    const lastModified = Date.now();
+    const name = blob.name = `${talk.name}.wav`;
+    return new File([blob], name, {lastModified});
+  };
+
+  toggleUpload = () => {
+    window.audioRecorder.exportWAV(this.handleUpload);
   };
 
   render() {

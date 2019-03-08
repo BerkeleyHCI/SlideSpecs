@@ -1,10 +1,10 @@
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
+audioRecorder = null; // global
 let audioContext = new AudioContext();
 let audioInput = null,
     realAudioInput = null,
-    inputPoint = null,
-    audioRecorder = null;
+    inputPoint = null;
 let rafID = null;
 let analyserContext = null;
 let canvasWidth, canvasHeight;
@@ -15,7 +15,6 @@ function saveAudio() {
 }
 
 function gotBuffers(buffers) {
-    console.log(buffers)
     let canvas = document.getElementById("wavedisplay");
 
     drawBuffer(
