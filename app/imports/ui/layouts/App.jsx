@@ -121,7 +121,7 @@ export default class App extends BaseComponent {
   };
 
   renderContent = ({ location, ...other }) => {
-    this.renderSecure(); // http -> https
+    //this.renderSecure(); // http -> https
     const { user, talks, files, loading } = this.props;
     const params = queryString.parse(location.search);
     const shared = this.getSharedProps();
@@ -150,7 +150,7 @@ export default class App extends BaseComponent {
             <Route path="/guide" render={this.renderGuidePage} />
             <Route path="/about" render={this.renderAboutPage} />
             <Route path="/comment/:id" render={this.renderComment} />
-            <Route path="/discuss/:id" render={this.renderDiscuss} />      
+            <Route path="/discuss/:id" render={this.renderDiscuss} />
             <PrivateRoute exact path="/" render={this.renderTalkList} />
             <PrivateRoute path="/talks/:id" render={this.renderTalk} />
             <PrivateRoute path="/review/:id" render={this.renderReview} />
