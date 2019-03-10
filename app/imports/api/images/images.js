@@ -1,10 +1,8 @@
-import {FilesCollection} from 'meteor/ostrio:files';
-
-// TODO make save folder dynamic, or relative?...
-const storagePath = '/Users/jwrnr/Downloads/slidespecs';
+import { FilesCollection } from "meteor/ostrio:files";
+import { storagePath } from "../storagePath.js";
 
 export const Images = new FilesCollection({
-  collectionName: 'images',
+  collectionName: "images",
   storagePath: `${storagePath}/images`, // persist in this spot
   allowClientCode: false, // Disallow remove files from Client
   onBeforeUpload(file) {
@@ -14,5 +12,5 @@ export const Images = new FilesCollection({
     } else {
       return `Invalid image type/size: ${file.extension} ${file.size}`;
     }
-  },
+  }
 });

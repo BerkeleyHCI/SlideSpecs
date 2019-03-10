@@ -447,7 +447,7 @@ class FacilitatePage extends BaseComponent {
     });
 
     uploadInstance.on("error", (err, file) => {
-      if (err) console.error(err, file);
+      if (err) console.error(errorrr, file);
       handleToast({
         msg: file.name,
         icon: "times",

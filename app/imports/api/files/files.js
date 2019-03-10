@@ -1,7 +1,6 @@
 import {FilesCollection} from 'meteor/ostrio:files';
 import {Images} from '../images/images.js';
-
-const storagePath = '/Users/jwrnr/Downloads/slidespecs';
+import {storagePath} from '../storagePath.js'
 
 export const Files = new FilesCollection({
   collectionName: 'files',
