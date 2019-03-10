@@ -10,45 +10,22 @@ let analyserContext = null;
 let canvasWidth, canvasHeight;
 let recIndex = 0;
 
-function saveAudio() {
-    audioRecorder.exportWAV(doneEncoding);
-}
-
 function gotBuffers(buffers) {
     let canvas = document.getElementById("wavedisplay");
-
     drawBuffer(
         canvas.width,
         canvas.height,
         canvas.getContext("2d"),
         buffers[0]
     );
-
-    // the ONLY time gotBuffers is called is right after a new recording is completed -
-    // so here's where we should set up the download.
-    audioRecorder.exportWAV(doneEncoding);
-}
-
-function doneEncoding(blob) {
-    Recorder.setupDownload(
-        blob,
-        "myRecording" + (recIndex < 10 ? "0" : "") + recIndex + ".wav"
-    );
-    recIndex++;
-}
-
-function clearRecording() {
-    audioRecorder.clear();
 }
 
 function toggleRecording(recording) {
+    if (!audioRecorder) return;
     if (recording) {
-        // stop recording
         audioRecorder.stop();
         audioRecorder.getBuffers(gotBuffers);
     } else {
-        // start recording
-        if (!audioRecorder) return;
         audioRecorder.record();
     }
 }
@@ -100,7 +77,7 @@ function updateAnalysers(time) {
             magnitude = magnitude / multiplier;
             let magnitude2 = freqByteData[i * multiplier];
             analyserContext.fillStyle =
-                "rgb( " + Math.round((i * 360) / numBars) + ", 100%, 50%)";
+                "hsl( " + Math.round((i * 360) / numBars) + ", 100%, 50%)";
             analyserContext.fillRect(
                 i * SPACING,
                 canvasHeight,
@@ -132,9 +109,8 @@ function gotStream(stream) {
     // Create an AudioNode from the stream.
     realAudioInput = audioContext.createMediaStreamSource(stream);
     audioInput = realAudioInput;
+    audioInput = convertToMono(realAudioInput);
     audioInput.connect(inputPoint);
-
-    //    audioInput = convertToMono( input );
 
     analyserNode = audioContext.createAnalyser();
     analyserNode.fftSize = 2048;

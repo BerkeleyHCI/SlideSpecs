@@ -527,11 +527,12 @@ class FacilitatePage extends BaseComponent {
     const { talk } = this.props;
     const lastModified = Date.now();
     const name = `${talk.name}.wav`;
-    return new File(blob, name, {lastModified});
+    return new File([blob], name, {lastModified});
   };
 
   toggleUpload = () => {
-    window.audioRecorder.exportWAV(this.handleUpload);
+    window.audioRecorder.exportMonoWAV(this.handleUpload);
+  
   };
 
   render() {
