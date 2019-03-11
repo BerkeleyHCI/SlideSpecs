@@ -74,9 +74,9 @@ class FacilitatePage extends BaseComponent {
   componentDidMount = () => {
     if (!navigator.getUserMedia)
       navigator.getUserMedia =
-        navigator.mediaDevices.getUserMedia ||
         navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia;
+        navigator.mozGetUserMedia ||
+        navigator.mediaDevices.getUserMedia;
     if (!navigator.cancelAnimationFrame)
       navigator.cancelAnimationFrame =
         navigator.webkitCancelAnimationFrame ||
