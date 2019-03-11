@@ -431,7 +431,7 @@ class CommentPage extends BaseComponent {
         <TextArea
           inRef={this.inRef}
           handleSubmit={this.addComment}
-          defaultValue="add feedback here."
+        defaultValue="add feedback here."
           className="code comment-text"
         />
       </div>

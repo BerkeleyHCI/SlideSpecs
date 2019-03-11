@@ -40,8 +40,10 @@ class FacilitatePage extends BaseComponent {
 
     this.inRef = React.createRef();
     this.state = {
+      recInterval: null,
       recording: false,
       redirectTo: null,
+      timeout: 60 * 1000, // ms -> once per minute
       sorter: "flag",
       filter: "flag",
       invert: true,
@@ -72,7 +74,9 @@ class FacilitatePage extends BaseComponent {
   componentDidMount = () => {
     if (!navigator.getUserMedia)
       navigator.getUserMedia =
-        navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        navigator.mediaDevices.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
     if (!navigator.cancelAnimationFrame)
       navigator.cancelAnimationFrame =
         navigator.webkitCancelAnimationFrame ||
@@ -100,6 +104,38 @@ class FacilitatePage extends BaseComponent {
         console.log(e);
       }
     );
+  };
+
+  addComment = () => {
+    const { talk } = this.props;
+    const cText = this.inRef.current.value.trim();
+    const priv = cText.includes("#private");
+    const commentFields = {
+      author: "audience",
+      content: cText,
+      talk: talk._id,
+      discuss: ["audience"],
+      userOwn: false,
+      slides: []
+    };
+
+    // save the current comment.
+    this.handleAudioUpload();
+
+    createComment.call(commentFields, (err, res) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.clearText();
+        setRespondingComment.call({ talkId: talk._id, commentId: res });
+      }
+    });
+  };
+
+  clearText = () => {
+    const textarea = this.inRef.current;
+    textarea.value = "";
+    textarea.focus();
   };
 
   setByAuth = e => {
@@ -184,8 +220,14 @@ class FacilitatePage extends BaseComponent {
     );
 
     return (
-      <div className="float-at-top">
-        <div className="btn-m-group btns-group">
+      <div>
+        <div className="facilitate-filter btn-m-group btns-group">
+          <button
+            className={"btn btn-menu" + (filter === "flag" ? " active" : "")}
+            onClick={flagSort}
+          >
+            discuss
+          </button>
           <button
             onClick={timeSort}
             className={"btn btn-menu" + (filter === "time" ? " active" : "")}
@@ -209,12 +251,6 @@ class FacilitatePage extends BaseComponent {
             onClick={agreeSort}
           >
             agree
-          </button>
-          <button
-            className={"btn btn-menu" + (filter === "flag" ? " active" : "")}
-            onClick={flagSort}
-          >
-            discuss
           </button>
           <button className={"btn btn-menu"} onClick={invFn}>
             {invert ? "▼" : "▲"}
@@ -245,6 +281,8 @@ class FacilitatePage extends BaseComponent {
   };
 
   renderFilter = () => {
+    const submit = this.renderSubmit();
+
     let { control, byAuth, bySlide, byTag } = this.state;
     const sType = bySlide === "general" ? "scope" : "slide";
     const { browserSupportsSpeechRecognition } = this.props;
@@ -255,6 +293,7 @@ class FacilitatePage extends BaseComponent {
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
         <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
+        {submit}
       </div>
     );
   };
@@ -277,7 +316,7 @@ class FacilitatePage extends BaseComponent {
       commentRef: this.inRef,
       handleTag: this.setByTag,
       handleAuthor: this.setByAuth,
-      startRecord: this.resumeTranscript,
+      handleAudioUpload: this.handleDiscussAudio,
       bySlide: bySlide,
       handleSlideIn: this.handleTagIn,
       handleSlideOut: this.handleSlideOut,
@@ -380,7 +419,7 @@ class FacilitatePage extends BaseComponent {
             <div>
               <h2>unmarked</h2>
               <div id="comments-list" className="alert">
-                {addressedItems.map(i => (
+                {unmarkedItems.map(i => (
                   <Comment {...i} />
                 ))}
               </div>
@@ -400,27 +439,21 @@ class FacilitatePage extends BaseComponent {
       });
     };
 
-    let file = this.blobToFile(blob);
-
     // Allow uploading files under 50MB for now.
-    const goodSize = file.size <= 50985760;
-    const goodType = /(wav)$/i.test(file.name);
-    if (!goodSize || !goodType) {
-      handleToast({
-        msg: "error",
-        icon: "times",
-        desc: "Error saving media."
-      });
+    const goodSize = blob.size <= 50985760;
+    if (!goodSize) {
       return; // skip this file.
     }
 
+    let file = this.blobToFile(blob);
     let uploadInstance = Sounds.insert(
       {
         file,
         meta: {
           locator: fileLocator,
           userId: Meteor.userId(),
-          talkId: talk._id
+          talkId: talk._id,
+          commentId: talk.active
         },
         //transport: 'http',
         streams: "dynamic",
@@ -436,47 +469,24 @@ class FacilitatePage extends BaseComponent {
 
     // TODO set status on talk item that uploading is done.
     uploadInstance.on("end", (err, file) => {
-      console.log("file:", file);
       if (!err) {
-        handleToast({
-          msg: file.name,
-          icon: "check",
-          desc: "upload complete"
-        });
+        console.log("file:", file);
+        audioRecorder.clear();
+      } else {
+        console.error(err);
       }
     });
 
     uploadInstance.on("error", (err, file) => {
       if (err) console.error(errorrr, file);
-      handleToast({
-        msg: file.name,
-        icon: "times",
-        desc: `Error uploading: ${err}`
-      });
     });
 
     uploadInstance.start();
   };
 
-  renderContext = () => {
-    const fileList = this.renderFiles();
-    const { talk } = this.props;
-    const { image, hoverImage, bySlide } = this.state;
-    const imgSrc = hoverImage ? hoverImage : image;
-
-    return (
-      <div className="context-filter float-at-top">
-        <Img className="big-slide" source={imgSrc} />
-        <div id="grid-holder">
-          <div id="grid">{fileList}</div>
-        </div>
-      </div>
-    );
-  };
-
   clearRespond = () => {
     const { talk } = this.props;
-    setRespondingComment.call({ talk: talk._id, commentId: "" });
+    setRespondingComment.call({ talkId: talk._id, commentId: "" });
   };
 
   renderRespond = () => {
@@ -488,51 +498,82 @@ class FacilitatePage extends BaseComponent {
       <div>
         <h2> discussing </h2>
         <div id="comments-list" className="alert">
-          <Comment {...respond} feedback={true} last={true} />
+          <Comment {...respond} focused={true} last={true} />
         </div>
       </div>
     );
   };
+
+  renderSubmit = () => {
+    return (
+      <div className="submitter">
+        <TextArea
+          inRef={this.inRef}
+          handleSubmit={this.addComment}
+          defaultValue="start a new discussion comment here.."
+          className="code comment-text"
+        />
+      </div>
+    );
+  };
+
+  // <canvas id="wavedisplay" width="1024" height="500" />
 
   renderSounds = () => {
     const { recording } = this.state;
     const classRecord = recording ? "recording" : "waiting";
     return (
-      <div>
-        <h2> audio </h2>
-        <div id="viz">
-          <canvas id="analyser" width="1024" height="500" />
-          <canvas id="wavedisplay" width="1024" height="500" />
+      <div id="sound" className="clearfix">
+        <div id="record" className={classRecord} onClick={this.toggleRecording}>
+          <img src="/img/mic128.png" />
         </div>
-        <div id="controls">
-          <img
-            id="record"
-            className={classRecord}
-            src="/img/mic128.png"
-            onClick={this.toggleRecording}
-          />
-          <img id="save" src="/img/save.svg" onClick={this.toggleUpload} />
-        </div>
+        <canvas id="analyser" width="1024" height="500" />
       </div>
     );
   };
 
+  handleTimerUpdate = () => {
+    const { recording, recInterval, timeout } = this.state;
+    if (!recording) {
+      // the recording is ending, clear timeout
+      clearInterval(recInterval);
+      this.setState({ recInterval: null });
+    } else {
+      // the recording is starting, set interval
+      const newInterval = setInterval(this.handleAudioUpload, timeout);
+      this.setState({ recInterval: newInterval });
+    }
+  };
+
   toggleRecording = () => {
+    if (window.audioContext) {
+      window.audioContext = new AudioContext();
+    }
+
     const { recording } = this.state;
     window.toggleRecording(recording);
     this.setState({ recording: !recording });
+    this.handleTimerUpdate();
   };
 
   blobToFile = blob => {
     const { talk } = this.props;
     const lastModified = Date.now();
     const name = `${talk.name}.wav`;
-    return new File([blob], name, {lastModified});
+    return new File([blob], name, { lastModified });
   };
 
-  toggleUpload = () => {
-    window.audioRecorder.exportMonoWAV(this.handleUpload);
-  
+  handleDiscussAudio = () => {
+    this.handleTimerUpdate();
+    this.handleAudioUpload();
+  };
+
+  handleAudioUpload = () => {
+    if (window.audioRecorder) {
+      window.audioRecorder.exportMonoWAV(this.handleUpload);
+    } else {
+      console.error("cant access audio recorder!");
+    }
   };
 
   render() {
@@ -540,13 +581,7 @@ class FacilitatePage extends BaseComponent {
     const context = this.renderSounds();
     const respond = this.renderRespond();
     const comments = this.renderComments();
-
-    /*
-    const context = this.renderContext();
     const cmtHead = this.renderCommentFilter();
-                {cmtHead}
-}
-*/
 
     return images ? (
       this.renderRedirect() || (
@@ -554,7 +589,12 @@ class FacilitatePage extends BaseComponent {
           <div className="reviewView">
             <div id="review-view" className="table review-table">
               <div className="row">
-                <div className="col-sm-5 no-float">{context}</div>
+                <div className="col-sm-5 full-height-md no-float">
+                  <div className="float-at-top">
+                    {context}
+                    {cmtHead}
+                  </div>
+                </div>
                 <div className="col-sm-7">
                   {respond}
                   {comments}

@@ -1,7 +1,7 @@
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 audioRecorder = null; // global
-let audioContext = new AudioContext();
+audioContext = new AudioContext();
 let audioInput = null,
     realAudioInput = null,
     inputPoint = null;
@@ -24,7 +24,7 @@ function toggleRecording(recording) {
     if (!audioRecorder) return;
     if (recording) {
         audioRecorder.stop();
-        audioRecorder.getBuffers(gotBuffers);
+        // audioRecorder.getBuffers(gotBuffers);
     } else {
         audioRecorder.record();
     }

@@ -214,7 +214,11 @@ class Comment extends BaseComponent {
   };
 
   handleActiveComment = () => {
-    const { discuss, talk, _id } = this.props;
+    const { discuss, talk, _id, handleAudioUpload } = this.props;
+    if (handleAudioUpload) {
+      handleAudioUpload();
+    }
+
     const commentFields = {
       talkId: talk,
       commentId: _id
@@ -227,6 +231,8 @@ class Comment extends BaseComponent {
     if (talk && _id) {
       setRespondingComment.call(commentFields);
     }
+
+    window.audioRecorder;
 
     toast(() => (
       <AppNotification msg="Ready" desc="Discussion comment set." icon="star" />
@@ -351,6 +357,7 @@ class Comment extends BaseComponent {
       addressed,
       bySlide,
       handleAuthor,
+      handleAudioUpload,
       slides,
       handleSlideIn,
       handleSlideOut,
@@ -361,7 +368,7 @@ class Comment extends BaseComponent {
 
     const master = author === reviewer;
     const sysDiscuss = discuss ? discuss.includes("system") : false;
-    let bData;
+    let bData = [];
     if (discussView && depth == 0) {
       bData = [this.activeButton, this.addressButton];
     } else if (feedback) {
@@ -413,13 +420,15 @@ class Comment extends BaseComponent {
             (isReply ? ` reply-comment-${depth}` : "")
           }
         >
-          <div className="hover-menu">
-            <div className="btn-group btns-empty">
-              {bData.map((button, i) =>
-                this.renderCommentButton({ ...button, key: i })
-              )}
+          {bData.length > 0 && (
+            <div className="hover-menu">
+              <div className="btn-group btns-empty">
+                {bData.map((button, i) =>
+                  this.renderCommentButton({ ...button, key: i })
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="pull-right">{context}</div>
           <strong data-auth={author} className="author" onClick={handleAuthor}>

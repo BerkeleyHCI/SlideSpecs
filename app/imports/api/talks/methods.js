@@ -21,16 +21,14 @@ export const createTalk = new ValidatedMethod({
     }
 
     if (!name) {
-      const basename = 'talk ';
-      let iter = new Date().toLocaleDateString();
-      name = `${basename} ${iter}`;
+      const iter = new Date().toLocaleDateString();
+      name = `talk ${iter}`;
     }
 
     return Talks.insert({
       userId: this.userId,
       created: Date.now(),
       secret: Random.id(),
-      talks: [],
       name,
     });
   },
