@@ -43,7 +43,8 @@ class FacilitatePage extends BaseComponent {
       recInterval: null,
       recording: false,
       redirectTo: null,
-      timeout: 60 * 1000, // ms -> once per minute
+      // timeout: 60 * 1000, // ms -> once per minute
+      timeout: 4 * 1000, // ms -> once per minute
       sorter: "flag",
       filter: "flag",
       invert: true,
@@ -71,8 +72,8 @@ class FacilitatePage extends BaseComponent {
     }
   };
 
-  componentDidMount = () => {
-    if (!navigator.getUserMedia)
+  handleSetupAudio = () => {
+        if (!navigator.getUserMedia)
       navigator.getUserMedia =
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia ||
@@ -104,6 +105,12 @@ class FacilitatePage extends BaseComponent {
         console.log(e);
       }
     );
+    
+      window.audioContext = new AudioContext();
+  }
+
+  componentDidMount = () => {
+    this.handleSetupAudio()
   };
 
   addComment = () => {
@@ -484,7 +491,7 @@ class FacilitatePage extends BaseComponent {
     });
 
     uploadInstance.on("error", (err, file) => {
-      if (err) console.error(errorrr, file);
+      if (err) console.error(err, file);
     });
 
     uploadInstance.start();
@@ -540,12 +547,12 @@ class FacilitatePage extends BaseComponent {
 
   toggleRecording = () => {
     if (!window.audioContext) {
-      window.audioContext = new AudioContext();
+        this.handleSetupAudio()
     }
 
     const { recording, recInterval, timeout } = this.state;
     const newRecord = !recording;
-    window.toggleRecording(newRecord);
+    window.setRecording(newRecord);
     this.setState({ recording: newRecord });
 
     if (newRecord) {
@@ -576,8 +583,8 @@ class FacilitatePage extends BaseComponent {
 
   handleAudioUpload = () => {
     if (window.audioRecorder) {
-      window.audioRecorder.exportMonoWAV(this.handleUpload);
-      // window.audioRecorder.exportWAV(this.handleUpload);
+      // window.audioRecorder.exportMonoWAV(this.handleUpload);
+      window.audioRecorder.exportWAV(this.handleUpload);
     } else {
       console.error("cant access audio recorder!");
     }

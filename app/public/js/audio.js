@@ -1,7 +1,8 @@
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 audioRecorder = null; // global
-audioContext = new AudioContext();
+audioContext = null; // global
+
 let audioInput = null,
     realAudioInput = null,
     inputPoint = null;
@@ -20,13 +21,15 @@ function gotBuffers(buffers) {
     );
 }
 
-function toggleRecording(recording) {
+function setRecording(recState) {
+    // really instead of a toggle it works as a state matcher in line with react.
     if (!audioRecorder) return;
-    if (recording) {
+
+    if (recState) {
+        audioRecorder.record();
+    } else {
         audioRecorder.stop();
         // audioRecorder.getBuffers(gotBuffers);
-    } else {
-        audioRecorder.record();
     }
 }
 
