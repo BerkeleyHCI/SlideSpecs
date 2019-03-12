@@ -1,6 +1,7 @@
 import { FilesCollection } from "meteor/ostrio:files";
-import { createComment } from "../images/methods.js";
+import { createComment } from "../comments/methods.js";
 import { storagePath } from "../storagePath.js";
+import { updateSound } from "./methods.js";
 
 export const Sounds = new FilesCollection({
   collectionName: "sounds",
@@ -21,10 +22,27 @@ export const Sounds = new FilesCollection({
   },
 
   onAfterUpload(file) {
-    const speech = Npm.require("@google-cloud/speech"),
-      fs = Npm.require("fs"),
-      client = new speech.SpeechClient();
-    fs.readFile(file.path, useFile);
+    const useTranscript = data => {
+      const { target, talkId } = file.meta;
+      let response = data[0];
+      let transcript = response.results
+        .map(result => result.alternatives[0].transcript)
+        .join("\n").trim();
+        
+        console.log(transcript)
+
+      if (transcript) {
+        const results = JSON.stringify(response.results, null, 4);
+        updateSound.call({ soundId: file._id, transcript, results });
+        return createComment.call({
+          author: "transcript",
+          content: `[x](#c${target}) ${transcript}`,
+          talk: talkId,
+          userOwn: true,
+          slides: []
+        });
+      }
+    };
 
     const useFile = (err, content) => {
       const audioBytes = content.toString("base64");
@@ -43,17 +61,16 @@ export const Sounds = new FilesCollection({
       // Detects speech in the audio file
       client
         .recognize(request)
-        .then(data => {
-          const response = data[0];
-          const transcription = response.results
-            .map(result => result.alternatives[0].transcript)
-            .join("\n");
-          console.log(`Transcription: ${transcription}`);
-        })
+        .then(useTranscript)
         .catch(err => {
           console.error("ERROR:", err);
         });
     };
+
+    const speech = Npm.require("@google-cloud/speech"),
+      fs = Npm.require("fs"),
+      client = new speech.SpeechClient();
+    fs.readFile(file.path, useFile);
   }
 });
 
