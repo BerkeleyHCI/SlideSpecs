@@ -88,6 +88,7 @@ ostrio:cookies@2.3.0
 ostrio:files@1.10.2
 ostrio:logger@2.0.7
 ostrio:loggerconsole@2.0.4
+ostrio:loggermongo@2.0.4
 practicalmeteor:chai@2.1.0_1
 practicalmeteor:loglevel@1.2.0_2
 practicalmeteor:mocha@2.4.5_6

@@ -1,13 +1,18 @@
-import {FilesCollection} from 'meteor/ostrio:files';
-import {createComment} from '../images/methods.js';
-import {storagePath} from '../storagePath.js';
+import { FilesCollection } from "meteor/ostrio:files";
+import { createComment } from "../images/methods.js";
+import { storagePath } from "../storagePath.js";
 
 export const Sounds = new FilesCollection({
-  collectionName: 'sounds',
+  collectionName: "sounds",
   storagePath: `${storagePath}/sounds`, // persist in this spot
   allowClientCode: false, // Disallow remove files from Client
   onBeforeUpload(file) {
-    if (file.size > 1000 && file.size <= 10098576 && /wav/i.test(file.extension)) {
+    // needs to be under 10 mb for google to be happy
+    if (
+      file.size > 1000 &&
+      file.size <= 10485760 &&
+      /wav/i.test(file.extension)
+    ) {
       // 100Mb
       return true;
     } else {
@@ -16,67 +21,46 @@ export const Sounds = new FilesCollection({
   },
 
   onAfterUpload(file) {
-    console.log(file)
-    // console.log(file, file.link('original', '//'));
-     // Sounds.findOne(id).link("original", "//")
-    return;
-
-    const googleParameters = {
-      config: {
-        enableWordTimeOffsets: true,
-        profanityFilter: true,
-        languageCode: 'en-US',
-      },
-      audio: {
-        content: 'gs://cloud-samples-tests/speech/brooklyn.flac',
-      },
-    };
-    const googleString = JSON.stringify(googleParameters, null, 4);
-
-    const script = 'transcribe.sh';
-    const util = Npm.require('util'),
-      spawn = Npm.require('child_process').spawn,
-      convert = spawn(`${process.env.PWD}/private/${script}`, [googleString]);
+    const script = "transcribe.sh";
+    const util = Npm.require("util"),
+      spawn = Npm.require("child_process").spawn,
+      convert = spawn(`${process.env.PWD}/private/transcribe.sh`, [file.path]);
 
     // reference: https://github.com/VeliovGroup/Meteor-Files/wiki/addFile
-    convert.stdout.on('data', function(data) {
-      console.log(data);
+    convert.stdout.on("data", function(data) {
+      const text = data.toString("utf8");
+      console.log(text);
       return;
 
-      if (data.includes(file._id)) {
-        var text = data.toString('utf8');
-        const images = text.split('\n');
-        images
-          .filter(i => i.includes(file._id))
-          .map(i => {
-            console.log('adding image file: ' + i);
-            const fileName = i.substring(i.lastIndexOf('/') + 1);
-
-            // get slide number from image title
-            const slideMatch = i.match(/\d+/g);
-            if (!slideMatch) console.error('no slide matched', i);
-            const slideNo = slideMatch.slice(-1)[0];
-
-            createComment.call(i, {
-              fileName,
-              type: 'image/png',
-              userId: file.meta.userId,
-              meta: {...file.meta, slideNo},
-            });
-          });
-      } else {
-        console.log('stdout: ' + data);
-      }
+      createComment.call(i, {
+        fileName,
+        type: "image/png",
+        userId: file.meta.userId,
+        meta: { ...file.meta, slideNo }
+      });
     });
 
-    convert.stderr.on('data', function(data) {
-      console.log('stderr: ' + data);
+    convert.stderr.on("data", function(data) {
+      console.log("stderr: " + data);
     });
 
-    convert.on('exit', function(code) {
-      console.log('child process exited with code ' + code);
+    convert.on("exit", function(code) {
+      console.log("child process exited with code " + code);
     });
 
     // do transcription here, add as a a comment.
-  },
+    // Detects speech in the audio file
+    // client
+    //   .recognize(request)
+    //   .then(data => {
+    //     const response = data[0];
+    //     const transcription = response.results
+    //       .map(result => result.alternatives[0].transcript)
+    //       .join('\n');
+    //     console.log(`Transcription: ${transcription}`);
+    //   })
+    //   .catch(err => {
+    //     console.error('ERROR:', err);
+    //   });
+  }
 });

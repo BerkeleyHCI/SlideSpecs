@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export API_KEY=***REMOVED***
+
 until meteor --production 2>&1 | tee -a output.log; do
     echo "Server crashed with exit code $?.  Respawning.." >&2
     sleep 1

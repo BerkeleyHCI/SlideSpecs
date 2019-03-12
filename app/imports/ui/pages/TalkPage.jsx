@@ -170,6 +170,7 @@ export default class TalkPage extends BaseComponent {
     // TODO update this into the secret talk field instead of the regular // id
     const commentLink = window.location.origin + "/comment/" + talk._id;
     const uploadLink = window.location.origin + "/upload/" + talk._id;
+    const facilitateLink = window.location.origin + "/facilitate/" + talk._id;
     const reviewLink = window.location.origin + "/review/" + talk._id;
 
     const content = (
@@ -204,6 +205,12 @@ export default class TalkPage extends BaseComponent {
           text={"share this talk with a public link"}
           bText={"open link"}
           link={commentLink}
+        />
+
+        <AlertLink
+          text={"share this talk with your facilitator"}
+          bText={"open link"}
+          link={facilitateLink}
         />
 
         {hasComments && (
