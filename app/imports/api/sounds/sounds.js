@@ -24,13 +24,16 @@ export const Sounds = new FilesCollection({
     const speech = Npm.require("@google-cloud/speech"),
       fs = Npm.require("fs"),
       client = new speech.SpeechClient();
-    fs.readFile(file.path, (err, content) => {
+    fs.readFile(file.path, useFile);
+
+    const useFile = (err, content) => {
       const audioBytes = content.toString("base64");
       const audio = {
         content: audioBytes
       };
       const config = {
-        languageCode: "en-US"
+        languageCode: "en-US",
+        enableWordTimeOffsets: true
       };
       const request = {
         audio: audio,
@@ -50,7 +53,7 @@ export const Sounds = new FilesCollection({
         .catch(err => {
           console.error("ERROR:", err);
         });
-    });
+    };
   }
 });
 
