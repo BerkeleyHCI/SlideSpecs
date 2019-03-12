@@ -71,3 +71,4 @@ ostrio:loggerconsole
 ostrio:logger
 random
 browser-policy
+ostrio:loggermongo

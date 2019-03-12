@@ -44,7 +44,7 @@ class FacilitatePage extends BaseComponent {
       recording: false,
       redirectTo: null,
       // timeout: 60 * 1000, // ms -> once per minute
-      timeout: 4 * 1000, // ms -> once per minute
+      timeout: 15 * 1000, // testing with lower
       sorter: "flag",
       filter: "flag",
       invert: true,
@@ -105,7 +105,7 @@ class FacilitatePage extends BaseComponent {
         console.log(e);
       }
     );
-    
+
       window.audioContext = new AudioContext();
   }
 
@@ -583,8 +583,8 @@ class FacilitatePage extends BaseComponent {
 
   handleAudioUpload = () => {
     if (window.audioRecorder) {
-      // window.audioRecorder.exportMonoWAV(this.handleUpload);
-      window.audioRecorder.exportWAV(this.handleUpload);
+      window.audioRecorder.exportMonoWAV(this.handleUpload);
+      // window.audioRecorder.exportWAV(this.handleUpload);
     } else {
       console.error("cant access audio recorder!");
     }
