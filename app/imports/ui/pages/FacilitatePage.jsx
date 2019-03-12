@@ -127,6 +127,7 @@ class FacilitatePage extends BaseComponent {
         console.error(err);
       } else {
         this.clearText();
+        addressComment.call({ commentId: talk.active }); // complete current comment
         setRespondingComment.call({ talkId: talk._id, commentId: res });
       }
     });
@@ -470,7 +471,12 @@ class FacilitatePage extends BaseComponent {
     // TODO set status on talk item that uploading is done.
     uploadInstance.on("end", (err, file) => {
       if (!err) {
-        console.log("file:", file);
+        {
+          // console.log("file:", file);
+          const { name, size } = file;
+          this.log({ name, size });
+        }
+
         audioRecorder.clear();
       } else {
         console.error(err);
@@ -532,45 +538,46 @@ class FacilitatePage extends BaseComponent {
     );
   };
 
-  handleTimerUpdate = () => {
-    const { recording, recInterval, timeout } = this.state;
-    if (!recording) {
-      // the recording is ending, clear timeout
-      clearInterval(recInterval);
-      this.setState({ recInterval: null });
-    } else {
-      // the recording is starting, set interval
-      const newInterval = setInterval(this.handleAudioUpload, timeout);
-      this.setState({ recInterval: newInterval });
-    }
-  };
-
   toggleRecording = () => {
-    if (window.audioContext) {
+    if (!window.audioContext) {
       window.audioContext = new AudioContext();
     }
 
-    const { recording } = this.state;
-    window.toggleRecording(recording);
-    this.setState({ recording: !recording });
-    this.handleTimerUpdate();
+    const { recording, recInterval, timeout } = this.state;
+    const newRecord = !recording;
+    window.toggleRecording(newRecord);
+    this.setState({ recording: newRecord });
+
+    if (newRecord) {
+      const newInterval = setInterval(this.handleAudioUpload, timeout);
+      this.setState({ recInterval: newInterval });
+    } else if (recInterval) {
+      clearInterval(recInterval);
+      this.setState({ recInterval: null });
+    }
   };
 
   blobToFile = blob => {
     const { talk } = this.props;
     const lastModified = Date.now();
-    const name = `${talk.name}.wav`;
-    return new File([blob], name, { lastModified });
+    const name = `${talk.name} ${lastModified}.wav`;
+    const type = "audio/wav";
+    return new File([blob], name, { lastModified, type });
   };
 
   handleDiscussAudio = () => {
-    this.handleTimerUpdate();
-    this.handleAudioUpload();
+    const { recording } = this.state;
+    if (recording) {
+      this.handleAudioUpload();
+    } else {
+      this.toggleRecording(); // enable mic.
+    }
   };
 
   handleAudioUpload = () => {
     if (window.audioRecorder) {
       window.audioRecorder.exportMonoWAV(this.handleUpload);
+      // window.audioRecorder.exportWAV(this.handleUpload);
     } else {
       console.error("cant access audio recorder!");
     }
