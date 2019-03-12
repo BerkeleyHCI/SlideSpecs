@@ -43,8 +43,8 @@ class FacilitatePage extends BaseComponent {
       recInterval: null,
       recording: false,
       redirectTo: null,
-      // timeout: 60 * 1000, // ms -> once per minute
-      timeout: 15 * 1000, // testing with lower
+      timeout: 50 * 1000, // ms -> once per minute
+      // timeout: 15 * 1000, // testing with lower
       sorter: "flag",
       filter: "flag",
       invert: true,
@@ -73,7 +73,7 @@ class FacilitatePage extends BaseComponent {
   };
 
   handleSetupAudio = () => {
-        if (!navigator.getUserMedia)
+    if (!navigator.getUserMedia)
       navigator.getUserMedia =
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia ||
@@ -106,11 +106,11 @@ class FacilitatePage extends BaseComponent {
       }
     );
 
-      window.audioContext = new AudioContext();
-  }
+    window.audioContext = new AudioContext();
+  };
 
   componentDidMount = () => {
-    this.handleSetupAudio()
+    this.handleSetupAudio();
   };
 
   addComment = () => {
@@ -439,7 +439,7 @@ class FacilitatePage extends BaseComponent {
   };
 
   handleUpload = blob => {
-    let { talk, fileLocator } = this.props;
+    let { talk } = this.props;
     const handleToast = ({ msg, desc, icon, closeTime }) => {
       if (!closeTime) closeTime = 4000;
       toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
@@ -454,22 +454,23 @@ class FacilitatePage extends BaseComponent {
     }
 
     let file = this.blobToFile(blob);
-    let uploadInstance = Sounds.insert(
-      {
-        file,
-        meta: {
-          locator: fileLocator,
-          userId: Meteor.userId(),
-          talkId: talk._id,
-          commentId: talk.active
-        },
-        //transport: 'http',
-        streams: "dynamic",
-        chunkSize: "dynamic",
-        allowWebWorkers: true
+    let soundArgs = {
+      file,
+      meta: {
+        userId: Meteor.userId(),
+        talkId: talk._id,
+        target: talk.active || false
       },
-      false // dont autostart the uploadg
-    );
+      //transport: 'http',
+      streams: "dynamic",
+      chunkSize: "dynamic",
+      allowWebWorkers: true
+    };
+
+    // console.log(soundArgs);
+
+    let uploadInstance = Sounds.insert(soundArgs, false);
+    // dont autostart the uploadg
 
     uploadInstance.on("start", (err, file) => {
       //console.log('started', file.name);
@@ -547,7 +548,7 @@ class FacilitatePage extends BaseComponent {
 
   toggleRecording = () => {
     if (!window.audioContext) {
-        this.handleSetupAudio()
+      this.handleSetupAudio();
     }
 
     const { recording, recInterval, timeout } = this.state;
