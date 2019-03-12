@@ -81,3 +81,4 @@ server {
 }
 ```
 
+git update-index --assume-unchanged private/slidespecs.json
