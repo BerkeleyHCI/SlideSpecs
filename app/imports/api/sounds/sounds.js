@@ -32,11 +32,13 @@ export const Sounds = new FilesCollection({
         console.log(transcript)
 
       if (transcript) {
+        const soundId = file._id
         const results = JSON.stringify(response.results, null, 4);
-        updateSound.call({ soundId: file._id, transcript, results });
+        updateSound.call({ soundId, transcript, results });
         return createComment.call({
           author: "transcript",
           content: `[x](#c${target}) ${transcript}`,
+          sound: soundId,
           talk: talkId,
           userOwn: true,
           slides: []
