@@ -19,7 +19,8 @@ export const createComment = new ValidatedMethod({
     discuss: { type: [String], optional: true },
     userOwn: { type: Boolean, optional: true },
     addressed: { type: Boolean, optional: true },
-    completed: { type: Boolean, optional: true }
+    completed: { type: Boolean, optional: true },
+    sounds: { type: [String], optional: true }
   }).validator(),
   run({
     talk,
@@ -30,7 +31,8 @@ export const createComment = new ValidatedMethod({
     discuss,
     userOwn,
     addressed,
-    completed
+    completed,
+    sounds
   }) {
     const uTalk = Talks.findOne(talk);
     if (uTalk) {
@@ -42,7 +44,8 @@ export const createComment = new ValidatedMethod({
         slides,
         agree,
         discuss,
-        userOwn
+        userOwn,
+        sounds
       };
       //console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
