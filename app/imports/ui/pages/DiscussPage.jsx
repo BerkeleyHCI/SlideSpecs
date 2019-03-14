@@ -21,8 +21,6 @@ import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {Comments} from '../../api/comments/comments.js';
-import {createComment, addressComment} from '../../api/comments/methods.js';
-import {setRespondingComment} from '../../api/talks/methods.js';
 
 class DiscussPage extends BaseComponent {
   constructor(props) {
@@ -146,58 +144,7 @@ class DiscussPage extends BaseComponent {
 
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
-
-    const {images} = this.props;
-    const {control, invert, filter} = this.state;
-    const invFn = () => this.setState({invert: !invert});
-    const setSort = (s, f) => {
-      return () => this.setState({sorter: s, filter: f});
-    };
-
-    const timeSort = setSort('created', 'time');
-    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
-    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
-    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
-    const slideSort = setSort(
-      x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
-      'slide',
-    );
-
-    return (
-      <div>
-        <div className="btn-m-group btns-group">
-          <button
-            onClick={timeSort}
-            className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
-            time
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
-            onClick={slideSort}>
-            slide
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-            onClick={authSort}>
-            auth
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
-            onClick={agreeSort}>
-            agree
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
-            onClick={flagSort}>
-            discuss
-          </button>
-          <button className={'btn btn-menu'} onClick={invFn}>
-            {invert ? '▼' : '▲'}
-          </button>
-        </div>
-        {filterer}
-      </div>
-    );
+    return filterer;
   };
 
   renderFiles = () => {
@@ -220,7 +167,7 @@ class DiscussPage extends BaseComponent {
   };
 
   renderFilter = () => {
-    let {control, byAuth, bySlide, byTag} = this.state;
+    let {byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     const {browserSupportsSpeechRecognition} = this.props;
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
@@ -236,7 +183,7 @@ class DiscussPage extends BaseComponent {
 
   renderCommentData = (arr, replies, c, i) => {
     const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
-    const {sorter, invert, byAuth, bySlide, byTag, control} = this.state;
+    const {sorter, invert, byAuth, bySlide, byTag} = this.state;
     c.last = i === arr.length - 1; // no final hr
     c.replies = replies.filter(r => r.replyTo == c._id);
     return {
@@ -252,18 +199,19 @@ class DiscussPage extends BaseComponent {
       commentRef: this.inRef,
       handleTag: this.setByTag,
       handleAuthor: this.setByAuth,
-      startRecord: this.resumeTranscript,
-      bySlide: bySlide,
       handleSlideIn: this.handleTagIn,
       handleSlideOut: this.handleSlideOut,
       clearButton: this.clearButton,
       clearBySlide: this.clearBySlide,
       setBySlide: this.setBySlide,
+      bySlide,
+      byAuth,
+      byTag,
     };
   };
 
   renderComments = () => {
-    const {sorter, invert, byAuth, bySlide, byTag, control} = this.state;
+    const {sorter, invert, byAuth, bySlide, byTag} = this.state;
     const {talk, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
@@ -350,7 +298,7 @@ class DiscussPage extends BaseComponent {
 
           {addressedItems.length > 0 && (
             <div>
-              <h2>discussed</h2>
+              <h3>discussed</h3>
               <div id="comments-list" className="alert">
                 {addressedItems.map(i => (
                   <Comment focused={true} {...i} />
@@ -393,21 +341,25 @@ class DiscussPage extends BaseComponent {
     );
   };
 
-  clearRespond = () => {
-    const {talk} = this.props;
-    setRespondingComment.call({talk: talk._id, commentId: ''});
-  };
-
   renderRespond = () => {
     const {talk} = this.props;
     if (!talk.active) return;
     const respond = Comments.findOne(talk.active);
     if (!respond) return;
+    const props = {
+      commentRef: this.inRef,
+      handleTag: this.setByTag,
+      handleAuthor: this.setByAuth,
+      handleSlideIn: this.handleTagIn,
+      handleSlideOut: this.handleSlideOut,
+      clearButton: this.clearButton,
+      clearBySlide: this.clearBySlide,
+      setBySlide: this.setBySlide,
+    };
     return (
-      <div className="alert float-at-top">
-        <h2> discussing </h2>
-        <div id="comments-list" className="alert">
-          <Comment {...respond} focused={true} last={true} />
+      <div className="alert float-at-top discuss-comments">
+        <div id="comments-list" className="alert no-margin">
+          <Comment {...respond} focused={true} {...props} last={true} />
         </div>
       </div>
     );

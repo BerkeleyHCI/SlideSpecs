@@ -323,19 +323,6 @@ class CommentPage extends BaseComponent {
     );
   };
 
-  /*
-<span className="comment-option" onClick={this.togglePrivate}>
-  <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
-  {defaultPriv ? 'private' : 'public'}
-</span>{' '}
-|{' '}
-{' '}|{' '}
-<span className="comment-option" onClick={this.toggleFollow}>
-<i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
-{following ? 'auto' : 'manual'}
-</span>
-*/
-
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
@@ -436,7 +423,6 @@ class CommentPage extends BaseComponent {
     const submitter = this.renderSubmit();
     const tagList = this.renderTags();
     let {byAuth, bySlide, byTag} = this.state;
-    const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
 
     return (
@@ -449,7 +435,7 @@ class CommentPage extends BaseComponent {
         <p> {tagList} </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
-        <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
+        <ClearingDiv set={bySlide} pre="slide" clear={this.clearBySlide} />
         <hr />
         {submitter}
       </div>
@@ -525,8 +511,7 @@ class CommentPage extends BaseComponent {
 
       if (bySlide) {
         csort = csort.filter(c => {
-          const general = [{slideNo: 'general'}];
-          const slides = c.slides.length > 0 ? c.slides : general;
+          const slides = c.slides.length > 0 ? c.slides : [];
           const slideNos = slides.map(x => x.slideNo);
           return slideNos.includes(bySlide);
         });
@@ -543,6 +528,7 @@ class CommentPage extends BaseComponent {
         return {
           ...c,
           key: c._id,
+          commentView: true,
           reviewer,
           setModal,
           clearModal,

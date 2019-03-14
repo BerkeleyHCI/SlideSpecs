@@ -198,7 +198,7 @@ class FacilitatePage extends BaseComponent {
     const filterer = this.renderFilter();
 
     const {images} = this.props;
-    const {control, invert, filter} = this.state;
+    const { invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
       return () => this.setState({sorter: s, filter: f});
@@ -272,7 +272,7 @@ class FacilitatePage extends BaseComponent {
   renderFilter = () => {
     const submit = this.renderSubmit();
 
-    let {control, byAuth, bySlide, byTag} = this.state;
+    let { byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     const {browserSupportsSpeechRecognition} = this.props;
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
@@ -289,7 +289,7 @@ class FacilitatePage extends BaseComponent {
 
   renderCommentData = (arr, replies, c, i) => {
     const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
-    const {sorter, invert, byAuth, bySlide, byTag, control} = this.state;
+    const {sorter, invert, byAuth, bySlide, byTag } = this.state;
     c.last = i === arr.length - 1; // no final hr
     c.replies = replies.filter(r => r.replyTo == c._id);
     return {
@@ -300,7 +300,7 @@ class FacilitatePage extends BaseComponent {
       clearModal,
       sessionId,
       log: this.log,
-      discussView: true,
+      facilitateView: true,
       allReplies: replies,
       commentRef: this.inRef,
       handleTag: this.setByTag,
@@ -316,7 +316,7 @@ class FacilitatePage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter, invert, byAuth, bySlide, byTag, control} = this.state;
+    const {sorter, invert, byAuth, bySlide, byTag} = this.state;
     const {talk, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
