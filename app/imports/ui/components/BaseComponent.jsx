@@ -2,12 +2,18 @@
 
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
+import {serverLog} from '../../api/myLogger.js';
 
 class BaseComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {path: null};
   }
+
+  log = data => {
+    const {reviewer, talk} = this.props;
+    serverLog({...data, reviewer, talk});
+  };
 
   componentDidUpdate = () => {
     const {path} = this.state;

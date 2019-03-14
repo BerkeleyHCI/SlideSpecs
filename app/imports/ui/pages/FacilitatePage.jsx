@@ -26,18 +26,9 @@ import {Comments} from '../../api/comments/comments.js';
 import {createComment, addressComment} from '../../api/comments/methods.js';
 import {setRespondingComment} from '../../api/talks/methods.js';
 
-// Control-log.
-import {Logger} from 'meteor/ostrio:logger';
-import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
-
 class FacilitatePage extends BaseComponent {
   constructor(props) {
     super(props);
-
-    // Control-log.
-    this.logger = new Logger();
-    new LoggerConsole(this.logger).enable();
-
     this.inRef = React.createRef();
     this.state = {
       recInterval: null,
@@ -53,24 +44,6 @@ class FacilitatePage extends BaseComponent {
       byTag: '',
     };
   }
-
-  log = data => {
-    //console.log(data);
-    const {reviewer, talk} = this.props;
-    if (typeof data === 'string') {
-      this.logger.info(
-        JSON.stringify({data, reviewer, talk, time: Date.now()}),
-      );
-    } else if (Object.keys.length > 0) {
-      this.logger.info(
-        JSON.stringify({...data, reviewer, talk, time: Date.now()}),
-      );
-    } else {
-      this.logger.info(
-        JSON.stringify({data, reviewer, talk, time: Date.now()}),
-      );
-    }
-  };
 
   handleSetupAudio = () => {
     if (!navigator.getUserMedia)
