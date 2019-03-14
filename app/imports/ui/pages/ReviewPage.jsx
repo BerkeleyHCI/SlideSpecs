@@ -1,7 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Session} from 'meteor/session.js';
-import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
@@ -18,18 +17,9 @@ import Comment from '../components/Comment.jsx';
 import {createComment, completeComment} from '../../api/comments/methods.js';
 import {Transition} from 'react-spring';
 
-// Control-log.
-import {Logger} from 'meteor/ostrio:logger';
-import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
-
 class ReviewPage extends BaseComponent {
   constructor(props) {
     super(props);
-
-    // Control-log.
-    this.logger = new Logger();
-    new LoggerConsole(this.logger).enable();
-
     this.inRef = React.createRef();
     this.state = {
       control: false,

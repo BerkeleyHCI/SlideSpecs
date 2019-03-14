@@ -16,11 +16,6 @@ import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment} from '../../api/comments/methods.js';
-import {serverLog} from '../../api/myLogger.js';
-
-// Control-log.
-import {Logger} from 'meteor/ostrio:logger';
-import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
 
 class CommentPage extends BaseComponent {
   constructor(props) {

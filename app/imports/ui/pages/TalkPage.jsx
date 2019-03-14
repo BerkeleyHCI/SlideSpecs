@@ -211,6 +211,7 @@ export default class TalkPage extends BaseComponent {
           text={'send to your discussion facilitator'}
           bText={'open link'}
           link={facilitateLink}
+          blank={true}
         />
 
         {hasComments && (
