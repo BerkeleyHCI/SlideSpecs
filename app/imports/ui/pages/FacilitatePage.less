@@ -1,4 +1,4 @@
-@import "{}/imports/ui/stylesheets/utils.less";
+@import '{}/imports/ui/stylesheets/utils.less';
 
 #sound {
   width: 100%;
@@ -20,16 +20,17 @@ canvas {
 }
 
 #record {
+  background: white;
   border-radius: 4px 0px 0px 0px;
   border: #202020 dotted 1px;
-
   width: 30%;
-  filter: brightness(80%);
-  &:hover {
+
+  &:hover img {
     filter: brightness(100%);
   }
 
   img {
+    filter: brightness(80%);
     padding: 1em;
     vertical-align: middle;
     text-align: center;

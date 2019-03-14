@@ -164,7 +164,7 @@ class DiscussPage extends BaseComponent {
     );
 
     return (
-      <div className="float-at-top">
+      <div>
         <div className="btn-m-group btns-group">
           <button
             onClick={timeSort}
@@ -281,6 +281,18 @@ class DiscussPage extends BaseComponent {
       // // TODO update for multiple
       csort = csort.filter(c => c._id !== talk.active);
 
+      if (!csort || !csort.length) {
+        return (
+          <div>
+            <div className="alert">no discussion comments yet</div>
+            <AlertLink
+              text={'mark discussion comments here'}
+              link={`/comment/${talk._id}`}
+            />
+          </div>
+        );
+      }
+
       // Filtering 'reply' comments into array.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
@@ -353,16 +365,24 @@ class DiscussPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderFiles();
-    const {talk} = this.props;
+    const {talk, reviewer} = this.props;
     const {image, hoverImage, bySlide} = this.state;
+    const cmtHead = this.renderCommentFilter();
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
+        <h2 className="alert clearfix no-margin">
+          {talk.name}
+          <small onClick={this.clearReviewer} className="pull-right clear-icon">
+            {reviewer}
+          </small>
+        </h2>
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid">{fileList}</div>
         </div>
+        {cmtHead}
         <div id="v-pad" />
         <AlertLink
           center={true}
@@ -384,7 +404,7 @@ class DiscussPage extends BaseComponent {
     const respond = Comments.findOne(talk.active);
     if (!respond) return;
     return (
-      <div>
+      <div className="alert float-at-top">
         <h2> discussing </h2>
         <div id="comments-list" className="alert">
           <Comment {...respond} focused={true} last={true} />
@@ -396,7 +416,6 @@ class DiscussPage extends BaseComponent {
   render() {
     const {images} = this.props;
     const context = this.renderContext();
-    const cmtHead = this.renderCommentFilter();
     const respond = this.renderRespond();
     const comments = this.renderComments();
 
@@ -407,8 +426,8 @@ class DiscussPage extends BaseComponent {
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
-                {cmtHead}
                 {respond}
+                <div id="v-pad clearfix" />
                 {comments}
               </div>
             </div>

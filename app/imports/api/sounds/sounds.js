@@ -21,8 +21,10 @@ export const Sounds = new FilesCollection({
   },
 
   onAfterUpload(file) {
+    const {target, talkId} = file.meta;
+    console.log(target, talkId);
+
     const useTranscript = data => {
-      const {target, talkId} = file.meta;
       let response = data[0];
       let transcript = response.results
         .map(result => result.alternatives[0].transcript)
