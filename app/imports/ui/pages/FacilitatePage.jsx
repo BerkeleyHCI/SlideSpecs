@@ -453,19 +453,18 @@ class FacilitatePage extends BaseComponent {
     let uploadInstance = Sounds.insert(soundArgs, false);
 
     uploadInstance.on('start', (err, file) => {
-      //console.log('started', file.name);
+      console.log('started', file.name);
     });
 
     uploadInstance.on('end', (err, file) => {
       if (!err) {
         {
-          // console.log("file:", file);
           const {name, size} = file;
           this.log({name, size});
         }
 
-        // TODO add check to see if other comments are discussed, handle audio
-        // segmentation.
+        // TODO add check to see if other comments are discussed,
+        // handle audio segmentation.
 
         window.audioRecorder.clear();
       } else {
