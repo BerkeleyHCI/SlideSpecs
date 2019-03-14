@@ -440,7 +440,7 @@ class FacilitatePage extends BaseComponent {
       meta: {
         userId: Meteor.userId(),
         talkId: talk._id,
-        target: talk.active || false,
+        target: talk.active || '',
       },
       //transport: 'http',
       streams: 'dynamic',
@@ -449,15 +449,13 @@ class FacilitatePage extends BaseComponent {
     };
 
     // console.log(soundArgs);
-
+    // dont autostart the upload
     let uploadInstance = Sounds.insert(soundArgs, false);
-    // dont autostart the uploadg
 
     uploadInstance.on('start', (err, file) => {
       //console.log('started', file.name);
     });
 
-    // TODO set status on talk item that uploading is done.
     uploadInstance.on('end', (err, file) => {
       if (!err) {
         {
@@ -465,6 +463,9 @@ class FacilitatePage extends BaseComponent {
           const {name, size} = file;
           this.log({name, size});
         }
+
+        // TODO add check to see if other comments are discussed, handle audio
+        // segmentation.
 
         window.audioRecorder.clear();
       } else {
