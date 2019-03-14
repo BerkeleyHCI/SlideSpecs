@@ -16,12 +16,9 @@ class SlideTags extends Component {
 
     const active = sn => (sn === bySlide ? 'active' : '');
 
+    //<kbd className={active({slideNo: '*'})} onClick={setBySlide}> * </kbd>
     if (slides.length === 0) {
-      return done ? (
-        <kbd className={active({slideNo: 'general'})} onClick={setBySlide}>
-          general
-        </kbd>
-      ) : null;
+      return done ? null : null;
     } else {
       const plural = slides.length > 1;
       const slideNos = _.sortBy(slides, x => Number(x.slideNo));
