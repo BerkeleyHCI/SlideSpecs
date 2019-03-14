@@ -1,40 +1,40 @@
-import React from "react";
-import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
-import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import React from 'react';
+import {Meteor} from 'meteor/meteor';
+import PropTypes from 'prop-types';
+import {toast} from 'react-toastify';
+import {Link} from 'react-router-dom';
 
-import { Files } from "../../api/files/files.js";
-import { Images } from "../../api/images/images.js";
+import {Files} from '../../api/files/files.js';
+import {Images} from '../../api/images/images.js';
 import {
   createTalk,
   deleteTalk,
-  setTalkProgress
-} from "../../api/talks/methods.js";
-import { deleteTalkFiles } from "../../api/files/methods.js";
+  setTalkProgress,
+} from '../../api/talks/methods.js';
+import {deleteTalkFiles} from '../../api/files/methods.js';
 
-import MenuContainer from "../containers/MenuContainer.jsx";
-import BaseComponent from "../components/BaseComponent.jsx";
-import AppNotification from "../components/AppNotification.jsx";
-import AlertLink from "../components/AlertLink.jsx";
-import { FullMessage } from "../components/Message.jsx";
-import DragUpload from "../components/DragUpload.jsx";
-import SelectUpload from "../components/SelectUpload.jsx";
-import TalkListItem from "../components/TalkListItem.jsx";
-import SlideFile from "../components/SlideFile.jsx";
+import MenuContainer from '../containers/MenuContainer.jsx';
+import BaseComponent from '../components/BaseComponent.jsx';
+import AppNotification from '../components/AppNotification.jsx';
+import AlertLink from '../components/AlertLink.jsx';
+import {FullMessage} from '../components/Message.jsx';
+import DragUpload from '../components/DragUpload.jsx';
+import SelectUpload from '../components/SelectUpload.jsx';
+import TalkListItem from '../components/TalkListItem.jsx';
+import SlideFile from '../components/SlideFile.jsx';
 
 export default class TalkPage extends BaseComponent {
   deleteFiles = () => {
-    const { talk } = this.props;
-    if (confirm("Really delete this talk?"))
-      deleteTalkFiles.call({ talkId: talk._id });
+    const {talk} = this.props;
+    if (confirm('Really delete this talk?'))
+      deleteTalkFiles.call({talkId: talk._id});
   };
 
   updateMason = () => {
     if (this.props.images) {
-      const grid = document.getElementById("grid");
-      const mason = new Masonry(grid, { itemSelector: ".file-item" });
-      this.setState({ mason });
+      const grid = document.getElementById('grid');
+      const mason = new Masonry(grid, {itemSelector: '.file-item'});
+      this.setState({mason});
     }
   };
 
@@ -58,11 +58,11 @@ export default class TalkPage extends BaseComponent {
 
   handleUpload = allfiles => {
     const files = [allfiles[0]]; // hack to only accept the first file.
-    let { talk, fileLocator } = this.props;
-    const handleToast = ({ msg, desc, icon, closeTime }) => {
+    let {talk, fileLocator} = this.props;
+    const handleToast = ({msg, desc, icon, closeTime}) => {
       if (!closeTime) closeTime = 4000;
       toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
-        autoClose: closeTime
+        autoClose: closeTime,
       });
     };
 
@@ -74,11 +74,11 @@ export default class TalkPage extends BaseComponent {
         const goodType = /(pdf)$/i.test(file.name);
         if (!goodSize || !goodType) {
           handleToast({
-            msg: "error",
-            icon: "times",
+            msg: 'error',
+            icon: 'times',
             desc:
               //'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
-              "Please only upload pdf files, with size equal or less than 30MB."
+              'Please only upload pdf files, with size equal or less than 30MB.',
           });
           return; // skip this file.
         }
@@ -89,47 +89,47 @@ export default class TalkPage extends BaseComponent {
             meta: {
               locator: fileLocator,
               userId: Meteor.userId(),
-              talkId: talk._id
+              talkId: talk._id,
             },
             //transport: 'http',
-            streams: "dynamic",
-            chunkSize: "dynamic",
-            allowWebWorkers: true
+            streams: 'dynamic',
+            chunkSize: 'dynamic',
+            allowWebWorkers: true,
           },
-          false // dont autostart the uploadg
+          false, // dont autostart the uploadg
         );
 
-        uploadInstance.on("start", (err, file) => {
+        uploadInstance.on('start', (err, file) => {
           //console.log('started', file.name);
         });
 
         // TODO set the percent of the specific talk item for upload
-        uploadInstance.on("progress", function(progress, file) {
-          setTalkProgress.call({ talkId: talk._id, progress });
+        uploadInstance.on('progress', function(progress, file) {
+          setTalkProgress.call({talkId: talk._id, progress});
         });
 
         // TODO set the percent of the specific talk item for upload
-        uploadInstance.on("uploaded", (err, file) => {
-          console.log("uploaded", file.name);
-          setTalkProgress.call({ talkId: talk._id, progress: 100 });
+        uploadInstance.on('uploaded', (err, file) => {
+          console.log('uploaded', file.name);
+          setTalkProgress.call({talkId: talk._id, progress: 100});
         });
 
         // TODO set status on talk item that uploading is done.
-        uploadInstance.on("end", (err, file) => {
-          console.log("file:", file);
+        uploadInstance.on('end', (err, file) => {
+          console.log('file:', file);
           handleToast({
             msg: file.name,
-            icon: "check",
-            desc: "upload complete"
+            icon: 'check',
+            desc: 'upload complete',
           });
         });
 
-        uploadInstance.on("error", (err, file) => {
+        uploadInstance.on('error', (err, file) => {
           if (err) console.error(err, file);
           handleToast({
             msg: file.name,
-            icon: "times",
-            desc: `Error uploading: ${err}`
+            icon: 'times',
+            desc: `Error uploading: ${err}`,
           });
         });
 
@@ -139,28 +139,28 @@ export default class TalkPage extends BaseComponent {
   };
 
   deleteTalk = () => {
-    const { talk } = this.props;
-    localStorage.setItem("feedbacks.referringLink", "/");
-    deleteTalk.call({ talkId: talk._id });
+    const {talk} = this.props;
+    localStorage.setItem('feedbacks.referringLink', '/');
+    deleteTalk.call({talkId: talk._id});
   };
 
   render() {
-    const { uploading } = this.state;
-    const { talk, name, file, images, comments } = this.props;
+    const {uploading} = this.state;
+    const {talk, name, file, images, comments} = this.props;
     const hasComments = comments.length > 0;
 
     let talkFile;
     try {
-      let fileParams = { "meta.talkId": talk._id };
-      talkFile = Files.findOne(fileParams).link("original", "//");
+      let fileParams = {'meta.talkId': talk._id};
+      talkFile = Files.findOne(fileParams).link('original', '//');
     } catch (e) {
-      talkFile = "/404";
+      talkFile = '/404';
     }
     let imageSet = images.map((i, key) => (
       <SlideFile
-        key={"file-" + key}
+        key={'file-' + key}
         iter={key + 1}
-        fileUrl={Images.findOne(i._id).link("original", "//")}
+        fileUrl={Images.findOne(i._id).link('original', '//')}
         handleLoad={this.updateMason}
         fileId={i._id}
         fileName={i.name}
@@ -168,10 +168,10 @@ export default class TalkPage extends BaseComponent {
     ));
 
     // TODO update this into the secret talk field instead of the regular // id
-    const commentLink = window.location.origin + "/comment/" + talk._id;
-    const uploadLink = window.location.origin + "/upload/" + talk._id;
-    const facilitateLink = window.location.origin + "/facilitate/" + talk._id;
-    const reviewLink = window.location.origin + "/review/" + talk._id;
+    const commentLink = window.location.origin + '/comment/' + talk._id;
+    const uploadLink = window.location.origin + '/upload/' + talk._id;
+    const facilitateLink = window.location.origin + '/facilitate/' + talk._id;
+    const reviewLink = window.location.origin + '/review/' + talk._id;
 
     const content = (
       <div className="main-content">
@@ -202,21 +202,21 @@ export default class TalkPage extends BaseComponent {
         )}
 
         <AlertLink
-          text={"share this talk with a public link"}
-          bText={"open link"}
+          text={'share this talk with a public link'}
+          bText={'open link'}
           link={commentLink}
         />
 
         <AlertLink
-          text={"share this talk with your facilitator"}
-          bText={"open link"}
+          text={'send to your discussion facilitator'}
+          bText={'open link'}
           link={facilitateLink}
         />
 
         {hasComments && (
           <AlertLink
-            text={"review comments and feedback"}
-            bText={"open link"}
+            text={'review comments and feedback'}
+            bText={'open link'}
             link={reviewLink}
           />
         )}
@@ -237,8 +237,7 @@ export default class TalkPage extends BaseComponent {
               </a>
               <button
                 onClick={this.deleteTalkFiles}
-                className="btn btn-menu pull-right"
-              >
+                className="btn btn-menu pull-right">
                 delete slides
               </button>
             </div>
@@ -260,11 +259,11 @@ export default class TalkPage extends BaseComponent {
 TalkPage.propTypes = {
   user: PropTypes.object,
   images: PropTypes.array,
-  comments: PropTypes.array
+  comments: PropTypes.array,
 };
 
 TalkPage.defaultProps = {
   user: null,
   comments: [],
-  images: []
+  images: [],
 };
