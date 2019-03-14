@@ -497,14 +497,16 @@ class CommentPage extends BaseComponent {
         [invert ? 'desc' : 'asc', 'asc'],
       );
 
+      // Filter out transcript comments.
+      csort = csort.filter(c => c.author != 'transcript');
+
       // Focus view filtering - omit replies.
       if (userOwn) {
         csort = csort.filter(c => c.author === reviewer);
       }
 
-      // TODO - make it so this seperates on punctuation
-
       // Filtering 'reply' comments into array.
+      // TODO - make it so this seperates on punctuation
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
       const replies = csort.filter(isReply).map(c => {

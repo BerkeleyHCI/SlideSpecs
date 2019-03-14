@@ -16,6 +16,12 @@ export const logEvent = new ValidatedMethod({
   },
 });
 
+export const logBlob = blob => {
+  const data = JSON.stringify(blob);
+  const log = {created: Date.now(), data};
+  return Events.insert(log);
+};
+
 export const deleteEvent = new ValidatedMethod({
   name: 'events.delete',
   validate: new SimpleSchema({

@@ -10,12 +10,10 @@ import Input from '../components/Input.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
 import TextArea from '../components/TextArea.jsx';
 import FileReview from '../components/FileReview.jsx';
-import Clock from '../components/Clock.jsx';
 import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment, completeComment} from '../../api/comments/methods.js';
-import {Transition} from 'react-spring';
 
 class ReviewPage extends BaseComponent {
   constructor(props) {
@@ -31,7 +29,7 @@ class ReviewPage extends BaseComponent {
       invert: true,
       filtered: [],
       tags: [],
-      bySlide: [], // array for this version of the interface
+      bySlide: [],
       byAuth: '',
       byTag: '',
       hoverImage: '',
@@ -232,11 +230,7 @@ class ReviewPage extends BaseComponent {
     const {bySlide} = this.state;
     const active = sn => (bySlide.includes(sn) ? 'active' : '');
     if (filtered.length === 0) {
-      return done ? (
-        <kbd className={active('general')} onClick={this.setBySlide}>
-          general
-        </kbd>
-      ) : null;
+      return null;
     } else {
       const plural = filtered.length > 1;
       const slideNos = _.sortBy(filtered, x => Number(x.slideNo));
@@ -357,7 +351,6 @@ class ReviewPage extends BaseComponent {
           <kbd className="pull-right">
             {commentsShown}/{comments.length}
           </kbd>
-          <Clock />
           {tagList}
         </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
@@ -422,6 +415,24 @@ class ReviewPage extends BaseComponent {
         [invert ? 'desc' : 'asc', 'asc'],
       );
 
+      // Filtering 'reply' comments into array.
+      // TODO - make it so this seperates on punctuation
+      const reply = /\[.*\]\(\s?#c(.*?)\)/;
+      const isReply = c => reply.test(c.content);
+      const replies = _.orderBy(
+        csort.filter(isReply).map(c => {
+          const match = reply.exec(c.content);
+          c.replyTo = match[1].trim();
+          c.isReply = true;
+          return c;
+        }),
+        ['created'],
+        ['asc'],
+      );
+
+      // remove child comments.
+      csort = csort.filter(c => !isReply(c));
+
       if (byAuth) {
         csort = csort.filter(c => c.author === byAuth);
       }
@@ -444,8 +455,10 @@ class ReviewPage extends BaseComponent {
       }
 
       const items = csort.map((c, i) => {
+        c.transcript = c.author === 'transcript';
         c.last = i === csort.length - 1; // no final hr
         c.active = c._id === activeComment; // highlight
+        c.replies = replies.filter(r => r.replyTo == c._id);
         const context = this.renderSlideTags(c.slides, true);
         return {
           ...c,
@@ -455,7 +468,7 @@ class ReviewPage extends BaseComponent {
           setModal,
           clearModal,
           log: this.log,
-          feedback: true,
+          allReplies: replies,
           commentRef: this.inRef,
           setBySlide: this.setBySlide,
           handleTag: this.setByTag,
@@ -476,8 +489,8 @@ class ReviewPage extends BaseComponent {
             <div>
               <h2>to address</h2>
               <div id="comments-list" className="alert">
-                {incomplete.map(i => (
-                  <Comment {...i} />
+                {incomplete.map((i, iter) => (
+                  <Comment {...i} key={`comment-${iter}`} />
                 ))}
               </div>
             </div>
@@ -491,17 +504,6 @@ class ReviewPage extends BaseComponent {
                   <Comment {...i} />
                 ))}
               </div>
-            </div>
-          )}
-
-          {items.length >= 5 && (
-            <div className="padded full-width">
-              <button
-                onClick={this.goToTop}
-                className="btn center btn-menu btn-round">
-                <i className={'fa fa-arrow-up'} />
-              </button>
-              <div className="v-pad" />
             </div>
           )}
         </div>
@@ -524,7 +526,7 @@ class ReviewPage extends BaseComponent {
             <span className="black"> ‹ </span>
             {name}
           </Link>{' '}
-          / <small> comment review </small>
+          / <small> review </small>
         </h2>
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
