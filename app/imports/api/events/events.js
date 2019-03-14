@@ -3,8 +3,6 @@ import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
 export const Events = new Mongo.Collection('Events');
 
-// Deny all client-side updates since we will be using methods to manage this collection
-
 Events.deny({
   insert() {
     return true;
@@ -18,9 +16,8 @@ Events.deny({
 });
 
 Events.schema = new SimpleSchema({
-  session: {type: String},
-  slideNo: {type: Number},
   created: {type: Date},
+  data: {type: String},
 });
 
 Events.attachSchema(Events.schema);

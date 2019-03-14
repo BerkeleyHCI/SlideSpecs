@@ -2,7 +2,6 @@ import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import {Session} from 'meteor/session.js';
-import {withTracker} from 'meteor/react-meteor-data';
 import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import _ from 'lodash';
