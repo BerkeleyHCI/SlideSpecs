@@ -20,7 +20,6 @@ class ReviewPage extends BaseComponent {
     super(props);
     this.inRef = React.createRef();
     this.state = {
-      control: false,
       redirectTo: null,
       activeComment: null,
       commentsShown: 0,
@@ -258,7 +257,7 @@ class ReviewPage extends BaseComponent {
     const filterer = this.renderFilter();
 
     const {images} = this.props;
-    const {control, invert, filter} = this.state;
+    const { invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
       return () => this.setState({sorter: s, filter: f});
@@ -403,7 +402,6 @@ class ReviewPage extends BaseComponent {
       byAuth,
       bySlide,
       byTag,
-      control,
     } = this.state;
     const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
@@ -463,6 +461,7 @@ class ReviewPage extends BaseComponent {
         return {
           ...c,
           key: c._id,
+          reviewView: true,
           context,
           reviewer,
           setModal,

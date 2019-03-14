@@ -223,12 +223,14 @@ class Comment extends BaseComponent {
   };
 
   handleAddress = () => {
-    const {_id} = this.props;
+    const {talk, _id} = this.props;
+    this.log({type: 'address', talkId: talk, commentId: _id});
     addressComment.call({commentId: _id});
   };
 
   handleComplete = () => {
-    const {_id} = this.props;
+    const {talk, _id} = this.props;
+    this.log({type: 'complete', talkId: talk, commentId: _id});
     completeComment.call({commentId: _id});
   };
 
@@ -248,6 +250,7 @@ class Comment extends BaseComponent {
     }
 
     if (talk && _id) {
+      this.log({type: 'setDiscussing', ...commentFields});
       setRespondingComment.call(commentFields);
     }
 
@@ -339,9 +342,7 @@ class Comment extends BaseComponent {
       isReply,
       userOwn,
       sounds,
-      activeComment,
       allReplies,
-      discussView,
       addressed,
       bySlide,
       handleAuthor,
@@ -352,21 +353,31 @@ class Comment extends BaseComponent {
       clearButton,
       clearBySlide,
       setBySlide,
+
+      activeComment,
+      facilitateView,
+      discussView,
+      commentView,
+      reviewView,
     } = this.props;
 
     const master = author === reviewer;
-    const sysDiscuss = discuss ? discuss.includes('system') : false;
+    const audio = author === 'transcript';
     let bData = [];
-    if (discussView && depth == 0) {
-      bData = [this.activeButton, this.addressButton];
-    } else if (discussView) {
-      bData = [this.talkButton];
-    } else if (sysDiscuss) {
-      bData = [...this.pubButtons, this.editButton];
-    } else if (master) {
+    if (commentView && master) {
       bData = [...this.pubButtons, ...this.privButtons];
-    } else {
-      bData = this.pubButtons;
+    } else if (commentView) {
+      bData = [...this.pubButtons];
+    } else if (facilitateView && depth == 0) {
+      bData = [this.activeButton, this.addressButton];
+    } else if (facilitateView) {
+      bData = [this.editButton];
+    } else if (discussView) {
+      bData = [...this.pubButtons];
+    } else if (reviewView && depth == 0) {
+      bData = [this.completeButton, this.trashButton];
+    } else if (reviewView && audio) {
+      bData = [this.trashButton];
     }
 
     const context = (
