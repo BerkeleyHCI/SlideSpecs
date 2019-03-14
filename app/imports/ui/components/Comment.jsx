@@ -474,7 +474,20 @@ class Comment extends BaseComponent {
   };
 
   renderAudio = audio => {
-    const sound = Sounds.findOne(audio);
+    const {_id} = this.props;
+    let sound = Sounds.findOne(audio);
+    if (sound) {
+      const url = sound.link('original', '//');
+      return <ReactAudioPlayer key={audio} src={url} controls />;
+    }
+
+    sound = Sounds.findOne({'meta.commentId': _id});
+    if (sound) {
+      const url = sound.link('original', '//');
+      return <ReactAudioPlayer key={audio} src={url} controls />;
+    }
+
+    sound = Sounds.findOne({'meta.target': _id});
     if (sound) {
       const url = sound.link('original', '//');
       return <ReactAudioPlayer key={audio} src={url} controls />;
@@ -514,8 +527,8 @@ Comment.propTypes = {
 Comment.defaultProps = {
   allReplies: [],
   isReply: false,
+  sounds: ['false'],
   replies: [],
-  sounds: [],
   depth: 0,
 };
 
