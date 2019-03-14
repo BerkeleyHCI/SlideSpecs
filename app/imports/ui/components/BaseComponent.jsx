@@ -1,8 +1,7 @@
 /* eslint-disable react/no-unused-state */
-
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
-import {serverLog} from '../../api/myLogger.js';
+import {serverLog} from '../api/serverLog.js';
 
 class BaseComponent extends Component {
   constructor(props) {
@@ -12,7 +11,18 @@ class BaseComponent extends Component {
 
   log = data => {
     const {reviewer, talk} = this.props;
-    serverLog({...data, reviewer, talk});
+    const base = {reviewer, talk, time: Date.now()};
+
+    let string;
+    if (typeof data === 'string') {
+      string = JSON.stringify({data, ...base});
+    } else if (Object.keys.length > 0) {
+      string = JSON.stringify({...data, ...base});
+    } else {
+      string = JSON.stringify({data, ...base});
+    }
+
+    serverLog.call(string);
   };
 
   componentDidUpdate = () => {

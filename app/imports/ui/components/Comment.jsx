@@ -1,59 +1,59 @@
-import React from "react";
-import PropTypes from "prop-types";
-import BaseComponent from "../components/BaseComponent.jsx";
-import TextArea from "../components/TextArea.jsx";
-import AppNotification from "../components/AppNotification.jsx";
-import SlideTags from "../components/SlideTags.jsx";
-import Markdown from "react-markdown";
-import { toast } from "react-toastify";
-import { setRespondingComment } from "../../api/talks/methods.js";
+import React from 'react';
+import PropTypes from 'prop-types';
+import BaseComponent from '../components/BaseComponent.jsx';
+import TextArea from '../components/TextArea.jsx';
+import AppNotification from '../components/AppNotification.jsx';
+import SlideTags from '../components/SlideTags.jsx';
+import Markdown from 'react-markdown';
+import {toast} from 'react-toastify';
+import {setRespondingComment} from '../../api/talks/methods.js';
 import {
   agreeComment,
   discussComment,
   updateComment,
   deleteComment,
   addressComment,
-  completeComment
-} from "../../api/comments/methods.js";
+  completeComment,
+} from '../../api/comments/methods.js';
 
 class Comment extends BaseComponent {
   constructor(props) {
     super(props);
     this.editRef = React.createRef();
-    this.state = { editing: false, replying: false };
+    this.state = {editing: false, replying: false};
   }
 
   componentDidMount = () => {
     const togs = $('[data-toggle="tooltip"]');
     togs.tooltip({
-      trigger: "hover",
-      template: '<div class="tooltip"><div class="tooltip-inner"></div></div>'
+      trigger: 'hover',
+      template: '<div class="tooltip"><div class="tooltip-inner"></div></div>',
     });
   };
 
   goToElementId = id => {
     const view = document.getElementById(id);
     if (view) {
-      view.scrollIntoView({ block: "center", inline: "center" });
+      view.scrollIntoView({block: 'center', inline: 'center'});
     }
   };
 
   renderers = {
     link: props => {
-      if (props.href[0] == "#") {
+      const {handleTag, setActive, _id} = this.props;
+      if (props.href[0] == '#') {
         const scrollView = e => {
           e.preventDefault();
           const _id = props.href.substring(2);
-          this.props.setActive(_id);
-          this.goToElementId("c" + _id);
+          setActive(_id);
+          this.goToElementId('c' + _id);
         };
         return (
           <a
             key={props.children.toString() + this.props._id}
             className="internal reply"
-            onClick={scrollView}
-          >
-            {props.children} <i className={"fa fa-reply"} />
+            onClick={scrollView}>
+            {props.children} <i className={'fa fa-reply'} />
           </a>
         );
       } else {
@@ -65,15 +65,16 @@ class Comment extends BaseComponent {
       }
     },
     text: props => {
-      // split here for hashtag rendering
-      // TODO handle ending punctuation
+      const {handleTag, setActive, _id} = this.props;
       const id = this.props._id;
+      // split here for hashtag rendering
+      //const words = props.split(/\s+|.,\/#!$%\^&\*;:{}=\-_`~()/).map((x, i) => {
       const words = props.split(/\s+/).map((x, i) => {
-        if (x[0] == "#" && x.length > 1) {
+        if (x[0] == '#' && x.length > 1) {
           return (
             <span key={id + props + i}>
-              <a className="hashtag" onClick={this.props.handleTag}>
-                {x}{" "}
+              <a className="hashtag" onClick={handleTag}>
+                {x}{' '}
               </a>
             </span>
           );
@@ -83,12 +84,12 @@ class Comment extends BaseComponent {
       });
 
       return <span key={id + props}>{words}</span>;
-    }
+    },
   };
 
   setEdit = () => {
-    const { content } = this.props;
-    this.setState({ editing: true });
+    const {content} = this.props;
+    this.setState({editing: true});
     setTimeout(() => {
       let eRef = this.editRef.current;
       eRef.value = content;
@@ -97,51 +98,51 @@ class Comment extends BaseComponent {
   };
 
   clearEdit = () => {
-    this.setState({ editing: false });
+    this.setState({editing: false});
   };
 
   confirmRemoveComment = () => {
-    const { setModal, clearModal, content, replies } = this.props;
+    const {setModal, clearModal, content, replies} = this.props;
     let modalContent;
     if (replies.length > 0) {
       modalContent = {
         accept: clearModal,
         deny: clearModal,
-        mtitle: "Comment cannot be removed as it has replies.",
-        mtext: "You can edit the content of the comment to be blank, though.",
-        act: "accept",
-        isOpen: true
+        mtitle: 'Comment cannot be removed as it has replies.',
+        mtext: 'You can edit the content of the comment to be blank, though.',
+        act: 'accept',
+        isOpen: true,
       };
     } else {
       modalContent = {
         accept: this.removeComment,
         deny: clearModal,
-        mtitle: "Delete this comment?",
+        mtitle: 'Delete this comment?',
         mtext: content,
-        act: "delete",
-        isOpen: true
+        act: 'delete',
+        isOpen: true,
       };
     }
     setModal(modalContent);
   };
 
   removeComment = () => {
-    const { _id, author } = this.props;
-    deleteComment.call({ commentId: _id, author });
+    const {_id, author} = this.props;
+    deleteComment.call({commentId: _id, author});
     this.props.clearModal();
   };
 
   handleEdit = () => {
     const newContent = this.editRef.current.value.trim();
-    const { author, discuss, reviewer, _id } = this.props;
-    const sysDiscuss = discuss.includes("system");
+    const {author, discuss, reviewer, _id} = this.props;
+    const sysDiscuss = discuss.includes('system');
     const editFields = {
       author: sysDiscuss ? author : reviewer, // make globally editable
       commentId: _id,
-      newContent
+      newContent,
     };
 
-    this.props.log({ type: "edit", ...editFields });
+    this.log({type: 'edit', ...editFields});
     updateComment.call(editFields, this.clearEdit);
     toast(() => (
       <AppNotification msg="updated" desc="Comment updated ok." icon="check" />
@@ -149,23 +150,23 @@ class Comment extends BaseComponent {
   };
 
   handleReply = () => {
-    const { commentRef, author, _id } = this.props;
+    const {commentRef, author, _id} = this.props;
     const refText = ` [@${author}](#c${_id})`;
     const commText = commentRef.current;
     if (commText) {
       commText.scrollIntoView(false);
       if (!` ${commText.value}`.includes(refText)) {
-        commText.value = (commText.value + refText).trim() + " ";
+        commText.value = (commText.value + refText).trim() + ' ';
       }
       commText.focus();
     }
   };
 
   handleAgree = () => {
-    const { reviewer, _id } = this.props;
+    const {reviewer, _id} = this.props;
     const commentFields = {
       author: reviewer,
-      commentId: _id
+      commentId: _id,
     };
 
     toast(() => (
@@ -176,17 +177,17 @@ class Comment extends BaseComponent {
       />
     ));
 
-    this.props.log({ type: "agree", ...commentFields });
+    this.log({type: 'agree', ...commentFields});
     if (reviewer && _id) {
       agreeComment.call(commentFields);
     }
   };
 
   handleDiscuss = () => {
-    const { reviewer, _id } = this.props;
+    const {reviewer, _id} = this.props;
     const commentFields = {
       author: reviewer,
-      commentId: _id
+      commentId: _id,
     };
 
     toast(() => (
@@ -197,31 +198,31 @@ class Comment extends BaseComponent {
       />
     ));
 
-    this.props.log({ type: "discuss", ...commentFields });
+    this.log({type: 'discuss', ...commentFields});
     if (reviewer && _id) {
       discussComment.call(commentFields);
     }
   };
 
   handleAddress = () => {
-    const { _id } = this.props;
-    addressComment.call({ commentId: _id });
+    const {_id} = this.props;
+    addressComment.call({commentId: _id});
   };
 
   handleComplete = () => {
-    const { _id } = this.props;
-    completeComment.call({ commentId: _id });
+    const {_id} = this.props;
+    completeComment.call({commentId: _id});
   };
 
   handleActiveComment = () => {
-    const { discuss, talk, _id, handleAudioUpload } = this.props;
+    const {discuss, talk, _id, handleAudioUpload} = this.props;
     if (handleAudioUpload) {
       handleAudioUpload();
     }
 
     const commentFields = {
       talkId: talk,
-      commentId: _id
+      commentId: _id,
     };
 
     if (discuss.length == 0) {
@@ -241,61 +242,61 @@ class Comment extends BaseComponent {
 
   extractCommentData = x => {
     return {
-      _id: x.getAttribute("data-id"),
-      auth: x.getAttribute("data-auth")
+      _id: x.getAttribute('data-id'),
+      auth: x.getAttribute('data-auth'),
     };
   };
 
   pubButtons = [
     {
       handleClick: this.handleReply,
-      icon: "reply",
-      txt: "reply"
+      icon: 'reply',
+      txt: 'reply',
     },
     {
       handleClick: this.handleAgree,
-      icon: "thumbs-up",
-      txt: "agree"
+      icon: 'thumbs-up',
+      txt: 'agree',
     },
     {
       handleClick: this.handleDiscuss,
-      icon: "comments",
-      txt: "discuss"
-    }
+      icon: 'comments',
+      txt: 'discuss',
+    },
   ];
 
   editButton = {
     handleClick: this.setEdit,
     master: true,
-    icon: "pencil",
-    txt: "edit"
+    icon: 'pencil',
+    txt: 'edit',
   };
 
   trashButton = {
     handleClick: this.confirmRemoveComment,
     master: true,
-    icon: "trash",
-    txt: "delete"
+    icon: 'trash',
+    txt: 'delete',
   };
 
   activeButton = {
     handleClick: this.handleActiveComment,
     // master: true,
-    icon: "star",
-    txt: "discuss"
+    icon: 'star',
+    txt: 'discuss',
   };
 
   addressButton = {
     handleClick: this.handleAddress,
     master: true,
-    icon: this.props.addressed ? "times" : "check",
-    txt: this.props.addressed ? "undo" : "finish"
+    icon: this.props.addressed ? 'times' : 'check',
+    txt: this.props.addressed ? 'undo' : 'finish',
   };
 
   completeButton = {
     handleClick: this.handleComplete,
-    icon: this.props.completed ? "times" : "check",
-    txt: this.props.completed ? "undo" : "address"
+    icon: this.props.completed ? 'times' : 'check',
+    txt: this.props.completed ? 'undo' : 'address',
     //master: true,
   };
 
@@ -307,14 +308,14 @@ class Comment extends BaseComponent {
       users.length > 0 && (
         <span className="meta">
           <strong> {tag}: </strong>
-          {users.join(", ")}
+          {users.join(', ')}
         </span>
       )
     );
   };
 
-  renderCommentButton = ({ icon, key, txt, handleClick, master }) => {
-    const { focused, reviewer, _id } = this.props;
+  renderCommentButton = ({icon, key, txt, handleClick, master}) => {
+    const {focused, reviewer, _id} = this.props;
     return (
       !focused && (
         <button
@@ -325,16 +326,15 @@ class Comment extends BaseComponent {
           data-toggle="tooltip"
           data-placement="top"
           onClick={handleClick}
-          className={`btn btn-empty btn-list-item ${master && "btn-user"}`}
-        >
-          <i className={"fa fa-" + icon} />
+          className={`btn btn-empty btn-list-item ${master && 'btn-user'}`}>
+          <i className={'fa fa-' + icon} />
         </button>
       )
     );
   };
 
   renderComment = () => {
-    const { replying } = this.state;
+    const {replying} = this.state;
     const {
       _id,
       author,
@@ -363,11 +363,11 @@ class Comment extends BaseComponent {
       handleSlideOut,
       clearButton,
       clearBySlide,
-      setBySlide
+      setBySlide,
     } = this.props;
 
     const master = author === reviewer;
-    const sysDiscuss = discuss ? discuss.includes("system") : false;
+    const sysDiscuss = discuss ? discuss.includes('system') : false;
     let bData = [];
     if (discussView && depth == 0) {
       bData = [this.activeButton, this.addressButton];
@@ -404,27 +404,26 @@ class Comment extends BaseComponent {
         depth: depth + 1,
         replies: allReplies.filter(r => r.replyTo == c._id),
         active: c._id === activeComment,
-        last: false
+        last: false,
       };
     });
 
     return (
       <div>
         <div
-          id={"c" + _id}
+          id={'c' + _id}
           onBlur={this.clearEdit}
           className={
-            "clearfix comment " +
-            (last ? " last-comment" : "") +
-            (active ? " active-comment" : "") +
-            (isReply ? ` reply-comment-${depth}` : "")
-          }
-        >
+            'clearfix comment ' +
+            (last ? ' last-comment' : '') +
+            (active ? ' active-comment' : '') +
+            (isReply ? ` reply-comment-${depth}` : '')
+          }>
           {bData.length > 0 && (
             <div className="hover-menu">
               <div className="btn-group btns-empty">
                 {bData.map((button, i) =>
-                  this.renderCommentButton({ ...button, key: i })
+                  this.renderCommentButton({...button, key: i}),
                 )}
               </div>
             </div>
@@ -438,18 +437,18 @@ class Comment extends BaseComponent {
             {created.toLocaleTimeString()}
             {userOwn && (
               <span>
-                {" "}
-                <i className={"fa fa-lock"} />{" "}
+                {' '}
+                <i className={'fa fa-lock'} />{' '}
               </span>
             )}
-            {agree && this.renderMeta("agreed", agree)}
-            {discuss && this.renderMeta("discuss", discuss)}
+            {agree && this.renderMeta('agreed', agree)}
+            {discuss && this.renderMeta('discuss', discuss)}
           </small>
 
           <br />
           <Markdown
             className="markdown-comment"
-            disallowedTypes={["image", "imageReference"]}
+            disallowedTypes={['image', 'imageReference']}
             unwrapDisallowed={true}
             renderers={this.renderers}
             source={content}
@@ -468,7 +467,7 @@ class Comment extends BaseComponent {
   };
 
   renderEditor = () => {
-    const { author } = this.props;
+    const {author} = this.props;
     return (
       <div onBlur={this.clearEdit} className="clearfix comment editing">
         <strong>{author}</strong> · <i> editing... </i>
@@ -486,7 +485,7 @@ class Comment extends BaseComponent {
   };
 
   render() {
-    const { editing } = this.state;
+    const {editing} = this.state;
     return editing ? this.renderEditor() : this.renderComment();
   }
 }
@@ -494,14 +493,14 @@ class Comment extends BaseComponent {
 Comment.propTypes = {
   allReplies: PropTypes.array,
   isReply: PropTypes.bool,
-  replies: PropTypes.array
+  replies: PropTypes.array,
 };
 
 Comment.defaultProps = {
   allReplies: [],
   isReply: false,
   replies: [],
-  depth: 0
+  depth: 0,
 };
 
 export default Comment;
