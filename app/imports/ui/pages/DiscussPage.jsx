@@ -286,10 +286,12 @@ class DiscussPage extends BaseComponent {
 
       // Clean - filter out those without discuss.
       csort = csort.filter(c => c.discuss.length > 0);
+
       // Clean - filter out active responding comment.
+      // // TODO update for multiple
       csort = csort.filter(c => c._id !== talk.active);
 
-      // Filtering 'reply' comments into array. HATE.
+      // Filtering 'reply' comments into array.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
       const replies = csort.filter(isReply).map(c => {
