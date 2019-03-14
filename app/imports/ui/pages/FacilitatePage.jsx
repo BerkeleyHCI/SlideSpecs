@@ -1,34 +1,34 @@
-import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { Session } from "meteor/session.js";
-import { withTracker } from "meteor/react-meteor-data";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import _ from "lodash";
+import {Meteor} from 'meteor/meteor';
+import PropTypes from 'prop-types';
+import React, {Component} from 'react';
+import {Session} from 'meteor/session.js';
+import {withTracker} from 'meteor/react-meteor-data';
+import {Link} from 'react-router-dom';
+import {toast} from 'react-toastify';
+import _ from 'lodash';
 
-import { Sounds } from "../../api/sounds/sounds.js";
-import { Images } from "../../api/images/images.js";
-import BaseComponent from "../components/BaseComponent.jsx";
-import AlertLink from "../components/AlertLink.jsx";
-import AppNotification from "../components/AppNotification.jsx";
-import SpeechRecognition from "react-speech-recognition";
-import Input from "../components/Input.jsx";
-import TextArea from "../components/TextArea.jsx";
-import SlideTags from "../components/SlideTags.jsx";
-import ClearingDiv from "../components/ClearingDiv.jsx";
-import FileReview from "../components/FileReview.jsx";
-import Clock from "../components/Clock.jsx";
-import Img from "../components/Image.jsx";
-import Message from "../components/Message.jsx";
-import Comment from "../components/Comment.jsx";
-import { Comments } from "../../api/comments/comments.js";
-import { createComment, addressComment } from "../../api/comments/methods.js";
-import { setRespondingComment } from "../../api/talks/methods.js";
+import {Sounds} from '../../api/sounds/sounds.js';
+import {Images} from '../../api/images/images.js';
+import BaseComponent from '../components/BaseComponent.jsx';
+import AlertLink from '../components/AlertLink.jsx';
+import AppNotification from '../components/AppNotification.jsx';
+import SpeechRecognition from 'react-speech-recognition';
+import Input from '../components/Input.jsx';
+import TextArea from '../components/TextArea.jsx';
+import SlideTags from '../components/SlideTags.jsx';
+import ClearingDiv from '../components/ClearingDiv.jsx';
+import FileReview from '../components/FileReview.jsx';
+import Clock from '../components/Clock.jsx';
+import Img from '../components/Image.jsx';
+import Message from '../components/Message.jsx';
+import Comment from '../components/Comment.jsx';
+import {Comments} from '../../api/comments/comments.js';
+import {createComment, addressComment} from '../../api/comments/methods.js';
+import {setRespondingComment} from '../../api/talks/methods.js';
 
 // Control-log.
-import { Logger } from "meteor/ostrio:logger";
-import { LoggerConsole } from "meteor/ostrio:loggerconsole";
+import {Logger} from 'meteor/ostrio:logger';
+import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
 
 class FacilitatePage extends BaseComponent {
   constructor(props) {
@@ -45,29 +45,29 @@ class FacilitatePage extends BaseComponent {
       redirectTo: null,
       timeout: 50 * 1000, // ms -> once per minute
       // timeout: 15 * 1000, // testing with lower
-      sorter: "flag",
-      filter: "flag",
+      sorter: 'flag',
+      filter: 'flag',
       invert: true,
-      bySlide: "",
-      byAuth: "",
-      byTag: ""
+      bySlide: '',
+      byAuth: '',
+      byTag: '',
     };
   }
 
   log = data => {
     //console.log(data);
-    const { reviewer, talk } = this.props;
-    if (typeof data === "string") {
+    const {reviewer, talk} = this.props;
+    if (typeof data === 'string') {
       this.logger.info(
-        JSON.stringify({ data, reviewer, talk, time: Date.now() })
+        JSON.stringify({data, reviewer, talk, time: Date.now()}),
       );
     } else if (Object.keys.length > 0) {
       this.logger.info(
-        JSON.stringify({ ...data, reviewer, talk, time: Date.now() })
+        JSON.stringify({...data, reviewer, talk, time: Date.now()}),
       );
     } else {
       this.logger.info(
-        JSON.stringify({ data, reviewer, talk, time: Date.now() })
+        JSON.stringify({data, reviewer, talk, time: Date.now()}),
       );
     }
   };
@@ -91,39 +91,52 @@ class FacilitatePage extends BaseComponent {
       {
         audio: {
           mandatory: {
-            googEchoCancellation: "false",
-            googAutoGainControl: "false",
-            googNoiseSuppression: "false",
-            googHighpassFilter: "false"
+            googEchoCancellation: 'false',
+            googAutoGainControl: 'false',
+            googNoiseSuppression: 'false',
+            googHighpassFilter: 'false',
           },
-          optional: []
-        }
+          optional: [],
+        },
       },
       gotStream,
       function(e) {
-        alert("Error getting audio");
+        alert('Error getting audio');
         console.log(e);
-      }
+      },
     );
 
     window.audioContext = new AudioContext();
+  };
+
+  handleTeardownAudio = () => {
+    if (audioRecorder && audioContext) {
+      window.audioContext = null;
+      window.audioRecorder = null;
+      window.audioRecorder.clear();
+      window.setRecording(false);
+    }
   };
 
   componentDidMount = () => {
     this.handleSetupAudio();
   };
 
+  componentWillUnmounta = () => {
+    this.handleTeardownAudio();
+  };
+
   addComment = () => {
-    const { talk } = this.props;
+    const {talk} = this.props;
     const cText = this.inRef.current.value.trim();
-    const priv = cText.includes("#private");
+    const priv = cText.includes('#private');
     const commentFields = {
-      author: "audience",
+      author: 'audience',
       content: cText,
       talk: talk._id,
-      discuss: ["audience"],
+      discuss: ['audience'],
       userOwn: false,
-      slides: []
+      slides: [],
     };
 
     // save the current comment.
@@ -134,134 +147,129 @@ class FacilitatePage extends BaseComponent {
         console.error(err);
       } else {
         this.clearText();
-        addressComment.call({ commentId: talk.active }); // complete current comment
-        setRespondingComment.call({ talkId: talk._id, commentId: res });
+        addressComment.call({commentId: talk.active}); // complete current comment
+        setRespondingComment.call({talkId: talk._id, commentId: res});
       }
     });
   };
 
   clearText = () => {
     const textarea = this.inRef.current;
-    textarea.value = "";
+    textarea.value = '';
     textarea.focus();
   };
 
   setByAuth = e => {
-    const { byAuth } = this.state;
-    const newAuth = e.target.getAttribute("data-auth");
+    const {byAuth} = this.state;
+    const newAuth = e.target.getAttribute('data-auth');
     if (newAuth && byAuth === newAuth) {
-      this.setState({ byAuth: "" });
+      this.setState({byAuth: ''});
     } else if (newAuth) {
-      this.setState({ byAuth: newAuth });
+      this.setState({byAuth: newAuth});
     }
   };
 
   clearByAuth = () => {
-    this.setState({ byAuth: "" });
+    this.setState({byAuth: ''});
   };
 
   setBySlide = e => {
-    const { bySlide } = this.state;
+    const {bySlide} = this.state;
     const newSlide = e.target.innerText.trim();
     if (newSlide && bySlide === newSlide) {
-      this.setState({ bySlide: "" });
+      this.setState({bySlide: ''});
     } else if (newSlide) {
-      this.setState({ bySlide: newSlide });
+      this.setState({bySlide: newSlide});
     }
   };
 
   clearBySlide = () => {
-    this.setState({ bySlide: "" });
+    this.setState({bySlide: ''});
   };
 
   // click on tag in comment
   setByTag = e => {
     e.preventDefault();
-    const { byTag } = this.state;
+    const {byTag} = this.state;
     const newTag = e.target.innerText.trim();
     if (newTag && byTag === newTag) {
-      this.setState({ byTag: "" });
+      this.setState({byTag: ''});
     } else if (newTag) {
-      this.setState({ byTag: newTag });
+      this.setState({byTag: newTag});
     }
   };
 
   clearByTag = () => {
-    this.setState({ byTag: "" });
+    this.setState({byTag: ''});
   };
 
   updateImage = fid => {
-    const link = Images.findOne({ _id: fid }).link("original", "//");
-    this.setState({ image: link });
+    const link = Images.findOne({_id: fid}).link('original', '//');
+    this.setState({image: link});
   };
 
   updateHoverImage = link => {
-    this.setState({ hoverImage: link, image: link });
+    this.setState({hoverImage: link, image: link});
   };
 
   handleSlideIn = e => {
-    const src = e.target.querySelector("img").src;
+    const src = e.target.querySelector('img').src;
     if (src) this.updateHoverImage(src);
   };
 
   handleSlideOut = e => {
-    this.setState({ hoverImage: false });
+    this.setState({hoverImage: false});
   };
 
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
-    const { images } = this.props;
-    const { control, invert, filter } = this.state;
-    const invFn = () => this.setState({ invert: !invert });
+    const {images} = this.props;
+    const {control, invert, filter} = this.state;
+    const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
-      return () => this.setState({ sorter: s, filter: f });
+      return () => this.setState({sorter: s, filter: f});
     };
 
-    const timeSort = setSort("created", "time");
-    const authSort = setSort(x => x.author.toLowerCase(), "auth");
-    const agreeSort = setSort(x => (x.agree || []).length, "agree");
-    const flagSort = setSort(x => (x.discuss || []).length, "flag");
+    const timeSort = setSort('created', 'time');
+    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
+    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
+    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
     const slideSort = setSort(
       x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
-      "slide"
+      'slide',
     );
 
     return (
       <div>
         <div className="facilitate-filter btn-m-group btns-group">
           <button
-            className={"btn btn-menu" + (filter === "flag" ? " active" : "")}
-            onClick={flagSort}
-          >
+            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
+            onClick={flagSort}>
             discuss
           </button>
           <button
             onClick={timeSort}
-            className={"btn btn-menu" + (filter === "time" ? " active" : "")}
-          >
+            className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
             time
           </button>
           <button
-            className={"btn btn-menu" + (filter === "slide" ? " active" : "")}
-            onClick={slideSort}
-          >
+            className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
+            onClick={slideSort}>
             slide
           </button>
           <button
-            className={"btn btn-menu" + (filter === "auth" ? " active" : "")}
-            onClick={authSort}
-          >
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
             auth
           </button>
           <button
-            className={"btn btn-menu" + (filter === "agree" ? " active" : "")}
-            onClick={agreeSort}
-          >
+            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
+            onClick={agreeSort}>
             agree
           </button>
-          <button className={"btn btn-menu"} onClick={invFn}>
-            {invert ? "▼" : "▲"}
+          <button className={'btn btn-menu'} onClick={invFn}>
+            {invert ? '▼' : '▲'}
           </button>
         </div>
         {filterer}
@@ -270,12 +278,12 @@ class FacilitatePage extends BaseComponent {
   };
 
   renderFiles = () => {
-    const { images } = this.props;
+    const {images} = this.props;
     return images.map((f, key) => {
-      let link = Images.findOne({ _id: f._id }).link("original", "//");
+      let link = Images.findOne({_id: f._id}).link('original', '//');
       return (
         <FileReview
-          key={"file-" + key}
+          key={'file-' + key}
           iter={key + 1}
           fileUrl={link}
           fileId={f._id}
@@ -291,9 +299,9 @@ class FacilitatePage extends BaseComponent {
   renderFilter = () => {
     const submit = this.renderSubmit();
 
-    let { control, byAuth, bySlide, byTag } = this.state;
-    const sType = bySlide === "general" ? "scope" : "slide";
-    const { browserSupportsSpeechRecognition } = this.props;
+    let {control, byAuth, bySlide, byTag} = this.state;
+    const sType = bySlide === 'general' ? 'scope' : 'slide';
+    const {browserSupportsSpeechRecognition} = this.props;
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
 
     return (
@@ -307,8 +315,8 @@ class FacilitatePage extends BaseComponent {
   };
 
   renderCommentData = (arr, replies, c, i) => {
-    const { sessionId, comments, reviewer, setModal, clearModal } = this.props;
-    const { sorter, invert, byAuth, bySlide, byTag, control } = this.state;
+    const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
+    const {sorter, invert, byAuth, bySlide, byTag, control} = this.state;
     c.last = i === arr.length - 1; // no final hr
     c.replies = replies.filter(r => r.replyTo == c._id);
     return {
@@ -330,20 +338,20 @@ class FacilitatePage extends BaseComponent {
       handleSlideOut: this.handleSlideOut,
       clearButton: this.clearButton,
       clearBySlide: this.clearBySlide,
-      setBySlide: this.setBySlide
+      setBySlide: this.setBySlide,
     };
   };
 
   renderComments = () => {
-    const { sorter, invert, byAuth, bySlide, byTag, control } = this.state;
-    const { talk, comments, reviewer, setModal, clearModal } = this.props;
+    const {sorter, invert, byAuth, bySlide, byTag, control} = this.state;
+    const {talk, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
       let csort = _.orderBy(
         comments,
-        [sorter, "created"],
-        [invert ? "desc" : "asc", "asc"]
+        [sorter, 'created'],
+        [invert ? 'desc' : 'asc', 'asc'],
       );
 
       // Clean - filter out active responding comment.
@@ -376,7 +384,7 @@ class FacilitatePage extends BaseComponent {
 
       if (bySlide) {
         csort = csort.filter(c => {
-          const general = [{ slideNo: "general" }];
+          const general = [{slideNo: 'general'}];
           const slides = c.slides.length > 0 ? c.slides : general;
           const slideNos = slides.map(x => x.slideNo);
           return slideNos.includes(bySlide);
@@ -388,15 +396,15 @@ class FacilitatePage extends BaseComponent {
       }
 
       const items = csort.map((c, i) =>
-        this.renderCommentData(csort, replies, c, i)
+        this.renderCommentData(csort, replies, c, i),
       );
 
       const addressedItems = addressed.map((c, i) =>
-        this.renderCommentData(addressed, replies, c, i)
+        this.renderCommentData(addressed, replies, c, i),
       );
 
       const unmarkedItems = unmarked.map((c, i) =>
-        this.renderCommentData(unmarked, replies, c, i)
+        this.renderCommentData(unmarked, replies, c, i),
       );
 
       return (
@@ -439,11 +447,11 @@ class FacilitatePage extends BaseComponent {
   };
 
   handleUpload = blob => {
-    let { talk } = this.props;
-    const handleToast = ({ msg, desc, icon, closeTime }) => {
+    let {talk} = this.props;
+    const handleToast = ({msg, desc, icon, closeTime}) => {
       if (!closeTime) closeTime = 4000;
       toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
-        autoClose: closeTime
+        autoClose: closeTime,
       });
     };
 
@@ -459,12 +467,12 @@ class FacilitatePage extends BaseComponent {
       meta: {
         userId: Meteor.userId(),
         talkId: talk._id,
-        target: talk.active || false
+        target: talk.active || false,
       },
       //transport: 'http',
-      streams: "dynamic",
-      chunkSize: "dynamic",
-      allowWebWorkers: true
+      streams: 'dynamic',
+      chunkSize: 'dynamic',
+      allowWebWorkers: true,
     };
 
     // console.log(soundArgs);
@@ -472,26 +480,26 @@ class FacilitatePage extends BaseComponent {
     let uploadInstance = Sounds.insert(soundArgs, false);
     // dont autostart the uploadg
 
-    uploadInstance.on("start", (err, file) => {
+    uploadInstance.on('start', (err, file) => {
       //console.log('started', file.name);
     });
 
     // TODO set status on talk item that uploading is done.
-    uploadInstance.on("end", (err, file) => {
+    uploadInstance.on('end', (err, file) => {
       if (!err) {
         {
           // console.log("file:", file);
-          const { name, size } = file;
-          this.log({ name, size });
+          const {name, size} = file;
+          this.log({name, size});
         }
 
-        audioRecorder.clear();
+        window.audioRecorder.clear();
       } else {
         console.error(err);
       }
     });
 
-    uploadInstance.on("error", (err, file) => {
+    uploadInstance.on('error', (err, file) => {
       if (err) console.error(err, file);
     });
 
@@ -499,12 +507,12 @@ class FacilitatePage extends BaseComponent {
   };
 
   clearRespond = () => {
-    const { talk } = this.props;
-    setRespondingComment.call({ talkId: talk._id, commentId: "" });
+    const {talk} = this.props;
+    setRespondingComment.call({talkId: talk._id, commentId: ''});
   };
 
   renderRespond = () => {
-    const { talk } = this.props;
+    const {talk} = this.props;
     if (!talk.active) return;
     const respond = Comments.findOne(talk.active);
     if (!respond) return;
@@ -534,8 +542,8 @@ class FacilitatePage extends BaseComponent {
   // <canvas id="wavedisplay" width="1024" height="500" />
 
   renderSounds = () => {
-    const { recording } = this.state;
-    const classRecord = recording ? "recording" : "waiting";
+    const {recording} = this.state;
+    const classRecord = recording ? 'recording' : 'waiting';
     return (
       <div id="sound" className="clearfix">
         <div id="record" className={classRecord} onClick={this.toggleRecording}>
@@ -551,30 +559,30 @@ class FacilitatePage extends BaseComponent {
       this.handleSetupAudio();
     }
 
-    const { recording, recInterval, timeout } = this.state;
+    const {recording, recInterval, timeout} = this.state;
     const newRecord = !recording;
     window.setRecording(newRecord);
-    this.setState({ recording: newRecord });
+    this.setState({recording: newRecord});
 
     if (newRecord) {
       const newInterval = setInterval(this.handleAudioUpload, timeout);
-      this.setState({ recInterval: newInterval });
+      this.setState({recInterval: newInterval});
     } else if (recInterval) {
       clearInterval(recInterval);
-      this.setState({ recInterval: null });
+      this.setState({recInterval: null});
     }
   };
 
   blobToFile = blob => {
-    const { talk } = this.props;
+    const {talk} = this.props;
     const lastModified = Date.now();
     const name = `${talk.name} ${lastModified}.wav`;
-    const type = "audio/wav";
-    return new File([blob], name, { lastModified, type });
+    const type = 'audio/wav';
+    return new File([blob], name, {lastModified, type});
   };
 
   handleDiscussAudio = () => {
-    const { recording } = this.state;
+    const {recording} = this.state;
     if (recording) {
       this.handleAudioUpload();
     } else {
@@ -587,12 +595,12 @@ class FacilitatePage extends BaseComponent {
       window.audioRecorder.exportMonoWAV(this.handleUpload);
       // window.audioRecorder.exportWAV(this.handleUpload);
     } else {
-      console.error("cant access audio recorder!");
+      console.error('cant access audio recorder!');
     }
   };
 
   render() {
-    const { images } = this.props;
+    const {images} = this.props;
     const context = this.renderSounds();
     const respond = this.renderRespond();
     const comments = this.renderComments();
