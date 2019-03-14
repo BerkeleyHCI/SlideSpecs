@@ -83,6 +83,7 @@ class FacilitatePage extends BaseComponent {
 
   handleTeardownAudio = () => {
     if (audioRecorder && audioContext) {
+      console.log('ending audio services.');
       window.audioContext = null;
       window.audioRecorder = null;
       window.audioRecorder.clear();
@@ -94,7 +95,7 @@ class FacilitatePage extends BaseComponent {
     this.handleSetupAudio();
   };
 
-  componentWillUnmounta = () => {
+  componentWillUnmount = () => {
     this.handleTeardownAudio();
   };
 
@@ -329,6 +330,9 @@ class FacilitatePage extends BaseComponent {
       // Clean - filter out active responding comment.
       csort = csort.filter(c => c._id !== talk.active);
 
+      // Filter out transcript comments.
+      csort = csort.filter(c => c.author != 'transcript');
+
       // Filtering 'reply' comments into array.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
@@ -447,8 +451,8 @@ class FacilitatePage extends BaseComponent {
       allowWebWorkers: true,
     };
 
-    // console.log(soundArgs);
     // dont autostart the upload
+    console.log(soundArgs.meta);
     let uploadInstance = Sounds.insert(soundArgs, false);
 
     uploadInstance.on('start', (err, file) => {
@@ -492,7 +496,7 @@ class FacilitatePage extends BaseComponent {
       <div>
         <h2> discussing </h2>
         <div id="comments-list" className="alert">
-          <Comment {...respond} focused={true} last={true} />
+          <Comment {...respond} last={true} />
         </div>
       </div>
     );

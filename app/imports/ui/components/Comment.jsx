@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ReactAudioPlayer from 'react-audio-player';
+import Markdown from 'react-markdown';
+import {toast} from 'react-toastify';
+
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import SlideTags from '../components/SlideTags.jsx';
-import Markdown from 'react-markdown';
-import {toast} from 'react-toastify';
+
 import {setRespondingComment} from '../../api/talks/methods.js';
+import {Sounds} from '../../api/sounds/sounds.js';
 import {
   agreeComment,
   discussComment,
@@ -15,6 +19,21 @@ import {
   addressComment,
   completeComment,
 } from '../../api/comments/methods.js';
+
+const CommentButton = ({_id, reviewer, icon, txt, handleClick, master}) => {
+  return (
+    <button
+      title={txt}
+      data-id={_id}
+      data-auth={reviewer}
+      data-toggle="tooltip"
+      data-placement="top"
+      onClick={handleClick}
+      className={`btn btn-empty btn-list-item ${master && 'btn-user'}`}>
+      <i className={'fa fa-' + icon} />
+    </button>
+  );
+};
 
 class Comment extends BaseComponent {
   constructor(props) {
@@ -135,11 +154,10 @@ class Comment extends BaseComponent {
   handleEdit = () => {
     const newContent = this.editRef.current.value.trim();
     const {author, discuss, reviewer, _id} = this.props;
-    const sysDiscuss = discuss.includes('system');
     const editFields = {
-      author: sysDiscuss ? author : reviewer, // make globally editable
       commentId: _id,
       newContent,
+      author,
     };
 
     this.log({type: 'edit', ...editFields});
@@ -164,42 +182,42 @@ class Comment extends BaseComponent {
 
   handleAgree = () => {
     const {reviewer, _id} = this.props;
-    const commentFields = {
-      author: reviewer,
-      commentId: _id,
-    };
-
-    toast(() => (
-      <AppNotification
-        msg="Agreed"
-        desc="Agreed with comment."
-        icon="thumbs-up"
-      />
-    ));
-
-    this.log({type: 'agree', ...commentFields});
     if (reviewer && _id) {
+      const commentFields = {
+        author: reviewer,
+        commentId: _id,
+      };
+
+      toast(() => (
+        <AppNotification
+          msg="Agreed"
+          desc="Agreed with comment."
+          icon="thumbs-up"
+        />
+      ));
+
+      this.log({type: 'agree', ...commentFields});
       agreeComment.call(commentFields);
     }
   };
 
   handleDiscuss = () => {
     const {reviewer, _id} = this.props;
-    const commentFields = {
-      author: reviewer,
-      commentId: _id,
-    };
-
-    toast(() => (
-      <AppNotification
-        msg="Marked"
-        desc="Marked for discussion."
-        icon="comments"
-      />
-    ));
-
-    this.log({type: 'discuss', ...commentFields});
     if (reviewer && _id) {
+      const commentFields = {
+        author: reviewer,
+        commentId: _id,
+      };
+
+      toast(() => (
+        <AppNotification
+          msg="Marked"
+          desc="Marked for discussion."
+          icon="comments"
+        />
+      ));
+
+      this.log({type: 'discuss', ...commentFields});
       discussComment.call(commentFields);
     }
   };
@@ -233,18 +251,9 @@ class Comment extends BaseComponent {
       setRespondingComment.call(commentFields);
     }
 
-    window.audioRecorder;
-
     toast(() => (
       <AppNotification msg="Ready" desc="Discussion comment set." icon="star" />
     ));
-  };
-
-  extractCommentData = x => {
-    return {
-      _id: x.getAttribute('data-id'),
-      auth: x.getAttribute('data-auth'),
-    };
   };
 
   pubButtons = [
@@ -279,13 +288,6 @@ class Comment extends BaseComponent {
     txt: 'delete',
   };
 
-  activeButton = {
-    handleClick: this.handleActiveComment,
-    // master: true,
-    icon: 'star',
-    txt: 'discuss',
-  };
-
   addressButton = {
     handleClick: this.handleAddress,
     master: true,
@@ -295,12 +297,17 @@ class Comment extends BaseComponent {
 
   completeButton = {
     handleClick: this.handleComplete,
+    master: true,
     icon: this.props.completed ? 'times' : 'check',
     txt: this.props.completed ? 'undo' : 'address',
-    //master: true,
   };
 
-  //privButtons = [this.editButton, this.trashButton, this.talkButton];
+  activeButton = {
+    handleClick: this.handleActiveComment,
+    icon: 'star',
+    txt: 'discuss',
+  };
+
   privButtons = [this.editButton, this.trashButton];
 
   renderMeta = (tag, users) => {
@@ -310,25 +317,6 @@ class Comment extends BaseComponent {
           <strong> {tag}: </strong>
           {users.join(', ')}
         </span>
-      )
-    );
-  };
-
-  renderCommentButton = ({icon, key, txt, handleClick, master}) => {
-    const {focused, reviewer, _id} = this.props;
-    return (
-      !focused && (
-        <button
-          key={key}
-          title={txt}
-          data-id={_id}
-          data-auth={reviewer}
-          data-toggle="tooltip"
-          data-placement="top"
-          onClick={handleClick}
-          className={`btn btn-empty btn-list-item ${master && 'btn-user'}`}>
-          <i className={'fa fa-' + icon} />
-        </button>
       )
     );
   };
@@ -343,14 +331,14 @@ class Comment extends BaseComponent {
       agree,
       active,
       discuss,
+      focused,
       last,
-      log,
       depth,
-      feedback,
       reviewer,
       replies,
       isReply,
       userOwn,
+      sounds,
       activeComment,
       allReplies,
       discussView,
@@ -371,8 +359,6 @@ class Comment extends BaseComponent {
     let bData = [];
     if (discussView && depth == 0) {
       bData = [this.activeButton, this.addressButton];
-    } else if (feedback) {
-      bData = [this.completeButton];
     } else if (discussView) {
       bData = [this.talkButton];
     } else if (sysDiscuss) {
@@ -396,17 +382,20 @@ class Comment extends BaseComponent {
       />
     );
 
-    const replyProps = replies.map((c, i) => {
-      return {
-        ...c,
-        isReply: true,
-        key: i + c._id,
-        depth: depth + 1,
-        replies: allReplies.filter(r => r.replyTo == c._id),
-        active: c._id === activeComment,
-        last: false,
-      };
-    });
+    // always sort replies by time.
+    const replyProps = replies
+      .sort((a, b) => a.created > b.created)
+      .map((c, i) => {
+        return {
+          ...c,
+          isReply: true,
+          key: i + c._id,
+          depth: depth + 1,
+          replies: allReplies.filter(r => r.replyTo == c._id),
+          active: c._id === activeComment,
+          last: false,
+        };
+      });
 
     return (
       <div>
@@ -419,12 +408,17 @@ class Comment extends BaseComponent {
             (active ? ' active-comment' : '') +
             (isReply ? ` reply-comment-${depth}` : '')
           }>
-          {bData.length > 0 && (
+          {!focused && bData.length > 0 && (
             <div className="hover-menu">
               <div className="btn-group btns-empty">
-                {bData.map((button, i) =>
-                  this.renderCommentButton({...button, key: i}),
-                )}
+                {bData.map((button, i) => (
+                  <CommentButton
+                    reviewer={reviewer}
+                    _id={_id}
+                    {...button}
+                    key={i}
+                  />
+                ))}
               </div>
             </div>
           )}
@@ -454,6 +448,8 @@ class Comment extends BaseComponent {
             source={content}
           />
 
+          {sounds.map(this.renderAudio)}
+
           {!last && <hr />}
         </div>
 
@@ -464,6 +460,14 @@ class Comment extends BaseComponent {
         </div>
       </div>
     );
+  };
+
+  renderAudio = audio => {
+    const sound = Sounds.findOne(audio);
+    if (sound) {
+      const url = sound.link('original', '//');
+      return <ReactAudioPlayer key={audio} src={url} controls />;
+    }
   };
 
   renderEditor = () => {
@@ -500,6 +504,7 @@ Comment.defaultProps = {
   allReplies: [],
   isReply: false,
   replies: [],
+  sounds: [],
   depth: 0,
 };
 
