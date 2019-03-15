@@ -26,7 +26,10 @@ brew cask install libreoffice # soffice
 To export data from production, use [`export.sh`](./export.sh). Move the files
 in a location specified in `import/api/storagePath.js`. Import the mongoDB
 records into a running meteor application with `mongoimport`, shown in the
-[`import.sh`](./import.sh) script.
+[`import.sh`](./import.sh) script. Copy from remote server:
+
+    scp -i ~/.ssh/bayscope \
+    bayscope2.eecs.berkeley.edu:/Users/jwrnr/Code/slidespecs-research/data.tar.bz2 .
 
 ##### Linting
 
