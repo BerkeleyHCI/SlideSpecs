@@ -7,6 +7,7 @@ declare -a arr=("users" "Talks" "Comments" "Events" "files" "images" "sounds")
 data="../db-data $NOW"
 mkdir -pv "$data"
 for i in "${arr[@]}"; do
+    echo "Processing $i"
     mongoexport --port 3001 --db meteor --collection "$i" --out "$data/$i.json"
 done
 
@@ -17,6 +18,6 @@ cp -Rv "$files" "$dfiles"
 
 # export and zip
 dump="../db-dump-$NOW.tar.gz"
-tar -czf "$dump" "$data" "$dfiles"
+tar -czf "$dump" "$data" "$dfile"
 echo "Export done."
 
