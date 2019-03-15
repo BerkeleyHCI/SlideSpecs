@@ -12,7 +12,7 @@ for i in "${arr[@]}"; do
 done
 
 # copy files/images (hardcoded path)
-if [ $1 != "--skip-files" ]; then
+if [[ $1 != "--skip-files" ]]; then
     files="$HOME/Downloads/research"
     dfile="../db-files $NOW"
     mkdir -pv "$dfile"
