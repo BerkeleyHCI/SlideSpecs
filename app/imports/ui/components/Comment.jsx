@@ -474,24 +474,24 @@ class Comment extends BaseComponent {
   };
 
   renderAudio = audio => {
-    const {_id} = this.props;
     let sound = Sounds.findOne(audio);
     if (sound) {
       const url = sound.link('original', '//');
       return <ReactAudioPlayer key={audio} src={url} controls />;
     }
 
-    sound = Sounds.findOne({'meta.commentId': _id});
-    if (sound) {
-      const url = sound.link('original', '//');
-      return <ReactAudioPlayer key={audio} src={url} controls />;
-    }
+    //const {_id} = this.props;
+    //sound = Sounds.findOne({'meta.commentId': _id});
+    //if (sound) {
+    //const url = sound.link('original', '//');
+    //return <ReactAudioPlayer key={audio} src={url} controls />;
+    //}
 
-    sound = Sounds.findOne({'meta.target': _id});
-    if (sound) {
-      const url = sound.link('original', '//');
-      return <ReactAudioPlayer key={audio} src={url} controls />;
-    }
+    //sound = Sounds.findOne({'meta.target': _id});
+    //if (sound) {
+    //const url = sound.link('original', '//');
+    //return <ReactAudioPlayer key={audio} src={url} controls />;
+    //}
   };
 
   renderEditor = () => {
