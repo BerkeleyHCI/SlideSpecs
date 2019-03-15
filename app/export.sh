@@ -14,7 +14,7 @@ done
 # copy files/images (hardcoded path)
 files="/$HOME/Downloads/research"
 dfile="../db-files $NOW"
-cp -Rv "$files" "$dfiles"
+cp -Rv "$files/*" "$dfiles"
 
 # export and zip
 dump="../db-dump-$NOW.tar.gz"
