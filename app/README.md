@@ -14,12 +14,21 @@ open http://localhost:3000
 
 ##### PDF Conversion (osx)
 
-```
+```bash
 brew install imagemagick      # convert
 brew cask install libreoffice # soffice
 ```
 
 ### Scripts
+
+##### Data Import/Export
+
+To export data from production, use [`export.sh`](./export.sh). Move the files
+in a location specified in `import/api/storagePath.js`. Import the mongoDB
+records into a running meteor application with `mongoimport`, shown in the
+[`import.sh`](./import.sh) script.
+
+##### Linting
 
 To lint:
 
@@ -81,4 +90,3 @@ server {
 }
 ```
 
-git update-index --assume-unchanged private/slidespecs.json
