@@ -17,7 +17,7 @@ dfile="../db-files $NOW"
 cp -Rv "$files/*" "$dfiles"
 
 # export and zip
-dump="../db-dump-$NOW.tar.gz"
+dump="../data.tar.gz"
 tar -czf "$dump" "$data" "$dfile"
 echo "Export done."
 
