@@ -28,8 +28,7 @@ in a location specified in `import/api/storagePath.js`. Import the mongoDB
 records into a running meteor application with `mongoimport`, shown in the
 [`import.sh`](./import.sh) script. Copy from remote server:
 
-    scp -i ~/.ssh/bayscope \
-    bayscope2.eecs.berkeley.edu:/Users/jwrnr/Code/slidespecs-research/data.tar.bz2 .
+     scp -i ~/.ssh/bayscope slidespecs.berkeley.edu:/Users/jwrnr/Code/slidespecs-research/data.tar.gz .
 
 ##### Linting
 
