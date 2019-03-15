@@ -12,13 +12,20 @@ for i in "${arr[@]}"; do
 done
 
 # copy files/images (hardcoded path)
-files="/$HOME/Downloads/research"
-dfile="../db-files $NOW"
-mkdir -pv "$dfile"
-cp -Rv "$files/*" "$dfile/"
+if [ $1 != "--skip-files" ]; then
+    files="$HOME/Downloads/research"
+    dfile="../db-files $NOW"
+    mkdir -pv "$dfile"
+    cp -av "$files/." "$dfile/"
+fi
 
 # export and zip
+echo "Compressing."
 dump="../data.tar.gz"
-tar -czf "$dump" "$data" "$dfile"
+if [[ -n $dfile ]]; then
+    tar -czf "$dump" "$data" "$dfile"
+else
+    tar -czf "$dump" "$data"
+fi
 echo "Export done."
 
