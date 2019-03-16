@@ -10,6 +10,7 @@ for i in `find "$1" -name '*.json'`; do
     mongoimport -h localhost:3001 --db meteor \
         --collection "$base" \
         --type json \
-        --file "$i" --jsonArray
+        --file "$i"
 done
+
 
