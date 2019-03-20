@@ -1,7 +1,7 @@
-import { Mongo } from "meteor/mongo";
-import { SimpleSchema } from "meteor/aldeed:simple-schema";
+import {Mongo} from 'meteor/mongo';
+import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
-export const Talks = new Mongo.Collection("Talks");
+export const Talks = new Mongo.Collection('Talks');
 
 Talks.deny({
   insert() {
@@ -12,16 +12,16 @@ Talks.deny({
   },
   remove() {
     return true;
-  }
+  },
 });
 
 Talks.schema = new SimpleSchema({
-  name: { type: String },
-  created: { type: Date },
-  progress: { type: Number, optional: true }, // for uploads
-  secret: { type: String, regEx: SimpleSchema.RegEx.Id },
-  userId: { type: String, regEx: SimpleSchema.RegEx.Id },
-  active: { type: String, optional: true }
+  name: {type: String},
+  created: {type: Date},
+  progress: {type: Number, optional: true}, // for uploads
+  secret: {type: String, regEx: SimpleSchema.RegEx.Id},
+  userId: {type: String, regEx: SimpleSchema.RegEx.Id},
+  active: {type: [String], defaultValue: [], optional: true},
 });
 
 Talks.attachSchema(Talks.schema);

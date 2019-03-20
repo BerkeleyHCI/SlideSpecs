@@ -33,8 +33,8 @@ class FacilitatePage extends BaseComponent {
       recInterval: null,
       recording: false,
       redirectTo: null,
-      timeout: 50 * 1000, // ms -> once per minute
-      // timeout: 15 * 1000, // testing with lower
+      timeout: 20 * 1000, // testing with lower
+      //timeout: 45 * 1000, // ms -> once per minute
       sorter: 'flag',
       filter: 'flag',
       invert: true,
@@ -63,10 +63,10 @@ class FacilitatePage extends BaseComponent {
       {
         audio: {
           mandatory: {
-            googEchoCancellation: 'false',
-            googAutoGainControl: 'false',
-            googNoiseSuppression: 'false',
-            googHighpassFilter: 'false',
+            googEchoCancellation: 'true',
+            googAutoGainControl: 'true',
+            googNoiseSuppression: 'true',
+            googHighpassFilter: 'true',
           },
           optional: [],
         },
@@ -93,6 +93,7 @@ class FacilitatePage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleSetupAudio();
+    this.updateResponding();
   };
 
   componentWillUnmount = () => {
@@ -120,7 +121,6 @@ class FacilitatePage extends BaseComponent {
         console.error(err);
       } else {
         this.clearText();
-        addressComment.call({commentId: talk.active}); // complete current comment
         setRespondingComment.call({talkId: talk._id, commentId: res});
       }
     });
@@ -194,11 +194,13 @@ class FacilitatePage extends BaseComponent {
     this.setState({hoverImage: false});
   };
 
+  updateResponding = () => {};
+
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
     const {images} = this.props;
-    const { invert, filter} = this.state;
+    const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
       return () => this.setState({sorter: s, filter: f});
@@ -272,7 +274,7 @@ class FacilitatePage extends BaseComponent {
   renderFilter = () => {
     const submit = this.renderSubmit();
 
-    let { byAuth, bySlide, byTag} = this.state;
+    let {byAuth, bySlide, byTag} = this.state;
     const sType = bySlide === 'general' ? 'scope' : 'slide';
     const {browserSupportsSpeechRecognition} = this.props;
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
@@ -289,7 +291,7 @@ class FacilitatePage extends BaseComponent {
 
   renderCommentData = (arr, replies, c, i) => {
     const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
-    const {sorter, invert, byAuth, bySlide, byTag } = this.state;
+    const {sorter, invert, byAuth, bySlide, byTag} = this.state;
     c.last = i === arr.length - 1; // no final hr
     c.replies = replies.filter(r => r.replyTo == c._id);
     return {
@@ -305,7 +307,6 @@ class FacilitatePage extends BaseComponent {
       commentRef: this.inRef,
       handleTag: this.setByTag,
       handleAuthor: this.setByAuth,
-      handleAudioUpload: this.handleDiscussAudio,
       bySlide: bySlide,
       handleSlideIn: this.handleTagIn,
       handleSlideOut: this.handleSlideOut,
@@ -327,8 +328,8 @@ class FacilitatePage extends BaseComponent {
         [invert ? 'desc' : 'asc', 'asc'],
       );
 
-      // Clean - filter out active responding comment.
-      csort = csort.filter(c => c._id !== talk.active);
+      // Clean - filter out active responding comments.
+      csort = csort.filter(c => talk.active.indexOf(c._id) < 0);
 
       // Filter out transcript comments.
       csort = csort.filter(c => c.author != 'transcript');
@@ -441,6 +442,7 @@ class FacilitatePage extends BaseComponent {
     let soundArgs = {
       file,
       meta: {
+        created: Date.now(),
         userId: Meteor.userId(),
         talkId: talk._id,
         target: talk.active || '',
@@ -489,14 +491,21 @@ class FacilitatePage extends BaseComponent {
 
   renderRespond = () => {
     const {talk} = this.props;
-    if (!talk.active) return;
-    const respond = Comments.findOne(talk.active);
-    if (!respond) return;
+    const respond = Comments.find({_id: {$in: talk.active}}).fetch();
+    if (!respond.length) return null;
     return (
       <div>
         <h2> discussing </h2>
         <div id="comments-list" className="alert">
-          <Comment {...respond} last={true} />
+          {respond.map((i, iter) => (
+            <Comment
+              {...i}
+              key={`discuss-${iter}`}
+              iter={iter}
+              facilitateView={true}
+              responding={true}
+            />
+          ))}
         </div>
       </div>
     );
@@ -540,14 +549,35 @@ class FacilitatePage extends BaseComponent {
     window.setRecording(newRecord);
     this.setState({recording: newRecord});
 
+    let msg;
     if (newRecord) {
       const newInterval = setInterval(this.handleAudioUpload, timeout);
       this.setState({recInterval: newInterval});
+      toast(() => (
+        <AppNotification
+          msg={'mic on'}
+          desc={'Recording on.'}
+          icon={'microphone'}
+        />
+      ));
     } else if (recInterval) {
       clearInterval(recInterval);
       this.setState({recInterval: null});
+      toast(() => (
+        <AppNotification
+          msg={'mic off'}
+          desc={'Recording off.'}
+          icon={'times'}
+        />
+      ));
     }
   };
+
+  // blob/fle conversion
+  // https://stackoverflow.com/questions/27159179/
+  //blob.lastModified = lastModified;
+  //blob.name = name;
+  //blob.type = type;
 
   blobToFile = blob => {
     const {talk} = this.props;
@@ -555,15 +585,6 @@ class FacilitatePage extends BaseComponent {
     const name = `${talk.name} ${lastModified}.wav`;
     const type = 'audio/wav';
     return new File([blob], name, {lastModified, type});
-  };
-
-  handleDiscussAudio = () => {
-    const {recording} = this.state;
-    if (recording) {
-      this.handleAudioUpload();
-    } else {
-      this.toggleRecording(); // enable mic.
-    }
   };
 
   handleAudioUpload = () => {

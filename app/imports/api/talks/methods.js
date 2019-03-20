@@ -98,11 +98,35 @@ export const setRespondingComment = new ValidatedMethod({
   }).validator(),
   run({talkId, commentId}) {
     const talk = Talks.findOne(talkId);
-    if (talk) {
-      Talks.update(talkId, {$set: {active: commentId}});
-    } else {
-      throw new Meteor.Error('api.sessions', 'Talk does not exist.');
+    const comment = Comments.findOne(commentId);
+    if (!comment || !talk) {
+      throw new Meteor.Error('api.talks', 'Talk/comment not found.');
+      console.error(comment, talk, commentId, talkId);
+      return false;
     }
+
+    let data;
+    if (!talk.active) {
+      data = [];
+    } else if (
+      typeof talk.active === 'string' ||
+      talk.active instanceof String
+    ) {
+      data = [talk.active];
+    } else {
+      data = talk.active;
+    }
+
+    let newActive;
+    const activeIdx = data.indexOf(commentId);
+    if (activeIdx >= 0) {
+      data.splice(activeIdx, 1);
+      newActive = data;
+    } else {
+      newActive = data.concat([commentId]);
+    }
+
+    Talks.update(talkId, {$set: {active: newActive}});
   },
 });
 
