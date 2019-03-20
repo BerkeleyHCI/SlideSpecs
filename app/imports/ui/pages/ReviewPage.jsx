@@ -15,7 +15,6 @@ import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment, completeComment} from '../../api/comments/methods.js';
-import {mergeSounds} from '../../api/sounds/methods.js';
 
 class ReviewPage extends BaseComponent {
   constructor(props) {
@@ -50,7 +49,7 @@ class ReviewPage extends BaseComponent {
   handleGenerate = () => {
     const {talk} = this.props;
     console.log('starting generation');
-    mergeSounds.call({talkId: talk._id});
+    Meteor.call('mergeSounds', talk._id);
   };
 
   handleSelectable = items => {
