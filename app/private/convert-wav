@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# convert-wav [newFile] file1.wav file2.wav ...
+
+# requirements
+# sox -- brew install sox
+
+sox "${@:2}" "$1" && echo "$1" && echo "convert-wav complete."

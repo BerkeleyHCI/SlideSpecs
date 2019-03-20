@@ -8,7 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.1.2",
     "@google-cloud/speech": "^2.3.0",
-    "@google-cloud/storage": "^2.4.2",
+    "@google-cloud/storage": "^2.4.3",
     "autoprefixer": "^8.6.5",
     "autosize": "^4.0.2",
     "bcrypt": "^2.0.1",
@@ -22,6 +22,7 @@
     "imagesloaded": "^4.1.4",
     "lodash": "^4.17.11",
     "meteor-node-stubs": "^0.4.1",
+    "mongo-express": "^0.51.2",
     "prop-types": "^15.6.1",
     "query-string": "^6.2.0",
     "react": "^16.4.2",

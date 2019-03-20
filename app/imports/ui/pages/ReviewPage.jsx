@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
 import {Images} from '../../api/images/images.js';
+import AlertLink from '../components/AlertLink.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
@@ -14,6 +15,7 @@ import Img from '../components/Image.jsx';
 import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment, completeComment} from '../../api/comments/methods.js';
+import {mergeSounds} from '../../api/sounds/methods.js';
 
 class ReviewPage extends BaseComponent {
   constructor(props) {
@@ -43,6 +45,12 @@ class ReviewPage extends BaseComponent {
       itemSelector: '.file-item',
     });
     mason.on('layoutComplete', this.handleSelectable);
+  };
+
+  handleGenerate = () => {
+    const {talk} = this.props;
+    console.log('starting generation');
+    mergeSounds.call({talkId: talk._id});
   };
 
   handleSelectable = items => {
@@ -257,7 +265,7 @@ class ReviewPage extends BaseComponent {
     const filterer = this.renderFilter();
 
     const {images} = this.props;
-    const { invert, filter} = this.state;
+    const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
       return () => this.setState({sorter: s, filter: f});
@@ -535,6 +543,9 @@ class ReviewPage extends BaseComponent {
             <div className="v-pad" />
           </div>
         </div>
+        <a onClick={this.handleGenerate} className="link-alert" href="#">
+          <div className="alert centered">generate transcription</div>
+        </a>
       </div>
     );
   };

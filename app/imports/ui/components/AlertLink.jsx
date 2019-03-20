@@ -36,10 +36,10 @@ AlertLink.propTypes = {
 };
 
 AlertLink.defaultProps = {
-  link: '/',
-  text: 'link',
   center: false,
   blank: false,
+  text: 'link',
+  link: '#',
 };
 
 export default AlertLink;
