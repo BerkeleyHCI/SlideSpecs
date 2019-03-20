@@ -594,7 +594,6 @@ class CommentPage extends BaseComponent {
             {fileList}
           </div>
         </div>
-
         {filtered.length > 0 && (
           <div>
             <div className="v-pad" />
@@ -602,16 +601,11 @@ class CommentPage extends BaseComponent {
               <SlideTags
                 slides={filtered}
                 bySlide={bySlide}
-                handleSlideIn={this.handleSlideIn}
-                handleSlideOut={this.handleSlideOut}
                 clearButton={this.clearButton}
-                clearBySlide={this.clearBySlide}
-                setBySlide={this.setBySlide}
               />
             </div>
           </div>
         )}
-
         {filtered.length == 0 && (
           <AlertLink
             center={true}
@@ -622,6 +616,11 @@ class CommentPage extends BaseComponent {
       </div>
     );
   };
+
+  //clearBySlide={this.clearBySlide}
+  //setBySlide={this.setBySlide}
+  //handleSlideIn={this.handleSlideIn}
+  //handleSlideOut={this.handleSlideOut}
 
   render() {
     const {images} = this.props;

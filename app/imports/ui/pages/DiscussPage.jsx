@@ -343,9 +343,9 @@ class DiscussPage extends BaseComponent {
 
   renderRespond = () => {
     const {talk} = this.props;
-    if (!talk.active) return;
-    const respond = Comments.findOne(talk.active);
-    if (!respond) return;
+    if (!talk.active) return null;
+    const respond = Comments.find({_id: {$in: talk.active}}).fetch();
+    if (!respond || !respond.length) return null;
     const props = {
       commentRef: this.inRef,
       handleTag: this.setByTag,
@@ -359,7 +359,15 @@ class DiscussPage extends BaseComponent {
     return (
       <div className="alert float-at-top discuss-comments">
         <div id="comments-list" className="alert no-margin">
-          <Comment {...respond} focused={true} {...props} last={true} />
+          {respond.map((i, iter) => (
+            <Comment
+              {...i}
+              {...props}
+              focused={true}
+              key={`discuss-${iter}`}
+              iter={iter}
+            />
+          ))}
         </div>
       </div>
     );

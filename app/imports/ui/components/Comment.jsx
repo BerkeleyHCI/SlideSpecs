@@ -255,7 +255,32 @@ class Comment extends BaseComponent {
     }
 
     toast(() => (
-      <AppNotification msg="Ready" desc="Discussion comment set." icon="star" />
+      <AppNotification msg="Set" desc="Discussion comment set." icon="star" />
+    ));
+  };
+
+  handleFinishComment = () => {
+    const {discuss, talk, _id} = this.props;
+    const commentFields = {
+      talkId: talk,
+      commentId: _id,
+    };
+
+    if (discuss.length == 0) {
+      this.handleDiscuss();
+    }
+
+    if (talk && _id) {
+      this.log({type: 'setDiscussing', ...commentFields});
+      setRespondingComment.call(commentFields);
+    }
+
+    toast(() => (
+      <AppNotification
+        msg="Cleared"
+        desc="Discussion omment cleared."
+        icon="check"
+      />
     ));
   };
 
@@ -311,6 +336,13 @@ class Comment extends BaseComponent {
     txt: 'discuss',
   };
 
+  // For active.
+  finishButton = {
+    handleClick: this.handleActiveComment,
+    icon: 'check',
+    txt: 'done',
+  };
+
   privButtons = [this.editButton, this.trashButton];
 
   renderMeta = (tag, users) => {
@@ -359,6 +391,7 @@ class Comment extends BaseComponent {
       discussView,
       commentView,
       reviewView,
+      responding,
     } = this.props;
 
     const master = author === reviewer;
@@ -368,6 +401,8 @@ class Comment extends BaseComponent {
       bData = [...this.pubButtons, ...this.privButtons];
     } else if (commentView) {
       bData = [...this.pubButtons];
+    } else if (facilitateView && depth == 0 && responding) {
+      bData = [this.finishButton];
     } else if (facilitateView && depth == 0) {
       bData = [this.activeButton, this.addressButton];
     } else if (facilitateView) {
@@ -392,6 +427,8 @@ class Comment extends BaseComponent {
         setBySlide={setBySlide}
       />
     );
+
+    const soundList = this.renderSounds();
 
     // always sort replies by time.
     const replyProps = replies
@@ -459,7 +496,7 @@ class Comment extends BaseComponent {
             source={content}
           />
 
-          {sounds.map(this.renderAudio)}
+          {soundList}
 
           {!last && <hr />}
         </div>
@@ -473,12 +510,15 @@ class Comment extends BaseComponent {
     );
   };
 
-  renderAudio = audio => {
-    let sound = Sounds.findOne(audio);
-    if (sound) {
-      const url = sound.link('original', '//');
-      return <ReactAudioPlayer key={audio} src={url} controls />;
-    }
+  renderSounds = () => {
+    const {sounds} = this.props;
+    return sounds.map((audio, iter) => {
+      let sound = Sounds.findOne(audio);
+      if (sound) {
+        const url = sound.link('original', '//');
+        return <ReactAudioPlayer key={audio} src={url} controls />;
+      }
+    });
 
     //const {_id} = this.props;
     //sound = Sounds.findOne({'meta.commentId': _id});
@@ -527,8 +567,8 @@ Comment.propTypes = {
 Comment.defaultProps = {
   allReplies: [],
   isReply: false,
-  sounds: ['false'],
   replies: [],
+  sounds: [],
   depth: 0,
 };
 

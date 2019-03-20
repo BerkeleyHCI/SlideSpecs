@@ -113,13 +113,12 @@ function gotStream(stream) {
   analyserNode = audioContext.createAnalyser();
   analyserNode.fftSize = 2048;
   inputPoint.connect(analyserNode);
-
   audioRecorder = new Recorder(inputPoint);
 
-  myGain = audioContext.createGain();
   // setting the volume and gain controls here
-  myGain.gain.value = 5.0;
+  myGain = audioContext.createGain();
+  myGain.gain.value = 6.0;
   inputPoint.connect(myGain);
-  myGain.connect(audioContext.destination);
+  //myGain.connect(audioContext.destination);
   updateAnalysers();
 }

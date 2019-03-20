@@ -12,6 +12,12 @@ meteor
 open http://localhost:3000
 ```
 
+##### Audio Concatenation (osx)
+
+```
+brew install sox
+```
+
 ##### PDF Conversion (osx)
 
 ```bash
