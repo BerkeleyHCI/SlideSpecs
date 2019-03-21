@@ -424,6 +424,7 @@ class FacilitatePage extends BaseComponent {
   };
 
   handleUpload = blob => {
+    window.audioRecorder.clear();
     let {talk} = this.props;
     const handleToast = ({msg, desc, icon, closeTime}) => {
       if (!closeTime) closeTime = 4000;
@@ -467,11 +468,6 @@ class FacilitatePage extends BaseComponent {
           const {name, size} = file;
           this.log({name, size});
         }
-
-        // TODO add check to see if other comments are discussed,
-        // handle audio segmentation.
-
-        window.audioRecorder.clear();
       } else {
         console.error(err);
       }
@@ -589,8 +585,8 @@ class FacilitatePage extends BaseComponent {
 
   handleAudioUpload = () => {
     if (window.audioRecorder) {
+      //window.audioRecorder.exportWAV(this.handleUpload);
       window.audioRecorder.exportMonoWAV(this.handleUpload);
-      // window.audioRecorder.exportWAV(this.handleUpload);
     } else {
       console.error('cant access audio recorder!');
     }
