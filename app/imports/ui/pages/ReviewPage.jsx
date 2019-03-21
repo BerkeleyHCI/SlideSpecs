@@ -1,6 +1,8 @@
 import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Session} from 'meteor/session.js';
+import ReactAudioPlayer from 'react-audio-player';
+import {Sounds} from '../../api/sounds/sounds.js';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
@@ -354,9 +356,9 @@ class ReviewPage extends BaseComponent {
     return (
       <div className="filterer alert no-submit border-bottom">
         <p>
-          <kbd className="pull-right">
-            {commentsShown}/{comments.length}
-          </kbd>
+          <span className="pull-right">
+            {commentsShown} / {comments.length}
+          </span>
           {tagList}
         </p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
@@ -519,6 +521,20 @@ class ReviewPage extends BaseComponent {
     }
   };
 
+  humanFileSize = size => {
+    let i = Math.floor(Math.log(1.0 * size) / Math.log(1024));
+    return (
+      (size / Math.pow(1024, i)).toFixed(2) * 1 +
+      ' ' +
+      ['B', 'kB', 'MB', 'GB', 'TB'][i]
+    );
+  };
+
+  humanDate = msTime => {
+    const ndate = new Date(msTime);
+    return ndate.toLocaleString();
+  };
+
   renderContext = () => {
     const fileList = this.renderImages();
     const {image, hoverImage, filtered} = this.state;
@@ -549,11 +565,31 @@ class ReviewPage extends BaseComponent {
     );
   };
 
+  renderSounds = () => {
+    const {sounds} = this.props;
+    const newSound = sounds[0] || {}; // sorted
+    const snd = Sounds.findOne({_id: newSound._id});
+    if (newSound && snd) {
+      const src = snd.link('original', '//');
+      const created = this.humanDate(newSound.meta.created);
+      const size = this.humanFileSize(newSound.size);
+      return (
+        <div className="alert">
+          <ReactAudioPlayer src={src} controls />
+          audio: {created}
+          <small className="pull-right"> {size} </small>
+        </div>
+      );
+    }
+  };
+
   render() {
     const {images} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
+    const sounds = this.renderSounds();
+    //const sounds = null;
 
     return images ? (
       this.renderRedirect() || (
@@ -563,6 +599,7 @@ class ReviewPage extends BaseComponent {
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
                 {cmtHead}
+                {sounds}
                 {comments}
               </div>
             </div>
