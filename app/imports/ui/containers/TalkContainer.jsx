@@ -29,7 +29,7 @@ export default class TalkContainer extends BaseComponent {
     props.comments = comments.filter(c => c.talk === _id);
     //props.comments = props.comments.filter(this.controlFilter);
     props.images = images.filter(f => f.meta.talkId === _id);
-    props.sounds = sounds.filter(f => f.meta.talkId === _id);
+    props.sounds = sounds.filter(f => f.meta.talkId === _id && f.meta.complete); // merged audio.
     props.name = props.talk.name;
     props.reviewer = reviewer;
     return props;
