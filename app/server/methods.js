@@ -1,6 +1,6 @@
 import {Promise} from 'meteor/promise';
 
-import {storagePath} from '../imports/api/storagePath.js';
+import {storagePath, bucketName} from '../imports/api/storagePath.js';
 import {Talks} from '../imports/api/talks/talks.js';
 import {Sounds} from '../imports/api/sounds/sounds.js';
 import {gAudio} from '../imports/api/gAudio/gAudio.js';
@@ -20,7 +20,6 @@ Meteor.methods({
     const sName = sounds.map(s => s.path);
     const fName = `${storagePath}/sounds/${talkId}-${Date.now()}.flac`;
     const fileName = fName.substring(fName.lastIndexOf('/') + 1);
-    const bucketName = Meteor.isProduction ? 'slidespecs' : 'slidespecs-dev';
     const args = [fName, ...sName];
 
     const useTranscript = data => {
@@ -55,6 +54,7 @@ Meteor.methods({
       const transcription = response.results
         .map(result => result.alternatives[0].transcript)
         .join('\n');
+
       console.log(`Transcription: ${transcription}`);
       console.log(response.results);
     };

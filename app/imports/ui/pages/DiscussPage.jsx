@@ -254,6 +254,9 @@ class DiscussPage extends BaseComponent {
       // remove child comments.
       csort = csort.filter(c => !isReply(c));
 
+      // Clean - filter out active responding comments.
+      csort = csort.filter(c => talk.active.indexOf(c._id) < 0);
+
       // split off 'addressed' comments
       const addressed = csort.filter(c => c.addressed);
       csort = csort.filter(c => !c.addressed);
@@ -285,25 +288,22 @@ class DiscussPage extends BaseComponent {
 
       return (
         <div>
+          <span className="comments-head" />
           {items.length > 0 && (
-            <div>
-              <h2>to discuss</h2>
-              <div id="comments-list" className="alert">
-                {items.map(i => (
-                  <Comment focused={true} {...i} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">to discuss</span>
+              {items.map(i => (
+                <Comment focused={true} {...i} />
+              ))}
             </div>
           )}
 
           {addressedItems.length > 0 && (
-            <div>
-              <h3>discussed</h3>
-              <div id="comments-list" className="alert">
-                {addressedItems.map(i => (
-                  <Comment focused={true} {...i} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">discussed</span>
+              {addressedItems.map(i => (
+                <Comment focused={true} {...i} />
+              ))}
             </div>
           )}
         </div>

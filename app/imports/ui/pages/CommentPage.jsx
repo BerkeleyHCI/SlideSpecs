@@ -554,6 +554,7 @@ class CommentPage extends BaseComponent {
         <div>
           <span className="comments-head" />
           <div id="comments-list" className="alert">
+            <span className="list-title">comments</span>
             {items.map((i, iter) => (
               <Comment key={`comment-${iter}`} {...i} />
             ))}
