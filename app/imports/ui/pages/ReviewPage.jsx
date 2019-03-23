@@ -8,6 +8,7 @@ import _ from 'lodash';
 
 import {Images} from '../../api/images/images.js';
 import AlertLink from '../components/AlertLink.jsx';
+import Waveform from '../components/Waveform.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
@@ -24,6 +25,7 @@ class ReviewPage extends BaseComponent {
     this.inRef = React.createRef();
     this.state = {
       redirectTo: null,
+      activeSound: null,
       activeComment: null,
       commentsShown: 0,
       sorter: 'created',
@@ -51,7 +53,7 @@ class ReviewPage extends BaseComponent {
   handleGenerate = () => {
     const {talk} = this.props;
     console.log('starting generation');
-    Meteor.call('mergeSounds', talk._id);
+    Meteor.call('mergeSounds', talk._id, console.log);
   };
 
   handleSelectable = items => {
@@ -457,9 +459,11 @@ class ReviewPage extends BaseComponent {
         csort = csort.filter(c => c.content.includes(byTag));
       }
 
-      if (commentsShown !== csort.length) {
-        this.setState({commentsShown: csort.length});
-      }
+      try {
+        if (commentsShown !== csort.length) {
+          this.setState({commentsShown: csort.length});
+        }
+      } catch (e) {}
 
       const items = csort.map((c, i) => {
         c.transcript = c.author === 'transcript';
@@ -494,24 +498,20 @@ class ReviewPage extends BaseComponent {
       return items.length > 0 ? (
         <div>
           {incomplete.length > 0 && (
-            <div>
-              <h2>to address</h2>
-              <div id="comments-list" className="alert">
-                {incomplete.map((i, iter) => (
-                  <Comment {...i} key={`comment-${iter}`} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">to address</span>
+              {incomplete.map((i, iter) => (
+                <Comment {...i} key={`comment-${iter}`} />
+              ))}
             </div>
           )}
 
           {completed.length > 0 && (
-            <div>
-              <h2>addressed</h2>
-              <div id="comments-list" className="alert">
-                {completed.map(i => (
-                  <Comment {...i} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">addressed</span>
+              {completed.map(i => (
+                <Comment {...i} />
+              ))}
             </div>
           )}
         </div>
@@ -537,6 +537,8 @@ class ReviewPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderImages();
+    const cmtHead = this.renderCommentFilter();
+
     const {image, hoverImage, filtered} = this.state;
     const {talk, name} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
@@ -558,6 +560,7 @@ class ReviewPage extends BaseComponent {
             <div className="v-pad" />
           </div>
         </div>
+        {cmtHead}
         <a onClick={this.handleGenerate} className="link-alert" href="#">
           <div className="alert centered">generate transcription</div>
         </a>
@@ -565,31 +568,44 @@ class ReviewPage extends BaseComponent {
     );
   };
 
+  renderSoundDownload = () => {
+    // audio stuff
+    const {sounds} = this.props;
+    const [newSound] = sounds; // sorted, first
+    if (!newSound || !WaveSurfer) return;
+    const snd = Sounds.findOne({_id: newSound._id});
+    if (!snd) return;
+    const src = snd.link('original', '//');
+    const created = this.humanDate(newSound.meta.created);
+    const size = this.humanFileSize(newSound.size);
+    return (
+      <div>
+        <ReactAudioPlayer src={src} controls />
+        <div className="v-pad centered">
+          <small>
+            [ generated: {created} | {size} ]
+          </small>
+        </div>
+      </div>
+    );
+  };
+
   renderSounds = () => {
     const {sounds} = this.props;
-    const newSound = sounds[0] || {}; // sorted
+    const [newSound] = sounds; // sorted, first
+    if (!newSound || !WaveSurfer) return;
     const snd = Sounds.findOne({_id: newSound._id});
-    if (newSound && snd) {
-      const src = snd.link('original', '//');
-      const created = this.humanDate(newSound.meta.created);
-      const size = this.humanFileSize(newSound.size);
-      return (
-        <div className="alert">
-          <ReactAudioPlayer src={src} controls />
-          audio: {created}
-          <small className="pull-right"> {size} </small>
-        </div>
-      );
-    }
+    if (!snd) return;
+    const src = snd.link('original', '//');
+    return <Waveform src={src} />;
   };
 
   render() {
     const {images} = this.props;
-    const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
     const context = this.renderContext();
     const sounds = this.renderSounds();
-    //const sounds = null;
+    const soundDownload = this.renderSoundDownload();
 
     return images ? (
       this.renderRedirect() || (
@@ -598,9 +614,9 @@ class ReviewPage extends BaseComponent {
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
-                {cmtHead}
                 {sounds}
                 {comments}
+                {soundDownload}
               </div>
             </div>
           </div>

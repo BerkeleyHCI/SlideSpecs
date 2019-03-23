@@ -37,7 +37,8 @@
     "react-speech-recognition": "^1.0.7",
     "react-spring": "^5.6.10",
     "react-toastify": "^4.2.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "wavesurfer.js": "^2.0.0-beta01"
   },
   "eslintConfig": {
     "parserOptions": {
