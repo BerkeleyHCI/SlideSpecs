@@ -387,35 +387,29 @@ class FacilitatePage extends BaseComponent {
       return (
         <div>
           {items.length > 0 && (
-            <div>
-              <h2>to discuss</h2>
-              <div id="comments-list" className="alert">
-                {items.map(i => (
-                  <Comment feedback={true} {...i} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">to discuss</span>
+              {items.map(i => (
+                <Comment feedback={true} {...i} />
+              ))}
             </div>
           )}
 
           {addressedItems.length > 0 && (
-            <div>
-              <h2>discussed</h2>
-              <div id="comments-list" className="alert">
-                {addressedItems.map(i => (
-                  <Comment feedback={true} {...i} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">discussed</span>
+              {addressedItems.map(i => (
+                <Comment feedback={true} {...i} />
+              ))}
             </div>
           )}
 
           {unmarkedItems.length > 0 && (
-            <div>
-              <h2>unmarked</h2>
-              <div id="comments-list" className="alert">
-                {unmarkedItems.map(i => (
-                  <Comment {...i} />
-                ))}
-              </div>
+            <div id="comments-list" className="alert">
+              <span className="list-title">unmarked</span>
+              {unmarkedItems.map(i => (
+                <Comment {...i} />
+              ))}
             </div>
           )}
         </div>
@@ -434,7 +428,7 @@ class FacilitatePage extends BaseComponent {
     };
 
     // Allow uploading files under 50MB for now.
-    const goodSize = blob.size <= 50985760;
+    const goodSize = blob.size <= 50985760 && blob.size > 4096;
     if (!goodSize) {
       return; // skip this file.
     }
@@ -490,19 +484,17 @@ class FacilitatePage extends BaseComponent {
     const respond = Comments.find({_id: {$in: talk.active}}).fetch();
     if (!respond.length) return null;
     return (
-      <div>
-        <h2> discussing </h2>
-        <div id="comments-list" className="alert">
-          {respond.map((i, iter) => (
-            <Comment
-              {...i}
-              key={`discuss-${iter}`}
-              iter={iter}
-              facilitateView={true}
-              responding={true}
-            />
-          ))}
-        </div>
+      <div id="comments-list" className="alert">
+        <span className="list-title list-title-note">discussing</span>
+        {respond.map((i, iter) => (
+          <Comment
+            {...i}
+            key={`discuss-${iter}`}
+            iter={iter}
+            facilitateView={true}
+            responding={true}
+          />
+        ))}
       </div>
     );
   };
