@@ -538,6 +538,7 @@ class ReviewPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderImages();
     const cmtHead = this.renderCommentFilter();
+    const soundDownload = this.renderSoundDownload();
 
     const {image, hoverImage, filtered} = this.state;
     const {talk, name} = this.props;
@@ -564,6 +565,7 @@ class ReviewPage extends BaseComponent {
         <a onClick={this.handleGenerate} className="link-alert" href="#">
           <div className="alert centered">generate transcription</div>
         </a>
+        {soundDownload}
       </div>
     );
   };
@@ -578,15 +580,16 @@ class ReviewPage extends BaseComponent {
     const src = snd.link('original', '//');
     const created = this.humanDate(newSound.meta.created);
     const size = this.humanFileSize(newSound.size);
+    if (!src) return;
     return (
-      <div>
-        <ReactAudioPlayer src={src} controls />
-        <div className="v-pad centered">
-          <small>
-            [ generated: {created} | {size} ]
+      <a download href={src} className="link-alert">
+        <div className="alert">
+          download audio
+          <small className="pull-right">
+            generated: {created} | {size}
           </small>
         </div>
-      </div>
+      </a>
     );
   };
 
@@ -605,7 +608,6 @@ class ReviewPage extends BaseComponent {
     const comments = this.renderComments();
     const context = this.renderContext();
     const sounds = this.renderSounds();
-    const soundDownload = this.renderSoundDownload();
 
     return images ? (
       this.renderRedirect() || (
@@ -616,7 +618,6 @@ class ReviewPage extends BaseComponent {
               <div className="col-sm-7">
                 {sounds}
                 {comments}
-                {soundDownload}
               </div>
             </div>
           </div>

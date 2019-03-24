@@ -10,22 +10,28 @@ import ReactDOM from 'react-dom';
 export default class Waveform extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {wavesurfer: {}, playing: false};
+    this.state = {
+      wavesurfer: {},
+      playing: false,
+      currentTime: 0,
+      duration: 0,
+    };
   }
 
   componentDidMount() {
     this.$el = ReactDOM.findDOMNode(this);
     this.$waveform = this.$el.querySelector('.wave');
     try {
-      const cursor = WaveSurfer.cursor.create({
+      WaveSurfer.cursor.formatTime = this.formatTime;
+      let cursor = WaveSurfer.cursor.create({
+        formatTime: this.formatTime,
         showTime: true,
         opacity: 1,
         customShowTimeStyle: {
-          'background-color': '#000',
-          color: '#eee',
-          padding: '2px',
+          'background-color': 'rgba(100, 100, 100, 0.1)',
+          'font-family': 'monospace',
           'margin-top': '0px',
-          'font-size': '12px',
+          padding: '0px 4px',
         },
       });
 
@@ -38,25 +44,19 @@ export default class Waveform extends React.Component {
         plugins: [cursor],
       };
 
-      // updating the timestamps
-      // https://codepen.io/BusyBee/pen/pbXzgg
-
       let wavesurfer = WaveSurfer.create(options);
-      // Show current time
-      function formatTime(time) {
-        return [
-          Math.floor((time % 3600) / 60), // minutes
-          ('00' + Math.floor(time % 60)).slice(-2), // seconds
-        ].join(':');
-      }
 
-      wavesurfer.on('audioprocess', function() {
-        $('.waveform__counter').text(formatTime(wavesurfer.getCurrentTime()));
+      // updating the timestamps: https://codepen.io/BusyBee/pen/pbXzgg
+      wavesurfer.on('audioprocess', () => {
+        const time = this.formatTime(wavesurfer.getCurrentTime());
+        this.setState({currentTime: time});
+        //const counter = this.$el.getElementsByTagName('showtitle');
+        //if (counter[0]) counter[0].innerHTML = time;
       });
 
-      // Show clip duration
-      wavesurfer.on('ready', function() {
-        $('.waveform__duration').text(formatTime(wavesurfer.getDuration()));
+      wavesurfer.on('ready', () => {
+        const duration = this.formatTime(wavesurfer.getDuration());
+        this.setState({duration});
       });
 
       this.setState({wavesurfer}, this.loadAudio);
@@ -65,7 +65,13 @@ export default class Waveform extends React.Component {
     }
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    const {wavesurfer} = this.state;
+    if (wavesurfer && wavesurfer.unAll) {
+      wavesurfer.unAll();
+      wavesurfer.pause();
+    }
+  }
 
   loadAudio = () => {
     const {wavesurfer} = this.state;
@@ -81,11 +87,33 @@ export default class Waveform extends React.Component {
     }
   };
 
+  formatTime = time => {
+    const min = Math.floor((time % 3600) / 60);
+    let sec = (time % 60).toFixed(1);
+    sec = sec >= 10 ? sec : `0${sec}`;
+    return [min, sec].join(':');
+  };
+
+  renderTitle = () => {
+    const {wavesurfer, duration, currentTime} = this.state;
+    return (
+      <span className="list-title">
+        audio
+        <code className="pull-right">
+          {currentTime} / {duration}
+        </code>
+      </span>
+    );
+  };
+
   render() {
     const {playing} = this.state;
     const playclass = playing ? 'empty' : 'primary';
+    const title = this.renderTitle();
+
     return (
       <div className="waveform">
+        {title}
         <div className="wave" />
         <div className="controls">
           <button className={`btn btn-${playclass}`} onClick={this.playAudio}>
