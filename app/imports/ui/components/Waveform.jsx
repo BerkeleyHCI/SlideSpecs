@@ -22,7 +22,6 @@ export default class Waveform extends React.Component {
     this.$el = ReactDOM.findDOMNode(this);
     this.$waveform = this.$el.querySelector('.wave');
     try {
-      WaveSurfer.cursor.formatTime = this.formatTime;
       let cursor = WaveSurfer.cursor.create({
         formatTime: this.formatTime,
         showTime: true,
@@ -50,8 +49,6 @@ export default class Waveform extends React.Component {
       wavesurfer.on('audioprocess', () => {
         const time = this.formatTime(wavesurfer.getCurrentTime());
         this.setState({currentTime: time});
-        //const counter = this.$el.getElementsByTagName('showtitle');
-        //if (counter[0]) counter[0].innerHTML = time;
       });
 
       wavesurfer.on('ready', () => {
