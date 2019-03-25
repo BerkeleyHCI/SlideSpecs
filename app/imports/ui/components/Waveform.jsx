@@ -5,7 +5,15 @@ import ReactDOM from 'react-dom';
 // exposed through main.html. npm broken
 //import WaveSurfer from 'wavesurfer.js';
 //import CursorPlugin from 'wavesurfer.js/src/plugin/cursor.js';
-//WaveSurfer.timeline.create({ container: '#wave-timeline', }),
+
+// wavesurfer docs
+//https://wavesurfer-js.org/docs/methods.html
+//https://wavesurfer-js.org/docs/options.html
+
+// wavesurfer plugins
+// https://wavesurfer-js.org/example/regions/index.html
+// https://wavesurfer-js.org/example/annotation/index.html
+// https://wavesurfer-js.org/example/elan/index.html?fill
 
 export default class Waveform extends React.Component {
   constructor(props) {

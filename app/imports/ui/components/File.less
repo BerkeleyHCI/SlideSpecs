@@ -329,45 +329,45 @@ div.reviewView {
     padding: 1px 4px;
     margin-right: 2px;
   }
+}
 
-  .filterer.no-submit {
-    border-bottom: 1px solid @color-rare;
+.filterer.no-submit {
+  border-bottom: 1px solid @color-rare;
+}
+
+.filterer.alert,
+.submitter.alert {
+  border: none;
+}
+
+.filterer,
+.submitter {
+  .force-wrap();
+  padding: 0px;
+  p {
+    padding: 10px 15px;
   }
-
-  .filterer.alert,
-  .submitter.alert {
-    border: none;
+  hr {
+    margin: 0px;
   }
-
-  .filterer,
-  .submitter {
-    .force-wrap();
-    padding: 0px;
-    p {
-      padding: 10px 15px;
+  textarea {
+    animation: pulse 3s infinite ease-in-out;
+    background: lighten(@color-primary, 45%);
+    padding: 15px 15px 5px 15px;
+    &:hover {
+      border-left: 0.5em solid @color-danger;
+      transition: border-width 0.1s ease;
+      transition: background 0.1s ease;
+      background: lighten(@color-primary, 35%);
     }
-    hr {
-      margin: 0px;
-    }
-    textarea {
-      animation: pulse 3s infinite ease-in-out;
-      background: lighten(@color-primary, 45%);
-      padding: 15px 15px 5px 15px;
-      &:hover {
-        border-left: 0.5em solid @color-danger;
-        transition: border-width 0.1s ease;
-        transition: background 0.1s ease;
-        background: lighten(@color-primary, 35%);
-      }
-      &:focus {
-        box-shadow: 0 4px 2px -2px @color-ancillary;
-        border-left: 1em solid @color-ancillary;
-        transition: border-width 0.1s ease;
-        transition: border-color 0.1s ease;
-        transition: background 0.1s ease;
-        background: @color-empty;
-        animation: none;
-      }
+    &:focus {
+      box-shadow: 0 4px 2px -2px @color-ancillary;
+      border-left: 1em solid @color-ancillary;
+      transition: border-width 0.1s ease;
+      transition: border-color 0.1s ease;
+      transition: background 0.1s ease;
+      background: @color-empty;
+      animation: none;
     }
   }
 }

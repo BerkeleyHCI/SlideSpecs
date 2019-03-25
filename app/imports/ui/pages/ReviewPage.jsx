@@ -285,7 +285,7 @@ class ReviewPage extends BaseComponent {
 
     return (
       <div className="float-at-top">
-        <div className="btn-m-group btns-group">
+        <div className="btn-m-straight btn-m-group btns-group">
           <button
             onClick={timeSort}
             className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
