@@ -250,7 +250,7 @@ class Comment extends BaseComponent {
     }
 
     if (talk && _id) {
-      this.log({type: 'setDiscussing', ...commentFields});
+      //this.log({type: 'setDiscussing', ...commentFields});
       setRespondingComment.call(commentFields);
     }
 
@@ -271,14 +271,14 @@ class Comment extends BaseComponent {
     }
 
     if (talk && _id) {
-      this.log({type: 'setDiscussing', ...commentFields});
+      //this.log({type: 'setDiscussing', ...commentFields});
       setRespondingComment.call(commentFields);
     }
 
     toast(() => (
       <AppNotification
         msg="Cleared"
-        desc="Discussion omment cleared."
+        desc="Discussion comment cleared."
         icon="check"
       />
     ));

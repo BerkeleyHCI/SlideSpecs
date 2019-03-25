@@ -10,11 +10,15 @@ export default class TalkContainer extends BaseComponent {
     return _id && (!sub || sub.type != 'talk' || sub._id != _id);
   };
 
-  controlFilter = comment => {
+  oldControlFilter = comment => {
     const auth = ['system', this.props.reviewer];
     return (
       !comment.userOwn || (comment.userOwn && auth.includes(comment.author))
     );
+  };
+
+  controlFilter = comment => {
+    return comment.author !== 'transcript';
   };
 
   getTalkProps = _id => {
@@ -27,7 +31,7 @@ export default class TalkContainer extends BaseComponent {
     props.talk = talks.find(t => t._id === _id) || {};
     props.file = files.find(f => f.meta.talkId === _id);
     props.comments = comments.filter(c => c.talk === _id);
-    //props.comments = props.comments.filter(this.controlFilter);
+    props.comments = props.comments.filter(this.controlFilter);
     props.images = images.filter(f => f.meta.talkId === _id);
     props.sounds = sounds.filter(f => f.meta.talkId === _id && f.meta.complete); // merged audio.
     props.name = props.talk.name;
