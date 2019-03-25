@@ -2,12 +2,14 @@ import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Random} from 'meteor/random';
+import _ from 'lodash';
 
 import {Talks} from './talks.js';
 import {Comments} from '../comments/comments.js';
+import {Events} from '../events/events.js';
 import {Files} from '../files/files.js';
 import {Images} from '../images/images.js';
-import _ from 'lodash';
+import {logEvent} from '../events/methods.js';
 
 export const createTalk = new ValidatedMethod({
   name: 'talks.create',
@@ -117,16 +119,92 @@ export const setRespondingComment = new ValidatedMethod({
       data = talk.active;
     }
 
-    let newActive;
+    let newActive, string;
+    const base = {
+      talk: talkId,
+      comment: commentId,
+      type: 'setRespondingComment',
+    };
+
     const activeIdx = data.indexOf(commentId);
     if (activeIdx >= 0) {
+      // Comment no longer being discussed.
+      string = JSON.stringify({responding: false});
+      logEvent.call({data: string, ...base});
       data.splice(activeIdx, 1);
       newActive = data;
     } else {
+      // Comment is now being discussed.
+      string = JSON.stringify({responding: true});
+      logEvent.call({data: string, ...base});
       newActive = data.concat([commentId]);
     }
 
     Talks.update(talkId, {$set: {active: newActive}});
+  },
+});
+
+// Testing method to see when a comment has been discussed.
+export const talkCommentsGenerate = new ValidatedMethod({
+  name: 'talk.talkCommentsGenerate',
+  validate: new SimpleSchema({
+    talkId: {type: SimpleSchema.RegEx.Id},
+    callback: {type: Function, optional: true},
+  }).validator(),
+  run({talkId, callback}) {
+    console.log(`generating regions for talk: ${talkId}`);
+    if (!callback) callback = console.log;
+
+    const convertData = c => {
+      if (c.data) {
+        const data = JSON.parse(c.data); // deserialize event data.
+        delete c.data;
+        return {...c, ...data};
+      } else {
+        return c;
+      }
+    };
+
+    const commentToRegions = c => {
+      let events = Events.find({comment: c._id}, {sort: {created: 1}})
+        .fetch()
+        .map(convertData)
+        .filter(e => e && e.type && e.type === 'setRespondingComment');
+
+      //make sure first event is turning on responding.
+      while (events[0] && events[0].responding !== true) {
+        console.log('cleaning events in generator:', events);
+        events.shift(); // remove element
+      }
+
+      // group by two, only accept pairs
+      const paired = _.chunk(events, 2).filter(x => x.length === 2);
+      const regions = paired.map(pair => {
+        return {
+          commentId: c._id,
+          startTime: pair[0].created,
+          stopTime: pair[1].created,
+        };
+      });
+
+      return regions;
+    };
+
+    const updateRegions = regions => {
+      if (regions[0]) {
+        const cleanRegions = regions.map(({startTime, stopTime}) => {
+          return {startTime, stopTime};
+        });
+        return Comments.update(regions[0].commentId, {
+          $set: {regions: cleanRegions},
+        });
+      }
+    };
+
+    const comments = Comments.find({talk: talkId})
+      .fetch()
+      .map(commentToRegions)
+      .map(updateRegions);
   },
 });
 

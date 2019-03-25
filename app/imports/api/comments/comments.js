@@ -22,6 +22,11 @@ const SlideSchema = new SimpleSchema({
   slideId: {type: String},
 });
 
+const RegionSchema = new SimpleSchema({
+  startTime: {type: Date},
+  stopTime: {type: Date},
+});
+
 Comments.schema = new SimpleSchema({
   created: {type: Date},
   author: {type: String},
@@ -33,6 +38,7 @@ Comments.schema = new SimpleSchema({
   userOwn: {type: Boolean, defaultValue: false, optional: true},
   addressed: {type: Boolean, defaultValue: false, optional: true},
   completed: {type: Boolean, defaultValue: false, optional: true},
+  regions: {type: [RegionSchema], defaultValue: [], optional: true},
   sounds: {type: [String], defaultValue: [], optional: true},
 });
 

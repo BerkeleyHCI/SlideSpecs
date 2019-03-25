@@ -13,17 +13,18 @@ class BaseComponent extends Component {
     const {reviewer, talk} = this.props;
     const base = {reviewer, talk};
 
-    let string;
+    let string, comment;
     if (typeof data === 'string') {
       string = JSON.stringify({data, ...base});
     } else if (Object.keys.length > 0) {
       string = JSON.stringify({...data, ...base});
+      comment = data.commentId;
     } else {
       string = JSON.stringify({data, ...base});
     }
 
     // TODO uncomment in prod
-    //logEvent.call({data: string});
+    logEvent.call({data: string, reviewer, talk, comment});
   };
 
   componentDidUpdate = () => {

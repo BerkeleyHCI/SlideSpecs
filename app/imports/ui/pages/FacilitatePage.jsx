@@ -217,7 +217,7 @@ class FacilitatePage extends BaseComponent {
 
     return (
       <div>
-        <div className="facilitate-filter btn-m-group btns-group">
+        <div className="btn-m-straight btn-m-group btns-group">
           <button
             className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
             onClick={flagSort}>
@@ -594,7 +594,7 @@ class FacilitatePage extends BaseComponent {
     return images ? (
       this.renderRedirect() || (
         <div className="main-content">
-          <div className="reviewView">
+          <div className="facilitateView">
             <div id="review-view" className="table review-table">
               <div className="row">
                 <div className="col-sm-5 full-height-md no-float">

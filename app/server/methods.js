@@ -2,6 +2,7 @@ import {Promise} from 'meteor/promise';
 
 import {storagePath, bucketName} from '../imports/api/storagePath.js';
 import {Talks} from '../imports/api/talks/talks.js';
+import {talkCommentsGenerate} from '../imports/api/talks/methods.js';
 import {Sounds} from '../imports/api/sounds/sounds.js';
 import {gAudio} from '../imports/api/gAudio/gAudio.js';
 
@@ -11,6 +12,8 @@ Meteor.methods({
     const talk = Talks.findOne(talkId);
     if (!(talk && Meteor.user() && Meteor.userId() === talk.userId)) {
       return console.error('no talk found.');
+    } else {
+      talkCommentsGenerate.call({talkId: talk._id});
     }
 
     const sounds = Sounds.find(
