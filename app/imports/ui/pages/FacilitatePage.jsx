@@ -33,6 +33,7 @@ class FacilitatePage extends BaseComponent {
       recInterval: null,
       recording: false,
       redirectTo: null,
+      draftWords: [],
       timeout: 20 * 1000, // testing with lower
       //timeout: 45 * 1000, // ms -> once per minute
       sorter: 'flag',
@@ -121,11 +122,15 @@ class FacilitatePage extends BaseComponent {
         console.error(err);
       } else {
         this.clearText();
+        this.clearMatch();
         setRespondingComment.call({talkId: talk._id, commentId: res});
       }
     });
   };
 
+  clearMatch = () => {
+    this.setState({draftWords: []});
+  };
   clearText = () => {
     const textarea = this.inRef.current;
     textarea.value = '';
@@ -417,6 +422,72 @@ class FacilitatePage extends BaseComponent {
     }
   };
 
+  renderMatchComments = () => {
+    const {draftWords, sorter, invert, byAuth, bySlide, byTag} = this.state;
+    const {talk, comments, reviewer, setModal, clearModal} = this.props;
+    if (!comments || !comments.length) {
+      return <div className="alert"> no comments yet</div>;
+    }
+
+    let csort = _.orderBy(
+      comments,
+      [sorter, 'created'],
+      [invert ? 'desc' : 'asc', 'asc'],
+    );
+
+    // Clean - filter out active responding comments.
+    csort = csort.filter(c => talk.active.indexOf(c._id) < 0);
+
+    // Filter out transcript comments.
+    csort = csort.filter(c => c.author != 'transcript');
+
+    // Filtering 'reply' comments into array.
+    const reply = /\[.*\]\(\s?#c(.*?)\)/;
+    const isReply = c => reply.test(c.content);
+    const replies = csort.filter(isReply).map(c => {
+      const match = reply.exec(c.content);
+      c.replyTo = match[1].trim();
+      c.isReply = true;
+      return c;
+    });
+
+    // remove child comments.
+    csort = csort.filter(c => !isReply(c));
+
+    // draft words
+    if (draftWords) {
+      csort = csort.filter(c =>
+        draftWords.some(dw => _.includes(c.content, dw)),
+      );
+    }
+
+    const items = csort.map((c, i) =>
+      this.renderCommentData(csort, replies, c, i),
+    );
+
+    return (
+      <div>
+        {items.length > 0 && (
+          <div id="comments-list" className="alert">
+            <span className="list-title">matched comments</span>
+            {items.map(i => (
+              <Comment feedback={true} {...i} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  handleSearch = text => {
+    if (!text) return;
+    const words = text
+      .split(/\s/)
+      .map(s => s.trim())
+      .filter(s => s);
+    this.setState({draftWords: words});
+  };
+
   handleUpload = blob => {
     window.audioRecorder.clear();
     let {talk} = this.props;
@@ -504,6 +575,7 @@ class FacilitatePage extends BaseComponent {
       <div className="submitter">
         <TextArea
           inRef={this.inRef}
+          handleKeyDown={this.handleSearch}
           handleSubmit={this.addComment}
           defaultValue="start a new discussion comment here.."
           className="code comment-text"
@@ -587,6 +659,7 @@ class FacilitatePage extends BaseComponent {
   render() {
     const {images} = this.props;
     const context = this.renderSounds();
+    const matched = this.renderMatchComments();
     const respond = this.renderRespond();
     const comments = this.renderComments();
     const cmtHead = this.renderCommentFilter();
@@ -601,6 +674,7 @@ class FacilitatePage extends BaseComponent {
                   <div className="float-at-top">
                     {context}
                     {cmtHead}
+                    {matched}
                   </div>
                 </div>
                 <div className="col-sm-7">
