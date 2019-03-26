@@ -603,8 +603,32 @@ class ReviewPage extends BaseComponent {
     return <Waveform src={src} />;
   };
 
+  renderTranscript = () => {
+    const {transcript} = this.props;
+    if (!transcript) return;
+    const {results, confidence} = transcript;
+    if (!results || !confidence) return;
+    return (
+      <div id="comments-list" className="alert">
+        <span className="list-title">
+          transcript
+          <small className="pull-right">
+            {confidence.toFixed(3)}% confidence
+          </small>
+        </span>
+        <div className="clearfix comment">
+          {results.map((w, i) => (
+            <span key={`${w.word}-${i}`}> {w.word} </span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  //({w.startTime} / {w.endTime})
   render() {
     const {images} = this.props;
+    const trans = this.renderTranscript();
     const comments = this.renderComments();
     const context = this.renderContext();
     const sounds = this.renderSounds();
@@ -618,6 +642,7 @@ class ReviewPage extends BaseComponent {
               <div className="col-sm-7">
                 {sounds}
                 {comments}
+                {trans}
               </div>
             </div>
           </div>

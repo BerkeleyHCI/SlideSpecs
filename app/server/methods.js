@@ -1,10 +1,13 @@
 import {Promise} from 'meteor/promise';
+import _ from 'lodash';
 
 import {storagePath, bucketName} from '../imports/api/storagePath.js';
 import {Talks} from '../imports/api/talks/talks.js';
-import {talkCommentsGenerate} from '../imports/api/talks/methods.js';
 import {Sounds} from '../imports/api/sounds/sounds.js';
 import {gAudio} from '../imports/api/gAudio/gAudio.js';
+
+import {talkCommentsGenerate} from '../imports/api/talks/methods.js';
+import {createTranscript} from '../imports/api/transcripts/methods.js';
 
 Meteor.methods({
   async mergeSounds(talkId) {
@@ -54,12 +57,46 @@ Meteor.methods({
       const request = {config, audio: {uri: gcsURI}};
       const [operation] = Promise.await(client.longRunningRecognize(request));
       const [response] = Promise.await(operation.promise());
-      const transcription = response.results
+      const results = response.results;
+      const transcript = results
         .map(result => result.alternatives[0].transcript)
-        .join('\n');
+        .join('\n')
+        .toLowerCase();
 
-      console.log(`Transcription: ${transcription}`);
-      console.log(response.results);
+      let confAggregate = results.map(r => r.alternatives[0].confidence);
+      const confidence = _.sum(confAggregate) / confAggregate.length;
+
+      let words = _.flatten(
+        results.map(result => result.alternatives[0].words),
+      ).map(res => {
+        const genTimeObj = time => {
+          const seconds = time.seconds ? parseInt(time.seconds) : 0;
+          const nanos = time.nanos ? time.nanos : 0;
+          return parseFloat(`${seconds}.${nanos}`);
+        };
+
+        return {
+          word: res.word.toLowerCase(),
+          startTime: genTimeObj(res.startTime),
+          endTime: genTimeObj(res.endTime),
+        };
+      });
+
+      //console.log(JSON.stringify(words, null, 2));
+      const transcriptsOptions = {
+        transcript,
+        results: words,
+        confidence,
+        talk: talk._id,
+      };
+
+      if (transcript) {
+        console.log('adding transcript: ', transcript);
+        console.log({confidence});
+        createTranscript.call(transcriptsOptions);
+      } else {
+        console.error('empty transcript');
+      }
     };
 
     const addGoogle = () => {
