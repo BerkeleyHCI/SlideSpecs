@@ -2,6 +2,8 @@ import '../../api/talks/methods.js';
 import '../../api/talks/server/publications.js';
 import '../../api/comments/methods.js';
 import '../../api/comments/server/publications.js';
+import '../../api/transcripts/methods.js';
+import '../../api/transcripts/server/publications.js';
 import '../../api/events/methods.js';
 import '../../api/events/server/publications.js';
 

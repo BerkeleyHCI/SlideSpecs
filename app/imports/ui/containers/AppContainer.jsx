@@ -7,6 +7,7 @@ import {Comments} from '../../api/comments/comments.js';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
 import {Sounds} from '../../api/sounds/sounds.js';
+import {Transcripts} from '../../api/transcripts/transcripts.js';
 
 import App from '../layouts/App.jsx';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -23,6 +24,7 @@ export default withTracker(() => {
     files: [],
     images: [],
     sounds: [],
+    transcripts: [],
 
     // Session data.
     reviewer,
@@ -35,6 +37,7 @@ export default withTracker(() => {
     const files = Meteor.subscribe(`files.${sub.type}`, sub._id);
     const images = Meteor.subscribe(`images.${sub.type}`, sub._id);
     const sounds = Meteor.subscribe(`sounds.${sub.type}`, sub._id);
+    const transcripts = Meteor.subscribe(`transcripts.${sub.type}`, sub._id);
     data = Object.assign(data, {
       loading: [talks, comments, files, images].some(s => !s.ready()),
       talks: Talks.find({}, {sort: {created: -1}}).fetch(),
@@ -42,6 +45,7 @@ export default withTracker(() => {
       files: Files.find({}, {sort: {name: 1}}).fetch(),
       images: Images.find({}, {sort: {name: 1}}).fetch(),
       sounds: Sounds.find({}, {sort: {'meta.created': -1}}).fetch(),
+      transcripts: Transcripts.find({}, {sort: {created: -1}}).fetch(),
     });
   }
 
