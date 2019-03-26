@@ -14,7 +14,8 @@ class TextArea extends Component {
   keyDown = e => {
     const {inRef, handleKeyDown, handleSubmit} = this.props;
     const text = e.target.value.trim();
-    handleKeyDown(text);
+    var charStr = String.fromCharCode(e.keyCode || e.which);
+    handleKeyDown(text + charStr.toLowerCase());
     if (text && e.keyCode === 13 && !e.shiftKey) {
       handleSubmit(text);
       setTimeout(() => autosize.update(inRef.current), 200);
@@ -29,8 +30,8 @@ class TextArea extends Component {
         type="text"
         ref={inRef}
         className={className}
-        onKeyDown={this.keyDown}
         placeholder={defaultValue}
+        onKeyDown={this.keyDown}
       />
     );
   }
