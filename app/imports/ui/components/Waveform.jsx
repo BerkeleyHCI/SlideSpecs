@@ -35,20 +35,35 @@ export default class Waveform extends React.Component {
         showTime: true,
         opacity: 1,
         customShowTimeStyle: {
-          'background-color': 'rgba(100, 100, 100, 0.1)',
+          'background-color': 'rgba(100, 100, 100, 0.8)',
           'font-family': 'monospace',
           'margin-top': '0px',
           padding: '0px 4px',
+          color: '#eee',
         },
       });
 
+      let regions = WaveSurfer.regions.create({
+        dragSelection: false,
+        regions: [
+          {
+            start: 5,
+            end: 7,
+            drag: false,
+            resize: false,
+            color: 'rgba(255, 255, 255, .3)',
+          },
+        ],
+      });
+
       const options = {
-        mediaControls: true,
+        normalize: true,
+        responsive: true,
         container: this.$waveform,
-        waveColor: '#ccc',
+        waveColor: '#ddd',
         progressColor: '#2cc5d2',
-        cursorColor: 'black',
-        plugins: [cursor],
+        cursorColor: 'white',
+        plugins: [cursor, regions],
       };
 
       let wavesurfer = WaveSurfer.create(options);
@@ -64,7 +79,7 @@ export default class Waveform extends React.Component {
         this.setState({duration});
       });
 
-      this.setState({wavesurfer}, this.loadAudio);
+      this.setState({wavesurfer, cursor, regions}, this.loadAudio);
     } catch (e) {
       console.error(e);
     }

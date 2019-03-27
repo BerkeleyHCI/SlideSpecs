@@ -23,8 +23,8 @@ const SlideSchema = new SimpleSchema({
 });
 
 const RegionSchema = new SimpleSchema({
-  startTime: {type: Date},
-  stopTime: {type: Date},
+  startTime: {type: Number, decimal: true},
+  stopTime: {type: Number, decimal: true},
 });
 
 Comments.schema = new SimpleSchema({

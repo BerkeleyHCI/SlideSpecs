@@ -7,14 +7,22 @@
   overflow-x: hidden;
 
   .wave {
+    border-bottom: @color-rare 1px solid;
     position: relative;
   }
   .wave canvas {
-    background-color: @color-rare;
+    background: #333;
     width: 100%;
+  }
+  .wavesurfer-region {
+    z-index: 3 !important;
   }
   .controls,
   .controls * {
     width: 100%;
+  }
+
+  cursor {
+    border-right: 1px solid white !important;
   }
 }

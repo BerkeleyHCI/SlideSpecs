@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
+import _ from 'lodash';
 
 export default class TalkContainer extends BaseComponent {
   renewSubscription = _id => {
