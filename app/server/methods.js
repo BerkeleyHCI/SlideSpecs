@@ -48,10 +48,19 @@ Meteor.methods({
       const client = new speech.SpeechClient();
       const config = {
         encoding: 'FLAC',
-        sampleRateHertz: 16000,
+        sampleRateHertz: 44100,
         languageCode: 'en-US',
+        profanityFilter: true,
         enableWordTimeOffsets: true,
-        model: 'video',
+        enableAutomaticPunctuation: true,
+        model: 'video', // only one of these
+        //model: 'phone_call', // only one of these
+        //useEnhanced: true, // add this w/ phone
+        speechContexts: [
+          {
+            phrases: ['comment', 'testing', 'discuss'], // todo - source this  from comments
+          },
+        ],
       };
 
       const request = {config, audio: {uri: gcsURI}};
