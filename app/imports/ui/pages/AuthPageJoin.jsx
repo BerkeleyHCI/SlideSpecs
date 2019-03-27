@@ -62,7 +62,7 @@ class JoinPage extends BaseComponent {
 
     const content = (
       <div className="wrapper-auth">
-        <h1 className="title-auth">join</h1>
+        <h1 className="title-auth">sign up</h1>
         <form onSubmit={this.onSubmit}>
           <div className="list-errors">
             {errorMessages.map(msg => (
@@ -105,7 +105,7 @@ class JoinPage extends BaseComponent {
             />
           </div>
           <button type="submit" className="btn-primary">
-            join now
+            sign up now
           </button>
         </form>
       </div>

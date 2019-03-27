@@ -11,20 +11,13 @@ let analyserContext = null;
 let canvasWidth, canvasHeight;
 let recIndex = 0;
 
-function gotBuffers(buffers) {
-  let canvas = document.getElementById('wavedisplay');
-  drawBuffer(canvas.width, canvas.height, canvas.getContext('2d'), buffers[0]);
-}
-
 function setRecording(recState) {
   // really instead of a toggle it works as a state matcher in line with react.
   if (!audioRecorder) return;
-
   if (recState) {
     audioRecorder.record();
   } else {
     audioRecorder.stop();
-    // audioRecorder.getBuffers(gotBuffers);
   }
 }
 
@@ -53,13 +46,11 @@ function updateAnalysers(time) {
 
   // analyzer draw code here
   {
-    let SPACING = 3;
-    let BAR_WIDTH = 1;
+    let SPACING = 4;
+    let BAR_WIDTH = 4;
     let numBars = Math.round(canvasWidth / SPACING);
     let freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
-
     analyserNode.getByteFrequencyData(freqByteData);
-
     analyserContext.clearRect(0, 0, canvasWidth, canvasHeight);
     analyserContext.fillStyle = '#F6D565';
     analyserContext.lineCap = 'round';
@@ -73,14 +64,14 @@ function updateAnalysers(time) {
       for (let j = 0; j < multiplier; j++)
         magnitude += freqByteData[offset + j];
       magnitude = magnitude / multiplier;
-      let magnitude2 = freqByteData[i * multiplier];
+      //let magnitude2 = freqByteData[i * multiplier];
       analyserContext.fillStyle =
         'hsl( ' + Math.round((i * 360) / numBars) + ', 100%, 50%)';
       analyserContext.fillRect(
         i * SPACING,
         canvasHeight,
         BAR_WIDTH,
-        -magnitude,
+        -magnitude - 8,
       );
     }
   }
