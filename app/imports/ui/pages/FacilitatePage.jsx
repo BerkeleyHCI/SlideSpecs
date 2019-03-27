@@ -456,8 +456,7 @@ class FacilitatePage extends BaseComponent {
 
     // draft words - check for matching contents.
     if (draftWords) {
-      console.log(draftWords);
-
+      //console.log(draftWords);
       csort = csort.filter(c =>
         draftWords.some(dw => c.content.indexOf(dw) >= 0),
       );
@@ -559,7 +558,8 @@ class FacilitatePage extends BaseComponent {
 
   renderRespond = () => {
     const {talk} = this.props;
-    const respond = Comments.find({_id: {$in: talk.active}}).fetch();
+    let activeFix = _.flatten([talk.active]);
+    const respond = Comments.find({_id: {$in: activeFix}}).fetch();
     if (!respond.length) return null;
     return (
       <div id="comments-list" className="alert">
