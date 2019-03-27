@@ -344,7 +344,8 @@ class DiscussPage extends BaseComponent {
   renderRespond = () => {
     const {talk} = this.props;
     if (!talk.active) return null;
-    const respond = Comments.find({_id: {$in: talk.active}}).fetch();
+    let activeFix = _.flatten([talk.active]);
+    const respond = Comments.find({_id: {$in: activeFix}}).fetch();
     if (!respond || !respond.length) return null;
     const props = {
       commentRef: this.inRef,
