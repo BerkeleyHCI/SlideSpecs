@@ -1,3 +1,4 @@
+/* eslint max-len 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Session} from 'meteor/session.js';
@@ -27,6 +28,23 @@ export default class TalkContainer extends BaseComponent {
       Session.set('subscription', {type: 'talk', _id});
     }
 
+    const toRegion = comment => {
+      if (!comment.regions) {
+        return;
+      } else {
+        return comment.regions.map(r => {
+          return {
+            ...comment,
+            ...r,
+          };
+        });
+      }
+    };
+
+    const nullF = region => {
+      return region != null;
+    };
+
     const {
       talks,
       reviewer,
@@ -47,6 +65,9 @@ export default class TalkContainer extends BaseComponent {
     props.sounds = sounds.filter(f => f.meta.talkId === _id && f.meta.complete); // merged audio.
     props.name = props.talk.name;
     props.reviewer = reviewer;
+
+    // compute comment regions.
+    props.regions = _.flatten(props.comments.map(toRegion)).filter(nullF);
     return props;
   };
 
