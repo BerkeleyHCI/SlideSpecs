@@ -64,10 +64,10 @@ class FacilitatePage extends BaseComponent {
       {
         audio: {
           mandatory: {
-            googEchoCancellation: 'true',
-            googAutoGainControl: 'true',
-            googNoiseSuppression: 'true',
-            googHighpassFilter: 'true',
+            //googEchoCancellation: 'true',
+            //googAutoGainControl: 'true',
+            //googNoiseSuppression: 'true',
+            //googHighpassFilter: 'true',
           },
           optional: [],
         },
@@ -656,8 +656,8 @@ class FacilitatePage extends BaseComponent {
 
   handleAudioUpload = () => {
     if (window.audioRecorder) {
-      //window.audioRecorder.exportWAV(this.handleUpload);
       window.audioRecorder.exportMonoWAV(this.handleUpload);
+      //window.audioRecorder.exportWAV(this.handleUpload);
     } else {
       console.error('cant access audio recorder!');
     }

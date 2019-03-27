@@ -7,8 +7,8 @@ import ReactDOM from 'react-dom';
 //import CursorPlugin from 'wavesurfer.js/src/plugin/cursor.js';
 
 // wavesurfer docs
-//https://wavesurfer-js.org/docs/methods.html
-//https://wavesurfer-js.org/docs/options.html
+// https://wavesurfer-js.org/docs/methods.html
+// https://wavesurfer-js.org/docs/options.html
 
 // wavesurfer plugins
 // https://wavesurfer-js.org/example/regions/index.html
@@ -45,15 +45,7 @@ export default class Waveform extends React.Component {
 
       let regions = WaveSurfer.regions.create({
         dragSelection: false,
-        regions: [
-          {
-            start: 5,
-            end: 7,
-            drag: false,
-            resize: false,
-            color: 'rgba(255, 255, 255, .3)',
-          },
-        ],
+        regions: [],
       });
 
       const options = {
@@ -85,6 +77,12 @@ export default class Waveform extends React.Component {
     }
   }
 
+  componentDidUpdate = () => {
+    const {regions} = this.props;
+    this.clearRegions();
+    regions.map(this.addRegion);
+  };
+
   componentWillUnmount() {
     const {wavesurfer} = this.state;
     if (wavesurfer && wavesurfer.unAll) {
@@ -107,11 +105,37 @@ export default class Waveform extends React.Component {
     }
   };
 
+  playTime = time => {
+    const {wavesurfer} = this.state;
+    if (wavesurfer && wavesurfer.play) {
+      this.setState({playing: true});
+      wavesurfer.play(time);
+    }
+  };
+
   formatTime = time => {
     const min = Math.floor((time % 3600) / 60);
     let sec = (time % 60).toFixed(1);
     sec = sec >= 10 ? sec : `0${sec}`;
     return [min, sec].join(':');
+  };
+
+  clearRegions = () => {
+    const {wavesurfer} = this.state;
+    if (!wavesurfer || !wavesurfer.clearRegions) return;
+    wavesurfer.clearRegions();
+  };
+
+  addRegion = region => {
+    const {wavesurfer} = this.state;
+    if (!wavesurfer || !wavesurfer.addRegion) return;
+    wavesurfer.addRegion({
+      start: region.startTime,
+      end: region.endTime,
+      drag: false,
+      resize: false,
+      color: region.color ? region.color : 'rgba(255, 255, 255, .3)',
+    });
   };
 
   renderTitle = () => {
@@ -146,5 +170,6 @@ export default class Waveform extends React.Component {
 }
 
 Waveform.defaultProps = {
+  regions: [],
   src: '',
 };

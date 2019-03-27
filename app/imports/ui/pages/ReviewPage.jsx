@@ -18,10 +18,27 @@ import Message from '../components/Message.jsx';
 import Comment from '../components/Comment.jsx';
 import {createComment, completeComment} from '../../api/comments/methods.js';
 
+class ReviewTimeMarker extends Component {
+  render() {
+    const {handleClick, handleOver, handleOut, word} = this.props;
+    return (
+      <span
+        className="time-marker"
+        onClick={handleClick}
+        onMouseOver={handleOver}
+        onMouseOut={handleOut}>
+        {word}
+      </span>
+    );
+  }
+}
+
 class ReviewPage extends BaseComponent {
   constructor(props) {
     super(props);
     this.inRef = React.createRef();
+    this.waveRef = React.createRef();
+    this.audioScale = 2.4;
     this.state = {
       redirectTo: null,
       activeSound: null,
@@ -35,6 +52,7 @@ class ReviewPage extends BaseComponent {
       byAuth: '',
       byTag: '',
       hoverImage: '',
+      activeRegions: [],
       image: '',
       ds: {},
     };
@@ -575,13 +593,55 @@ class ReviewPage extends BaseComponent {
   };
 
   renderSounds = () => {
+    const {activeRegions} = this.state;
     const {sounds} = this.props;
     const [newSound] = sounds; // sorted, first
     if (!newSound || !WaveSurfer) return;
     const snd = Sounds.findOne({_id: newSound._id});
     if (!snd) return;
     const src = snd.link('original', '//');
-    return <Waveform src={src} />;
+    return <Waveform src={src} ref={this.waveRef} regions={activeRegions} />;
+  };
+
+  playRegionWord = ({startTime}) => {
+    return () => {
+      this.waveRef.current.playTime(startTime * this.audioScale);
+    };
+  };
+
+  highlightRegionWord = region => {
+    return _.throttle(() => {
+      // For some reason this needs to be scaled.
+      // This is really bad. Time stamps way off.
+      const startTime = region.startTime * this.audioScale;
+      const newRegion = {
+        ...region,
+        startTime,
+        endTime: Math.max(region.endTime * this.audioScale, startTime + 10), // visibiliy
+      };
+      this.setState({activeRegions: [newRegion]});
+    }, 100);
+  };
+
+  playRegionComment = region => {
+    return () => {
+      this.waveRef.current.playTime(region.startTime / 1000.0);
+    };
+  };
+
+  highlightRegionComment = region => {
+    return _.throttle(() => {
+      const newRegion = {
+        color: 'rgba(255, 100, 100, 0.4)',
+        startTime: region.startTime / 1000.0,
+        endTime: region.stopTime / 1000.0,
+      };
+      this.setState({activeRegions: [newRegion]});
+    }, 100);
+  };
+
+  clearRegions = () => {
+    this.setState({activeRegions: []});
   };
 
   renderTranscript = () => {
@@ -594,22 +654,59 @@ class ReviewPage extends BaseComponent {
         <span className="list-title">
           transcript
           <small className="pull-right">
-            {confidence.toFixed(3)}% confidence
+            {(confidence * 100.0).toFixed(1)}% confidence
           </small>
         </span>
         <div className="clearfix comment">
-          {results.map((w, i) => (
-            <span key={`${w.word}-${i}`}> {w.word} </span>
-          ))}
+          <p>
+            {results.map((w, i) => {
+              const playWord = this.playRegionWord(w);
+              const highlight = this.highlightRegionWord(w);
+              return (
+                <ReviewTimeMarker
+                  key={`${w.word}-${i}`}
+                  handleClick={playWord}
+                  handleOver={highlight}
+                  handleOut={this.clearRegions}
+                  word={w.word}
+                />
+              );
+            })}
+          </p>
         </div>
       </div>
     );
   };
 
-  //({w.startTime} / {w.endTime})
+  renderRegions = () => {
+    const {regions} = this.props;
+    if (!regions) return;
+    return (
+      <div id="comments-list" className="alert">
+        <span className="list-title">discussed comments</span>
+        {regions.map((w, i) => {
+          const playComment = this.playRegionComment(w);
+          const highlight = this.highlightRegionComment(w);
+          return (
+            <Comment
+              {...w}
+              key={`region-comment-${i}`}
+              last={i + 1 == regions.length}
+              handlePlayAudio={playComment}
+              handleMouseOut={this.clearRegions}
+              handleMouseOver={highlight}
+              regionView={true}
+            />
+          );
+        })}
+      </div>
+    );
+  };
+
   render() {
     const {images} = this.props;
     const trans = this.renderTranscript();
+    const regions = this.renderRegions();
     const comments = this.renderComments();
     const context = this.renderContext();
     const sounds = this.renderSounds();
@@ -622,8 +719,9 @@ class ReviewPage extends BaseComponent {
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
                 {sounds}
-                {comments}
+                {regions}
                 {trans}
+                {comments}
               </div>
             </div>
           </div>

@@ -316,6 +316,12 @@ class Comment extends BaseComponent {
     txt: 'delete',
   };
 
+  playButton = {
+    handleClick: this.props.handlePlayAudio,
+    icon: 'play',
+    txt: 'play',
+  };
+
   addressButton = {
     handleClick: this.handleAddress,
     master: true,
@@ -379,6 +385,8 @@ class Comment extends BaseComponent {
       bySlide,
       handleAuthor,
       handleAudioUpload,
+      handleMouseOver,
+      handleMouseOut,
       slides,
       handleSlideIn,
       handleSlideOut,
@@ -390,6 +398,7 @@ class Comment extends BaseComponent {
       facilitateView,
       discussView,
       commentView,
+      regionView,
       reviewView,
       responding,
     } = this.props;
@@ -409,6 +418,8 @@ class Comment extends BaseComponent {
       bData = [this.editButton];
     } else if (discussView) {
       bData = [...this.pubButtons];
+    } else if (regionView) {
+      bData = [this.playButton];
     } else if (reviewView && depth == 0) {
       bData = [this.completeButton, this.trashButton];
     } else if (reviewView && audio) {
@@ -450,6 +461,8 @@ class Comment extends BaseComponent {
         <div
           id={'c' + _id}
           onBlur={this.clearEdit}
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
           className={
             'clearfix comment ' +
             (last ? ' last-comment' : '') +

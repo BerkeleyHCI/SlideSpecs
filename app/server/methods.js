@@ -56,14 +56,17 @@ Meteor.methods({
         sampleRateHertz: 16000,
         languageCode: 'en-US',
         profanityFilter: true,
+        //audioChannelCount: 2,
         enableWordTimeOffsets: true,
         enableAutomaticPunctuation: true,
-        model: 'video', // only one of these
+        model: 'default', // only one of these
+        //model: 'video', // only one of these
         //model: 'phone_call', // only one of these
-        useEnhanced: true, // add this w/ phone
+        //useEnhanced: true, // add this w/ phone
+        // todo - source this  from comments
         speechContexts: [
           {
-            phrases: ['comment', 'testing', 'discuss'], // todo - source this  from comments
+            phrases: ['comment', 'testing', 'discuss'],
           },
         ],
       };
