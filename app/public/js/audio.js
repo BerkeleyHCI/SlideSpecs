@@ -108,7 +108,7 @@ function gotStream(stream) {
 
   // setting the volume and gain controls here
   myGain = audioContext.createGain();
-  myGain.gain.value = 3.0;
+  myGain.gain.value = 2.0;
   inputPoint.connect(myGain);
   //myGain.connect(audioContext.destination);
   updateAnalysers();
