@@ -6,16 +6,21 @@ import {Talks} from '../imports/api/talks/talks.js';
 import {Sounds} from '../imports/api/sounds/sounds.js';
 import {gAudio} from '../imports/api/gAudio/gAudio.js';
 
-import {talkCommentsGenerate} from '../imports/api/talks/methods.js';
+import {
+  talkCommentsGenerate,
+  setAudioStart,
+} from '../imports/api/talks/methods.js';
 import {createTranscript} from '../imports/api/transcripts/methods.js';
 
 Meteor.methods({
   async mergeSounds(talkId) {
     check(talkId, String);
     const talk = Talks.findOne(talkId);
+
     if (!(talk && Meteor.user() && Meteor.userId() === talk.userId)) {
       return console.error('no talk found.');
     } else {
+      setAudioStart.call({talkId: talk._id});
       talkCommentsGenerate.call({talkId: talk._id});
     }
 
@@ -48,14 +53,14 @@ Meteor.methods({
       const client = new speech.SpeechClient();
       const config = {
         encoding: 'FLAC',
-        sampleRateHertz: 44100,
+        sampleRateHertz: 16000,
         languageCode: 'en-US',
         profanityFilter: true,
         enableWordTimeOffsets: true,
         enableAutomaticPunctuation: true,
         model: 'video', // only one of these
         //model: 'phone_call', // only one of these
-        //useEnhanced: true, // add this w/ phone
+        useEnhanced: true, // add this w/ phone
         speechContexts: [
           {
             phrases: ['comment', 'testing', 'discuss'], // todo - source this  from comments

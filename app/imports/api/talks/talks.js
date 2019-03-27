@@ -22,6 +22,7 @@ Talks.schema = new SimpleSchema({
   secret: {type: String, regEx: SimpleSchema.RegEx.Id},
   userId: {type: String, regEx: SimpleSchema.RegEx.Id},
   active: {type: [String], defaultValue: [], optional: true},
+  audioStart: {type: Date, optional: true},
 });
 
 Talks.attachSchema(Talks.schema);

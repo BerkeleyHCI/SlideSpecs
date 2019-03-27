@@ -8,6 +8,7 @@ import {Talks} from './talks.js';
 import {Comments} from '../comments/comments.js';
 import {Events} from '../events/events.js';
 import {Files} from '../files/files.js';
+import {Sounds} from '../sounds/sounds.js';
 import {Images} from '../images/images.js';
 import {logEvent} from '../events/methods.js';
 
@@ -154,6 +155,8 @@ export const talkCommentsGenerate = new ValidatedMethod({
   run({talkId, callback}) {
     console.log(`generating regions for talk: ${talkId}`);
     if (!callback) callback = console.log;
+    const talk = Talks.findOne(talkId);
+    if (!talk) throw 'talk not found';
 
     const convertData = c => {
       if (c.data) {
@@ -178,12 +181,14 @@ export const talkCommentsGenerate = new ValidatedMethod({
       }
 
       // group by two, only accept pairs
+      const audioOffset = 19500; // length of clip.
+      const audioStart = talk.audioStart - audioOffset;
       const paired = _.chunk(events, 2).filter(x => x.length === 2);
       const regions = paired.map(pair => {
         return {
           commentId: c._id,
-          startTime: pair[0].created,
-          stopTime: pair[1].created,
+          startTime: pair[0].created - audioStart,
+          stopTime: pair[1].created - audioStart,
         };
       });
 
@@ -205,6 +210,24 @@ export const talkCommentsGenerate = new ValidatedMethod({
       .fetch()
       .map(commentToRegions)
       .map(updateRegions);
+  },
+});
+
+export const setAudioStart = new ValidatedMethod({
+  name: 'talk.setAudioStart',
+  validate: new SimpleSchema({
+    talkId: {type: String},
+  }).validator(),
+  run({talkId}) {
+    const talk = Talks.findOne(talkId);
+    if (!talk) return false; // talk does not exist
+    const [oldest] = Sounds.find(
+      {'meta.talkId': talkId},
+      {sort: {'meta.created': 1}, limit: 1},
+    ).fetch();
+    if (!oldest) return false; // sound does not exist
+    //console.log(oldest);
+    Talks.update(talkId, {$set: {audioStart: oldest.meta.created}});
   },
 });
 
