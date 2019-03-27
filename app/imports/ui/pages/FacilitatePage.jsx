@@ -426,7 +426,7 @@ class FacilitatePage extends BaseComponent {
     const {draftWords, sorter, invert, byAuth, bySlide, byTag} = this.state;
     const {talk, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
-      return <div className="alert"> no comments yet</div>;
+      return null;
     }
 
     let csort = _.orderBy(
@@ -454,10 +454,12 @@ class FacilitatePage extends BaseComponent {
     // remove child comments.
     csort = csort.filter(c => !isReply(c));
 
-    // draft words
+    // draft words - check for matching contents.
     if (draftWords) {
+      console.log(draftWords);
+
       csort = csort.filter(c =>
-        draftWords.some(dw => _.includes(c.content, dw)),
+        draftWords.some(dw => c.content.indexOf(dw) >= 0),
       );
     }
 
@@ -479,13 +481,18 @@ class FacilitatePage extends BaseComponent {
     );
   };
 
-  handleSearch = text => {
-    if (!text) return;
-    const words = text
-      .split(/\s/)
-      .map(s => s.trim())
-      .filter(s => s);
-    this.setState({draftWords: words});
+  handleSearch = () => {
+    const text = this.inRef.current.value.trim();
+    if (!text) {
+      this.setState({draftWords: []});
+    } else {
+      const words = text
+        .trim()
+        .split(/\s/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+      this.setState({draftWords: words});
+    }
   };
 
   handleUpload = blob => {

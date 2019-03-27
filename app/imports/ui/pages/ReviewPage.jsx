@@ -7,7 +7,6 @@ import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
 import {Images} from '../../api/images/images.js';
-import AlertLink from '../components/AlertLink.jsx';
 import Waveform from '../components/Waveform.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import Input from '../components/Input.jsx';
@@ -27,7 +26,6 @@ class ReviewPage extends BaseComponent {
       redirectTo: null,
       activeSound: null,
       activeComment: null,
-      commentsShown: 0,
       sorter: 'created',
       filter: 'time',
       invert: true,
@@ -349,20 +347,17 @@ class ReviewPage extends BaseComponent {
     });
   };
 
+  //<span className="pull-right">{comments.length} comments</span>
+
   renderFilter = () => {
     let {comments} = this.props;
-    let {byAuth, bySlide, byTag, filtered, commentsShown} = this.state;
+    let {byAuth, bySlide, byTag, filtered} = this.state;
     const tagList = this.renderTags();
     const slideKeys = this.renderSlideTags(filtered);
     const sType = bySlide === ['general'] ? 'scope' : 'slide';
     return (
       <div className="filterer alert no-submit border-bottom">
-        <p>
-          <span className="pull-right">
-            {commentsShown} / {comments.length}
-          </span>
-          {tagList}
-        </p>
+        <p>{tagList}</p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
         <ClearingDiv set={slideKeys} pre={sType} clear={this.clearBySlide} />
@@ -405,15 +400,7 @@ class ReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {
-      commentsShown,
-      sorter,
-      invert,
-      activeComment,
-      byAuth,
-      bySlide,
-      byTag,
-    } = this.state;
+    const {sorter, invert, activeComment, byAuth, bySlide, byTag} = this.state;
     const {comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
@@ -458,12 +445,6 @@ class ReviewPage extends BaseComponent {
       if (byTag) {
         csort = csort.filter(c => c.content.includes(byTag));
       }
-
-      try {
-        if (commentsShown !== csort.length) {
-          this.setState({commentsShown: csort.length});
-        }
-      } catch (e) {}
 
       const items = csort.map((c, i) => {
         c.transcript = c.author === 'transcript';

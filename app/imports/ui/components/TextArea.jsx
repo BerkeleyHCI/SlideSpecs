@@ -5,6 +5,7 @@ import autosize from 'autosize';
 class TextArea extends Component {
   componentDidMount = () => {
     setTimeout(() => autosize(this.props.inRef.current), 200);
+    this.state = {text: ''};
   };
 
   componentDidUpdate = () => {
@@ -14,8 +15,7 @@ class TextArea extends Component {
   keyDown = e => {
     const {inRef, handleKeyDown, handleSubmit} = this.props;
     const text = e.target.value.trim();
-    var charStr = String.fromCharCode(e.keyCode || e.which);
-    handleKeyDown(text + charStr.toLowerCase());
+    handleKeyDown(text);
     if (text && e.keyCode === 13 && !e.shiftKey) {
       handleSubmit(text);
       setTimeout(() => autosize.update(inRef.current), 200);
