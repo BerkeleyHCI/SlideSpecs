@@ -47,6 +47,9 @@ Meteor.methods({
       }
     };
 
+    const wordFreq = generateWordFreq.call({talkId: talk._id});
+    console.log(wordFreq);
+
     const runGoogle = () => {
       const gcsURI = `gs://${bucketName}/${fileName}`;
       const speech = Npm.require('@google-cloud/speech');
@@ -59,8 +62,8 @@ Meteor.methods({
         //audioChannelCount: 2,
         enableWordTimeOffsets: true,
         enableAutomaticPunctuation: true,
-        model: 'default', // only one of these
-        //model: 'video', // only one of these
+        model: 'video', // only one of these
+        //model: 'default', // only one of these
         //model: 'phone_call', // only one of these
         //useEnhanced: true, // add this w/ phone
         // todo - source this  from comments
