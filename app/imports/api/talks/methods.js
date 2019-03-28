@@ -146,6 +146,43 @@ export const setRespondingComment = new ValidatedMethod({
 });
 
 // Testing method to see when a comment has been discussed.
+export const generateWordFreq = new ValidatedMethod({
+  name: 'talk.generateWordFreq',
+  validate: new SimpleSchema({
+    talkId: {type: SimpleSchema.RegEx.Id},
+  }).validator(),
+  run({talkId}) {
+    console.log(`generating words for talk: ${talkId}`);
+    const talk = Talks.findOne(talkId);
+    if (!talk) throw 'talk not found';
+    const commentWords = Comments.find({talk: talkId})
+      .fetch()
+      .map(c => c.content.trim())
+      .join('\n')
+      .split(/\s/)
+      .map(c => c.trim());
+    const wordFreq = _.countBy(commentWords);
+    console.log(wordFreq);
+    const wordArray = Object.keys(wordFreq)
+      .map(key => [key, wordFreq[key]])
+      .slice(0, 500); // google cloud limit
+    console.log(wordArray);
+
+    // TODO filter out commonplace filler words, like 'the'
+    // -Like
+    //-Actually
+    //-Basically
+    //-Mmk
+    //-Yeah
+    //-Literally
+    //-Pretty much
+    //-Sooo
+    //-You know
+    //- kind of
+    return wordArray;
+  },
+});
+
 export const talkCommentsGenerate = new ValidatedMethod({
   name: 'talk.talkCommentsGenerate',
   validate: new SimpleSchema({
