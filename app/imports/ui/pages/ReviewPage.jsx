@@ -38,7 +38,8 @@ class ReviewPage extends BaseComponent {
     super(props);
     this.inRef = React.createRef();
     this.waveRef = React.createRef();
-    this.audioScale = 2.4;
+    //this.audioScale = 2.4;
+    this.audioScale = 1;
     this.state = {
       redirectTo: null,
       activeSound: null,
@@ -713,7 +714,7 @@ class ReviewPage extends BaseComponent {
 
     return images ? (
       this.renderRedirect() || (
-        <div className="reviewView" onMouseDown={this.clearButtonBG}>
+        <div className="" onMouseDown={this.clearButtonBG}>
           <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
