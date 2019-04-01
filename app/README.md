@@ -9,10 +9,14 @@
 ```bash
 meteor npm install
 meteor
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/slidespecs-research/app/private/slidespecs.json
 open http://localhost:3000
 ```
 
+
 ##### Audio Concatenation (osx)
+
+Best practices for audio recording: https://cloud.google.com/speech-to-text/docs/best-practices
 
 ```
 brew install sox
