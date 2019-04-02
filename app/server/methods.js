@@ -7,7 +7,8 @@ import {Sounds} from '../imports/api/sounds/sounds.js';
 import {gAudio} from '../imports/api/gAudio/gAudio.js';
 
 import {
-  talkCommentsGenerate,
+  generateCommentRegions,
+  generateWordFreq,
   setAudioStart,
 } from '../imports/api/talks/methods.js';
 import {createTranscript} from '../imports/api/transcripts/methods.js';
@@ -19,10 +20,14 @@ Meteor.methods({
 
     if (!(talk && Meteor.user() && Meteor.userId() === talk.userId)) {
       return console.error('no talk found.');
-    } else {
-      setAudioStart.call({talkId: talk._id});
-      talkCommentsGenerate.call({talkId: talk._id});
     }
+
+    // the talk exists
+    setAudioStart.call({talkId: talk._id});
+    generateCommentRegions.call({talkId: talk._id});
+    const wordFreq = generateWordFreq.call({talkId: talk._id});
+    const wordList = wordFreq.filter(wf => wf.count >= 2).map(wf => wf.word);
+    //console.log(wordList);
 
     const sounds = Sounds.find(
       {'meta.talkId': talkId, 'meta.complete': {$ne: true}},
@@ -33,10 +38,6 @@ Meteor.methods({
     const fileName = fName.substring(fName.lastIndexOf('/') + 1);
     const args = [fName, ...sName];
 
-    const useTranscript = data => {
-      console.log(data);
-    };
-
     const gatherTranscript = (results, err) => {
       const res = results[0];
       if (res) {
@@ -46,9 +47,6 @@ Meteor.methods({
         console.error(err);
       }
     };
-
-    const wordFreq = generateWordFreq.call({talkId: talk._id});
-    console.log(wordFreq);
 
     const runGoogle = () => {
       const gcsURI = `gs://${bucketName}/${fileName}`;
@@ -66,12 +64,7 @@ Meteor.methods({
         //model: 'default', // only one of these
         //model: 'phone_call', // only one of these
         //useEnhanced: true, // add this w/ phone
-        // todo - source this  from comments
-        speechContexts: [
-          {
-            phrases: ['comment', 'testing', 'discuss'],
-          },
-        ],
+        speechContexts: [{phrases: wordList}],
       };
 
       const request = {config, audio: {uri: gcsURI}};
