@@ -13,4 +13,3 @@ for i in `find "$1" -name '*.json'`; do
         --file "$i"
 done
 
-
