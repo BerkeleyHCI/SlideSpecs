@@ -102,3 +102,4 @@ server {
 }
 ```
 
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/slidespecs-research/app/private/slidespecs.json

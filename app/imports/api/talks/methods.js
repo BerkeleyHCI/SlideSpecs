@@ -152,39 +152,48 @@ export const generateWordFreq = new ValidatedMethod({
     talkId: {type: SimpleSchema.RegEx.Id},
   }).validator(),
   run({talkId}) {
-    console.log(`generating words for talk: ${talkId}`);
+    console.log(`generating hint words for talk: ${talkId}`);
     const talk = Talks.findOne(talkId);
     if (!talk) throw 'talk not found';
+
+    const fillerWords = [
+      'like',
+      'actually',
+      'the',
+      'as',
+      'the',
+      'yes',
+      'no',
+      'agree',
+    ];
+
+    const punctuation = /[.,\/#!$%\^&\*;:{}=\-_`~()]/g;
+
     const commentWords = Comments.find({talk: talkId})
       .fetch()
       .map(c => c.content.trim())
       .join('\n')
       .split(/\s/)
-      .map(c => c.trim());
+      .map(c => c.replace(punctuation, ''))
+      .map(c => c.trim())
+      .filter(c => !fillerWords.includes(c));
     const wordFreq = _.countBy(commentWords);
-    console.log(wordFreq);
     const wordArray = Object.keys(wordFreq)
-      .map(key => [key, wordFreq[key]])
+      .map(key => {
+        return {
+          word: key,
+          count: wordFreq[key],
+        };
+      })
       .slice(0, 500); // google cloud limit
-    console.log(wordArray);
 
-    // TODO filter out commonplace filler words, like 'the'
-    // -Like
-    //-Actually
-    //-Basically
-    //-Mmk
-    //-Yeah
-    //-Literally
-    //-Pretty much
-    //-Sooo
-    //-You know
-    //- kind of
-    return wordArray;
+    const sortArray = _.orderBy(wordArray, ['count'], ['desc']);
+    return sortArray;
   },
 });
 
-export const talkCommentsGenerate = new ValidatedMethod({
-  name: 'talk.talkCommentsGenerate',
+export const generateCommentRegions = new ValidatedMethod({
+  name: 'talk.generateCommentRegions',
   validate: new SimpleSchema({
     talkId: {type: SimpleSchema.RegEx.Id},
     callback: {type: Function, optional: true},
@@ -204,6 +213,8 @@ export const talkCommentsGenerate = new ValidatedMethod({
         return c;
       }
     };
+
+    // TODO filter out regions that are beyond the end of the audio recording.
 
     const commentToRegions = c => {
       let events = Events.find({comment: c._id}, {sort: {created: 1}})
