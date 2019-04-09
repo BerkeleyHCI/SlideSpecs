@@ -30,22 +30,6 @@ export default class TalkPage extends BaseComponent {
       deleteTalkFiles.call({talkId: talk._id});
   };
 
-  updateMason = () => {
-    if (this.props.images) {
-      const grid = document.getElementById('grid');
-      const mason = new Masonry(grid, {itemSelector: '.file-item'});
-      this.setState({mason});
-    }
-  };
-
-  componentDidMount() {
-    this.updateMason();
-  }
-
-  componentDidUpdate() {
-    this.updateMason();
-  }
-
   handleDropUpload = files => {
     this.handleUpload(files);
   };
@@ -103,18 +87,15 @@ export default class TalkPage extends BaseComponent {
           //console.log('started', file.name);
         });
 
-        // TODO set the percent of the specific talk item for upload
         uploadInstance.on('progress', function(progress, file) {
           setTalkProgress.call({talkId: talk._id, progress});
         });
 
-        // TODO set the percent of the specific talk item for upload
         uploadInstance.on('uploaded', (err, file) => {
           console.log('uploaded', file.name);
           setTalkProgress.call({talkId: talk._id, progress: 100});
         });
 
-        // TODO set status on talk item that uploading is done.
         uploadInstance.on('end', (err, file) => {
           console.log('file:', file);
           handleToast({
@@ -175,6 +156,12 @@ export default class TalkPage extends BaseComponent {
 
     const content = (
       <div className="main-content">
+        {file && (
+          <small className="pull-right">
+            {images.length} slides, {comments.length} comments
+          </small>
+        )}
+
         <h1>
           <Link to={`/`}>
             <span className="black"> ‹ </span>
@@ -223,31 +210,16 @@ export default class TalkPage extends BaseComponent {
         )}
 
         {file && (
-          <div className="alert">
-            <ul>
-              <li>slides: {images.length}</li>
-              <li>comments: {comments.length}</li>
-            </ul>
-            <hr />
-
-            <div className="btns-menu-space">
-              <a download href={talkFile}>
-                <button className="btn btn-menu btn-primary">
-                  download original
-                </button>
-              </a>
-              <button
-                onClick={this.deleteTalkFiles}
-                className="btn btn-menu pull-right">
-                delete slides
+          <div className="btns-menu-space">
+            <a download href={talkFile}>
+              <button className="btn btn-menu btn-primary">
+                download original
               </button>
-            </div>
+            </a>
           </div>
         )}
 
         {file && images.length == 0 && <TalkListItem talk={talk} />}
-
-        <div id="grid" />
       </div>
     );
 
@@ -256,6 +228,11 @@ export default class TalkPage extends BaseComponent {
 }
 
 // <div id="grid">{imageSet}</div>
+//<button
+//onClick={this.deleteTalkFiles}
+//className="btn btn-menu pull-right">
+//delete slides
+//</button>
 
 TalkPage.propTypes = {
   user: PropTypes.object,

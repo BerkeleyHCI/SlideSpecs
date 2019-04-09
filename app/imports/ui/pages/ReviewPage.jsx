@@ -2,15 +2,20 @@ import {Meteor} from 'meteor/meteor';
 import React, {Component} from 'react';
 import {Session} from 'meteor/session.js';
 import ReactAudioPlayer from 'react-audio-player';
-import {Sounds} from '../../api/sounds/sounds.js';
+import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
+import {Sounds} from '../../api/sounds/sounds.js';
 import {Images} from '../../api/images/images.js';
 import Waveform from '../components/Waveform.jsx';
+import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
+import CommentList from '../components/CommentList.jsx';
 import Input from '../components/Input.jsx';
 import ClearingDiv from '../components/ClearingDiv.jsx';
+import DragUpload from '../components/DragUpload.jsx';
+import SelectUpload from '../components/SelectUpload.jsx';
 import TextArea from '../components/TextArea.jsx';
 import FileReview from '../components/FileReview.jsx';
 import Img from '../components/Image.jsx';
@@ -38,7 +43,7 @@ class ReviewPage extends BaseComponent {
     super(props);
     this.inRef = React.createRef();
     this.waveRef = React.createRef();
-    //this.audioScale = 2.4;
+    //this.audioScale = 2.75;
     this.audioScale = 1;
     this.state = {
       redirectTo: null,
@@ -71,6 +76,12 @@ class ReviewPage extends BaseComponent {
     const {talk} = this.props;
     console.log('starting generation');
     Meteor.call('mergeSounds', talk._id, console.log);
+  };
+
+  handleTranscribe = filename => {
+    const {talk} = this.props;
+    console.log('starting transcription');
+    Meteor.call('transcribeSounds', talk._id, filename);
   };
 
   handleSelectable = items => {
@@ -143,6 +154,85 @@ class ReviewPage extends BaseComponent {
 
   clearActiveComment = () => {
     this.setState({activeComment: ''});
+  };
+
+  handleDropUpload = files => {
+    this.handleUpload(files);
+  };
+
+  handleSelectUpload = e => {
+    e.preventDefault();
+    const files = [...e.currentTarget.files];
+    this.handleUpload(files);
+  };
+
+  handleUpload = allfiles => {
+    const file = allfiles[0]; // only accept the first file.
+    if (!file) return;
+    let {talk} = this.props;
+    const handleToast = ({msg, desc, icon, closeTime}) => {
+      if (!closeTime) closeTime = 3000;
+      toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
+        autoClose: closeTime,
+      });
+    };
+
+    const goodSize = file.size <= 50985760;
+    const goodType = /(flac|wav)$/i.test(file.name);
+    if (!goodSize || !goodType) {
+      handleToast({
+        msg: 'error',
+        icon: 'times',
+        desc:
+          'Please only upload FLAC or WAV files, with size equal or less than 50MB.',
+      });
+      return; // skip this file.
+    }
+
+    let uploadInstance = Sounds.insert(
+      {
+        file,
+        meta: {
+          created: Date.now(),
+          userId: Meteor.userId(),
+          talkId: talk._id,
+        },
+        streams: 'dynamic',
+        chunkSize: 'dynamic',
+        allowWebWorkers: true,
+      },
+      false, // dont autostart the upload
+    );
+
+    uploadInstance.on('start', (err, file) => {
+      console.log('started', file.name);
+      handleToast({
+        msg: file.name,
+        icon: 'hourglass',
+        desc: 'upload started',
+      });
+    });
+
+    uploadInstance.on('end', (err, file) => {
+      console.log('file:', file);
+      this.handleGenerate();
+      handleToast({
+        msg: file.name,
+        icon: 'check',
+        desc: 'upload complete',
+      });
+    });
+
+    uploadInstance.on('error', (err, file) => {
+      if (err) console.error(err, file);
+      handleToast({
+        msg: file.name,
+        icon: 'times',
+        desc: `Error uploading: ${err}`,
+      });
+    });
+
+    uploadInstance.start();
   };
 
   setByAuth = e => {
@@ -384,6 +474,32 @@ class ReviewPage extends BaseComponent {
     );
   };
 
+  renderUpload = () => {
+    const soundDownload = this.renderSoundDownload();
+    return (
+      <div>
+        <div className="alert">
+          add your discussion audio.
+          <SelectUpload
+            labelText="+ new"
+            className="pull-right btn-menu btn-note"
+            handleUpload={this.handleSelectUpload}
+          />
+          <hr />
+          <DragUpload
+            handleUpload={this.handleDropUpload}
+            title="drop file here"
+            subtitle="audio only"
+          />
+        </div>
+        <a onClick={this.handleGenerate} className="link-alert" href="#">
+          <div className="alert centered">generate transcription</div>
+        </a>
+        {soundDownload}
+      </div>
+    );
+  };
+
   renderTags = () => {
     const {byTag} = this.state;
     const {comments} = this.props;
@@ -497,23 +613,8 @@ class ReviewPage extends BaseComponent {
 
       return items.length > 0 ? (
         <div>
-          {incomplete.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">to address</span>
-              {incomplete.map((i, iter) => (
-                <Comment {...i} key={`comment-${iter}`} />
-              ))}
-            </div>
-          )}
-
-          {completed.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">addressed</span>
-              {completed.map(i => (
-                <Comment {...i} />
-              ))}
-            </div>
-          )}
+          <CommentList title={'to address'} items={incomplete} />
+          <CommentList title={'addressed'} items={completed} />
         </div>
       ) : (
         <div className="alert"> no matching comments</div>
@@ -538,7 +639,6 @@ class ReviewPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderImages();
     const cmtHead = this.renderCommentFilter();
-    const soundDownload = this.renderSoundDownload();
 
     const {image, hoverImage, filtered} = this.state;
     const {talk, name} = this.props;
@@ -562,10 +662,6 @@ class ReviewPage extends BaseComponent {
           </div>
         </div>
         {cmtHead}
-        <a onClick={this.handleGenerate} className="link-alert" href="#">
-          <div className="alert centered">generate transcription</div>
-        </a>
-        {soundDownload}
       </div>
     );
   };
@@ -621,7 +717,7 @@ class ReviewPage extends BaseComponent {
         endTime: Math.max(region.endTime * this.audioScale, startTime + 10), // visibiliy
       };
       this.setState({activeRegions: [newRegion]});
-    }, 100);
+    }, 50);
   };
 
   playRegionComment = region => {
@@ -638,12 +734,12 @@ class ReviewPage extends BaseComponent {
         endTime: region.stopTime / 1000.0,
       };
       this.setState({activeRegions: [newRegion]});
-    }, 100);
+    }, 50);
   };
 
-  clearRegions = () => {
+  clearRegions = _.throttle(() => {
     this.setState({activeRegions: []});
-  };
+  }, 50);
 
   renderTranscript = () => {
     const {transcript} = this.props;
@@ -651,7 +747,7 @@ class ReviewPage extends BaseComponent {
     const {results, confidence} = transcript;
     if (!results || !confidence) return;
     return (
-      <div id="comments-list" className="alert">
+      <div className="comments-list alert">
         <span className="list-title">
           transcript
           <small className="pull-right">
@@ -682,26 +778,20 @@ class ReviewPage extends BaseComponent {
   renderRegions = () => {
     const {regions} = this.props;
     if (!regions) return;
-    return (
-      <div id="comments-list" className="alert">
-        <span className="list-title">discussed comments</span>
-        {regions.map((w, i) => {
-          const playComment = this.playRegionComment(w);
-          const highlight = this.highlightRegionComment(w);
-          return (
-            <Comment
-              {...w}
-              key={`region-comment-${i}`}
-              last={i + 1 == regions.length}
-              handlePlayAudio={playComment}
-              handleMouseOut={this.clearRegions}
-              handleMouseOver={highlight}
-              regionView={true}
-            />
-          );
-        })}
-      </div>
-    );
+    const regionComments = regions.map((w, i) => {
+      const playComment = this.playRegionComment(w);
+      const highlight = this.highlightRegionComment(w);
+      return {
+        ...w,
+        last: i + 1 == regions.length,
+        handlePlayAudio: playComment,
+        handleMouseOut: this.clearRegions,
+        handleMouseOver: highlight,
+        regionView: true,
+      };
+    });
+
+    return <CommentList title={'discussed comments'} items={regionComments} />;
   };
 
   render() {
@@ -711,17 +801,21 @@ class ReviewPage extends BaseComponent {
     const comments = this.renderComments();
     const context = this.renderContext();
     const sounds = this.renderSounds();
+    const upload = this.renderUpload();
 
     return images ? (
       this.renderRedirect() || (
-        <div className="" onMouseDown={this.clearButtonBG}>
+        <div className="padded" onMouseDown={this.clearButtonBG}>
           <div id="review-view" className="table review-table">
             <div className="row">
-              <div className="col-sm-5 full-height-md no-float">{context}</div>
+              <div className="col-sm-5">
+                {context}
+                {upload}
+              </div>
               <div className="col-sm-7">
                 {sounds}
-                {regions}
                 {trans}
+                {regions}
                 {comments}
               </div>
             </div>

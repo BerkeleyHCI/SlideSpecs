@@ -188,13 +188,13 @@ class Comment extends BaseComponent {
         commentId: _id,
       };
 
-      toast(() => (
-        <AppNotification
-          msg="Agreed"
-          desc="Agreed with comment."
-          icon="thumbs-up"
-        />
-      ));
+      //toast(() => (
+      //<AppNotification
+      //msg="Agreed"
+      //desc="Agreed with comment."
+      //icon="thumbs-up"
+      ///>
+      //));
 
       this.log({type: 'agree', ...commentFields});
       agreeComment.call(commentFields);
@@ -254,9 +254,9 @@ class Comment extends BaseComponent {
       setRespondingComment.call(commentFields);
     }
 
-    toast(() => (
-      <AppNotification msg="Set" desc="Discussion comment set." icon="star" />
-    ));
+    //toast(() => (
+    //<AppNotification msg="Set" desc="Discussion comment set." icon="star" />
+    //));
   };
 
   handleFinishComment = () => {
@@ -275,13 +275,13 @@ class Comment extends BaseComponent {
       setRespondingComment.call(commentFields);
     }
 
-    toast(() => (
-      <AppNotification
-        msg="Cleared"
-        desc="Discussion comment cleared."
-        icon="check"
-      />
-    ));
+    //toast(() => (
+    //<AppNotification
+    //msg="Cleared"
+    //desc="Discussion comment cleared."
+    //icon="check"
+    ///>
+    //));
   };
 
   pubButtons = [

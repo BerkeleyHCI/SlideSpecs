@@ -18,10 +18,12 @@ class AboutPage extends BaseComponent {
         </h3>
 
         <h1>About</h1>
-        <div className="alert">
+        {!user && (
+          <AlertLink center={true} text={'Create An Account'} link={`/join`} />
+        )}
+        <div className="v-pad">
           SlideSpecs is a collaborative presentation feedback platform. You can
           use SlideSpecs to:
-          <hr />
           <dl>
             <dt>Collect rich feedback</dt>
             <dd>
@@ -44,24 +46,19 @@ class AboutPage extends BaseComponent {
               transcript can be reviewed or exported.
             </dd>
           </dl>
-          <hr />
-          Check out the [ <Link to="/guide"> user guide </Link> ] to see more of
-          what SlideSpecs can do.
+          <div className="v-pad">
+            Check out the [ <Link to="/guide"> user guide </Link> ] to see more
+            of what SlideSpecs can do.
+          </div>
         </div>
-
-        {!user && (
-          <AlertLink center={true} text={'Create An Account'} link={`/join`} />
-        )}
 
         <h3>Contact</h3>
-        <div className="alert">
-          <p>
-            Please email Jeremy Warner (first.last at berkeley.edu) with any
-            feedback or questions.
-          </p>
-        </div>
+        <p>
+          Please email Jeremy Warner (first.last at berkeley.edu) with any
+          feedback or questions.
+        </p>
 
-        <h3>
+        <h3 className="v-pad">
           <Link to={`/`}>
             <span className="black"> ‹ </span> back
           </Link>
