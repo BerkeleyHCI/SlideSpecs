@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import {Images} from '../../api/images/images.js';
 import AlertLink from '../components/AlertLink.jsx';
+import CommentList from '../components/CommentList.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
 import SlideTags from '../components/SlideTags.jsx';
@@ -314,7 +315,6 @@ class CommentPage extends BaseComponent {
           <i className={'fa fa-' + (focusing ? 'eye' : 'comments')} />{' '}
           {focusing ? 'focus' : 'share'}
         </span>{' '}
-        |{' '}
         <span className="comment-option" onClick={this.toggleUserOwn}>
           <i className={'fa fa-' + (userOwn ? 'user' : 'globe')} />{' '}
           {userOwn ? 'mine' : 'all'}
@@ -454,13 +454,6 @@ class CommentPage extends BaseComponent {
     ));
   };
 
-  goToTop = () => {
-    const view = document.getElementsByClassName('comments-head');
-    if (view[0]) {
-      view[0].scrollIntoView({block: 'center', inline: 'center'});
-    }
-  };
-
   renderComments = () => {
     const {
       sorter,
@@ -553,22 +546,7 @@ class CommentPage extends BaseComponent {
       return (
         <div>
           <span className="comments-head" />
-          <div id="comments-list" className="alert">
-            <span className="list-title">comments</span>
-            {items.map((i, iter) => (
-              <Comment key={`comment-${iter}`} {...i} />
-            ))}
-          </div>
-          {items.length >= 5 && (
-            <div className="clearComment padded full-width">
-              <button
-                onClick={this.goToTop}
-                className="btn center btn-menu btn-round">
-                <i className={'fa fa-arrow-up no-padding'} />
-              </button>
-              <div className="clearComment v-pad" />
-            </div>
-          )}
+          <CommentList title={'comments'} items={items} />
           {items.length == 0 && <div className="alert"> no comments</div>}
         </div>
       );

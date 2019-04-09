@@ -10,6 +10,7 @@ import {Sounds} from '../../api/sounds/sounds.js';
 import {Images} from '../../api/images/images.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import AlertLink from '../components/AlertLink.jsx';
+import CommentList from '../components/CommentList.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import SpeechRecognition from 'react-speech-recognition';
 import Input from '../components/Input.jsx';
@@ -93,8 +94,7 @@ class FacilitatePage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    this.handleSetupAudio();
-    this.updateResponding();
+    //this.handleSetupAudio();
   };
 
   componentWillUnmount = () => {
@@ -113,9 +113,6 @@ class FacilitatePage extends BaseComponent {
       userOwn: false,
       slides: [],
     };
-
-    // save the current comment.
-    this.handleAudioUpload();
 
     createComment.call(commentFields, (err, res) => {
       if (err) {
@@ -198,8 +195,6 @@ class FacilitatePage extends BaseComponent {
   handleSlideOut = e => {
     this.setState({hoverImage: false});
   };
-
-  updateResponding = () => {};
 
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
@@ -381,7 +376,7 @@ class FacilitatePage extends BaseComponent {
         this.renderCommentData(csort, replies, c, i),
       );
 
-      const addressedItems = addressed.map((c, i) =>
+      const addrItems = addressed.map((c, i) =>
         this.renderCommentData(addressed, replies, c, i),
       );
 
@@ -391,32 +386,9 @@ class FacilitatePage extends BaseComponent {
 
       return (
         <div>
-          {items.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">to discuss</span>
-              {items.map(i => (
-                <Comment feedback={true} {...i} />
-              ))}
-            </div>
-          )}
-
-          {addressedItems.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">discussed</span>
-              {addressedItems.map(i => (
-                <Comment feedback={true} {...i} />
-              ))}
-            </div>
-          )}
-
-          {unmarkedItems.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">unmarked</span>
-              {unmarkedItems.map(i => (
-                <Comment {...i} />
-              ))}
-            </div>
-          )}
+          <CommentList title={'to discuss'} items={items} feedback={true} />
+          <CommentList title={'discussed'} items={addrItems} feedback={true} />
+          <CommentList title={'unmarked'} items={unmarkedItems} />
         </div>
       );
     }
@@ -467,16 +439,7 @@ class FacilitatePage extends BaseComponent {
     );
 
     return (
-      <div>
-        {items.length > 0 && (
-          <div id="comments-list" className="alert">
-            <span className="list-title">matched comments</span>
-            {items.map(i => (
-              <Comment feedback={true} {...i} />
-            ))}
-          </div>
-        )}
-      </div>
+      <CommentList title={'matched comments'} items={items} feedback={true} />
     );
   };
 
@@ -560,20 +523,14 @@ class FacilitatePage extends BaseComponent {
     const {talk} = this.props;
     let activeFix = _.flatten([talk.active]);
     const respond = Comments.find({_id: {$in: activeFix}}).fetch();
-    if (!respond.length) return null;
     return (
-      <div id="comments-list" className="alert">
-        <span className="list-title list-title-note">discussing</span>
-        {respond.map((i, iter) => (
-          <Comment
-            {...i}
-            key={`discuss-${iter}`}
-            iter={iter}
-            facilitateView={true}
-            responding={true}
-          />
-        ))}
-      </div>
+      <CommentList
+        title={'to discuss'}
+        items={respond}
+        facilitateView={true}
+        responding={true}
+        note={true}
+      />
     );
   };
 
@@ -665,7 +622,8 @@ class FacilitatePage extends BaseComponent {
 
   render() {
     const {images} = this.props;
-    const context = this.renderSounds();
+    //const context = this.renderSounds();
+    //{context}
     const matched = this.renderMatchComments();
     const respond = this.renderRespond();
     const comments = this.renderComments();
@@ -679,7 +637,6 @@ class FacilitatePage extends BaseComponent {
               <div className="row">
                 <div className="col-sm-5 full-height-md no-float">
                   <div className="float-at-top">
-                    {context}
                     {cmtHead}
                     {matched}
                   </div>

@@ -190,23 +190,6 @@ div.reviewView {
     content: '× ';
   }
 
-  kbd {
-    line-height: initial;
-    display: inline-block;
-    background-color: lighten(@color-danger, 20%);
-    &:hover {
-      background-color: @color-note !important;
-      color: @color-full;
-    }
-  }
-  kbd.active {
-    background-color: @color-ancillary;
-    &:hover {
-      background-color: lighten(@color-ancillary, 10%);
-      color: @color-raw;
-    }
-  }
-
   .context-filter {
     max-height: 100vh;
     overflow-y: auto;
@@ -236,39 +219,9 @@ div.reviewView {
     padding: 0.5em 1em !important;
   }
 
-  .tag-group {
-    display: inline-block;
-    &:hover {
-      .tag-count {
-        opacity: 0.8;
-      }
-    }
-  }
-
   .auth-active {
     background-color: @color-note;
     text-decoration: underline;
-  }
-
-  .tag-active {
-    opacity: 1;
-    kbd.tag-count {
-      background-color: darken(@color-ancillary, 5%);
-      opacity: 1;
-      &:hover {
-        background-color: @color-ancillary;
-        opacity: 1;
-      }
-    }
-  }
-
-  .tag-link {
-    padding: 0.5em;
-    opacity: 1;
-  }
-
-  kbd.tag-count {
-    opacity: 0.3;
   }
 
   .transcript {
@@ -331,11 +284,14 @@ div.reviewView {
   }
 }
 
+.filterer {
+  border: 1px solid @color-rare;
+}
+
 .filterer.no-submit {
   border-bottom: 1px solid @color-rare;
 }
 
-.filterer.alert,
 .submitter.alert {
   border: none;
 }
@@ -352,13 +308,13 @@ div.reviewView {
   }
   textarea {
     animation: pulse 3s infinite ease-in-out;
-    background: lighten(@color-primary, 45%);
+    background: darken(@color-fourth, 0%);
     padding: 15px 15px 5px 15px;
     &:hover {
       border-left: 0.5em solid @color-danger;
       transition: border-width 0.1s ease;
       transition: background 0.1s ease;
-      background: lighten(@color-primary, 35%);
+      background: darken(@color-fourth, 3%);
     }
     &:focus {
       box-shadow: 0 4px 2px -2px @color-ancillary;
@@ -368,6 +324,53 @@ div.reviewView {
       transition: background 0.1s ease;
       background: @color-empty;
       animation: none;
+    }
+  }
+}
+
+kbd {
+  line-height: initial;
+  display: inline-block;
+  background-color: lighten(@color-danger, 20%);
+  &:hover {
+    background-color: @color-note !important;
+    color: @color-full;
+  }
+}
+kbd.active {
+  background-color: @color-ancillary;
+  &:hover {
+    background-color: lighten(@color-ancillary, 10%);
+    color: @color-raw;
+  }
+}
+
+.tag-active {
+  opacity: 1;
+  kbd.tag-count {
+    background-color: darken(@color-ancillary, 5%);
+    opacity: 1;
+    &:hover {
+      background-color: @color-ancillary;
+      opacity: 1;
+    }
+  }
+}
+
+.tag-link {
+  padding: 0.5em;
+  opacity: 1;
+}
+
+kbd.tag-count {
+  opacity: 0.3;
+}
+.tag-group {
+  margin-right: 1em;
+  display: inline-block;
+  &:hover {
+    .tag-count {
+      opacity: 0.8;
     }
   }
 }

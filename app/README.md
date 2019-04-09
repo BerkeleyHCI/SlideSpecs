@@ -18,6 +18,8 @@ open http://localhost:3000
 
 Best practices for audio recording: https://cloud.google.com/speech-to-text/docs/best-practices
 
+transcription material: http://www.ushistory.org/declaration/document/
+
 ```
 brew install sox
 ```

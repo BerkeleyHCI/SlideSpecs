@@ -33,6 +33,7 @@ class DragUpload extends BaseComponent {
   };
 
   render() {
+    const {title, subtitle} = this.props;
     const dClass = 'dragUpload ' + (this.state.hover ? 'hovered' : '');
     return (
       <DropToUpload
@@ -40,17 +41,18 @@ class DragUpload extends BaseComponent {
         onLeave={this.handleLeave}
         onOver={this.handleOver}
         onDrop={this.handleDrop}>
-        <FullMessage
-          className={dClass}
-          title="drop files here"
-          subtitle="PDF only"
-        />
+        <FullMessage className={dClass} title={title} subtitle={subtitle} />
       </DropToUpload>
     );
   }
 }
 
 //subtitle="PDF or PowerPoint"
+
+DragUpload.defaultProps = {
+  title: 'drop files here',
+  subtitle: 'PDF only',
+};
 
 DragUpload.propTypes = {
   handleUpload: PropTypes.func.isRequired,

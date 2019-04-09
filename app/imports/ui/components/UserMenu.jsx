@@ -1,28 +1,28 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Meteor } from "meteor/meteor";
-import { Link } from "react-router-dom";
-import BaseComponent from "./BaseComponent.jsx";
-import { Session } from "meteor/session.js";
+import React from 'react';
+import PropTypes from 'prop-types';
+import {Meteor} from 'meteor/meteor';
+import {Link} from 'react-router-dom';
+import BaseComponent from './BaseComponent.jsx';
+import {Session} from 'meteor/session.js';
 
 export default class UserMenu extends BaseComponent {
   goHome = e => {
     e.preventDefault();
-    this.redirectTo("/");
+    this.redirectTo('/');
   };
 
   logout = e => {
     e.preventDefault();
     Meteor.logout(() => {
-      localStorage.setItem("feedbacks.referringLink", "");
-      Session.set("reviewer", null);
-      Session.set("session", null);
-      Session.set("talk", null);
+      localStorage.setItem('feedbacks.referringLink', '');
+      Session.set('reviewer', null);
+      Session.set('session', null);
+      Session.set('talk', null);
     });
   };
 
   renderOpen = () => {
-    const { user } = this.props;
+    const {user} = this.props;
     const username = user.username;
     return (
       <div className="user-menu">
@@ -44,7 +44,7 @@ export default class UserMenu extends BaseComponent {
     return (
       <div className="user-menu">
         <Link to="/signin" className="btn-secondary">
-          login
+          signin
         </Link>
         <Link to="/join" className="btn-secondary">
           join
@@ -54,7 +54,7 @@ export default class UserMenu extends BaseComponent {
   }
 
   render() {
-    const { user } = this.props;
+    const {user} = this.props;
     let content = user ? this.renderOpen() : this.renderLoggedOut();
     return (
       this.renderRedirect() || (
@@ -70,5 +70,5 @@ export default class UserMenu extends BaseComponent {
 }
 
 UserMenu.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object,
 };
