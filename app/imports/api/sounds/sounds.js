@@ -12,7 +12,7 @@ export const Sounds = new FilesCollection({
     if (
       file.size > 1000 &&
       file.size <= 10485760 &&
-      /wav/i.test(file.extension)
+      /wav|flac/i.test(file.extension)
     ) {
       return true;
     } else {
@@ -64,12 +64,3 @@ export const Sounds = new FilesCollection({
     fs.readFile(file.path, useFile);
   },
 });
-
-//return createComment.call({
-//author: 'transcript',
-//content: `[x](#c${target}) ${transcript}`,
-//sounds: [soundId],
-//talk: talkId,
-//userOwn: true,
-//slides: [],
-//});

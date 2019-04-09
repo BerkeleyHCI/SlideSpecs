@@ -1,9 +1,12 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
-#comments-list {
+.comments-list {
+  span.list-title {
+    cursor: pointer;
+  }
+  border: 1px solid @color-raw;
   margin-top: 15px;
   padding: 0px;
-  border: 0px;
 }
 
 .list-title {
@@ -34,6 +37,9 @@
 
 .comment-config {
   color: @color-danger;
+  .comment-option {
+    padding-left: 1em;
+  }
   .comment-option:hover {
     text-decoration: underline;
   }

@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {Images} from '../../api/images/images.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import AlertLink from '../components/AlertLink.jsx';
+import CommentList from '../components/CommentList.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import SpeechRecognition from 'react-speech-recognition';
 import Input from '../components/Input.jsx';
@@ -289,23 +290,12 @@ class DiscussPage extends BaseComponent {
       return (
         <div>
           <span className="comments-head" />
-          {items.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">to discuss</span>
-              {items.map(i => (
-                <Comment focused={true} {...i} />
-              ))}
-            </div>
-          )}
-
-          {addressedItems.length > 0 && (
-            <div id="comments-list" className="alert">
-              <span className="list-title">discussed</span>
-              {addressedItems.map(i => (
-                <Comment focused={true} {...i} />
-              ))}
-            </div>
-          )}
+          <CommentList title={'to discuss'} items={items} focused={true} />
+          <CommentList
+            title={'discussed'}
+            items={addressedItems}
+            focused={true}
+          />
         </div>
       );
     }
@@ -365,6 +355,7 @@ class DiscussPage extends BaseComponent {
               {...i}
               {...props}
               focused={true}
+              last={iter + 1 == respond.length}
               key={`discuss-${iter}`}
               iter={iter}
             />

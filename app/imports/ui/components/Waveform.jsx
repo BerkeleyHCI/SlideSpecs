@@ -52,8 +52,8 @@ export default class Waveform extends React.Component {
         normalize: true,
         responsive: true,
         container: this.$waveform,
-        waveColor: '#ddd',
-        progressColor: '#2cc5d2',
+        waveColor: '#ccc',
+        progressColor: 'aliceblue',
         cursorColor: 'white',
         plugins: [cursor, regions],
       };
