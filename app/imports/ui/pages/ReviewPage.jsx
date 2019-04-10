@@ -625,30 +625,6 @@ class ReviewPage extends BaseComponent {
     }
   };
 
-  // Comment Download
-  renderCommentsDownload = () => {
-    const {sounds} = this.props;
-    const [newSound] = sounds; // sorted, first
-    if (!newSound || !WaveSurfer) return;
-    const snd = Sounds.findOne({_id: newSound._id});
-    if (!snd) return;
-    const src = snd.link('original', '//');
-    const created = this.humanDate(newSound.meta.created);
-    const size = this.humanFileSize(newSound.size);
-    if (!src) return;
-    return (
-      <a download href={src} className="link-alert">
-        <div className="alert">
-          download json
-          <small className="pull-right">
-            generated: {created} | {size}
-          </small>
-        </div>
-      </a>
-    );
-  };
-
-
   humanFileSize = size => {
     let i = Math.floor(Math.log(1.0 * size) / Math.log(1024));
     return (
