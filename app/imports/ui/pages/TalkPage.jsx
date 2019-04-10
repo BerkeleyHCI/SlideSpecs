@@ -210,12 +210,23 @@ export default class TalkPage extends BaseComponent {
         )}
 
         {file && (
+
+          <div className="alert">
           <div className="btns-menu-space">
             <a download href={talkFile}>
               <button className="btn btn-menu btn-primary">
                 download original
-              </button>
-            </a>
+                </button>
+              </a>
+              
+              {/* Download JSON */}
+              {/* <a download href={jsonFile}>
+                <button className="btn btn-menu btn-primary">
+                  download json
+                </button>
+              </a> */}
+
+
           </div>
         )}
 
