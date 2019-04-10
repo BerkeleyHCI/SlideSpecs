@@ -122,6 +122,7 @@ export default class App extends BaseComponent {
     return this.preRender(match, ReviewPage, 'talk');
   };
 
+
   renderSecure = () => {
     if (location.protocol === 'http:' && location.hostname !== 'localhost') {
       console.log('moving to https...');
