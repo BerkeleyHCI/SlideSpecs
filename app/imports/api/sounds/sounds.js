@@ -58,9 +58,12 @@ export const Sounds = new FilesCollection({
         .catch(console.error);
     };
 
-    const speech = Npm.require('@google-cloud/speech'),
-      fs = Npm.require('fs'),
-      client = new speech.SpeechClient();
-    fs.readFile(file.path, useFile);
+    // Run this per recording on browser files only
+    if (/wav/i.test(file.extension)) {
+      const speech = Npm.require('@google-cloud/speech'),
+        fs = Npm.require('fs'),
+        client = new speech.SpeechClient();
+      fs.readFile(file.path, useFile);
+    }
   },
 });
