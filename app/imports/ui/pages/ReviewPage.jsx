@@ -78,10 +78,11 @@ class ReviewPage extends BaseComponent {
     Meteor.call('mergeSounds', talk._id, console.log);
   };
 
-  handleTranscribe = filename => {
+  handleTranscribe = file => {
     const {talk} = this.props;
     console.log('starting transcription');
-    Meteor.call('transcribeSounds', talk._id, filename);
+    console.log(talk._id, file._id);
+    Meteor.call('transcribeSounds', talk._id, file._id);
   };
 
   handleSelectable = items => {
@@ -215,7 +216,7 @@ class ReviewPage extends BaseComponent {
 
     uploadInstance.on('end', (err, file) => {
       console.log('file:', file);
-      this.handleGenerate();
+      this.handleTranscribe(file);
       handleToast({
         msg: file.name,
         icon: 'check',

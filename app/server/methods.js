@@ -14,54 +14,69 @@ import {
 import {createTranscript} from '../imports/api/transcripts/methods.js';
 
 Meteor.methods({
-  async transribeSound(talkId, fileName) {
+  async transcribeSounds(talkId, fileId) {
     check(talkId, String);
-    check(fileName, String);
+    check(fileId, String);
     const talk = Talks.findOne(talkId);
+    const fileName = `${fileId}.flac`;
+    const fName = `${storagePath}/sounds/${fileName}`;
 
     if (!(talk && Meteor.user() && Meteor.userId() === talk.userId)) {
       return console.error('no talk found.');
     }
 
     // the talk exists
-    setAudioStart.call({talkId: talk._id});
-    generateCommentRegions.call({talkId: talk._id});
-    const wordFreq = generateWordFreq.call({talkId: talk._id});
-    const wordList = wordFreq.filter(wf => wf.count >= 2).map(wf => wf.word);
-
-    const gatherTranscript = (results, err) => {
-      const res = results[0];
-      if (res) {
-        const name = res.latestResponse.name;
-        console.log(name);
-      } else {
-        console.error(err);
-      }
-    };
+    //setAudioStart.call({talkId: talk._id});
+    //generateCommentRegions.call({talkId: talk._id});
+    //const wordFreq = generateWordFreq.call({talkId: talk._id});
+    //const wordList = wordFreq.filter(wf => wf.count >= 2).map(wf => wf.word);
 
     const runGoogle = () => {
       const gcsURI = `gs://${bucketName}/${fileName}`;
-      const speech = Npm.require('@google-cloud/speech');
+      const speech = Npm.require('@google-cloud/speech').v1p1beta1;
       const client = new speech.SpeechClient();
       const config = {
         encoding: 'FLAC',
         sampleRateHertz: 44100,
         languageCode: 'en-US',
-        profanityFilter: true,
         enableWordTimeOffsets: true,
         enableAutomaticPunctuation: true,
-        enableSpeakerDiarization: true,
-        diarizationSpeakerCount: 1,
-        model: 'video', // only one of these
-        //model: 'default', // only one of these
-        //model: 'phone_call', // only one of these
-        //useEnhanced: true, // add this w/ phone
-        speechContexts: [{phrases: wordList}],
       };
+
+      //model: 'video', // only one of these
+      //enableSpeakerDiarization: true,
+      //diarizationSpeakerCount: 1,
+      //profanityFilter: true,
+      //model: 'default', // only one of these
+      //model: 'phone_call', // only one of these
+      //useEnhanced: true, // add this w/ phone
+      //speechContexts: [{phrases: wordList}],
 
       const request = {config, audio: {uri: gcsURI}};
       const [operation] = Promise.await(client.longRunningRecognize(request));
       const [response] = Promise.await(operation.promise());
+
+      response.results.forEach(result => {
+        console.log(`Transcription: ${result.alternatives[0].transcript}`);
+        result.alternatives[0].words.forEach(wordInfo => {
+          const startSecs =
+            `${wordInfo.startTime.seconds}` +
+            `.` +
+            wordInfo.startTime.nanos / 100000000;
+          const endSecs =
+            `${wordInfo.endTime.seconds}` +
+            `.` +
+            wordInfo.endTime.nanos / 100000000;
+          console.log(
+            `Word: ${
+              wordInfo.word
+            }, start_time: ${startSecs}, end_time: ${endSecs}`,
+          );
+        });
+      });
+
+      return;
+
       const results = response.results;
       const transcript = results
         .map(result => result.alternatives[0].transcript)
@@ -74,18 +89,21 @@ Meteor.methods({
       let words = _.flatten(
         results.map(result => result.alternatives[0].words),
       ).map(res => {
-        const genTimeObj = time => {
+        const genTime = time => {
           const seconds = time.seconds ? parseInt(time.seconds) : 0;
           const nanos = time.nanos ? time.nanos : 0;
           return parseFloat(`${seconds}.${nanos}`);
         };
 
-        return {
+        const wordData = {
           word: res.word,
           //word: res.word.toLowerCase(),
-          startTime: genTimeObj(res.startTime),
-          endTime: genTimeObj(res.endTime),
+          startTime: genTime(res.startTime),
+          endTime: genTime(res.endTime),
         };
+
+        console.log(res, wordData);
+        return wordData;
       });
 
       //console.log(JSON.stringify(words, null, 2));
@@ -98,7 +116,7 @@ Meteor.methods({
 
       if (transcript) {
         console.log('adding transcript: ', transcript);
-        console.log({confidence});
+        console.log({confidence, words});
         createTranscript.call(transcriptsOptions);
       } else {
         console.error('empty transcript');
@@ -106,7 +124,7 @@ Meteor.methods({
     };
 
     const addGoogle = () => {
-      console.log('adding merged file: ' + fileName);
+      console.log('adding uploaded audio file: ' + fileName);
       const meta = {
         fileName,
         type: 'audio/flac',
@@ -114,9 +132,6 @@ Meteor.methods({
         meta: {talkId, complete: true, created: Date.now()},
       };
 
-      // add to both sounds (complete) and to google audio for transcription.
-      Sounds.addFile(fName, meta);
-      gAudio.addFile(fName, meta);
       const gOptions = {
         destination: fileName,
         gzip: true,
@@ -165,19 +180,9 @@ Meteor.methods({
     const fileName = fName.substring(fName.lastIndexOf('/') + 1);
     const args = [fName, ...sName];
 
-    const gatherTranscript = (results, err) => {
-      const res = results[0];
-      if (res) {
-        const name = res.latestResponse.name;
-        console.log(name);
-      } else {
-        console.error(err);
-      }
-    };
-
     const runGoogle = () => {
       const gcsURI = `gs://${bucketName}/${fileName}`;
-      const speech = Npm.require('@google-cloud/speech');
+      const speech = Npm.require('@google-cloud/speech').v1p1beta1;
       const client = new speech.SpeechClient();
       const config = {
         encoding: 'FLAC',
