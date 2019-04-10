@@ -4,4 +4,4 @@
 export const bucketName = Meteor.isProduction ? 'slidespecs' : 'slidespecs-dev';
 
 // Place for saving files locally.
-export const storagePath = '/Users/jwrnr/Downloads/research';
+export const storagePath = '/Users/tonyanguyen/Downloads/research';
