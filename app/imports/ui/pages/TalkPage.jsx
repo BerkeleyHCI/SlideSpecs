@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from "lodash";
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
@@ -125,9 +126,65 @@ export default class TalkPage extends BaseComponent {
     deleteTalk.call({talkId: talk._id});
   };
 
+  // dev-download start
+
+  filterComment = c => {
+    let newComment = _.pick(c, [
+      "author",
+      "content",
+      "created",
+      "agree",
+      "discuss"
+    ]);
+    c.replies = c.replies || [];
+    newComment.replies = c.replies.map(this.filterComment);
+    return newComment;
+  };
+
+  downloadJSON = () => {
+    const { comments, talk } = this.props;
+    // Filtering out 'reply' comments.
+    const reply = /\[.*\]\(\s?#c(.*?)\)/;
+    const notReply = c => !reply.test(c.content);
+    const filtered = comments.filter(notReply).map(this.filterComment);
+    const fname = `${talk.name}_comments.json`;
+    const content = JSON.stringify(filtered, null, 2);
+    console.log(content);
+    this.createDownload({ fname, content, type: "application/json" });
+  };
+
+  createDownload = ({ fname, content, type }) => {
+    const file = new File([content], fname, { type: type });
+    const element = document.createElement("a");
+    element.href = URL.createObjectURL(file);
+    element.download = fname;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    toast(() => (
+      <AppNotification msg={"downloaded"} desc={fname} icon={"floppy-o"} />
+    ));
+  };
+
+
+  renderDownload = () => {
+    return (
+      <div>
+        <button onClick={this.downloadJSON} className="btn btn-menu btn-primary">
+          download JSON
+        </button>
+      </div>
+    );
+  };
+
+ // dev-download end
+
+
+
   render() {
     const {uploading} = this.state;
     const {talk, name, file, images, comments} = this.props;
+    const download = this.renderDownload();
     const hasComments = comments.length > 0;
 
     let talkFile;
@@ -218,13 +275,9 @@ export default class TalkPage extends BaseComponent {
                 download original
                 </button>
               </a>
-              
-              {/* Download JSON */}
-              {/* <a download href={jsonFile}>
-                <button className="btn btn-menu btn-primary">
-                  download json
-                </button>
-              </a> */}
+
+
+              {download}
 
 
           </div>
