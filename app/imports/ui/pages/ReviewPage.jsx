@@ -194,6 +194,7 @@ class ReviewPage extends BaseComponent {
       {
         file,
         meta: {
+          complete: true,
           created: Date.now(),
           userId: Meteor.userId(),
           talkId: talk._id,
@@ -493,13 +494,14 @@ class ReviewPage extends BaseComponent {
             subtitle="audio only"
           />
         </div>
-        <a onClick={this.handleGenerate} className="link-alert" href="#">
-          <div className="alert centered">generate transcription</div>
-        </a>
-        {soundDownload}
       </div>
     );
   };
+
+  //<a onClick={this.handleGenerate} className="link-alert" href="#">
+  //<div className="alert centered">generate transcription</div>
+  //</a>
+  //{soundDownload}
 
   renderTags = () => {
     const {byTag} = this.state;
@@ -709,15 +711,7 @@ class ReviewPage extends BaseComponent {
 
   highlightRegionWord = region => {
     return _.throttle(() => {
-      // For some reason this needs to be scaled.
-      // This is really bad. Time stamps way off.
-      const startTime = region.startTime * this.audioScale;
-      const newRegion = {
-        ...region,
-        startTime,
-        endTime: Math.max(region.endTime * this.audioScale, startTime + 10), // visibiliy
-      };
-      this.setState({activeRegions: [newRegion]});
+      this.setState({activeRegions: [region]});
     }, 50);
   };
 
