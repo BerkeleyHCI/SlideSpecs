@@ -4,3 +4,4 @@ settings.json
 slidespecs.json
 data
 *log
+imports/api/storagePath.js
