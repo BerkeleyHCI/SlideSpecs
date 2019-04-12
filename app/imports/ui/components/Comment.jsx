@@ -362,6 +362,29 @@ class Comment extends BaseComponent {
     );
   };
 
+  formatTime = time => {
+    if (time < 0) {
+      //console.error('negative comment region time: ', time);
+      return null;
+    }
+    const secTime = time / 1000.0; // originally in millis
+    const minutes = Math.floor(secTime / 60.0);
+    const seconds = `${Math.floor(secTime)}`.padStart(2, '0');
+    const millis = ((secTime % 60) % 1).toFixed(1).substring(2);
+    return `${minutes}:${seconds}.${millis}`;
+  };
+
+  renderTime = () => {
+    const {startTime, stopTime} = this.props;
+    if (!startTime || !stopTime) return null;
+    return (
+      <span className="meta">
+        <strong> {this.formatTime(startTime)} </strong>—
+        <strong> {this.formatTime(stopTime)} </strong>
+      </span>
+    );
+  };
+
   renderComment = () => {
     const {replying} = this.state;
     const {
@@ -393,6 +416,8 @@ class Comment extends BaseComponent {
       clearButton,
       clearBySlide,
       setBySlide,
+      startTime,
+      stopTime,
 
       activeComment,
       facilitateView,
@@ -496,8 +521,13 @@ class Comment extends BaseComponent {
                 <i className={'fa fa-lock'} />{' '}
               </span>
             )}
-            {agree && this.renderMeta('agreed', agree)}
-            {discuss && this.renderMeta('discuss', discuss)}
+            {!regionView && (
+              <span>
+                {agree && this.renderMeta('agreed', agree)}
+                {discuss && this.renderMeta('discuss', discuss)}
+              </span>
+            )}
+            {regionView && this.renderTime()}
           </small>
 
           <br />

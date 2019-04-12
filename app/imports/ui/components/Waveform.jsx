@@ -1,6 +1,7 @@
 // components/waveform.js
 import React from 'react';
 import ReactDOM from 'react-dom';
+import _ from 'lodash';
 
 // exposed through main.html. npm broken
 //import WaveSurfer from 'wavesurfer.js';
@@ -78,9 +79,11 @@ export default class Waveform extends React.Component {
   }
 
   componentDidUpdate = () => {
-    const {regions} = this.props;
-    this.clearRegions();
-    regions.map(this.addRegion);
+    _.throttle(() => {
+      const {regions} = this.props;
+      this.clearRegions();
+      regions.map(this.addRegion);
+    }, 100);
   };
 
   componentWillUnmount() {
