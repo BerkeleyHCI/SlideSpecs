@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from "lodash";
+import _ from 'lodash';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
@@ -130,11 +130,12 @@ export default class TalkPage extends BaseComponent {
 
   filterComment = c => {
     let newComment = _.pick(c, [
-      "author",
-      "content",
-      "created",
-      "agree",
-      "discuss"
+      'author',
+      'content',
+      'created',
+      'agree',
+      'discuss',
+      'replies',
     ]);
     c.replies = c.replies || [];
     newComment.replies = c.replies.map(this.filterComment);
@@ -142,49 +143,49 @@ export default class TalkPage extends BaseComponent {
   };
 
   downloadJSON = () => {
-    const { comments, talk } = this.props;
+    const {comments, talk} = this.props;
     // Filtering out 'reply' comments.
     const reply = /\[.*\]\(\s?#c(.*?)\)/;
     const notReply = c => !reply.test(c.content);
+    const isReply = c => reply.test(c.content);
+
+    const replies = comments.filter(isReply).map(c => {
+      const match = reply.exec(c.content);
+      c.replyTo = match[1].trim();
+      c.isReply = true;
+      return c;
+    });
+
+    comments.map(c => {
+      c.replies = replies.filter(r => r.replyTo == c._id);
+    });
+
     const filtered = comments.filter(notReply).map(this.filterComment);
+
     const fname = `${talk.name}_comments.json`;
     const content = JSON.stringify(filtered, null, 2);
-    console.log(content);
-    this.createDownload({ fname, content, type: "application/json" });
+    //console.log(content);
+    this.createDownload({fname, content, type: 'application/json'});
   };
 
-  createDownload = ({ fname, content, type }) => {
-    const file = new File([content], fname, { type: type });
-    const element = document.createElement("a");
+  createDownload = ({fname, content, type}) => {
+    const file = new File([content], fname, {type: type});
+    const element = document.createElement('a');
     element.href = URL.createObjectURL(file);
     element.download = fname;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
     toast(() => (
-      <AppNotification msg={"downloaded"} desc={fname} icon={"floppy-o"} />
+      <AppNotification msg={'downloaded'} desc={fname} icon={'floppy-o'} />
     ));
   };
 
-
-  renderDownload = () => {
-    return (
-      <div>
-        <button onClick={this.downloadJSON} className="btn btn-menu btn-primary">
-          download JSON
-        </button>
-      </div>
-    );
-  };
-
- // dev-download end
-
-
+  // dev-download end
 
   render() {
     const {uploading} = this.state;
     const {talk, name, file, images, comments} = this.props;
-    const download = this.renderDownload();
     const hasComments = comments.length > 0;
 
     let talkFile;
@@ -267,19 +268,16 @@ export default class TalkPage extends BaseComponent {
         )}
 
         {file && (
-
-          <div className="alert">
           <div className="btns-menu-space">
             <a download href={talkFile}>
-              <button className="btn btn-menu btn-primary">
-                download original
-                </button>
-              </a>
+              <button className="btn btn-menu btn-primary">download PDF</button>
+            </a>
 
-
-              {download}
-
-
+            <button
+              onClick={this.downloadJSON}
+              className="btn btn-menu btn-primary">
+              download JSON
+            </button>
           </div>
         )}
 
