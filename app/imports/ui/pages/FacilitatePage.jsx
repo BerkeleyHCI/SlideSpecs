@@ -94,7 +94,7 @@ class FacilitatePage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    //this.handleSetupAudio();
+    this.handleSetupAudio();
   };
 
   componentWillUnmount = () => {
@@ -622,8 +622,7 @@ class FacilitatePage extends BaseComponent {
 
   render() {
     const {images} = this.props;
-    //const context = this.renderSounds();
-    //{context}
+    const sounds = this.renderSounds();
     const matched = this.renderMatchComments();
     const respond = this.renderRespond();
     const comments = this.renderComments();
@@ -637,6 +636,7 @@ class FacilitatePage extends BaseComponent {
               <div className="row">
                 <div className="col-sm-5 full-height-md no-float">
                   <div className="float-at-top">
+                    {sounds}
                     {cmtHead}
                     {matched}
                   </div>

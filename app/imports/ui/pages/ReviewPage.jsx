@@ -710,9 +710,16 @@ class ReviewPage extends BaseComponent {
   };
 
   highlightRegionWord = region => {
-    return _.throttle(() => {
-      this.setState({activeRegions: [region]});
-    }, 50);
+    return () => {
+      this.setState({
+        activeRegions: [
+          {
+            ...region,
+            stopTime: Math.max(region.stopTime, region.startTime + 10),
+          },
+        ],
+      });
+    };
   };
 
   playRegionComment = region => {
