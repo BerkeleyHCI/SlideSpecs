@@ -40,7 +40,7 @@ class TalkPage extends BaseComponent {
   };
 
   render() {
-    const {session, talk, name, images, comments} = this.props;
+    const {session, talk, name, images, comments, sessionOwner} = this.props;
     let talkFile;
     try {
       let fileParams = {'meta.talkId': talk._id};
@@ -59,13 +59,16 @@ class TalkPage extends BaseComponent {
       />
     ));
 
-const downloadLink = `/download/${talk._id}`
+    const downloadLink = `/download/${talk._id}`;
+    const shareLink = `/share/${session._id}`;
+    const sessLink = `/sessions/${session._id}`;
+    const homeLink = sessionOwner ? sessLink : shareLink;
 
     return (
       this.renderRedirect() || (
         <div className="main-content">
           <h1>
-            <Link to={`/sessions/${session._id}`}>
+            <Link to={homeLink}>
               <span className="black"> ‹ </span>
               {session.name}
             </Link>
@@ -73,11 +76,10 @@ const downloadLink = `/download/${talk._id}`
             <small> / {name}</small>
           </h1>
 
-        <AlertLink
-          text={'download all comments for this talk'}
-          link={downloadLink}
-        />
-
+          <AlertLink
+            text={'download all comments for this talk'}
+            link={downloadLink}
+          />
 
           <div className="alert">
             <ul>
