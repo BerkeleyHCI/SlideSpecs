@@ -1,6 +1,7 @@
 @import './utils.less';
 
 a,
+a:focus,
 a:visited {
   color: @color-primary;
   cursor: pointer;
@@ -31,11 +32,16 @@ a:visited {
   }
 }
 
-a.link-alert {
-  /*.font-m1;*/
+a.link-alert,
+a.link-alert:focus,
+a.link-alert:visited {
   color: @color-danger;
   &:hover {
     color: @color-primary;
+    font-weight: bold;
+  }
+  &:hover div {
+    box-shadow: 0em 1px @color-primary;
   }
 }
 

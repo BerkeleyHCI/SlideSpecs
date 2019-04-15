@@ -47,6 +47,27 @@ export default class UploadPage extends BaseComponent {
       return false;
     }
 
+    const handleToast = ({msg, desc, icon, closeTime}) => {
+      if (!closeTime) closeTime = 4000;
+      toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
+        autoClose: closeTime,
+      });
+    };
+
+    // Allow uploading files under 30MB for now.
+    const goodSize = file.size <= 30985760;
+    //const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
+    const goodType = /(pdf)$/i.test(file.name);
+    if (!goodSize || !goodType) {
+      handleToast({
+        msg: 'error',
+        icon: 'times',
+        desc:
+          'Please only upload pdf files, with size equal or less than 30MB.',
+      });
+      return; // skip this file.
+    }
+
     const talkId = createTalk.call({
       sessionId,
       name: file.name.replace(/\.[^/.]+$/, ''),
@@ -61,7 +82,6 @@ export default class UploadPage extends BaseComponent {
           sessionId,
           talkId,
         },
-        //transport: 'http',
         streams: 'dynamic',
         chunkSize: 'dynamic',
         allowWebWorkers: true,
@@ -154,10 +174,6 @@ export default class UploadPage extends BaseComponent {
         )}
       </div>
     );
-
-    //if (!this.props.user) {
-    ////content = <Redirect to="/join" />;
-    //}
 
     return <MenuContainer {...this.props} content={content} />;
   }

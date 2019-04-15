@@ -1,9 +1,24 @@
 @import '{}/imports/ui/stylesheets/utils.less';
 
-#comments-list {
+.comments-list {
+  span.list-title {
+    cursor: pointer;
+  }
+  border: 1px solid @color-raw;
   margin-top: 15px;
   padding: 0px;
-  border: 0px;
+}
+
+.list-title {
+  background-color: @color-rare;
+  color: @color-well;
+  padding: 10px 15px;
+  display: block;
+  width: 100%;
+  .font-m1();
+}
+.list-title-note {
+  background-color: @color-note;
 }
 
 #comment-image {
@@ -22,6 +37,9 @@
 
 .comment-config {
   color: @color-danger;
+  .comment-option {
+    padding-left: 1em;
+  }
   .comment-option:hover {
     text-decoration: underline;
   }
@@ -77,7 +95,7 @@ div.comment {
       .no-transition();
     }
     .meta {
-      opacity: 0.7;
+      opacity: 0.8;
     }
     .author {
       box-shadow: inset 0 -2px 0 0 @color-medium;
@@ -96,7 +114,7 @@ div.comment {
 
   .meta {
     padding-left: 1.5em;
-    opacity: 0.3;
+    opacity: 0.4;
   }
 
   .author {

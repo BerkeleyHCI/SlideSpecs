@@ -1,17 +1,17 @@
-import React, { useRef } from "react";
-import _ from "lodash";
-import { Link } from "react-router-dom";
+import React, {useRef} from 'react';
+import _ from 'lodash';
+import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify';
 
 import AppNotification from '../components/AppNotification.jsx';
-import BaseComponent from "../components/BaseComponent.jsx";
-import ClearingDiv from "../components/ClearingDiv.jsx";
-import Comment from "../components/Comment.jsx";
+import BaseComponent from '../components/BaseComponent.jsx';
+import ClearingDiv from '../components/ClearingDiv.jsx';
+import Comment from '../components/Comment.jsx';
 
 // Control-log.
-import { Logger } from "meteor/ostrio:logger";
-import { LoggerConsole } from "meteor/ostrio:loggerconsole";
-import { getDiffieHellman } from "crypto";
+import {Logger} from 'meteor/ostrio:logger';
+import {LoggerConsole} from 'meteor/ostrio:loggerconsole';
+import {getDiffieHellman} from 'crypto';
 
 class DownloadPage extends BaseComponent {
   constructor(props) {
@@ -27,85 +27,85 @@ class DownloadPage extends BaseComponent {
       focusing: true,
       userOwn: false,
       redirectTo: null,
-      sorter: "created",
-      filter: "time",
+      sorter: 'created',
+      filter: 'time',
       invert: true,
       tags: [],
-      bySlide: "",
-      byAuth: "",
-      byTag: ""
+      bySlide: '',
+      byAuth: '',
+      byTag: '',
     };
   }
 
   log = data => {
     //console.log(data);
-    const { reviewer, sessionId } = this.props;
-    if (typeof data === "string") {
+    const {reviewer, sessionId} = this.props;
+    if (typeof data === 'string') {
       this.logger.info(
-        JSON.stringify({ data, reviewer, sessionId, time: Date.now() })
+        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
       );
     } else if (Object.keys.length > 0) {
       this.logger.info(
-        JSON.stringify({ ...data, reviewer, sessionId, time: Date.now() })
+        JSON.stringify({...data, reviewer, sessionId, time: Date.now()}),
       );
     } else {
       this.logger.info(
-        JSON.stringify({ data, reviewer, sessionId, time: Date.now() })
+        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
       );
     }
   };
 
   setByAuth = e => {
-    const { byAuth } = this.state;
-    const newAuth = e.target.getAttribute("data-auth");
+    const {byAuth} = this.state;
+    const newAuth = e.target.getAttribute('data-auth');
     if (newAuth && byAuth === newAuth) {
-      this.setState({ byAuth: "" });
+      this.setState({byAuth: ''});
     } else if (newAuth) {
-      this.setState({ byAuth: newAuth });
+      this.setState({byAuth: newAuth});
     }
   };
 
   clearByAuth = () => {
-    this.setState({ byAuth: "" });
+    this.setState({byAuth: ''});
   };
 
   setBySlide = e => {
-    const { bySlide } = this.state;
+    const {bySlide} = this.state;
     const newSlide = e.target.innerText.trim();
     if (newSlide && bySlide === newSlide) {
-      this.setState({ bySlide: "" });
+      this.setState({bySlide: ''});
     } else if (newSlide) {
-      this.setState({ bySlide: newSlide });
+      this.setState({bySlide: newSlide});
     }
   };
 
   clearBySlide = () => {
-    this.setState({ bySlide: "" });
+    this.setState({bySlide: ''});
   };
 
   // click on tag in comment
   setByTag = e => {
     e.preventDefault();
-    const { byTag } = this.state;
+    const {byTag} = this.state;
     const newTag = e.target.innerText.trim();
     if (newTag && byTag === newTag) {
-      this.setState({ byTag: "" });
+      this.setState({byTag: ''});
     } else if (newTag) {
-      this.setState({ byTag: newTag });
+      this.setState({byTag: newTag});
     }
   };
 
   clearByTag = () => {
-    this.setState({ byTag: "" });
+    this.setState({byTag: ''});
   };
 
   filterComment = c => {
     let newComment = _.pick(c, [
-      "author",
-      "content",
-      "created",
-      "agree",
-      "discuss"
+      'author',
+      'content',
+      'created',
+      'agree',
+      'discuss',
     ]);
     c.replies = c.replies || [];
     newComment.replies = c.replies.map(this.filterComment);
@@ -113,7 +113,7 @@ class DownloadPage extends BaseComponent {
   };
 
   downloadJSON = () => {
-    const { comments, talk } = this.props;
+    const {comments, talk} = this.props;
 
     // Filtering out 'reply' comments.
     const reply = /\[.*\]\(\s?#c(.*?)\)/;
@@ -122,27 +122,27 @@ class DownloadPage extends BaseComponent {
     const fname = `${talk.name}_comments.json`;
     const content = JSON.stringify(filtered, null, 2);
 
-    this.createDownload({ fname, content, type: "application/json" });
+    this.createDownload({fname, content, type: 'application/json'});
   };
 
   downloadHTML = () => {
-    const { talk } = this.props;
+    const {talk} = this.props;
     const fname = `${talk.name}_comments.html`;
     const content = document.documentElement.innerHTML;
     // const content = document.getElementById("comment-main").innerHTML;
-    this.createDownload({ fname, content, type: "text/html" });
+    this.createDownload({fname, content, type: 'text/html'});
   };
 
-  createDownload = ({ fname, content, type }) => {
-    const file = new File([content], fname, { type: type });
-    const element = document.createElement("a");
+  createDownload = ({fname, content, type}) => {
+    const file = new File([content], fname, {type: type});
+    const element = document.createElement('a');
     element.href = URL.createObjectURL(file);
     element.download = fname;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
     toast(() => (
-      <AppNotification msg={"downloaded"} desc={fname} icon={"floppy-o"} />
+      <AppNotification msg={'downloaded'} desc={fname} icon={'floppy-o'} />
     ));
   };
 
@@ -162,19 +162,19 @@ class DownloadPage extends BaseComponent {
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
-    const { invert, filter } = this.state;
-    const invFn = () => this.setState({ invert: !invert });
+    const {invert, filter} = this.state;
+    const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f) => {
-      return () => this.setState({ sorter: s, filter: f });
+      return () => this.setState({sorter: s, filter: f});
     };
 
-    const timeSort = setSort("created", "time");
-    const authSort = setSort(x => x.author.toLowerCase(), "auth");
-    const agreeSort = setSort(x => (x.agree || []).length, "agree");
-    const flagSort = setSort(x => (x.discuss || []).length, "flag");
+    const timeSort = setSort('created', 'time');
+    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
+    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
+    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
     const slideSort = setSort(
       x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
-      "slide"
+      'slide',
     );
 
     return (
@@ -182,36 +182,31 @@ class DownloadPage extends BaseComponent {
         <div className="btn-m-group btns-group">
           <button
             onClick={timeSort}
-            className={"btn btn-menu" + (filter === "time" ? " active" : "")}
-          >
+            className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
             time
           </button>
           <button
-            className={"btn btn-menu" + (filter === "slide" ? " active" : "")}
-            onClick={slideSort}
-          >
+            className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
+            onClick={slideSort}>
             slide
           </button>
           <button
-            className={"btn btn-menu" + (filter === "auth" ? " active" : "")}
-            onClick={authSort}
-          >
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
             author
           </button>
           <button
-            className={"btn btn-menu" + (filter === "agree" ? " active" : "")}
-            onClick={agreeSort}
-          >
+            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
+            onClick={agreeSort}>
             agree
           </button>
           <button
-            className={"btn btn-menu" + (filter === "flag" ? " active" : "")}
-            onClick={flagSort}
-          >
+            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
+            onClick={flagSort}>
             discuss
           </button>
-          <button className={"btn btn-menu"} onClick={invFn}>
-            {invert ? "▼" : "▲"}
+          <button className={'btn btn-menu'} onClick={invFn}>
+            {invert ? '▼' : '▲'}
           </button>
         </div>
         {filterer}
@@ -221,8 +216,8 @@ class DownloadPage extends BaseComponent {
 
   renderFilter = () => {
     const tagList = this.renderTags();
-    let { byAuth, bySlide, byTag } = this.state;
-    const sType = bySlide === "general" ? "scope" : "slide";
+    let {byAuth, bySlide, byTag} = this.state;
+    const sType = bySlide === 'general' ? 'scope' : 'slide';
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
 
     return (
@@ -237,8 +232,8 @@ class DownloadPage extends BaseComponent {
   };
 
   renderTags = () => {
-    const { comments } = this.props;
-    const getTag = t => t.split(/\s/).filter(t => t[0] == "#" && t.length > 1);
+    const {comments} = this.props;
+    const getTag = t => t.split(/\s/).filter(t => t[0] == '#' && t.length > 1);
     const alltags = comments.map(c => getTag(c.content));
     const unique = _.uniq(_.flatten(alltags));
     return unique.map(tag => (
@@ -257,16 +252,16 @@ class DownloadPage extends BaseComponent {
       userOwn,
       byAuth,
       bySlide,
-      byTag
+      byTag,
     } = this.state;
-    const { sessionId, comments, reviewer, setModal, clearModal } = this.props;
+    const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
       let csort = _.orderBy(
         comments,
-        [sorter, "created"],
-        [invert ? "desc" : "asc", "asc"]
+        [sorter, 'created'],
+        [invert ? 'desc' : 'asc', 'asc'],
       );
 
       // Focus view filtering - omit replies.
@@ -294,7 +289,7 @@ class DownloadPage extends BaseComponent {
 
       if (bySlide) {
         csort = csort.filter(c => {
-          const general = [{ slideNo: "general" }];
+          const general = [{slideNo: 'general'}];
           const slides = c.slides.length > 0 ? c.slides : general;
           const slideNos = slides.map(x => x.slideNo);
           return slideNos.includes(bySlide);
@@ -323,14 +318,14 @@ class DownloadPage extends BaseComponent {
           handleAuthor: this.setByAuth,
           clearButton: this.clearButton,
           clearBySlide: this.clearBySlide,
-          setBySlide: this.setBySlide
+          setBySlide: this.setBySlide,
         };
       });
 
       const cmtHead = this.renderCommentFilter();
       return (
         <div>
-          <div id="comments-list" className="alert">
+          <div className="comments-list alert">
             {cmtHead}
             <div id="comment-main">
               {items.map((i, iter) => (
@@ -345,7 +340,7 @@ class DownloadPage extends BaseComponent {
   };
 
   render() {
-    const { files, userId, session, talk } = this.props;
+    const {files, userId, session, talk} = this.props;
     const download = this.renderDownload();
     const comments = this.renderComments();
 

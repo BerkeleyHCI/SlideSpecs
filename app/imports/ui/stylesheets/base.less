@@ -117,6 +117,17 @@ small {
   padding: 1em 0em;
 }
 
+dl * {
+  line-height: 1.4em !important;
+}
+dt {
+  font-weight: bold;
+  margin-top: 1em;
+}
+dd {
+  padding-left: 1em;
+}
+
 textarea {
   resize: none;
   width: 100%;
@@ -124,6 +135,24 @@ textarea {
 
 img {
   max-width: 100%;
+}
+img {
+  max-width: 100%;
+}
+audio {
+  width: 100%;
+  opacity: 0.5;
+  background: #f3f5f5;
+  margin-top: 1em;
+  margin-bottom: -0.5em;
+  border-radius: 6px;
+  border: 1px solid @color-empty;
+}
+audio:hover,
+audio:focus,
+audio:active {
+  opacity: 1;
+  border: 1px solid @color-primary;
 }
 
 // Hiding when screen gets too small
@@ -164,7 +193,11 @@ img {
 }
 
 .no-margin {
-  margin: 0px;
+  margin: 0px !important;
+}
+
+.centered {
+  text-align: center;
 }
 
 .no-padding {
