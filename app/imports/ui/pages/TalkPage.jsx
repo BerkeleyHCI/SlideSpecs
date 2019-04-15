@@ -60,6 +60,7 @@ class TalkPage extends BaseComponent {
     ));
 
     const downloadLink = `/download/${talk._id}`;
+    const commentLink = `/comment/${talk._id}`;
     const shareLink = `/share/${session._id}`;
     const sessLink = `/sessions/${session._id}`;
     const homeLink = sessionOwner ? sessLink : shareLink;
@@ -76,8 +77,10 @@ class TalkPage extends BaseComponent {
             <small> / {name}</small>
           </h1>
 
+          <AlertLink center={true} text={'add comments'} link={commentLink} />
           <AlertLink
-            text={'download all comments for this talk'}
+            center={true}
+            text={'download comments'}
             link={downloadLink}
           />
 
@@ -89,12 +92,9 @@ class TalkPage extends BaseComponent {
             <hr />
 
             <div className="btns-menu-space">
-              <Link to={`/comment/${talk._id}`}>
-                <button className="btn btn-menu">add comments</button>
-              </Link>
               <a download href={talkFile}>
                 <button className="btn btn-menu btn-primary pull-right">
-                  download original
+                  download slides pdf
                 </button>
               </a>
             </div>

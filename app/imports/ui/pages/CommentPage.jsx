@@ -2,6 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import React from 'react';
 import {Session} from 'meteor/session.js';
 import imagesLoaded from 'imagesloaded';
+import AlertLink from '../components/AlertLink.jsx';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 
@@ -617,7 +618,7 @@ class CommentPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderFiles();
     const {image, hoverImage, filtered, bySlide} = this.state;
-    const {name, session, reviewer} = this.props;
+    const {name, session, talk, reviewer, talkOwner} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
@@ -655,10 +656,21 @@ class CommentPage extends BaseComponent {
     );
   };
 
+  renderDownload = () => {
+    const {talk, talkOwner} = this.props;
+    const dlLink = `/download/${talk._id}`;
+    return (
+      talkOwner && (
+        <AlertLink center={true} text={'download comments'} link={dlLink} />
+      )
+    );
+  };
+
   render() {
-    const {files, userId} = this.props;
+    const {files, userId, talkOwner} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
+    const download = this.renderDownload();
     const context = this.renderContext();
 
     return files ? (
@@ -669,6 +681,7 @@ class CommentPage extends BaseComponent {
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
                 {cmtHead}
+                {download}
                 {comments}
               </div>
             </div>

@@ -173,7 +173,7 @@ export default class App extends BaseComponent {
             <Route path="/about" render={this.renderAboutPage} />
             <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
-                        <Route path="/download/:id" render={this.renderDownload} />
+            <Route path="/download/:id" render={this.renderDownload} />
             <PrivateRoute exact path="/" render={this.renderSessionList} />
             <PrivateRoute path="/sessions/:id" render={this.renderSession} />
             <PrivateRoute path="/upload/:id" render={this.renderUpload} />

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {Session} from 'meteor/session.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import ReviewContainer from '../containers/ReviewContainer.jsx';
+import {checkUserTalk} from '../../api/talks/methods.js';
 
 export default class TalkContainer extends BaseComponent {
   renewSubscription = _id => {
@@ -30,6 +31,7 @@ export default class TalkContainer extends BaseComponent {
     //props.comments = props.comments.filter(this.controlFilter);
     props.files = files.filter(f => f.meta.talkId === _id);
     props.images = images.filter(f => f.meta.talkId === _id);
+    props.talkOwner = checkUserTalk.call({matchId: _id});
     props.sessionId = props.session._id;
     props.name = props.talk.name;
     props.reviewer = reviewer;
