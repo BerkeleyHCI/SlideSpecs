@@ -43,8 +43,6 @@ class ReviewPage extends BaseComponent {
     super(props);
     this.inRef = React.createRef();
     this.waveRef = React.createRef();
-    //this.audioScale = 2.75;
-    this.audioScale = 1;
     this.state = {
       redirectTo: null,
       activeSound: null,
@@ -58,7 +56,7 @@ class ReviewPage extends BaseComponent {
       byAuth: '',
       byTag: '',
       hoverImage: '',
-      activeRegions: [],
+      activeRegion: [],
       image: '',
       ds: {},
     };
@@ -136,6 +134,9 @@ class ReviewPage extends BaseComponent {
     if (images.length > 0) {
       this.updateImage(images[0]._id);
     }
+
+    // handling the left-right arrow keys
+    window.document.addEventListener('keyPress', console.log);
   };
 
   componentDidUpdate = () => {
@@ -143,6 +144,7 @@ class ReviewPage extends BaseComponent {
   };
 
   componentWillUnmount = () => {
+    window.document.removeEventListener('keyPress', console.log);
     let {ds} = this.state;
     if (ds && ds.stop) {
       ds.stop(); // no drag
@@ -693,33 +695,36 @@ class ReviewPage extends BaseComponent {
   };
 
   renderSounds = () => {
-    const {activeRegions} = this.state;
+    const {activeRegion} = this.state;
     const {sounds} = this.props;
     const [newSound] = sounds; // sorted, first
     if (!newSound || !WaveSurfer) return;
     const snd = Sounds.findOne({_id: newSound._id});
     if (!snd) return;
     const src = snd.link('original', '//');
-    return <Waveform src={src} ref={this.waveRef} regions={activeRegions} />;
+    return <Waveform src={src} ref={this.waveRef} region={activeRegion} />;
   };
 
   playRegionWord = ({startTime}) => {
     return () => {
-      this.waveRef.current.playTime(startTime * this.audioScale);
+      this.waveRef.current.playTime(startTime);
     };
   };
 
   highlightRegionWord = region => {
-    return () => {
-      this.setState({
-        activeRegions: [
-          {
-            ...region,
-            stopTime: Math.max(region.stopTime, region.startTime + 10),
-          },
-        ],
-      });
-    };
+    return this.handleRegion({
+      startTime: region.startTime,
+      endTime: Math.max(region.endTime, region.startTime + 3.0),
+    });
+  };
+
+  handleRegion = region => {
+    return _.throttle(() => {
+      const wave = this.waveRef.current;
+      if (!wave) return false;
+      wave.clearRegions();
+      wave.addRegion(region);
+    }, 100);
   };
 
   playRegionComment = region => {
@@ -729,19 +734,18 @@ class ReviewPage extends BaseComponent {
   };
 
   highlightRegionComment = region => {
-    return _.throttle(() => {
-      const newRegion = {
-        color: 'rgba(255, 100, 100, 0.4)',
-        startTime: region.startTime / 1000.0,
-        endTime: region.stopTime / 1000.0,
-      };
-      this.setState({activeRegions: [newRegion]});
-    }, 50);
+    return this.handleRegion({
+      color: 'rgba(255, 100, 100, 0.4)',
+      startTime: region.startTime / 1000.0,
+      endTime: region.stopTime / 1000.0,
+    });
   };
 
-  clearRegions = _.throttle(() => {
-    this.setState({activeRegions: []});
-  }, 50);
+  clearRegions = () => {
+    const wave = this.waveRef.current;
+    if (!wave) return false;
+    wave.clearRegions();
+  };
 
   renderTranscript = () => {
     const {transcript} = this.props;
