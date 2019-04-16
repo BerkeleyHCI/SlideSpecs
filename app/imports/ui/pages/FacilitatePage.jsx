@@ -584,6 +584,7 @@ class FacilitatePage extends BaseComponent {
         />
       ));
     } else if (recInterval) {
+      this.handleAudioUpload(); // get remaining audio from buffer.
       clearInterval(recInterval);
       this.setState({recInterval: null});
       toast(() => (

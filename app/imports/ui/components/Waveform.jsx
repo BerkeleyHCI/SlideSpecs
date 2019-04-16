@@ -24,6 +24,7 @@ export default class Waveform extends React.Component {
       playing: false,
       currentTime: 0,
       duration: 0,
+      region: {},
     };
   }
 
@@ -46,7 +47,7 @@ export default class Waveform extends React.Component {
 
       let regions = WaveSurfer.regions.create({
         dragSelection: false,
-        regions: [],
+        region: {},
       });
 
       const options = {
@@ -77,14 +78,6 @@ export default class Waveform extends React.Component {
       console.error(e);
     }
   }
-
-  componentDidUpdate = () => {
-    _.throttle(() => {
-      const {regions} = this.props;
-      this.clearRegions();
-      regions.map(this.addRegion);
-    }, 100);
-  };
 
   componentWillUnmount() {
     const {wavesurfer} = this.state;
@@ -132,7 +125,7 @@ export default class Waveform extends React.Component {
   addRegion = region => {
     const {wavesurfer} = this.state;
     if (!wavesurfer || !wavesurfer.addRegion) return;
-    wavesurfer.addRegion({
+    return wavesurfer.addRegion({
       start: region.startTime,
       end: region.endTime,
       drag: false,
@@ -173,6 +166,6 @@ export default class Waveform extends React.Component {
 }
 
 Waveform.defaultProps = {
-  regions: [],
+  region: {},
   src: '',
 };
