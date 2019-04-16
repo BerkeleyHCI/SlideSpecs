@@ -480,28 +480,28 @@ class ReviewPage extends BaseComponent {
     const soundDownload = this.renderSoundDownload();
     return (
       <div>
-        <div className="alert">
-          add your discussion audio.
-          <SelectUpload
-            labelText="+ new"
-            className="pull-right btn-menu btn-note"
-            handleUpload={this.handleSelectUpload}
-          />
-          <hr />
-          <DragUpload
-            handleUpload={this.handleDropUpload}
-            title="drop file here"
-            subtitle="audio only"
-          />
-        </div>
+        <a onClick={this.handleGenerate} className="link-alert" href="#">
+          <div className="alert centered">generate transcription</div>
+        </a>
+        {soundDownload}
       </div>
     );
   };
 
-  //<a onClick={this.handleGenerate} className="link-alert" href="#">
-  //<div className="alert centered">generate transcription</div>
-  //</a>
-  //{soundDownload}
+  //<div className="alert">
+  //add your discussion audio.
+  //<SelectUpload
+  //labelText="+ new"
+  //className="pull-right btn-menu btn-note"
+  //handleUpload={this.handleSelectUpload}
+  ///>
+  //<hr />
+  //<DragUpload
+  //handleUpload={this.handleDropUpload}
+  //title="drop file here"
+  //subtitle="audio only"
+  ///>
+  //</div>
 
   renderTags = () => {
     const {byTag} = this.state;

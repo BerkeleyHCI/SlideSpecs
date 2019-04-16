@@ -65,10 +65,10 @@ class FacilitatePage extends BaseComponent {
       {
         audio: {
           mandatory: {
-            //googEchoCancellation: 'true',
-            //googAutoGainControl: 'true',
-            //googNoiseSuppression: 'true',
-            //googHighpassFilter: 'true',
+            googEchoCancellation: 'false',
+            googAutoGainControl: 'false',
+            googNoiseSuppression: 'false',
+            googHighpassFilter: 'false',
           },
           optional: [],
         },
@@ -86,10 +86,10 @@ class FacilitatePage extends BaseComponent {
   handleTeardownAudio = () => {
     if (audioRecorder && audioContext) {
       console.log('ending audio services.');
-      window.audioContext = null;
-      window.audioRecorder = null;
-      window.audioRecorder.clear();
       window.setRecording(false);
+      window.audioRecorder.clear();
+      window.audioRecorder = null;
+      window.audioContext = null;
     }
   };
 
@@ -301,7 +301,6 @@ class FacilitatePage extends BaseComponent {
       setModal,
       clearModal,
       sessionId,
-      log: this.log,
       facilitateView: true,
       allReplies: replies,
       commentRef: this.inRef,
@@ -482,7 +481,6 @@ class FacilitatePage extends BaseComponent {
         talkId: talk._id,
         target: talk.active || '',
       },
-      //transport: 'http',
       streams: 'dynamic',
       chunkSize: 'dynamic',
       allowWebWorkers: true,
@@ -525,7 +523,7 @@ class FacilitatePage extends BaseComponent {
     const respond = Comments.find({_id: {$in: activeFix}}).fetch();
     return (
       <CommentList
-        title={'to discuss'}
+        title={'discussing'}
         items={respond}
         facilitateView={true}
         responding={true}
@@ -541,7 +539,7 @@ class FacilitatePage extends BaseComponent {
           inRef={this.inRef}
           handleKeyDown={this.handleSearch}
           handleSubmit={this.addComment}
-          defaultValue="start a new discussion comment here.."
+          defaultValue="start a new discussion comment here"
           className="code comment-text"
         />
       </div>
@@ -572,6 +570,7 @@ class FacilitatePage extends BaseComponent {
     const newRecord = !recording;
     window.setRecording(newRecord);
     this.setState({recording: newRecord});
+    this.log({type: 'record', recording: newRecord});
 
     let msg;
     if (newRecord) {

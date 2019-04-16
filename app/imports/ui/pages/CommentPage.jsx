@@ -556,13 +556,19 @@ class CommentPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderFiles();
     const {image, hoverImage, filtered, bySlide} = this.state;
-    const {name, talk, reviewer} = this.props;
+    const {name, talk, reviewer, sessionOwner} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
         <h2 className="alert clearfix no-margin">
-          {name}
+          {sessionOwner && (
+            <Link to={`/talk/${talk._id}`}>
+              <span className="black"> ‹ </span>
+              {name}
+            </Link>
+          )}
+          {!sessionOwner && name}
           <small onClick={this.clearReviewer} className="pull-right clear-icon">
             {reviewer}
           </small>
