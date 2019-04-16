@@ -37,33 +37,31 @@ export const Sounds = new FilesCollection({
       }
     };
 
-    const useFile = (err, content) => {
-      const audioBytes = content.toString('base64');
-      const audio = {
-        content: audioBytes,
-      };
-      const config = {
-        languageCode: 'en-US',
-        enableWordTimeOffsets: true,
-      };
-      const request = {
-        audio: audio,
-        config: config,
-      };
-
-      // Detects speech in the audio file
-      client
-        .recognize(request)
-        .then(useTranscript)
-        .catch(console.error);
-    };
-
     // Run this per recording on browser files only
     if (/wav/i.test(file.extension)) {
       const speech = Npm.require('@google-cloud/speech'),
         fs = Npm.require('fs'),
         client = new speech.SpeechClient();
-      fs.readFile(file.path, useFile);
+      fs.readFile(file.path, (err, content) => {
+        const audioBytes = content.toString('base64');
+        const audio = {
+          content: audioBytes,
+        };
+        const config = {
+          languageCode: 'en-US',
+          enableWordTimeOffsets: true,
+        };
+        const request = {
+          audio: audio,
+          config: config,
+        };
+
+        // Detects speech in the audio file
+        client
+          .recognize(request)
+          .then(useTranscript)
+          .catch(console.error);
+      });
     }
   },
 });

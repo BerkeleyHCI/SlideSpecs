@@ -303,15 +303,21 @@ class DiscussPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderFiles();
-    const {talk, reviewer} = this.props;
     const {image, hoverImage, bySlide} = this.state;
+    const {talk, reviewer, sessionOwner} = this.props;
     const cmtHead = this.renderCommentFilter();
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
         <h2 className="alert clearfix no-margin">
-          {talk.name}
+          {sessionOwner && (
+            <Link to={`/talk/${talk._id}`}>
+              <span className="black"> ‹ </span>
+              {talk.name}
+            </Link>
+          )}
+          {!sessionOwner && talk.name}
           <small onClick={this.clearReviewer} className="pull-right clear-icon">
             {reviewer}
           </small>

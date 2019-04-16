@@ -23,8 +23,8 @@ class BaseComponent extends Component {
       string = JSON.stringify({data, ...base});
     }
 
-    // TODO uncomment in prod
-    logEvent.call({data: string, reviewer, talk, comment});
+    // TODO uncomment logging in production
+    logEvent.call({data: string, reviewer, talk: talk._id, comment});
   };
 
   componentDidUpdate = () => {
