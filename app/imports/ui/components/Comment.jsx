@@ -514,7 +514,7 @@ class Comment extends BaseComponent {
             {author}
           </strong>
           <small>
-            {created.toLocaleTimeString()}
+            {!regionView && created.toLocaleTimeString()}
             {userOwn && (
               <span>
                 {' '}
