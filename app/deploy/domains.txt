@@ -1,0 +1,2 @@
+slidespecs.berkeley.edu
+bayscope2.eecs.berkeley.edu
