@@ -28,12 +28,22 @@ export const createTalk = new ValidatedMethod({
       name = `talk ${iter}`;
     }
 
-    return Talks.insert({
+    const talkId = Talks.insert({
       userId: this.userId,
       created: Date.now(),
       secret: Random.id(),
       name,
     });
+
+    // set default tags
+    Comments.insert({
+      talk: talkId,
+      created: Date.now(),
+      author: 'SlideSpecs',
+      content: '#great #story #clarity #slideDesign',
+    });
+
+    return talkId;
   },
 });
 
