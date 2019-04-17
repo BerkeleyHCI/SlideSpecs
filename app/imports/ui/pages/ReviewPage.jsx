@@ -62,6 +62,10 @@ class ReviewPage extends BaseComponent {
     };
   }
 
+  handleKeyPress = e => {
+    console.log(e);
+  };
+
   handleLoad = () => {
     const grid = document.getElementById('grid');
     const mason = new Masonry(grid, {
@@ -134,9 +138,6 @@ class ReviewPage extends BaseComponent {
     if (images.length > 0) {
       this.updateImage(images[0]._id);
     }
-
-    // handling the left-right arrow keys
-    window.document.addEventListener('keyPress', console.log);
   };
 
   componentDidUpdate = () => {
@@ -144,7 +145,6 @@ class ReviewPage extends BaseComponent {
   };
 
   componentWillUnmount = () => {
-    window.document.removeEventListener('keyPress', console.log);
     let {ds} = this.state;
     if (ds && ds.stop) {
       ds.stop(); // no drag
@@ -333,10 +333,14 @@ class ReviewPage extends BaseComponent {
   };
 
   clearButtonBG = e => {
+    console.log(e.target.className);
     const base = e.target.className.split()[0];
-    const matches = [/col-/, /review-table/];
+    const matches = [/full-/, /row/, /col-/, /review-table/];
     if (matches.some(x => base.match(x))) {
+      console.log('cleared');
       this.clearBySlide();
+      this.clearByTag();
+      this.clearByAuth();
     }
   };
 
@@ -781,12 +785,29 @@ class ReviewPage extends BaseComponent {
     );
   };
 
+  generateWordList = (region, offset = 200) => {
+    const {startTimeMS, stopTimeMS} = region,
+      startTime = startTimeMS / 1000.0,
+      stopTime = stopTimeMS / 1000.0;
+    const {transcript} = this.props;
+    if (!transcript) return;
+    const {results, confidence} = transcript;
+    if (!results || !confidence) return;
+    return results.filter(word => {
+      return (
+        word.startTime > startTime - offset && word.endTime < stopTime + offset
+      );
+    });
+  };
+
   renderRegions = () => {
     const {regions} = this.props;
     if (!regions) return;
     const regionComments = regions.map((w, i) => {
       const playComment = this.playRegionComment(w);
       const highlight = this.highlightRegionComment(w);
+      const wordList = this.generateWordList(w);
+      console.log(w, wordList);
       return {
         ...w,
         last: i + 1 == regions.length,
@@ -811,7 +832,10 @@ class ReviewPage extends BaseComponent {
 
     return images ? (
       this.renderRedirect() || (
-        <div className="padded" onMouseDown={this.clearButtonBG}>
+        <div
+          className="full-container full-height-md padded"
+          onMouseDown={this.clearButtonBG}
+          onKeyPress={console.log}>
           <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5">
