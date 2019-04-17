@@ -4,11 +4,7 @@ import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
-import {
-  createTalk,
-  renameTalk,
-  deleteTalk,
-} from '../../api/talks/methods.js';
+import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
 
 // Helper class for individual file items.
 
@@ -30,8 +26,7 @@ class TalkItem extends BaseComponent {
 
   deleteTalk = () => {
     const {name} = this.props;
-    if (confirm(`Delete ${name}?`))
-      deleteTalk.call({talkId: this.props._id});
+    if (confirm(`Delete ${name}?`)) deleteTalk.call({talkId: this.props._id});
   };
 
   render() {
@@ -53,12 +48,6 @@ class TalkItem extends BaseComponent {
   }
 }
 
-// too dangerous for user study
-// also TODO confirm w/ modal
-//<button onClick={this.deleteTalk} className="btn-menu">G
-//delete
-//</button>
-
 TalkItem.propTypes = {id: PropTypes.string};
 
 export default class TalkListPage extends BaseComponent {
@@ -73,7 +62,8 @@ export default class TalkListPage extends BaseComponent {
   };
 
   render() {
-    let {talks} = this.props, talkList;
+    let {talks} = this.props,
+      talkList;
     if (!talks || !talks.length) {
       talkList = <div className="alert">no talks yet</div>;
     } else {

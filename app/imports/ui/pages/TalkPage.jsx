@@ -7,12 +7,7 @@ import {Link} from 'react-router-dom';
 
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
-import {
-  createTalk,
-  deleteTalk,
-  setTalkProgress,
-} from '../../api/talks/methods.js';
-import {deleteTalkFiles} from '../../api/files/methods.js';
+import {createTalk, setTalkProgress} from '../../api/talks/methods.js';
 
 import MenuContainer from '../containers/MenuContainer.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
@@ -25,12 +20,6 @@ import TalkListItem from '../components/TalkListItem.jsx';
 import SlideFile from '../components/SlideFile.jsx';
 
 export default class TalkPage extends BaseComponent {
-  deleteFiles = () => {
-    const {talk} = this.props;
-    if (confirm('Really delete this talk?'))
-      deleteTalkFiles.call({talkId: talk._id});
-  };
-
   handleDropUpload = files => {
     this.handleUpload(files);
   };
@@ -55,7 +44,6 @@ export default class TalkPage extends BaseComponent {
       files.map(file => {
         // Allow uploading files under 30MB for now.
         const goodSize = file.size <= 30985760;
-        //const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
         const goodType = /(pdf)$/i.test(file.name);
         if (!goodSize || !goodType) {
           handleToast({
@@ -120,12 +108,6 @@ export default class TalkPage extends BaseComponent {
     }
   };
 
-  deleteTalk = () => {
-    const {talk} = this.props;
-    localStorage.setItem('feedbacks.referringLink', '/');
-    deleteTalk.call({talkId: talk._id});
-  };
-
   // dev-download start
 
   filterComment = c => {
@@ -142,6 +124,10 @@ export default class TalkPage extends BaseComponent {
     return newComment;
   };
 
+  downloadHTML = () => {
+    console.log('todo');
+  };
+
   downloadJSON = () => {
     const {comments, talk} = this.props;
     // Filtering out 'reply' comments.
@@ -149,6 +135,7 @@ export default class TalkPage extends BaseComponent {
     const notReply = c => !reply.test(c.content);
     const isReply = c => reply.test(c.content);
 
+    // Add label replies with which referring comment
     const replies = comments.filter(isReply).map(c => {
       const match = reply.exec(c.content);
       c.replyTo = match[1].trim();
@@ -164,7 +151,6 @@ export default class TalkPage extends BaseComponent {
 
     const fname = `${talk.name}_comments.json`;
     const content = JSON.stringify(filtered, null, 2);
-    //console.log(content);
     this.createDownload({fname, content, type: 'application/json'});
   };
 
@@ -269,32 +255,31 @@ export default class TalkPage extends BaseComponent {
 
         {file && (
           <div className="btns-menu-space">
-            <a download href={talkFile}>
-              <button className="btn btn-menu btn-primary">download PDF</button>
-            </a>
-
-            <button
-              onClick={this.downloadJSON}
-              className="btn btn-menu btn-primary">
+            <button onClick={this.downloadJSON} className="btn btn-menu">
               download JSON
             </button>
+
+            <button onClick={this.downloadHTML} className="btn btn-menu">
+              download HTML
+            </button>
+
+            <a download href={talkFile}>
+              <button className="btn btn-menu pull-right">
+                download slides
+              </button>
+            </a>
           </div>
         )}
 
-        {file && images.length == 0 && <TalkListItem talk={talk} />}
+        {file && images.length == 0 && (
+          <TalkListItem className={'v-margin'} talk={talk} />
+        )}
       </div>
     );
 
     return <MenuContainer {...this.props} content={content} />;
   }
 }
-
-// <div id="grid">{imageSet}</div>
-//<button
-//onClick={this.deleteTalkFiles}
-//className="btn btn-menu pull-right">
-//delete slides
-//</button>
 
 TalkPage.propTypes = {
   user: PropTypes.object,
