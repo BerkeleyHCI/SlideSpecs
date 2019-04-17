@@ -22,12 +22,12 @@ transcription material: http://www.ushistory.org/declaration/document/
 
 ```
 brew install sox
-brew install gs
 ```
 
 ##### PDF Conversion (osx)
 
 ```bash
+brew install gs  # dependency
 brew install imagemagick      # convert
 brew cask install libreoffice # soffice
 ```
@@ -42,6 +42,9 @@ records into a running meteor application with `mongoimport`, shown in the
 [`import.sh`](./import.sh json-folder/) script. Copy from remote server:
 
      scp -i ~/.ssh/bayscope slidespecs.berkeley.edu:/Users/jwrnr/Code/slidespecs-research/data.tar.gz .
+
+Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
+
 
 ##### Linting
 
