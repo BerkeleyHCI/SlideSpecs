@@ -22,6 +22,7 @@ transcription material: http://www.ushistory.org/declaration/document/
 
 ```
 brew install sox
+brew install gs
 ```
 
 ##### PDF Conversion (osx)
@@ -104,4 +105,15 @@ server {
 }
 ```
 
+for accessing google cloud storage
+
+```
 export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/slidespecs-research/app/private/slidespecs.json
+```
+
+checking what process is using a port
+
+```
+netstat -nl|grep 9000
+```
+
