@@ -20,7 +20,7 @@ static-html@1.1.12_1
 react-meteor-data
 
 # data
-mongo@1.6.0
+mongo@1.6.2
 aldeed:simple-schema
 aldeed:collection2
 dburles:collection-helpers
@@ -40,7 +40,7 @@ chriswessels:hammer
 
 # production
 juliancwirko:postcss@1.0.0-beta.11
-standard-minifier-js@2.4.0
+standard-minifier-js@2.4.1
 ddp-rate-limiter@1.0.7
 app-prod-security
 
@@ -61,13 +61,13 @@ shell-server@0.4.0
 
 # security
 audit-argument-checks@1.0.7
-dynamic-import@0.5.0
+dynamic-import@0.5.1
 reactive-var@1.0.11
 ostrio:files
 twbs:bootstrap
 session@1.2.0
-webapp@1.7.1
+webapp@1.7.3
 ostrio:loggerconsole
 ostrio:logger
-random
-browser-policy
+random@1.1.0
+browser-policy@1.1.0
