@@ -24,6 +24,10 @@ textarea {
   background-color: aliceblue;
   outline: none;
 
+  &:hover {
+    background-color: darken(aliceblue, 1%);
+  }
+
   &[disabled] {
     opacity: 0.5;
   }
@@ -147,5 +151,13 @@ input[type='text'].code {
   .yes-select();
   font-family: monospace;
   padding: 0em 1em;
+  width: 100%;
+}
+
+input[type='text'].padded {
+  .font-s3;
+  .yes-select();
+  font-family: monospace;
+  padding: 1em;
   width: 100%;
 }
