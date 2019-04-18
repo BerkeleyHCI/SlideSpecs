@@ -77,7 +77,11 @@ class TalkPage extends BaseComponent {
             <small> / {name}</small>
           </h1>
 
-          <AlertLink center={true} text={'add comments'} link={commentLink} />
+          <AlertLink
+            center={true}
+            text={'view commenting interface'}
+            link={commentLink}
+          />
           <AlertLink
             center={true}
             text={'download comments'}
