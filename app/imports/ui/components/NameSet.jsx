@@ -36,20 +36,19 @@ class NameSet extends Component {
       <div className="padded">
         <div className="padded">
           <h1>name entry</h1>
-          <div className="alert">
-            please enter your name before providing feedback:
-            <hr />
-            <Input
-              inRef={this.inRef}
-              handleSubmit={this.setName}
-              defaultValue="your name"
-            />
-            <hr />
-            <div className="btns-group">
-              <button onClick={this.setName} className="btn btn-primary">
-                set name
-              </button>
-            </div>
+          please enter your name before providing feedback:
+          <hr />
+          <Input
+            inRef={this.inRef}
+            handleSubmit={this.setName}
+            defaultValue="your name"
+            className="padded"
+          />
+          <hr />
+          <div className="btns-group">
+            <button onClick={this.setName} className="btn btn-primary">
+              set name
+            </button>
           </div>
         </div>
       </div>
