@@ -93,6 +93,15 @@ export default class Waveform extends React.Component {
     wavesurfer.load(src);
   };
 
+  getDuration = () => {
+    const {wavesurfer} = this.state;
+    if (wavesurfer.getDuration) {
+      return wavesurfer.getDuration();
+    } else {
+      return 0;
+    }
+  };
+
   playAudio = () => {
     const {playing, wavesurfer} = this.state;
     this.setState({playing: !playing});
@@ -130,7 +139,7 @@ export default class Waveform extends React.Component {
       end: region.endTime,
       drag: false,
       resize: false,
-      color: region.color ? region.color : 'rgba(255, 255, 255, .3)',
+      color: region.color ? region.color : 'rgba(255, 255, 255, .4)',
     });
   };
 

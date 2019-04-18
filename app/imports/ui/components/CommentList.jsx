@@ -15,8 +15,8 @@ class CommentList extends Component {
 
   render() {
     const {open} = this.state;
-    const {title, items, note, ...other} = this.props;
-    if (items.length == 0) return null;
+    const {title, items, note, content, ...other} = this.props;
+    if (items.length == 0 && !content) return null;
 
     let expander = open ? '−' : '+';
     return (
@@ -27,6 +27,7 @@ class CommentList extends Component {
           {title}
           <span className="pull-right danger">{expander}</span>
         </span>
+        {open && content}
         {open &&
           items.map((item, i) => (
             <Comment
