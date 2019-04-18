@@ -108,8 +108,6 @@ export default class TalkPage extends BaseComponent {
     }
   };
 
-  // dev-download start
-
   filterComment = c => {
     let newComment = _.pick(c, [
       'author',
@@ -166,8 +164,6 @@ export default class TalkPage extends BaseComponent {
       <AppNotification msg={'downloaded'} desc={fname} icon={'floppy-o'} />
     ));
   };
-
-  // dev-download end
 
   render() {
     const {uploading} = this.state;
@@ -255,14 +251,6 @@ export default class TalkPage extends BaseComponent {
 
         {file && (
           <div className="btns-menu-space">
-            <button onClick={this.downloadJSON} className="btn btn-menu">
-              download JSON
-            </button>
-
-            <button onClick={this.downloadHTML} className="btn btn-menu">
-              download HTML
-            </button>
-
             <a download href={talkFile}>
               <button className="btn btn-menu pull-right">
                 download slides
@@ -280,6 +268,13 @@ export default class TalkPage extends BaseComponent {
     return <MenuContainer {...this.props} content={content} />;
   }
 }
+
+//<button onClick={this.downloadJSON} className="btn btn-menu">
+//download JSON
+//</button>
+//<button onClick={this.downloadHTML} className="btn btn-menu">
+//download HTML
+//</button>
 
 TalkPage.propTypes = {
   user: PropTypes.object,
