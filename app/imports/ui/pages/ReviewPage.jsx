@@ -333,11 +333,10 @@ class ReviewPage extends BaseComponent {
   };
 
   clearButtonBG = e => {
-    console.log(e.target.className);
+    //console.log(e.target.className);
     const base = e.target.className.split()[0];
     const matches = [/full-/, /row/, /col-/, /review-table/];
     if (matches.some(x => base.match(x))) {
-      console.log('cleared');
       this.clearBySlide();
       this.clearByTag();
       this.clearByAuth();
@@ -399,7 +398,7 @@ class ReviewPage extends BaseComponent {
     );
 
     return (
-      <div className="float-at-top">
+      <div>
         <div className="btn-m-straight btn-m-group btns-group">
           <button
             onClick={timeSort}
@@ -654,7 +653,7 @@ class ReviewPage extends BaseComponent {
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
-      <div className="context-filter float-at-top">
+      <div className="context-filter">
         <h2 className="alert clearfix no-margin">
           <Link to={`/talk/${talk._id}`}>
             <span className="black"> ‹ </span>
@@ -706,7 +705,11 @@ class ReviewPage extends BaseComponent {
     const snd = Sounds.findOne({_id: newSound._id});
     if (!snd) return;
     const src = snd.link('original', '//');
-    return <Waveform src={src} ref={this.waveRef} region={activeRegion} />;
+    return (
+      <div className="float-at-top">
+        <Waveform src={src} ref={this.waveRef} region={activeRegion} />
+      </div>
+    );
   };
 
   playRegionWord = ({startTime}) => {
@@ -716,17 +719,20 @@ class ReviewPage extends BaseComponent {
   };
 
   highlightRegionWord = region => {
-    return this.handleRegion({
-      startTime: region.startTime,
-      endTime: Math.max(region.endTime, region.startTime + 3.0),
-    });
+    return this.handleRegion(
+      {
+        startTime: region.startTime,
+        endTime: Math.max(region.endTime, region.startTime + 3.0),
+      },
+      true,
+    );
   };
 
-  handleRegion = region => {
+  handleRegion = (region, clear = false) => {
     return _.throttle(() => {
       const wave = this.waveRef.current;
       if (!wave) return false;
-      wave.clearRegions();
+      if (clear) wave.clearRegions();
       wave.addRegion(region);
     }, 100);
   };
@@ -739,7 +745,7 @@ class ReviewPage extends BaseComponent {
 
   highlightRegionComment = region => {
     return this.handleRegion({
-      color: 'rgba(255, 100, 100, 0.4)',
+      color: 'rgba(255, 100, 100, 0.2)',
       startTime: region.startTime / 1000.0,
       endTime: region.stopTime / 1000.0,
     });
@@ -751,72 +757,80 @@ class ReviewPage extends BaseComponent {
     wave.clearRegions();
   };
 
+  renderWordList = words => {
+    return (
+      <p>
+        {words.map((w, i) => {
+          const playWord = this.playRegionWord(w);
+          const highlight = this.highlightRegionWord(w);
+          return (
+            <ReviewTimeMarker
+              key={`${w.word}-${i}`}
+              handleClick={playWord}
+              handleOver={highlight}
+              handleOut={this.clearRegions}
+              word={w.word}
+            />
+          );
+        })}
+      </p>
+    );
+  };
   renderTranscript = () => {
     const {transcript} = this.props;
     if (!transcript) return;
     const {results, confidence} = transcript;
     if (!results || !confidence) return;
-    return (
-      <div className="comments-list alert">
-        <span className="list-title">
-          transcript
-          <small className="pull-right">
-            {(confidence * 100.0).toFixed(1)}% confidence
-          </small>
-        </span>
-        <div className="clearfix comment">
-          <p>
-            {results.map((w, i) => {
-              const playWord = this.playRegionWord(w);
-              const highlight = this.highlightRegionWord(w);
-              return (
-                <ReviewTimeMarker
-                  key={`${w.word}-${i}`}
-                  handleClick={playWord}
-                  handleOver={highlight}
-                  handleOut={this.clearRegions}
-                  word={w.word}
-                />
-              );
-            })}
-          </p>
-        </div>
+    const wordList = this.renderWordList(results);
+    const content = (
+      <div className="clearfix comment">
+        <small className="note pull-right">
+          {(confidence * 100.0).toFixed(1)}% confidence
+        </small>
+        {wordList}
       </div>
     );
+
+    return <CommentList title={'transcript'} content={content} />;
   };
 
-  generateWordList = (region, offset = 200) => {
-    const {startTimeMS, stopTimeMS} = region,
-      startTime = startTimeMS / 1000.0,
-      stopTime = stopTimeMS / 1000.0;
+  generateWordList = (region, pad = 200) => {
+    const {startTime, stopTime} = region;
     const {transcript} = this.props;
     if (!transcript) return;
     const {results, confidence} = transcript;
     if (!results || !confidence) return;
     return results.filter(word => {
       return (
-        word.startTime > startTime - offset && word.endTime < stopTime + offset
+        word.startTime > (startTime - pad) / 1000 &&
+        word.endTime < (stopTime + pad) / 1000
       );
     });
   };
 
   renderRegions = () => {
-    const {regions} = this.props;
-    if (!regions) return;
-    const regionComments = regions.map((w, i) => {
-      const playComment = this.playRegionComment(w);
-      const highlight = this.highlightRegionComment(w);
-      const wordList = this.generateWordList(w);
-      console.log(w, wordList);
-      return {
-        ...w,
-        last: i + 1 == regions.length,
-        handlePlayAudio: playComment,
-        handleMouseOut: this.clearRegions,
-        handleMouseOver: highlight,
-        regionView: true,
-      };
-    });
+    const {talk, regions} = this.props;
+    if (!regions || !this.waveRef || !this.waveRef.current) return;
+    const wave = this.waveRef.current;
+    if (!wave || !wave.getDuration || !talk || !talk.audioStart) return;
+    const duration = wave.getDuration() * 1000; // convert to millis
+    const regionComments = regions
+      .filter(w => w.startTime < duration && w.stopTime > 0)
+      .map((w, i) => {
+        const playComment = this.playRegionComment(w);
+        const highlight = this.highlightRegionComment(w);
+        const words = this.generateWordList(w);
+        const commentWords = this.renderWordList(words);
+        return {
+          ...w,
+          last: i + 1 == regions.length,
+          handlePlayAudio: playComment,
+          handleMouseOut: this.clearRegions,
+          handleMouseOver: highlight,
+          wordList: commentWords,
+          regionView: true,
+        };
+      });
 
     return <CommentList title={'discussed comments'} items={regionComments} />;
   };
@@ -833,7 +847,7 @@ class ReviewPage extends BaseComponent {
     return images ? (
       this.renderRedirect() || (
         <div
-          className="full-container full-height-md padded"
+          className="full-container padded"
           onMouseDown={this.clearButtonBG}
           onKeyPress={console.log}>
           <div id="review-view" className="table review-table">
@@ -844,9 +858,9 @@ class ReviewPage extends BaseComponent {
               </div>
               <div className="col-sm-7">
                 {sounds}
-                {trans}
                 {regions}
                 {comments}
+                {trans}
               </div>
             </div>
           </div>

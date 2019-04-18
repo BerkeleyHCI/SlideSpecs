@@ -209,13 +209,13 @@ class Comment extends BaseComponent {
         commentId: _id,
       };
 
-      toast(() => (
-        <AppNotification
-          msg="Marked"
-          desc="Marked for discussion."
-          icon="comments"
-        />
-      ));
+      //toast(() => (
+      //<AppNotification
+      //msg="Marked"
+      //desc="Marked for discussion."
+      //icon="comments"
+      ///>
+      //));
 
       this.log({type: 'discuss', ...commentFields});
       discussComment.call(commentFields);
@@ -369,7 +369,7 @@ class Comment extends BaseComponent {
     }
     const secTime = time / 1000.0; // originally in millis
     const minutes = Math.floor(secTime / 60.0);
-    const seconds = `${Math.floor(secTime)}`.padStart(2, '0');
+    const seconds = `${Math.floor(secTime % 60)}`.padStart(2, '0');
     const millis = ((secTime % 60) % 1).toFixed(1).substring(2);
     return `${minutes}:${seconds}.${millis}`;
   };
@@ -418,6 +418,7 @@ class Comment extends BaseComponent {
       setBySlide,
       startTime,
       stopTime,
+      wordList,
 
       activeComment,
       facilitateView,
@@ -539,6 +540,13 @@ class Comment extends BaseComponent {
             source={content}
           />
 
+          {wordList && (
+            <span>
+              <hr />
+              <b>discussion:</b> {wordList}
+            </span>
+          )}
+
           {soundList}
 
           {!last && <hr />}
@@ -595,6 +603,7 @@ Comment.propTypes = {
 };
 
 Comment.defaultProps = {
+  wordList: false,
   allReplies: [],
   isReply: false,
   replies: [],
