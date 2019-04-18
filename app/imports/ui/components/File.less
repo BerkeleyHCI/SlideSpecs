@@ -190,31 +190,6 @@ div.reviewView {
     content: '× ';
   }
 
-  .context-filter {
-    max-height: 100vh;
-    overflow-y: auto;
-  }
-
-  .full-height {
-    height: 100%;
-  }
-
-  .float-at-top {
-    position: sticky;
-    z-index: 5;
-    top: 0px;
-  }
-
-  .full-width {
-    text-align: center;
-    width: 100%;
-  }
-
-  .btn.center {
-    margin: auto;
-    padding: 0.4em;
-  }
-
   .btn-round {
     padding: 0.5em 1em !important;
   }
@@ -345,6 +320,7 @@ kbd.active {
 
 .tag-link {
   padding: 0.5em;
+  .font-s1();
   opacity: 1;
 }
 
@@ -360,3 +336,38 @@ kbd.tag-count {
     }
   }
 }
+
+.float-at-top {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  z-index: 5;
+  top: 0px;
+}
+
+.context-filter {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.full-width {
+  text-align: center;
+  width: 100%;
+}
+
+.btn.center {
+  margin: auto;
+  padding: 0.4em;
+}
+
+/*.row {*/
+/*overflow: hidden;*/
+/*}*/
+
+/*[class*='col-'] {*/
+/*margin-bottom: -99999px;*/
+/*padding-bottom: 99999px;*/
+/*}*/
