@@ -30,8 +30,6 @@ import ForbiddenPage from '../pages/ForbiddenPage.jsx';
 
 import {checkUserTalk} from '../../api/talks/methods.js';
 
-const CONNECTION_ISSUE_TIMEOUT = 5000;
-
 const Fade = cssTransition({
   enter: 'fadeIn',
   exit: 'fadeOut',
@@ -41,7 +39,7 @@ const Fade = cssTransition({
 export default class App extends BaseComponent {
   constructor(props) {
     super(props);
-    this.state = {showConnectionIssue: false, modal: {isOpen: false}};
+    this.state = {modal: {isOpen: false}};
   }
 
   renewSubscription = () => {
@@ -53,10 +51,6 @@ export default class App extends BaseComponent {
 
   componentDidMount = () => {
     this.renewSubscription();
-    setTimeout(() => {
-      /* eslint-disable react/no-did-mount-set-state */
-      this.setState({showConnectionIssue: true});
-    }, CONNECTION_ISSUE_TIMEOUT);
   };
 
   componentDidUpdate = () => {
@@ -135,8 +129,6 @@ export default class App extends BaseComponent {
     const {user, talks, files, loading} = this.props;
     const params = queryString.parse(location.search);
     const shared = this.getSharedProps();
-    const {modal} = this.state;
-    this.showConnection();
 
     return (
       <div id="container">
@@ -170,20 +162,6 @@ export default class App extends BaseComponent {
         )}
       </div>
     );
-  };
-
-  showConnection = () => {
-    const {showConnectionIssue} = this.state;
-    const {connected} = this.props;
-    if (showConnectionIssue && !connected) {
-      toast(() => (
-        <AppNotification
-          msg="connection issue"
-          desc="trying to reconnect..."
-          icon="refresh"
-        />
-      ));
-    }
   };
 
   render() {
@@ -223,7 +201,6 @@ const PrivateRoute = ({render, ...other}) => {
 };
 
 App.propTypes = {
-  connected: PropTypes.bool.isRequired, // server connection status
   loading: PropTypes.bool.isRequired, // subscription status
   user: PropTypes.object, // current meteor user
   talks: PropTypes.array,
