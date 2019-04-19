@@ -127,11 +127,13 @@ class ReviewPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
+    setTimeout(() => {}, 500);
+
     setTimeout(() => {
       const items = document.querySelectorAll('.file-item');
       const nodes = Array.prototype.slice.call(items).map(this.elementize);
       this.handleSelectable(nodes);
-    }, 500);
+    }, 1500);
 
     // set image to link of the first slide
     const {images} = this.props;
@@ -697,6 +699,10 @@ class ReviewPage extends BaseComponent {
     );
   };
 
+  setDuration = dur => {
+    this.setState({duration: dur * 1000.0});
+  };
+
   renderSounds = () => {
     const {activeRegion} = this.state;
     const {sounds} = this.props;
@@ -707,7 +713,12 @@ class ReviewPage extends BaseComponent {
     const src = snd.link('original', '//');
     return (
       <div className="float-at-top">
-        <Waveform src={src} ref={this.waveRef} region={activeRegion} />
+        <Waveform
+          src={src}
+          ref={this.waveRef}
+          region={activeRegion}
+          handleAudioSet={this.setDuration}
+        />
       </div>
     );
   };
@@ -745,7 +756,7 @@ class ReviewPage extends BaseComponent {
 
   highlightRegionComment = region => {
     return this.handleRegion({
-      color: 'rgba(255, 100, 100, 0.2)',
+      color: 'rgba(255, 100, 100, 0.25)',
       startTime: region.startTime / 1000.0,
       endTime: region.stopTime / 1000.0,
     });
@@ -776,6 +787,7 @@ class ReviewPage extends BaseComponent {
       </p>
     );
   };
+
   renderTranscript = () => {
     const {transcript} = this.props;
     if (!transcript) return;
@@ -791,7 +803,9 @@ class ReviewPage extends BaseComponent {
       </div>
     );
 
-    return <CommentList title={'transcript'} content={content} />;
+    return (
+      <CommentList title={'transcript'} content={content} defaultOpen={false} />
+    );
   };
 
   generateWordList = (region, pad = 200) => {
@@ -809,11 +823,11 @@ class ReviewPage extends BaseComponent {
   };
 
   renderRegions = () => {
+    const {duration} = this.state;
     const {talk, regions} = this.props;
     if (!regions || !this.waveRef || !this.waveRef.current) return;
     const wave = this.waveRef.current;
-    if (!wave || !wave.getDuration || !talk || !talk.audioStart) return;
-    const duration = wave.getDuration() * 1000; // convert to millis
+    if (!duration) return;
     const regionComments = regions
       .filter(w => w.startTime < duration && w.stopTime > 0)
       .map((w, i) => {

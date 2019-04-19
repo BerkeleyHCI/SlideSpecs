@@ -69,7 +69,9 @@ export default class Waveform extends React.Component {
       });
 
       wavesurfer.on('ready', () => {
-        const duration = this.formatTime(wavesurfer.getDuration());
+        const duration = wavesurfer.getDuration();
+        const audioSet = this.props.handleAudioSet;
+        if (audioSet) audioSet(duration);
         this.setState({duration});
       });
 
@@ -94,12 +96,8 @@ export default class Waveform extends React.Component {
   };
 
   getDuration = () => {
-    const {wavesurfer} = this.state;
-    if (wavesurfer.getDuration) {
-      return wavesurfer.getDuration();
-    } else {
-      return 0;
-    }
+    const {duration} = this.state;
+    return duration;
   };
 
   playAudio = () => {
@@ -144,12 +142,12 @@ export default class Waveform extends React.Component {
   };
 
   renderTitle = () => {
-    const {wavesurfer, duration, currentTime} = this.state;
+    const {duration, currentTime} = this.state;
     return (
       <span className="list-title">
         audio
         <code className="pull-right">
-          {currentTime} / {duration}
+          {currentTime} / {this.formatTime(duration)}
         </code>
       </span>
     );
