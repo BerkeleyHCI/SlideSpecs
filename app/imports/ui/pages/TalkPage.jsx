@@ -4,7 +4,7 @@ import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
-import CommentListHtml from '../components/CommentListHtml.jsx';
+import CommentList from '../components/CommentList.jsx';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
 import {
@@ -259,31 +259,15 @@ export default class TalkPage extends BaseComponent {
           ...c,
           key: c._id,
           commentView: true,
-          reviewer,
-          setModal,
-          clearModal,
-          activeComment,
-          log: this.log,
-          focused: focusing,
-          bySlide: bySlide,
+          focused: true,
           allReplies: replies,
-          commentRef: this.inRef,
-          handleTag: this.setByTag,
-          handleAuthor: this.setByAuth,
-          handleSlideIn: this.handleSlideIn,
-          handleSlideOut: this.handleSlideOut,
-          clearButton: this.clearButton,
-          clearBySlide: this.clearBySlide,
-          setBySlide: this.setBySlide,
-          setActive: this.setActiveComment,
-          unsetActive: this.clearActiveComment,
         };
       });
 
       return (
         <div>
           <span className="comments-head" />
-          <CommentListHtml title={'comments'} items={items} />
+          <CommentList title={'comments'} items={items} />
           {items.length == 0 && <div className="alert"> no comments</div>}
         </div>
       );
@@ -294,19 +278,45 @@ export default class TalkPage extends BaseComponent {
   // Jeremy's version of HTML download
   downloadHTML = () => {
     const renderComments = this.renderComments();
-    const commentHtml = ReactDOMServer.renderToString(renderComments);
+    var geturl = document.getElementsByTagName('link')[0].href
+    const commentStyle = this.httpGet(geturl);
+    const  commentHtml = ReactDOMServer.renderToString(renderComments);
+    const documentBody = (`
+    <head> 
+    <meta charset="utf-8"/>
+    <style>${commentStyle}</style>
+    </head>
+    <body> 
+      <div class="padded">
+        ${commentHtml} 
+      </div>
+    </body>`
+    );
     const {talk } = this.props;
     const fname = `${talk.name}_comments.html`;
-    const content = commentHtml;
+    const content = documentBody;
     this.createDownload({ fname, content, type: "text/html" });
   };
 
-  
-  
+  httpGet = (theUrl) => {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+  };
+
+
+
 
   // dev-html download end
 
   render() {
+    // var geturl = document.getElementsByTagName('link')[0].href
+    // const commentStyle = this.httpGet(geturl);
+    // console.log(commentStyle);
+    const renderComments = this.renderComments();
+    const commentHtml = ReactDOMServer.renderToString(renderComments);
+
     const {uploading} = this.state;
     const {talk, name, file, images, comments} = this.props;
     const hasComments = comments.length > 0;
@@ -411,6 +421,7 @@ export default class TalkPage extends BaseComponent {
         )}
 
         {file && images.length == 0 && <TalkListItem talk={talk} />}
+        {renderComments}
       </div>
     );
 

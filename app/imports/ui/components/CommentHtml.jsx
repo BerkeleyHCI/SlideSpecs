@@ -494,7 +494,7 @@ class Comment extends BaseComponent {
             (active ? ' active-comment' : '') +
             (isReply ? ` reply-comment-${depth}` : '')
           }>
-          {/* {!focused && bData.length > 0 && (
+          {!focused && bData.length > 0 && (
             <div className="hover-menu">
               <div className="btn-group btns-empty">
                 {bData.map((button, i) => (
@@ -507,7 +507,7 @@ class Comment extends BaseComponent {
                 ))}
               </div>
             </div>
-          )} */}
+          )}
 
           <div className="pull-right">{context}</div>
           <strong data-auth={author} className="author" onClick={handleAuthor}>
