@@ -4,7 +4,7 @@ import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
-import CommentList from '../components/CommentList.jsx';
+import CommentListHtml from '../components/CommentListHtml.jsx';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
 import {
@@ -283,7 +283,7 @@ export default class TalkPage extends BaseComponent {
       return (
         <div>
           <span className="comments-head" />
-          <CommentList title={'comments'} items={items} />
+          <CommentListHtml title={'comments'} items={items} />
           {items.length == 0 && <div className="alert"> no comments</div>}
         </div>
       );
