@@ -4,7 +4,7 @@ import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
-
+import CommentList from '../components/CommentList.jsx';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
 import {createTalk, setTalkProgress} from '../../api/talks/methods.js';
@@ -18,6 +18,7 @@ import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import SlideFile from '../components/SlideFile.jsx';
+import ReactDOMServer from 'react-dom/server';
 
 export default class TalkPage extends BaseComponent {
   handleDropUpload = files => {
@@ -165,6 +166,121 @@ export default class TalkPage extends BaseComponent {
     ));
   };
 
+  // dev-html download start
+
+  renderComments = () => {
+    const {
+      sorter,
+      invert,
+      filtered,
+      activeComment,
+      focusing,
+      userOwn,
+      byAuth,
+      bySlide,
+      byTag,
+    } = this.state;
+    const {comments, reviewer, setModal, clearModal} = this.props;
+    if (!comments || !comments.length) {
+      return <div className="alert"> no comments yet</div>;
+    } else {
+      let csort = _.orderBy(
+        comments,
+        [sorter, 'created'],
+        [invert ? 'desc' : 'asc', 'asc'],
+      );
+
+      // Filter out transcript comments.
+      csort = csort.filter(c => c.author != 'transcript');
+
+      // Focus view filtering - omit replies.
+      if (userOwn) {
+        csort = csort.filter(c => c.author === reviewer);
+      }
+
+      // Filtering 'reply' comments into array.
+      // TODO - make it so this seperates on punctuation
+      const reply = /\[.*\]\(\s?#c(.*?)\)/;
+      const isReply = c => reply.test(c.content);
+      const replies = csort.filter(isReply).map(c => {
+        const match = reply.exec(c.content);
+        c.replyTo = match[1].trim();
+        c.isReply = true;
+        return c;
+      });
+
+      // remove child comments.
+      csort = csort.filter(c => !isReply(c));
+
+      if (byAuth) {
+        csort = csort.filter(c => c.author === byAuth);
+      }
+
+      if (bySlide) {
+        csort = csort.filter(c => {
+          const slides = c.slides.length > 0 ? c.slides : [];
+          const slideNos = slides.map(x => x.slideNo);
+          return slideNos.includes(bySlide);
+        });
+      }
+
+      if (byTag) {
+        csort = csort.filter(c => c.content.includes(byTag));
+      }
+
+      const items = csort.map((c, i) => {
+        c.last = i === csort.length - 1; // no final hr
+        c.active = c._id === activeComment; // highlight
+        c.replies = replies.filter(r => r.replyTo == c._id);
+        return {
+          ...c,
+          key: c._id,
+          commentView: true,
+          focused: true,
+          allReplies: replies,
+        };
+      });
+
+      return (
+        <div>
+          <span className="comments-head" />
+          <CommentList title={'comments'} items={items} />
+          {items.length == 0 && <div className="alert"> no comments</div>}
+        </div>
+      );
+    }
+  };
+
+  downloadHTML = () => {
+    const renderComments = this.renderComments();
+    var geturl = document.getElementsByTagName('link')[0].href;
+    const commentStyle = this.httpGet(geturl);
+    const commentHtml = ReactDOMServer.renderToString(renderComments);
+    const documentBody = `
+    <head>
+    <meta charset="utf-8"/>
+    <style>${commentStyle}</style>
+    </head>
+    <body>
+      <div class="padded">
+        ${commentHtml}
+      </div>
+    </body>`;
+    const {talk} = this.props;
+    const fname = `${talk.name}_comments.html`;
+    const content = documentBody;
+    this.createDownload({fname, content, type: 'text/html'});
+  };
+
+  httpGet = theUrl => {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('GET', theUrl, false); // false for synchronous request
+    xmlHttp.send(null);
+    return xmlHttp.responseText;
+  };
+
+  // dev-html download end
+
   render() {
     const {uploading} = this.state;
     const {talk, name, file, images, comments} = this.props;
@@ -256,6 +372,18 @@ export default class TalkPage extends BaseComponent {
                 download slides
               </button>
             </a>
+
+            <button
+              onClick={this.downloadJSON}
+              className="btn btn-menu btn-primary">
+              download JSON
+            </button>
+
+            <button
+              onClick={this.downloadHTML}
+              className="btn btn-menu btn-primary">
+              download HTML
+            </button>
           </div>
         )}
 
