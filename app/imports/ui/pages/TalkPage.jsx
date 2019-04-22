@@ -23,11 +23,8 @@ import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
 import TalkListItem from '../components/TalkListItem.jsx';
 import SlideFile from '../components/SlideFile.jsx';
-// Import Comment
-import ReactDOM from 'react-dom';
-// ES modules
 import ReactDOMServer from 'react-dom/server';
-// CommonJS
+
 
 
 export default class TalkPage extends BaseComponent {
@@ -306,17 +303,9 @@ export default class TalkPage extends BaseComponent {
   };
 
 
-
-
   // dev-html download end
 
   render() {
-    // var geturl = document.getElementsByTagName('link')[0].href
-    // const commentStyle = this.httpGet(geturl);
-    // console.log(commentStyle);
-    const renderComments = this.renderComments();
-    const commentHtml = ReactDOMServer.renderToString(renderComments);
-
     const {uploading} = this.state;
     const {talk, name, file, images, comments} = this.props;
     const hasComments = comments.length > 0;
