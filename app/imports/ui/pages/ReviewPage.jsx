@@ -457,8 +457,6 @@ class ReviewPage extends BaseComponent {
           fileName={f.name}
           active={false}
           slideCount={count}
-          handleMouse={this.handleSlideIn}
-          handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />
       );
@@ -470,12 +468,10 @@ class ReviewPage extends BaseComponent {
   renderFilter = () => {
     let {comments} = this.props;
     let {byAuth, bySlide, byTag, filtered} = this.state;
-    const tagList = this.renderTags();
     const slideKeys = this.renderSlideTags(filtered);
     const sType = bySlide === ['general'] ? 'scope' : 'slide';
     return (
       <div className="filterer alert no-submit border-bottom">
-        <p>{tagList}</p>
         <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
         <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
         <ClearingDiv set={slideKeys} pre={sType} clear={this.clearBySlide} />
@@ -493,55 +489,6 @@ class ReviewPage extends BaseComponent {
         {soundDownload}
       </div>
     );
-  };
-
-  //<div className="alert">
-  //add your discussion audio.
-  //<SelectUpload
-  //labelText="+ new"
-  //className="pull-right btn-menu btn-note"
-  //handleUpload={this.handleSelectUpload}
-  ///>
-  //<hr />
-  //<DragUpload
-  //handleUpload={this.handleDropUpload}
-  //title="drop file here"
-  //subtitle="audio only"
-  ///>
-  //</div>
-
-  renderTags = () => {
-    const {byTag} = this.state;
-    const {comments} = this.props;
-    const getTag = t => t.split(/\s/).filter(t => t[0] == '#' && t.length > 1);
-    const alltags = _.flatten(comments.map(c => getTag(c.content)));
-    const tagCount = _.countBy(alltags); // object
-    const unique = _.orderBy(
-      _.toPairs(tagCount),
-      [x => x[1], x => [0]],
-      ['desc', 'asc'],
-    ); // array
-
-    return unique.map((tag, i) => {
-      const active = tag[0] == byTag;
-      return (
-        <span
-          key={tag + i}
-          className={'tag-group ' + (active ? 'tag-active' : '')}>
-          <a onClick={this.setByTag} className="tag-link ">
-            {tag[0]}
-          </a>
-          <kbd className="tag-count">{tag[1]} </kbd>
-        </span>
-      );
-    });
-  };
-
-  goToTop = () => {
-    const view = document.getElementsByClassName('nav-head');
-    if (view[0]) {
-      view[0].scrollIntoView();
-    }
   };
 
   renderComments = () => {
@@ -663,7 +610,6 @@ class ReviewPage extends BaseComponent {
           </Link>{' '}
           / <small> review </small>
         </h2>
-        <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
             <div className="v-pad" />
