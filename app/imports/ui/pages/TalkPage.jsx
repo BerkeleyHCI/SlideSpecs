@@ -180,7 +180,7 @@ export default class TalkPage extends BaseComponent {
       bySlide,
       byTag,
     } = this.state;
-    const {comments, reviewer, setModal, clearModal} = this.props;
+    const {talk, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
@@ -241,8 +241,13 @@ export default class TalkPage extends BaseComponent {
         };
       });
 
+      const homeLink = window.location.origin + '/review/' + talk._id;
       return (
         <div>
+          <AlertLink
+            text={'Open the talk page on SlideSpecs with this link.'}
+            link={homeLink}
+          />
           <span className="comments-head" />
           <CommentList title={'comments'} items={items} />
           {items.length == 0 && <div className="alert"> no comments</div>}
@@ -393,16 +398,10 @@ export default class TalkPage extends BaseComponent {
       </div>
     );
 
+    //{this.renderComments()}
     return <MenuContainer {...this.props} content={content} />;
   }
 }
-
-//<button onClick={this.downloadJSON} className="btn btn-menu">
-//download JSON
-//</button>
-//<button onClick={this.downloadHTML} className="btn btn-menu">
-//download HTML
-//</button>
 
 TalkPage.propTypes = {
   user: PropTypes.object,

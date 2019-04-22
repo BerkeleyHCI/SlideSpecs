@@ -142,10 +142,15 @@ export default class Waveform extends React.Component {
   };
 
   renderTitle = () => {
-    const {duration, currentTime} = this.state;
+    const {duration, currentTime, playing} = this.state;
+    const playclass = playing ? 'empty' : 'primary';
     return (
       <span className="list-title">
-        audio
+        <button
+          className={`btn btn-menu btn-${playclass}`}
+          onClick={this.playAudio}>
+          {playing ? 'pause' : 'play discussion audio'}
+        </button>
         <code className="pull-right">
           {currentTime} / {this.formatTime(duration)}
         </code>
@@ -155,18 +160,12 @@ export default class Waveform extends React.Component {
 
   render() {
     const {playing} = this.state;
-    const playclass = playing ? 'empty' : 'primary';
     const title = this.renderTitle();
 
     return (
       <div className="waveform">
         {title}
         <div className="wave" />
-        <div className="controls">
-          <button className={`btn btn-${playclass}`} onClick={this.playAudio}>
-            {playing ? 'pause' : 'play'}
-          </button>
-        </div>
       </div>
     );
   }
