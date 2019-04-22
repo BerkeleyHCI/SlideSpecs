@@ -768,7 +768,7 @@ class ReviewPage extends BaseComponent {
     wave.clearRegions();
   };
 
-  renderWordList = words => {
+  renderWordList = (words = []) => {
     return (
       <p>
         {words.map((w, i) => {

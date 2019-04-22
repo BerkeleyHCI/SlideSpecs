@@ -4,7 +4,7 @@
 NOW=$(date)
 
 # Mongo Collections to export.
-declare -a arr=("users" "Talks" "Comments" "Events" "files" "images" "sounds")
+declare -a arr=("users" "Talks" "Comments" "Events" "Transcripts" "files" "images" "sounds")
 data="db-data $NOW"
 mkdir -pv "$data"
 for i in "${arr[@]}"; do
