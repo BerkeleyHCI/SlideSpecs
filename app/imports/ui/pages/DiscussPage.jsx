@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {Images} from '../../api/images/images.js';
 import BaseComponent from '../components/BaseComponent.jsx';
 import AlertLink from '../components/AlertLink.jsx';
+import LocalLink from '../components/LocalLink.jsx';
 import CommentList from '../components/CommentList.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import SpeechRecognition from 'react-speech-recognition';
@@ -381,11 +382,11 @@ class DiscussPage extends BaseComponent {
               <div className="col-sm-7">
                 {respond}
                 <div id="v-pad clearfix" />
-                <AlertLink
-                  center={true}
-                  text={'return to commenting'}
-                  link={`/comment/${talk._id}`}
-                />
+                <div className="padded">
+                  <LocalLink to={`/comment/${talk._id}`}>
+                    <center>return to commenting</center>
+                  </LocalLink>
+                </div>
                 {comments}
               </div>
             </div>

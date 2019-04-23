@@ -35,8 +35,8 @@ class FacilitatePage extends BaseComponent {
       recording: false,
       redirectTo: null,
       draftWords: [],
-      timeout: 20 * 1000, // testing with lower
-      //timeout: 45 * 1000, // ms -> once per minute
+      //timeout: 20 * 1000, // testing with lower
+      timeout: 60 * 1000, // ms -> once per minute
       sorter: 'flag',
       filter: 'flag',
       invert: true,
@@ -596,12 +596,6 @@ class FacilitatePage extends BaseComponent {
       ));
     }
   };
-
-  // blob/fle conversion
-  // https://stackoverflow.com/questions/27159179/
-  //blob.lastModified = lastModified;
-  //blob.name = name;
-  //blob.type = type;
 
   blobToFile = blob => {
     const {talk} = this.props;

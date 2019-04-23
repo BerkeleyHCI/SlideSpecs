@@ -34,7 +34,10 @@ class CommentList extends Component {
               key={i}
               {...item}
               {...other}
-              last={i + 1 == items.length}
+              last={
+                i + 1 == items.length &&
+                (!item.replies || item.replies.length === 0)
+              }
             />
           ))}
       </div>

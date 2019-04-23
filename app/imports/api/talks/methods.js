@@ -239,7 +239,8 @@ export const generateCommentRegions = new ValidatedMethod({
       }
 
       // group by two, only accept pairs
-      const audioOffset = 19500; // length of clip.
+      // todo - set to first audio recording click.
+      const audioOffset = 60 * 1000; // length of clip (1 minute)
       const audioStart = talk.audioStart - audioOffset;
       const paired = _.chunk(events, 2).filter(x => x.length === 2);
       const regions = paired.map(pair => {

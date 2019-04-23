@@ -602,11 +602,6 @@ class CommentPage extends BaseComponent {
     );
   };
 
-  //clearBySlide={this.clearBySlide}
-  //setBySlide={this.setBySlide}
-  //handleSlideIn={this.handleSlideIn}
-  //handleSlideOut={this.handleSlideOut}
-
   render() {
     const {images} = this.props;
     const cmtHead = this.renderCommentFilter();
