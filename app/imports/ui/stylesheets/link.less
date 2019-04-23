@@ -2,7 +2,10 @@
 
 a,
 a:focus,
-a:visited {
+a:visited,
+span.span-link,
+span.span-link:focus,
+span.span-link:visited {
   color: @color-primary;
   cursor: pointer;
   text-decoration: none;
@@ -45,6 +48,7 @@ a.link-alert:visited {
   }
 }
 
+h1 > .span-link,
 h1 > a {
   color: @color-danger;
 }

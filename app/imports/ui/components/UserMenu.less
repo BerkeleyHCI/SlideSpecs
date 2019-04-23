@@ -6,6 +6,10 @@
     position: relative;
     width: 100%;
   }
+
+  span.span-link {
+    color: @color-empty;
+  }
 }
 
 .user-menu {
@@ -13,7 +17,6 @@
   text-align: center;
   width: 90%;
 
-  // TODO - make the side nav responsive, go to top of screen when under desktop
   .btn-secondary {
     .font-s0;
     padding-top: 0.5em;
@@ -31,7 +34,6 @@
 
     & + .btn-secondary {
       margin-top: 0.5rem;
-
       &:before {
         .position(absolute, -0.5rem, 50%, auto, auto, 1px, 0.5rem);
         background: lighten(#517096, 5%);

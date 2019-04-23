@@ -328,11 +328,6 @@ class DiscussPage extends BaseComponent {
         </div>
         {cmtHead}
         <div id="v-pad" />
-        <AlertLink
-          center={true}
-          text={'return to commenting'}
-          link={`/comment/${talk._id}`}
-        />
       </div>
     );
   };
@@ -372,7 +367,7 @@ class DiscussPage extends BaseComponent {
   };
 
   render() {
-    const {images} = this.props;
+    const {images, talk} = this.props;
     const context = this.renderContext();
     const respond = this.renderRespond();
     const comments = this.renderComments();
@@ -386,6 +381,11 @@ class DiscussPage extends BaseComponent {
               <div className="col-sm-7">
                 {respond}
                 <div id="v-pad clearfix" />
+                <AlertLink
+                  center={true}
+                  text={'return to commenting'}
+                  link={`/comment/${talk._id}`}
+                />
                 {comments}
               </div>
             </div>

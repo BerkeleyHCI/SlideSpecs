@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BaseComponent from '../components/BaseComponent.jsx';
 import MenuContainer from '../containers/MenuContainer.jsx';
-import {Link} from 'react-router-dom';
+import LocalLink from '../components/LocalLink.jsx';
 import _ from 'lodash';
 import {createTalk, renameTalk, deleteTalk} from '../../api/talks/methods.js';
 
@@ -34,7 +34,7 @@ class TalkItem extends BaseComponent {
     const talkLink = `/talk/${_id}`;
     return (
       <li className="list-group-item clearfix">
-        <Link to={talkLink}>{name}</Link>
+        <LocalLink to={talkLink}>{name}</LocalLink>
         <div className="btn-m-group pull-right">
           <button onClick={this.renameTalk} className="btn-menu">
             rename
@@ -73,9 +73,9 @@ export default class TalkListPage extends BaseComponent {
     const content = (
       <div className="main-content">
         <h1>talks</h1>
-        <Link to={'/guide'} className="btn btn-empty pull-right">
+        <LocalLink to={'/guide'} className="btn btn-empty pull-right">
           user guide
-        </Link>
+        </LocalLink>
         <button onClick={this.addTalk} className="btn btn-primary">
           + new talk
         </button>

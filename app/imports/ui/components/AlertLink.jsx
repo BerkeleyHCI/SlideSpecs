@@ -5,7 +5,7 @@ import {Session} from 'meteor/session.js';
 
 class AlertLink extends Component {
   render() {
-    const {link, text, bText, blank, center} = this.props;
+    const {link, text, bText, blank, center, handleClick} = this.props;
 
     let ref;
     if (blank) {
@@ -16,7 +16,7 @@ class AlertLink extends Component {
     }
 
     return (
-      <a className="link-alert" href={link} {...ref}>
+      <a onClick={handleClick} className="link-alert" href={link} {...ref}>
         <div className={'alert ' + (center ? 'centered' : '')}>
           {text}
           {bText && (
@@ -29,6 +29,7 @@ class AlertLink extends Component {
 }
 
 AlertLink.propTypes = {
+  handleClick: PropTypes.func,
   link: PropTypes.string,
   text: PropTypes.string,
   bText: PropTypes.string,
@@ -36,6 +37,7 @@ AlertLink.propTypes = {
 };
 
 AlertLink.defaultProps = {
+  handleClick: function() {},
   center: false,
   blank: false,
   text: 'link',

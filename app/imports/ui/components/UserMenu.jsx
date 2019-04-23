@@ -1,16 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
-import {Link} from 'react-router-dom';
 import BaseComponent from './BaseComponent.jsx';
 import {Session} from 'meteor/session.js';
+import LocalLink from '../components/LocalLink.jsx';
 
 export default class UserMenu extends BaseComponent {
-  goHome = e => {
-    e.preventDefault();
-    this.redirectTo('/');
-  };
-
   logout = e => {
     e.preventDefault();
     Meteor.logout(() => {
@@ -26,29 +21,28 @@ export default class UserMenu extends BaseComponent {
     const username = user.username;
     return (
       <div className="user-menu">
-        <a className="btn-secondary" onClick={this.goHome}>
+        <LocalLink className="btn-secondary" to={'/'}>
           {username}
-        </a>
-        <a className="btn-secondary" onClick={this.logout}>
+        </LocalLink>
+        <span className="btn-secondary" onClick={this.logout}>
           log out
-        </a>
+        </span>
       </div>
     );
   };
 
-  // <Link to="/guide" className="btn-secondary">
-  //   guide
-  // </Link>
-
   renderLoggedOut() {
     return (
       <div className="user-menu">
-        <Link to="/signin" className="btn-secondary">
+        <LocalLink to="/signin" className="btn-secondary">
           signin
-        </Link>
-        <Link to="/join" className="btn-secondary">
+        </LocalLink>
+        <LocalLink to="/join" className="btn-secondary">
           join
-        </Link>
+        </LocalLink>
+        <LocalLink to="/guide" className="btn-secondary">
+          guide
+        </LocalLink>
       </div>
     );
   }
@@ -60,7 +54,7 @@ export default class UserMenu extends BaseComponent {
       this.renderRedirect() || (
         <section className="clearfix" id="menu">
           <h1>
-            <Link to="/">SlideSpecs</Link>
+            <LocalLink to="/">SlideSpecs</LocalLink>
           </h1>
           {content}
         </section>
