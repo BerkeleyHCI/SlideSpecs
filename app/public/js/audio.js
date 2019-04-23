@@ -37,8 +37,8 @@ function cancelAnalyserUpdates() {
 }
 
 function updateAnalysers(time) {
-  if (!analyserContext) {
-    let canvas = document.getElementById('analyser');
+  let canvas = document.getElementById('analyser');
+  if (!analyserContext && canvas) {
     canvasWidth = canvas.width;
     canvasHeight = canvas.height;
     analyserContext = canvas.getContext('2d');

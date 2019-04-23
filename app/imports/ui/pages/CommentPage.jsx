@@ -338,6 +338,27 @@ class CommentPage extends BaseComponent {
     );
   };
 
+  updateSelected = (event, image) => {
+    const {selected} = this.state;
+    const newSlide = {
+      slideId: image._id,
+      slideNo: `${+image.meta.slideNo + 1}`,
+    };
+
+    if (event.shiftKey || event.metaKey) {
+      // adding item to list, or removing item if already in it
+      if (selected.some(s => s.slideId === newSlide.slideId)) {
+        const newSelect = selected.filter(s => s.slideId !== newSlide.slideId);
+        this.setState({selected: newSelect});
+      } else {
+        this.setState({selected: [...selected, newSlide]});
+      }
+    } else {
+      // set list to just be this item
+      this.setState({selected: [newSlide]});
+    }
+  };
+
   renderSubmit = () => {
     const {defaultPriv} = this.state;
     return (
@@ -354,6 +375,7 @@ class CommentPage extends BaseComponent {
   };
 
   renderFiles = () => {
+    const {selected} = this.state;
     const {images} = this.props;
     if (!images) return;
     return images.map((f, key) => {
@@ -364,13 +386,16 @@ class CommentPage extends BaseComponent {
         console.error(e);
       }
 
+      const active = selected.some(s => s.slideId == f._id);
       const setHover = () => this.handleMouseOver(link);
+      const setSelect = e => this.updateSelected(e, f);
       return (
         <FileReview
           key={'file-' + key}
           iter={key + 1}
           fileUrl={link}
-          active={false}
+          active={active}
+          handleClick={setSelect}
           handleMouse={setHover}
           handleLoad={this.handleLoad}
         />

@@ -31,18 +31,12 @@ class FacilitatePage extends BaseComponent {
     super(props);
     this.inRef = React.createRef();
     this.state = {
+      redirectTo: null,
       recInterval: null,
       recording: false,
-      redirectTo: null,
       draftWords: [],
-      //timeout: 20 * 1000, // testing with lower
       timeout: 60 * 1000, // ms -> once per minute
-      sorter: 'flag',
-      filter: 'flag',
-      invert: true,
-      bySlide: '',
-      byAuth: '',
-      byTag: '',
+      //timeout: 20 * 1000, // testing with lower
     };
   }
 
@@ -73,7 +67,7 @@ class FacilitatePage extends BaseComponent {
           optional: [],
         },
       },
-      gotStream,
+      gotStream, // global worker handler
       function(e) {
         alert('Error getting audio');
         console.log(e);
@@ -135,139 +129,9 @@ class FacilitatePage extends BaseComponent {
     textarea.focus();
   };
 
-  setByAuth = e => {
-    const {byAuth} = this.state;
-    const newAuth = e.target.getAttribute('data-auth');
-    if (newAuth && byAuth === newAuth) {
-      this.setState({byAuth: ''});
-    } else if (newAuth) {
-      this.setState({byAuth: newAuth});
-    }
-  };
-
-  clearByAuth = () => {
-    this.setState({byAuth: ''});
-  };
-
-  setBySlide = e => {
-    const {bySlide} = this.state;
-    const newSlide = e.target.innerText.trim();
-    if (newSlide && bySlide === newSlide) {
-      this.setState({bySlide: ''});
-    } else if (newSlide) {
-      this.setState({bySlide: newSlide});
-    }
-  };
-
-  clearBySlide = () => {
-    this.setState({bySlide: ''});
-  };
-
-  // click on tag in comment
-  setByTag = e => {
-    e.preventDefault();
-    const {byTag} = this.state;
-    const newTag = e.target.innerText.trim();
-    if (newTag && byTag === newTag) {
-      this.setState({byTag: ''});
-    } else if (newTag) {
-      this.setState({byTag: newTag});
-    }
-  };
-
-  clearByTag = () => {
-    this.setState({byTag: ''});
-  };
-
-  renderCommentFilter = () => {
-    const filterer = this.renderFilter();
-
-    const {images} = this.props;
-    const {invert, filter} = this.state;
-    const invFn = () => this.setState({invert: !invert});
-    const setSort = (s, f) => {
-      return () => this.setState({sorter: s, filter: f});
-    };
-
-    const timeSort = setSort('created', 'time');
-    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
-    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
-    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
-    const slideSort = setSort(
-      x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
-      'slide',
-    );
-
-    return (
-      <div>
-        <div className="btn-m-straight btn-m-group btns-group">
-          <button
-            className={'btn btn-menu' + (filter === 'flag' ? ' active' : '')}
-            onClick={flagSort}>
-            discuss
-          </button>
-          <button
-            onClick={timeSort}
-            className={'btn btn-menu' + (filter === 'time' ? ' active' : '')}>
-            time
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'slide' ? ' active' : '')}
-            onClick={slideSort}>
-            slide
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
-            onClick={authSort}>
-            auth
-          </button>
-          <button
-            className={'btn btn-menu' + (filter === 'agree' ? ' active' : '')}
-            onClick={agreeSort}>
-            agree
-          </button>
-          <button className={'btn btn-menu'} onClick={invFn}>
-            {invert ? '▼' : '▲'}
-          </button>
-        </div>
-        {filterer}
-      </div>
-    );
-  };
-
-  renderFiles = () => {
-    const {images} = this.props;
-    return images.map((f, key) => {
-      let link = Images.findOne({_id: f._id}).link('original', '//');
-      return (
-        <FileReview
-          key={'file-' + key}
-          iter={key + 1}
-          fileUrl={link}
-          fileId={f._id}
-          fileName={f.name}
-          active={false}
-        />
-      );
-    });
-  };
-
   renderFilter = () => {
     const submit = this.renderSubmit();
-
-    let {byAuth, bySlide, byTag} = this.state;
-    const sType = bySlide === 'general' ? 'scope' : 'slide';
-    const {browserSupportsSpeechRecognition} = this.props;
-    if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
-
-    return (
-      <div className="filterer alert clearfix">
-        <ClearingDiv set={byTag} pre="tag" clear={this.clearByTag} />
-        <ClearingDiv set={byAuth} pre="author" clear={this.clearByAuth} />
-        <ClearingDiv set={bySlide} pre={sType} clear={this.clearBySlide} />
-        {submit}
-      </div>
-    );
+    return <div className="filterer clearfix">{submit}</div>;
   };
 
   renderCommentData = (arr, replies, c, i) => {
@@ -297,16 +161,11 @@ class FacilitatePage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter, invert, byAuth, bySlide, byTag} = this.state;
     const {talk, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      let csort = _.orderBy(
-        comments,
-        [sorter, 'created'],
-        [invert ? 'desc' : 'asc', 'asc'],
-      );
+      let csort = _.orderBy(comments, ['created'], ['asc']);
 
       // Clean - filter out active responding comments.
       csort = csort.filter(c => talk.active.indexOf(c._id) < 0);
@@ -335,23 +194,6 @@ class FacilitatePage extends BaseComponent {
       const unmarked = csort.filter(c => c.discuss.length == 0);
       csort = csort.filter(c => c.discuss.length > 0);
 
-      if (byAuth) {
-        csort = csort.filter(c => c.author === byAuth);
-      }
-
-      if (bySlide) {
-        csort = csort.filter(c => {
-          const general = [{slideNo: 'general'}];
-          const slides = c.slides.length > 0 ? c.slides : general;
-          const slideNos = slides.map(x => x.slideNo);
-          return slideNos.includes(bySlide);
-        });
-      }
-
-      if (byTag) {
-        csort = csort.filter(c => c.content.includes(byTag));
-      }
-
       const items = csort.map((c, i) =>
         this.renderCommentData(csort, replies, c, i),
       );
@@ -377,9 +219,7 @@ class FacilitatePage extends BaseComponent {
   renderMatchComments = () => {
     const {draftWords, sorter, invert, byAuth, bySlide, byTag} = this.state;
     const {talk, comments, reviewer, setModal, clearModal} = this.props;
-    if (!comments || !comments.length) {
-      return null;
-    }
+    if (!draftWords || !comments || !comments.length) return null;
 
     let csort = _.orderBy(
       comments,
@@ -406,13 +246,21 @@ class FacilitatePage extends BaseComponent {
     // remove child comments.
     csort = csort.filter(c => !isReply(c));
 
-    // draft words - check for matching contents.
-    if (draftWords) {
-      //console.log(draftWords);
-      csort = csort.filter(c =>
-        draftWords.some(dw => c.content.indexOf(dw) >= 0),
+    // string match
+    const draftMatch = (s, dws) => dws.some(dw => s.indexOf(dw) >= 0);
+
+    // comment match with replies
+    const commentMatch = (c, dws) => {
+      c.replies = c.replies || [];
+      return (
+        draftMatch(c.content, dws) ||
+        draftMatch(c.author, dws) ||
+        c.replies.some(c => commentMatch(c, dws))
       );
-    }
+    };
+
+    // draft words - check for matching contents.
+    csort = csort.filter(c => commentMatch(c, draftWords));
 
     const items = csort.map((c, i) =>
       this.renderCommentData(csort, replies, c, i),
@@ -426,7 +274,7 @@ class FacilitatePage extends BaseComponent {
   handleSearch = () => {
     const text = this.inRef.current.value.trim();
     if (!text) {
-      this.setState({draftWords: []}, this.renderMatchComments);
+      this.setState({draftWords: []});
     } else {
       const words = text
         .trim()
@@ -519,6 +367,7 @@ class FacilitatePage extends BaseComponent {
         <TextArea
           inRef={this.inRef}
           handleKeyDown={this.handleSearch}
+          handleKeyUp={this.handleSearch}
           handleSubmit={this.addComment}
           defaultValue="start a new discussion comment here"
           className="code comment-text"
@@ -535,9 +384,13 @@ class FacilitatePage extends BaseComponent {
     return (
       <div id="sound" className="clearfix">
         <div id="record" className={classRecord} onClick={this.toggleRecording}>
-          <img src="/img/mic128.png" />
+          {recording ? (
+            <i className="fa fa-stop" />
+          ) : (
+            <i className="fa fa-microphone" />
+          )}
         </div>
-        <canvas id="analyser" width="1024" height="500" />
+        <canvas id="analyser" width="1024" height="400" />
       </div>
     );
   };
@@ -601,20 +454,20 @@ class FacilitatePage extends BaseComponent {
     const matched = this.renderMatchComments();
     const respond = this.renderRespond();
     const comments = this.renderComments();
-    const cmtHead = this.renderCommentFilter();
+    const submit = this.renderFilter();
 
     return images ? (
       this.renderRedirect() || (
         <div className="main-content">
           <div className="facilitateView">
             <div id="review-view" className="table review-table">
-              <div className="row">
-                <div className="col-sm-5 full-height-md no-float">
+              <div className="row row-eq-height">
+                <div className="col-sm-5 no-float">
                   <div className="float-at-top">
                     {sounds}
-                    {cmtHead}
-                    {matched}
+                    {submit}
                   </div>
+                  {matched}
                 </div>
                 <div className="col-sm-7">
                   {respond}

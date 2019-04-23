@@ -23,7 +23,7 @@ class TextArea extends Component {
   };
 
   render() {
-    const {inRef, defaultValue, className} = this.props;
+    const {inRef, defaultValue, handleKeyUp, className} = this.props;
     return (
       <textarea
         autoFocus
@@ -32,6 +32,7 @@ class TextArea extends Component {
         className={className}
         placeholder={defaultValue}
         onKeyDown={this.keyDown}
+        onKeyUp={handleKeyUp}
       />
     );
   }

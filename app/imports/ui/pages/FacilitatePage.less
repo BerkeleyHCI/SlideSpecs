@@ -19,35 +19,46 @@ canvas,
 
 canvas {
   border-radius: 0px 4px 0px 0px;
-  background: #202020;
+  background: @color-full;
   width: 70%;
 }
 
 #record {
-  background: white;
+  background: @color-full;
   border-radius: 4px 0px 0px 0px;
-  border: #202020 dotted 1px;
   width: 30%;
 
   &:hover img {
     filter: brightness(100%);
   }
 
+  &:hover i {
+    color: @color-note;
+  }
+
+  i,
   img {
     filter: brightness(80%);
-    padding: 1em;
     vertical-align: middle;
     text-align: center;
+    padding: 1em;
+  }
+
+  i {
+    .font-l3();
+    color: @color-empty;
   }
 }
 
 #record.recording {
-  background: red;
-  border: none;
 }
 
 .facilitateView {
   .alert:first-child {
     margin-top: 0px !important;
+  }
+
+  .filterer.alert {
+    border-top: 0px;
   }
 }

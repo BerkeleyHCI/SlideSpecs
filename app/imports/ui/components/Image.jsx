@@ -30,6 +30,7 @@ Img.propTypes = {
 };
 
 Img.defaultProps = {
+  source: '/default.png',
   err: '/default.png',
 };
 
