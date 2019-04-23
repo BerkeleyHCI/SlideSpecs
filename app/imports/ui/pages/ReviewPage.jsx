@@ -45,32 +45,25 @@ class ReviewPage extends BaseComponent {
     this.inRef = React.createRef();
     this.waveRef = React.createRef();
     this.state = {
-      activeSound: null,
       activeComment: null,
       sorter: 'created',
       filter: 'time',
-      invert: true,
-      filtered: [],
+      invert: false,
+      selected: [],
       tags: [],
       bySlide: [],
       byAuth: '',
       byTag: '',
-      hoverImage: '',
       activeRegion: [],
       image: '',
     };
   }
-
-  handleKeyPress = e => {
-    console.log(e);
-  };
 
   handleLoad = () => {
     const grid = document.getElementById('grid');
     const mason = new Masonry(grid, {
       itemSelector: '.file-item',
     });
-    mason.on('layoutComplete', this.handleSelectable);
   };
 
   handleGenerate = () => {
@@ -94,30 +87,43 @@ class ReviewPage extends BaseComponent {
     Meteor.call('transcribeSounds', talk._id, file._id);
   };
 
-  handleSelectable = items => {
-    const area = document.getElementById('grid');
-    const elements = items.map(i => i.element);
-  };
-
-  elementize = x => {
-    return {element: x};
-  };
-
-  extractFileData = x => {
-    return {
-      slideId: x.getAttribute('data-file-id'),
-      slideNo: x.getAttribute('data-iter'),
+  updateSelected = (event, image) => {
+    const {selected} = this.state;
+    const newSlide = {
+      slideId: image._id,
+      slideNo: `${+image.meta.slideNo + 1}`,
     };
+
+    let bySlide;
+    const slidesToFilter = slides => {
+      if (!slides) slides = [];
+      return slides.map(s => s.slideNo.trim());
+    };
+
+    if (event.shiftKey || event.metaKey) {
+      // adding item to list, or removing item if already in it
+      if (selected.some(s => s.slideId === newSlide.slideId)) {
+        const newSelect = selected.filter(s => s.slideId !== newSlide.slideId);
+        bySlide = slidesToFilter(newSelect);
+        this.setState({selected: newSelect, bySlide});
+      } else {
+        const newSelect = [...selected, newSlide];
+        bySlide = slidesToFilter(newSelect);
+        this.setState({selected: newSelect, bySlide});
+      }
+    } else {
+      // set list to just be this item
+      bySlide = slidesToFilter([newSlide]);
+      this.setState({selected: [newSlide], bySlide});
+    }
   };
 
   componentDidMount = () => {
-    // set image to link of the first slide
     const {images} = this.props;
+    this.handleLoad();
     if (images.length > 0) {
       this.updateImage(images[0]._id);
     }
-
-    this.handleLoad();
   };
 
   componentDidUpdate = () => {
@@ -147,27 +153,14 @@ class ReviewPage extends BaseComponent {
   };
 
   setBySlide = e => {
-    const {ds} = this.state;
     const slideId = e.target.dataset.fileId;
     const newSlide = e.target.innerText.trim();
-    const filtered = [{slideNo: newSlide, slideId}];
-    this.setState({bySlide: [newSlide], filtered});
-    const slide = document.querySelectorAll(`[data-iter='${newSlide}']`);
-    if (ds) {
-      const sel = ds.getSelection();
-      ds.removeSelection(sel);
-      ds.addSelection(slide);
-    }
+    const selected = [{slideNo: newSlide, slideId}];
+    this.setState({bySlide: [newSlide], selected});
   };
 
   clearBySlide = () => {
-    // clearing internal grid
-    const {ds} = this.state;
-    if (ds) {
-      const sel = ds.getSelection();
-      ds.removeSelection(sel);
-    }
-    this.setState({filtered: [], bySlide: []});
+    this.setState({selected: [], bySlide: []});
   };
 
   // click on tag in comment
@@ -175,24 +168,11 @@ class ReviewPage extends BaseComponent {
     e.preventDefault();
     const {byTag} = this.state;
     const newTag = e.target.innerText.trim();
-    if (newTag && byTag === newTag) {
+    if (newTag && byTag == newTag) {
       this.setState({byTag: ''});
     } else if (newTag) {
       this.setState({byTag: newTag});
     }
-  };
-
-  // click on tag in filter
-  insertTag = e => {
-    e.preventDefault();
-    const tag = e.target.innerText.trim();
-    const textarea = this.inRef.current;
-    if (textarea.value === '') {
-      textarea.value = `${tag} `;
-    } else if (!textarea.value.includes(tag)) {
-      textarea.value += ` ${tag} `;
-    }
-    textarea.focus();
   };
 
   clearByTag = () => {
@@ -207,22 +187,6 @@ class ReviewPage extends BaseComponent {
   updateImage = fid => {
     const link = Images.findOne({_id: fid}).link('original', '//');
     this.setState({image: link});
-  };
-
-  updateHoverImage = fid => {
-    const link = Images.findOne({_id: fid}).link('original', '//');
-    this.setState({hoverImage: link, image: link});
-  };
-
-  handleSlideIn = e => {
-    if (e.target === e.currentTarget) {
-      const data = this.extractFileData(e.target);
-      this.updateHoverImage(data.slideId);
-    }
-  };
-
-  handleSlideOut = e => {
-    this.setState({hoverImage: false});
   };
 
   clearButtonBG = e => {
@@ -243,22 +207,20 @@ class ReviewPage extends BaseComponent {
     }
   };
 
-  renderSlideTags = (filtered, done: false) => {
+  renderSlideTags = (selected, done: false) => {
     const {bySlide} = this.state;
     const active = sn => (bySlide.includes(sn) ? 'active' : '');
-    if (filtered.length === 0) {
+    if (selected.length === 0) {
       return null;
     } else {
-      const plural = filtered.length > 1;
-      const slideNos = _.sortBy(filtered, x => Number(x.slideNo));
+      const plural = selected.length > 1;
+      const slideNos = _.sortBy(selected, x => Number(x.slideNo));
       const slideKeys = slideNos.map(s => (
         <kbd
+          iter={s.slideNo}
           className={active(s.slideNo)}
           key={`key-${s.slideNo}`}
-          iter={s.slideNo}
           data-file-id={s.slideId}
-          onMouseOver={this.handleSlideIn}
-          onMouseOut={this.handleSlideOut}
           onClick={this.setBySlide}>
           {s.slideNo}
         </kbd>
@@ -277,17 +239,20 @@ class ReviewPage extends BaseComponent {
     const {images} = this.props;
     const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
-    const setSort = (s, f) => {
-      return () => this.setState({sorter: s, filter: f});
+    const setSort = (s, f, invert) => {
+      return () => {
+        this.setState({sorter: s, filter: f, invert});
+      };
     };
 
-    const timeSort = setSort('created', 'time');
-    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
-    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
-    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
+    const timeSort = setSort('created', 'time', invert);
+    const authSort = setSort(x => x.author.toLowerCase(), 'auth', false);
+    const agreeSort = setSort(x => (x.agree || []).length, 'agree', true);
+    const flagSort = setSort(x => (x.discuss || []).length, 'flag', true);
     const slideSort = setSort(
       x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
       'slide',
+      false,
     );
 
     return (
@@ -328,6 +293,7 @@ class ReviewPage extends BaseComponent {
   };
 
   renderImages = () => {
+    const {selected} = this.state;
     const {images, comments} = this.props;
     return images.map((f, key) => {
       let link = Images.findOne({_id: f._id}).link('original', '//');
@@ -339,6 +305,8 @@ class ReviewPage extends BaseComponent {
         return slideNos.includes((key + 1).toString());
       }).length;
 
+      const active = selected.some(s => s.slideId == f._id);
+      const setSelect = e => this.updateSelected(e, f);
       return (
         <FileReview
           key={'file-' + key}
@@ -346,8 +314,9 @@ class ReviewPage extends BaseComponent {
           fileUrl={link}
           fileId={f._id}
           fileName={f.name}
-          active={false}
+          selected={active}
           slideCount={count}
+          handleClick={setSelect}
           handleLoad={this.handleLoad}
         />
       );
@@ -355,9 +324,8 @@ class ReviewPage extends BaseComponent {
   };
 
   renderFilter = () => {
-    let {comments} = this.props;
-    let {byAuth, bySlide, byTag, filtered} = this.state;
-    const slideKeys = this.renderSlideTags(filtered);
+    let {byAuth, bySlide, byTag, selected} = this.state;
+    const slideKeys = this.renderSlideTags(selected);
     const sType = bySlide === ['general'] ? 'scope' : 'slide';
     return (
       <div className="filterer alert no-submit border-bottom">
@@ -383,86 +351,23 @@ class ReviewPage extends BaseComponent {
   };
 
   renderComments = () => {
-    const {sorter, invert, activeComment, byAuth, bySlide, byTag} = this.state;
     const {comments, reviewer, setModal, clearModal} = this.props;
+    const {sorter, invert, activeComment, byAuth, bySlide, byTag} = this.state;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      let csort = _.orderBy(
-        comments,
-        [sorter, 'created'],
-        [invert ? 'desc' : 'asc', 'asc'],
-      );
-
-      // Filtering 'reply' comments into array.
-      // TODO - make it so this seperates on punctuation
-      const reply = /\[.*\]\(\s?#c(.*?)\)/;
-      const isReply = c => reply.test(c.content);
-      const replies = _.orderBy(
-        csort.filter(isReply).map(c => {
-          const match = reply.exec(c.content);
-          c.replyTo = match[1].trim();
-          c.isReply = true;
-          return c;
-        }),
-        ['created'],
-        ['asc'],
-      );
-
-      // remove child comments.
-      csort = csort.filter(c => !isReply(c));
-
-      if (byAuth) {
-        csort = csort.filter(c => c.author === byAuth);
-      }
-
-      if (bySlide.length > 0) {
-        csort = csort.filter(c => {
-          const general = [{slideNo: 'general'}];
-          const slides = c.slides.length > 0 ? c.slides : general;
-          const slideNos = slides.map(x => x.slideNo);
-          return bySlide.some(sn => slideNos.includes(sn));
-        });
-      }
-
-      if (byTag) {
-        csort = csort.filter(c => c.content.includes(byTag));
-      }
-
-      const items = csort.map((c, i) => {
-        c.transcript = c.author === 'transcript';
-        c.last = i === csort.length - 1; // no final hr
-        c.active = c._id === activeComment; // highlight
-        c.replies = replies.filter(r => r.replyTo == c._id);
-        const context = this.renderSlideTags(c.slides, true);
-        return {
-          ...c,
-          key: c._id,
-          reviewView: true,
-          context,
-          reviewer,
-          setModal,
-          clearModal,
-          log: this.log,
-          allReplies: replies,
-          commentRef: this.inRef,
-          setBySlide: this.setBySlide,
-          handleTag: this.setByTag,
-          handleAuthor: this.setByAuth,
-          handleSlideIn: this.handleSlideIn,
-          handleSlideOut: this.handleSlideOut,
-          setActive: this.setActiveComment,
-          unsetActive: this.clearActiveComment,
-        };
-      });
-
+      let items = this.generateBaseComments();
       const completed = items.filter(c => c.completed);
       const incomplete = items.filter(c => !c.completed);
 
       return items.length > 0 ? (
         <div>
-          <CommentList title={'to address'} items={incomplete} />
-          <CommentList title={'addressed'} items={completed} />
+          <CommentList title={'comments'} items={incomplete} />
+          <CommentList
+            title={'addressed'}
+            items={completed}
+            defaultOpen={false}
+          />
         </div>
       ) : (
         <div className="alert"> no matching comments</div>
@@ -487,9 +392,9 @@ class ReviewPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderImages();
 
-    const {image, hoverImage, filtered} = this.state;
+    const {image, selected} = this.state;
     const {talk, name, sounds} = this.props;
-    const imgSrc = hoverImage ? hoverImage : image;
+    const imgSrc = image;
 
     let snd;
     const [newSound] = sounds; // sorted, first
@@ -584,6 +489,7 @@ class ReviewPage extends BaseComponent {
       {
         startTime: region.startTime,
         endTime: Math.max(region.endTime, region.startTime + 3.0),
+        type: 'word',
       },
       true,
     );
@@ -608,7 +514,6 @@ class ReviewPage extends BaseComponent {
     const {setModal, clearModal} = this.props;
     const generate = this.renderGenerate();
     const mContent = generate;
-
     setModal({
       accept: false,
       deny: clearModal,
@@ -624,6 +529,7 @@ class ReviewPage extends BaseComponent {
       color: 'rgba(255, 100, 100, 0.25)',
       startTime: region.startTime / 1000.0,
       endTime: region.stopTime / 1000.0,
+      type: 'region',
     });
   };
 
@@ -633,7 +539,8 @@ class ReviewPage extends BaseComponent {
     wave.clearRegions();
   };
 
-  renderWordList = (words = []) => {
+  renderWordList = (words = false) => {
+    if (!words) return null;
     return (
       <p>
         {words.map((w, i) => {
@@ -673,6 +580,78 @@ class ReviewPage extends BaseComponent {
     );
   };
 
+  generateBaseComments = () => {
+    const {comments, reviewer, setModal, clearModal} = this.props;
+    const {sorter, invert, activeComment, byAuth, bySlide, byTag} = this.state;
+
+    let csort = _.orderBy(
+      comments,
+      [sorter, 'created'],
+      [invert ? 'desc' : 'asc', 'asc'],
+    );
+
+    // Filtering 'reply' comments into array.
+    // TODO - make it so this seperates on punctuation
+    const reply = /\[.*\]\(\s?#c(.*?)\)/;
+    const isReply = c => reply.test(c.content);
+    const replies = _.orderBy(
+      csort.filter(isReply).map(c => {
+        const match = reply.exec(c.content);
+        c.replyTo = match[1].trim();
+        c.isReply = true;
+        return c;
+      }),
+      ['created'],
+      ['asc'],
+    );
+
+    // remove child comments.
+    csort = csort.filter(c => !isReply(c));
+
+    if (byAuth) {
+      csort = csort.filter(c => c.author === byAuth);
+    }
+
+    if (bySlide.length > 0) {
+      csort = csort.filter(c => {
+        const general = [{slideNo: 'general'}];
+        const slides = c.slides.length > 0 ? c.slides : general;
+        const slideNos = slides.map(x => x.slideNo);
+        return bySlide.some(sn => slideNos.includes(sn));
+      });
+    }
+
+    if (byTag) {
+      csort = csort.filter(c => c.content.includes(byTag));
+    }
+
+    const items = csort.map((c, i) => {
+      c.transcript = c.author === 'transcript';
+      c.active = c._id === activeComment; // highlight
+      c.replies = replies.filter(r => r.replyTo == c._id);
+      const context = this.renderSlideTags(c.slides, true);
+      return {
+        ...c,
+        key: c._id,
+        reviewView: true,
+        context,
+        reviewer,
+        setModal,
+        clearModal,
+        log: this.log,
+        allReplies: replies,
+        commentRef: this.inRef,
+        setBySlide: this.setBySlide,
+        handleTag: this.setByTag,
+        handleAuthor: this.setByAuth,
+        setActive: this.setActiveComment,
+        unsetActive: this.clearActiveComment,
+      };
+    });
+
+    return items;
+  };
+
   generateWordList = (region, pad = 200) => {
     const {startTime, stopTime} = region;
     const {transcript} = this.props;
@@ -687,19 +666,21 @@ class ReviewPage extends BaseComponent {
     });
   };
 
+  // TODO adding the sorting here. generateBaseComponent.
   renderRegions = () => {
     const {duration} = this.state;
     const {talk, regions} = this.props;
     if (!regions || !this.waveRef || !this.waveRef.current) return;
     const wave = this.waveRef.current;
     if (!duration) return;
-    const regionComments = regions
+    const regionComments = _.sortBy(regions, ['startTime'])
       .filter(w => w.startTime < duration && w.stopTime > 0)
       .map((w, i) => {
         const playComment = this.playRegionComment(w);
         const highlight = this.highlightRegionComment(w);
         const words = this.generateWordList(w);
         const commentWords = this.renderWordList(words);
+        //console.log(words, commentWords);
         return {
           ...w,
           last: i + 1 == regions.length,
@@ -711,7 +692,13 @@ class ReviewPage extends BaseComponent {
         };
       });
 
-    return <CommentList title={'discussed comments'} items={regionComments} />;
+    return (
+      <CommentList
+        title={'discussion'}
+        items={regionComments}
+        defaultOpen={false}
+      />
+    );
   };
 
   render() {
@@ -733,21 +720,21 @@ class ReviewPage extends BaseComponent {
     return images ? (
       this.renderRedirect() || (
         <div
-          className="full-container padded"
+          className="full-container padded reviewPage"
           onMouseDown={this.clearButtonBG}
           onKeyPress={console.log}>
           {snd && audio}
           <div id="review-view" className="table review-table">
-            <div className="row row-eq-height">
+            <div className="row">
               <div className="col-sm-5">
                 {context}
                 {!snd && generate}
+                {trans}
               </div>
               <div className="col-sm-7">
                 {filter}
                 {regions}
                 {comments}
-                {trans}
               </div>
             </div>
           </div>

@@ -8,6 +8,7 @@ class FileReview extends BaseComponent {
     const {
       iter,
       active,
+      selected,
       fileUrl,
       slideCount,
       handleLoad,
@@ -20,7 +21,11 @@ class FileReview extends BaseComponent {
         onClick={handleClick}
         onMouseOver={handleMouse}
         onMouseOut={handleMouseOut}
-        className={'file-item file-item-review ' + (active ? ' active' : '')}>
+        className={
+          'file-item file-item-review ' +
+          (active ? ' active' : '') +
+          (selected ? ' ds-selected' : '')
+        }>
         <div className="slide-container">
           {active && <div className="live" />}
           <div className="overlay">{iter}</div>
