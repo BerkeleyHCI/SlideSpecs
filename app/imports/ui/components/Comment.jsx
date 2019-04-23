@@ -525,7 +525,7 @@ class Comment extends BaseComponent {
             source={content}
           />
 
-          {wordList.length > 0 && (
+          {wordList && (
             <span>
               <hr />
               <div className="v-pad">
@@ -590,9 +590,9 @@ Comment.propTypes = {
 };
 
 Comment.defaultProps = {
-  wordList: [],
   allReplies: [],
   isReply: false,
+  wordList: false,
   replies: [],
   sounds: [],
   depth: 0,
