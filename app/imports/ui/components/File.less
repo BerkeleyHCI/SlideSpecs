@@ -12,6 +12,18 @@
   }
 }
 
+div.file-item.ds-selected {
+  outline: 2px double @color-primary !important;
+  img {
+    opacity: 0.7;
+  }
+  .slide-overlay,
+  .overlay {
+    background: rgba(0, 0, 0, 0.75);
+    opacity: 1;
+  }
+}
+
 div.file-item {
   position: absolute;
   margin-bottom: 1em;
@@ -166,18 +178,6 @@ div.reviewView {
 
   [class*='col-'] {
     padding: 0px 15px;
-  }
-
-  .ds-selected {
-    outline: 2px double @color-primary;
-    img {
-      opacity: 0.7;
-    }
-    .slide-overlay,
-    .overlay {
-      background: rgba(0, 0, 0, 0.75);
-      opacity: 1;
-    }
   }
 
   .clear-icon:hover {
