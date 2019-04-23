@@ -8,7 +8,6 @@ class FileReview extends BaseComponent {
     const {
       iter,
       active,
-      fileId,
       fileUrl,
       slideCount,
       handleLoad,
@@ -19,9 +18,7 @@ class FileReview extends BaseComponent {
       <div
         className={'file-item file-item-review ' + (active ? ' active' : '')}
         onMouseOver={handleMouse}
-        onMouseOut={handleMouseOut}
-        data-iter={iter}
-        data-file-id={fileId}>
+        onMouseOut={handleMouseOut}>
         <div className="slide-container">
           {active && <div className="live" />}
           <div className="overlay">{iter}</div>
