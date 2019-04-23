@@ -123,10 +123,6 @@ export default class TalkPage extends BaseComponent {
     return newComment;
   };
 
-  downloadHTML = () => {
-    console.log('todo');
-  };
-
   downloadJSON = () => {
     const {comments, talk} = this.props;
     // Filtering out 'reply' comments.
@@ -372,12 +368,6 @@ export default class TalkPage extends BaseComponent {
 
         {file && (
           <div className="btns-menu-space">
-            <a download href={talkFile}>
-              <button className="btn btn-menu pull-right">
-                download slides
-              </button>
-            </a>
-
             <button
               onClick={this.downloadJSON}
               className="btn btn-menu btn-primary">
@@ -389,6 +379,12 @@ export default class TalkPage extends BaseComponent {
               className="btn btn-menu btn-primary">
               download HTML
             </button>
+
+            <a download href={talkFile}>
+              <button className="btn btn-menu pull-right">
+                download slides
+              </button>
+            </a>
           </div>
         )}
 

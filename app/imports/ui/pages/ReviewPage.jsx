@@ -76,6 +76,14 @@ class ReviewPage extends BaseComponent {
   handleGenerate = () => {
     const {talk} = this.props;
     console.log('starting generation');
+    toast(() => (
+      <AppNotification
+        msg={'transcript started'}
+        desc={'processing discussion audio...'}
+        icon={'spinner'}
+      />
+    ));
+
     Meteor.call('mergeSounds', talk._id, console.log);
   };
 
@@ -365,9 +373,9 @@ class ReviewPage extends BaseComponent {
     return (
       <div>
         <AlertLink
-          onClick={this.handleGenerate}
-          center={true}
+          handleClick={this.handleGenerate}
           text={'generate transcript'}
+          center={true}
         />
         {soundDownload}
       </div>
@@ -516,7 +524,7 @@ class ReviewPage extends BaseComponent {
   };
 
   renderSoundDownload = () => {
-    const {sounds} = this.props;
+    const {sounds, talk} = this.props;
     const [newSound] = sounds; // sorted, first
     if (!newSound || !WaveSurfer) return;
     const snd = Sounds.findOne({_id: newSound._id});
@@ -524,9 +532,10 @@ class ReviewPage extends BaseComponent {
     const src = snd.link('original', '//');
     const created = this.humanDate(newSound.meta.created);
     const size = this.humanFileSize(newSound.size);
+    const name = `${talk.name}-discussion`;
     if (!src) return;
     return (
-      <a download href={src} className="link-alert">
+      <a download={name} href={src} className="link-alert">
         <div className="alert">
           download audio
           <small className="pull-right">
