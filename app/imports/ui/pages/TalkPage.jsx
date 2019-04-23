@@ -254,7 +254,7 @@ export default class TalkPage extends BaseComponent {
 
   downloadHTML = () => {
     const renderComments = this.renderComments();
-    var geturl = document.getElementsByTagName('link')[0].href;
+    var geturl = document.querySelectorAll('link.__meteor-css__')[0].href;
     const commentStyle = this.httpGet(geturl);
     const commentHtml = ReactDOMServer.renderToString(renderComments);
     const documentBody = `
