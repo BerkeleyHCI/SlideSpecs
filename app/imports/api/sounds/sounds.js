@@ -23,45 +23,54 @@ export const Sounds = new FilesCollection({
   onAfterUpload(file) {
     const {target, talkId} = file.meta;
     console.log(target, talkId);
-    const useTranscript = data => {
-      let response = data[0];
-      let transcript = response.results
-        .map(result => result.alternatives[0].transcript)
-        .join('\n')
-        .trim();
-      console.log(transcript);
-      if (transcript) {
-        const soundId = file._id;
-        const results = JSON.stringify(response.results, null, 4);
-        updateSound.call({soundId, transcript, results});
-      }
-    };
-
-    // Run this per recording on browser files only
-    if (/wav/i.test(file.extension)) {
-      const speech = Npm.require('@google-cloud/speech'),
-        fs = Npm.require('fs'),
-        client = new speech.SpeechClient();
-      fs.readFile(file.path, (err, content) => {
-        const audioBytes = content.toString('base64');
-        const audio = {
-          content: audioBytes,
-        };
-        const config = {
-          languageCode: 'en-US',
-          enableWordTimeOffsets: true,
-        };
-        const request = {
-          audio: audio,
-          config: config,
-        };
-
-        // Detects speech in the audio file
-        client
-          .recognize(request)
-          .then(useTranscript)
-          .catch(console.error);
-      });
-    }
   },
 });
+
+
+
+
+
+
+
+
+
+
+//const useTranscript = data => {
+//let response = data[0];
+//let transcript = response.results
+//.map(result => result.alternatives[0].transcript)
+//.join('\n')
+//.trim();
+//console.log(transcript);
+//if (transcript) {
+//const soundId = file._id;
+//const results = JSON.stringify(response.results, null, 4);
+//updateSound.call({soundId, transcript, results});
+//}
+//};
+// Run this per recording on browser files only
+// Update: Never run this since transcription happens later.
+//if (false && /wav/i.test(file.extension)) {
+//const speech = Npm.require('@google-cloud/speech'),
+//fs = Npm.require('fs'),
+//client = new speech.SpeechClient();
+//fs.readFile(file.path, (err, content) => {
+//const audioBytes = content.toString('base64');
+//const audio = {
+//content: audioBytes,
+//};
+//const config = {
+//languageCode: 'en-US',
+//enableWordTimeOffsets: true,
+//};
+//const request = {
+//audio: audio,
+//config: config,
+//};
+//// Detects speech in the audio file
+//client
+//.recognize(request)
+//.then(useTranscript)
+//.catch(console.error);
+//});
+//}

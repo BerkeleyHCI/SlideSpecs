@@ -36,12 +36,12 @@ export const createTalk = new ValidatedMethod({
     });
 
     // set default tags
-    Comments.insert({
-      talk: talkId,
-      created: Date.now(),
-      author: 'SlideSpecs',
-      content: '#great #story #clarity #slideDesign',
-    });
+    //Comments.insert({
+    //talk: talkId,
+    //created: Date.now(),
+    //author: 'SlideSpecs',
+    //content: '#great #story #clarity #slideDesign',
+    //});
 
     return talkId;
   },

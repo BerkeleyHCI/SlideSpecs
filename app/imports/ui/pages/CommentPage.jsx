@@ -308,6 +308,7 @@ class CommentPage extends BaseComponent {
   };
 
   renderCommentHead = () => {
+    const {talk} = this.props;
     const {defaultPriv, focusing, userOwn} = this.state;
     return (
       <span className="comment-config pull-right">
@@ -318,6 +319,12 @@ class CommentPage extends BaseComponent {
         <span className="comment-option" onClick={this.toggleUserOwn}>
           <i className={'fa fa-' + (userOwn ? 'user' : 'globe')} />{' '}
           {userOwn ? 'mine' : 'all'}
+        </span>
+        <span
+          className="comment-option"
+          onClick={() => this.redirectTo(`/discuss/${talk._id}`)}>
+          <i className={'fa fa-' + (userOwn ? 'discuss' : 'discuss')} />{' '}
+          {userOwn ? 'discuss' : 'discuss'}
         </span>
       </span>
     );
@@ -590,13 +597,6 @@ class CommentPage extends BaseComponent {
               />
             </div>
           </div>
-        )}
-        {filtered.length == 0 && (
-          <AlertLink
-            center={true}
-            text={'enter discussion here'}
-            link={`/discuss/${talk._id}`}
-          />
         )}
       </div>
     );

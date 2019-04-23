@@ -1,14 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import {Link} from 'react-router-dom';
-import {
-  renameTalk,
-  deleteTalk,
-  moveTalkTalk,
-} from '../../api/talks/methods.js';
+import {renameTalk, deleteTalk, moveTalkTalk} from '../../api/talks/methods.js';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
+import LocalLink from '../components/LocalLink.jsx';
 
 class TalkListItem extends Component {
   renameTalk = () => {
@@ -89,9 +85,9 @@ class TalkListItem extends Component {
             <div className="col-sm-3">
               {!linkPre && <Img className="preview" source={iLink} />}
               {linkPre && (
-                <Link to={talkLink}>
+                <LocalLink to={talkLink}>
                   <Img className="preview" source={iLink} />
-                </Link>
+                </LocalLink>
               )}
             </div>
 
@@ -108,7 +104,7 @@ class TalkListItem extends Component {
                 </div>
               )}
               {!linkPre && talk.name}
-              {linkPre && <Link to={talkLink}>{talk.name}</Link>}
+              {linkPre && <LocalLink to={talkLink}>{talk.name}</LocalLink>}
               {!hasImages && (
                 <i>
                   <br />

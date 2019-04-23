@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {Sounds} from '../../api/sounds/sounds.js';
 import {Images} from '../../api/images/images.js';
 import Waveform from '../components/Waveform.jsx';
+import AlertLink from '../components/AlertLink.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import CommentList from '../components/CommentList.jsx';
@@ -44,7 +45,6 @@ class ReviewPage extends BaseComponent {
     this.inRef = React.createRef();
     this.waveRef = React.createRef();
     this.state = {
-      redirectTo: null,
       activeSound: null,
       activeComment: null,
       sorter: 'created',
@@ -58,7 +58,6 @@ class ReviewPage extends BaseComponent {
       hoverImage: '',
       activeRegion: [],
       image: '',
-      ds: {},
     };
   }
 
@@ -90,28 +89,6 @@ class ReviewPage extends BaseComponent {
   handleSelectable = items => {
     const area = document.getElementById('grid');
     const elements = items.map(i => i.element);
-    let {ds} = this.state;
-    const updateSelection = () => {
-      const s = ds.getSelection();
-      if (s.length > 0) {
-        const filtered = s.map(this.extractFileData);
-        const bySlide = filtered.map(s => s.slideNo);
-        this.setState({filtered, bySlide});
-      }
-    };
-
-    if (!_.isEmpty(ds)) {
-      ds.selectables = elements;
-    } else {
-      ds = new DragSelect({
-        selectables: elements,
-        onDragMove: updateSelection,
-        callback: updateSelection,
-        autoScrollSpeed: 12,
-        area: area,
-      });
-      this.setState({ds});
-    }
   };
 
   elementize = x => {
@@ -126,31 +103,17 @@ class ReviewPage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    this.handleLoad();
-    setTimeout(() => {}, 500);
-
-    setTimeout(() => {
-      const items = document.querySelectorAll('.file-item');
-      const nodes = Array.prototype.slice.call(items).map(this.elementize);
-      this.handleSelectable(nodes);
-    }, 1500);
-
     // set image to link of the first slide
     const {images} = this.props;
     if (images.length > 0) {
       this.updateImage(images[0]._id);
     }
+
+    this.handleLoad();
   };
 
   componentDidUpdate = () => {
     this.handleLoad();
-  };
-
-  componentWillUnmount = () => {
-    let {ds} = this.state;
-    if (ds && ds.stop) {
-      ds.stop(); // no drag
-    }
   };
 
   setActiveComment = ac => {
@@ -159,86 +122,6 @@ class ReviewPage extends BaseComponent {
 
   clearActiveComment = () => {
     this.setState({activeComment: ''});
-  };
-
-  handleDropUpload = files => {
-    this.handleUpload(files);
-  };
-
-  handleSelectUpload = e => {
-    e.preventDefault();
-    const files = [...e.currentTarget.files];
-    this.handleUpload(files);
-  };
-
-  handleUpload = allfiles => {
-    const file = allfiles[0]; // only accept the first file.
-    if (!file) return;
-    let {talk} = this.props;
-    const handleToast = ({msg, desc, icon, closeTime}) => {
-      if (!closeTime) closeTime = 3000;
-      toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
-        autoClose: closeTime,
-      });
-    };
-
-    const goodSize = file.size <= 50985760;
-    const goodType = /(flac|wav)$/i.test(file.name);
-    if (!goodSize || !goodType) {
-      handleToast({
-        msg: 'error',
-        icon: 'times',
-        desc:
-          'Please only upload FLAC or WAV files, with size equal or less than 50MB.',
-      });
-      return; // skip this file.
-    }
-
-    let uploadInstance = Sounds.insert(
-      {
-        file,
-        meta: {
-          complete: true,
-          created: Date.now(),
-          userId: Meteor.userId(),
-          talkId: talk._id,
-        },
-        streams: 'dynamic',
-        chunkSize: 'dynamic',
-        allowWebWorkers: true,
-      },
-      false, // dont autostart the upload
-    );
-
-    uploadInstance.on('start', (err, file) => {
-      console.log('started', file.name);
-      handleToast({
-        msg: file.name,
-        icon: 'hourglass',
-        desc: 'upload started',
-      });
-    });
-
-    uploadInstance.on('end', (err, file) => {
-      console.log('file:', file);
-      this.handleTranscribe(file);
-      handleToast({
-        msg: file.name,
-        icon: 'check',
-        desc: 'upload complete',
-      });
-    });
-
-    uploadInstance.on('error', (err, file) => {
-      if (err) console.error(err, file);
-      handleToast({
-        msg: file.name,
-        icon: 'times',
-        desc: `Error uploading: ${err}`,
-      });
-    });
-
-    uploadInstance.start();
   };
 
   setByAuth = e => {
@@ -463,8 +346,6 @@ class ReviewPage extends BaseComponent {
     });
   };
 
-  //<span className="pull-right">{comments.length} comments</span>
-
   renderFilter = () => {
     let {comments} = this.props;
     let {byAuth, bySlide, byTag, filtered} = this.state;
@@ -479,13 +360,15 @@ class ReviewPage extends BaseComponent {
     );
   };
 
-  renderUpload = () => {
+  renderGenerate = () => {
     const soundDownload = this.renderSoundDownload();
     return (
       <div>
-        <a onClick={this.handleGenerate} className="link-alert" href="#">
-          <div className="alert centered">generate transcription</div>
-        </a>
+        <AlertLink
+          onClick={this.handleGenerate}
+          center={true}
+          text={'generate transcript'}
+        />
         {soundDownload}
       </div>
     );
@@ -595,20 +478,31 @@ class ReviewPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderImages();
-    const cmtHead = this.renderCommentFilter();
 
     const {image, hoverImage, filtered} = this.state;
-    const {talk, name} = this.props;
+    const {talk, name, sounds} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
+
+    let snd;
+    const [newSound] = sounds; // sorted, first
+    if (newSound && WaveSurfer) {
+      snd = Sounds.findOne({_id: newSound._id});
+    }
 
     return (
       <div className="context-filter">
         <h2 className="alert clearfix no-margin">
-          <Link to={`/talk/${talk._id}`}>
+          <a onClick={() => this.redirectTo(`/talk/${talk._id}`)}>
             <span className="black"> ‹ </span>
             {name}
-          </Link>{' '}
-          / <small> review </small>
+          </a>
+          {snd && (
+            <button
+              className="btn btn-menu btn-empty pull-right"
+              onClick={this.handleExtra}>
+              more
+            </button>
+          )}
         </h2>
         <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
@@ -617,13 +511,11 @@ class ReviewPage extends BaseComponent {
             <div className="v-pad" />
           </div>
         </div>
-        {cmtHead}
       </div>
     );
   };
 
   renderSoundDownload = () => {
-    // audio stuff
     const {sounds} = this.props;
     const [newSound] = sounds; // sorted, first
     if (!newSound || !WaveSurfer) return;
@@ -657,6 +549,7 @@ class ReviewPage extends BaseComponent {
     const snd = Sounds.findOne({_id: newSound._id});
     if (!snd) return;
     const src = snd.link('original', '//');
+    if (!src) return;
     return (
       <div className="float-at-top">
         <Waveform
@@ -698,6 +591,21 @@ class ReviewPage extends BaseComponent {
     return () => {
       this.waveRef.current.playTime(region.startTime / 1000.0);
     };
+  };
+
+  handleExtra = () => {
+    const {setModal, clearModal} = this.props;
+    const generate = this.renderGenerate();
+    const mContent = generate;
+
+    setModal({
+      accept: false,
+      deny: clearModal,
+      denyText: 'close',
+      mtitle: 'More Options',
+      mtext: mContent,
+      isOpen: true,
+    });
   };
 
   highlightRegionComment = region => {
@@ -796,13 +704,20 @@ class ReviewPage extends BaseComponent {
   };
 
   render() {
-    const {images} = this.props;
+    const {images, sounds} = this.props;
     const trans = this.renderTranscript();
     const regions = this.renderRegions();
     const comments = this.renderComments();
     const context = this.renderContext();
-    const sounds = this.renderSounds();
-    const upload = this.renderUpload();
+    const filter = this.renderCommentFilter();
+    const generate = this.renderGenerate();
+    const audio = this.renderSounds();
+
+    let snd;
+    const [newSound] = sounds; // sorted, first
+    if (newSound && WaveSurfer) {
+      snd = Sounds.findOne({_id: newSound._id});
+    }
 
     return images ? (
       this.renderRedirect() || (
@@ -810,14 +725,15 @@ class ReviewPage extends BaseComponent {
           className="full-container padded"
           onMouseDown={this.clearButtonBG}
           onKeyPress={console.log}>
+          {snd && audio}
           <div id="review-view" className="table review-table">
             <div className="row">
-              <div className="col-sm-5">
+              <div className="col-sm-6">
                 {context}
-                {upload}
+                {!snd && generate}
               </div>
-              <div className="col-sm-7">
-                {sounds}
+              <div className="col-sm-6">
+                {filter}
                 {regions}
                 {comments}
                 {trans}

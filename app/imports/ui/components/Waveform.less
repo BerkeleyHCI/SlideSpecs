@@ -2,7 +2,11 @@
 
 .waveform {
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: 0px 0 4px 4px;
+  * {
+    border-radius: 0px 0 4px 4px;
+  }
+
   box-sizing: border-box;
   overflow-x: hidden;
 
@@ -17,6 +21,21 @@
   .wavesurfer-region {
     z-index: 3 !important;
   }
+
+  button {
+    position: absolute;
+    z-index: 5;
+  }
+
+  code {
+    background-color: 'rgba(100, 100, 100, 0.8)';
+    font-family: monospace;
+    position: absolute;
+    padding: 4px;
+    z-index: 10;
+    right: 0px;
+  }
+
   .controls,
   .controls * {
     width: 100%;

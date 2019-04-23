@@ -22,6 +22,7 @@ export default class Waveform extends React.Component {
     this.state = {
       wavesurfer: {},
       playing: false,
+      visible: false,
       currentTime: 0,
       duration: 0,
       region: {},
@@ -39,7 +40,7 @@ export default class Waveform extends React.Component {
         customShowTimeStyle: {
           'background-color': 'rgba(100, 100, 100, 0.8)',
           'font-family': 'monospace',
-          'margin-top': '0px',
+          'margin-bottom': '0px',
           padding: '0px 4px',
           color: '#eee',
         },
@@ -51,6 +52,7 @@ export default class Waveform extends React.Component {
       });
 
       const options = {
+        height: 100,
         normalize: true,
         responsive: true,
         container: this.$waveform,
@@ -72,7 +74,7 @@ export default class Waveform extends React.Component {
         const duration = wavesurfer.getDuration();
         const audioSet = this.props.handleAudioSet;
         if (audioSet) audioSet(duration);
-        this.setState({duration});
+        this.setState({duration, visible: true});
       });
 
       this.setState({wavesurfer, cursor, regions}, this.loadAudio);
@@ -141,29 +143,41 @@ export default class Waveform extends React.Component {
     });
   };
 
-  renderTitle = () => {
-    const {duration, currentTime, playing} = this.state;
-    const playclass = playing ? 'empty' : 'primary';
+  renderAudioTag = (name = '') => {
     return (
-      <span className="list-title">
-        <button
-          className={`btn btn-menu btn-${playclass}`}
-          onClick={this.playAudio}>
-          {playing ? 'pause' : 'play discussion audio'}
-        </button>
-        <code className="pull-right">
-          {currentTime} / {this.formatTime(duration)}
-        </code>
+      <span>
+        <i className={`fa fa-${name}`} />
+        {name} discussion audio
       </span>
     );
   };
 
-  render() {
-    const {playing} = this.state;
-    const title = this.renderTitle();
+  renderTitle = () => {
+    const {duration, currentTime, playing} = this.state;
+    const playclass = playing ? 'empty' : 'primary';
+    const playTag = this.renderAudioTag('play');
+    const pauseTag = this.renderAudioTag('pause');
 
     return (
-      <div className="waveform">
+      <div>
+        <button
+          className={`pull-left btn btn-menu btn-${playclass}`}
+          onClick={this.playAudio}>
+          {playing ? pauseTag : playTag}
+        </button>
+        <code>
+          {currentTime}|{this.formatTime(duration)}
+        </code>
+      </div>
+    );
+  };
+
+  render() {
+    const {visible, playing} = this.state;
+    const title = this.renderTitle();
+    const vizClass = visible ? '' : 'waveform-hidden';
+    return (
+      <div className={`waveform ${vizClass}`}>
         {title}
         <div className="wave" />
       </div>
