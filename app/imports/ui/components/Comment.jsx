@@ -209,14 +209,6 @@ class Comment extends BaseComponent {
         commentId: _id,
       };
 
-      //toast(() => (
-      //<AppNotification
-      //msg="Marked"
-      //desc="Marked for discussion."
-      //icon="comments"
-      ///>
-      //));
-
       this.log({type: 'discuss', ...commentFields});
       discussComment.call(commentFields);
     }
@@ -250,17 +242,13 @@ class Comment extends BaseComponent {
     }
 
     if (talk && _id) {
-      //this.log({type: 'setDiscussing', ...commentFields});
+      this.log({type: 'setDiscussing', ...commentFields});
       setRespondingComment.call(commentFields);
     }
-
-    //toast(() => (
-    //<AppNotification msg="Set" desc="Discussion comment set." icon="star" />
-    //));
   };
 
   handleFinishComment = () => {
-    const {discuss, talk, _id} = this.props;
+    const {addressed, discuss, talk, _id} = this.props;
     const commentFields = {
       talkId: talk,
       commentId: _id,
@@ -271,17 +259,12 @@ class Comment extends BaseComponent {
     }
 
     if (talk && _id) {
-      //this.log({type: 'setDiscussing', ...commentFields});
+      this.log({type: 'setDiscussing', ...commentFields});
       setRespondingComment.call(commentFields);
+      if (!addressed) {
+        this.handleAddress();
+      }
     }
-
-    //toast(() => (
-    //<AppNotification
-    //msg="Cleared"
-    //desc="Discussion comment cleared."
-    //icon="check"
-    ///>
-    //));
   };
 
   pubButtons = [
@@ -344,7 +327,7 @@ class Comment extends BaseComponent {
 
   // For active.
   finishButton = {
-    handleClick: this.handleActiveComment,
+    handleClick: this.handleFinishComment,
     icon: 'check',
     txt: 'done',
   };

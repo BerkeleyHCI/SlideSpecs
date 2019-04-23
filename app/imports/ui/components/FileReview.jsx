@@ -11,14 +11,16 @@ class FileReview extends BaseComponent {
       fileUrl,
       slideCount,
       handleLoad,
+      handleClick,
       handleMouse,
       handleMouseOut,
     } = this.props;
     return (
       <div
-        className={'file-item file-item-review ' + (active ? ' active' : '')}
+        onClick={handleClick}
         onMouseOver={handleMouse}
-        onMouseOut={handleMouseOut}>
+        onMouseOut={handleMouseOut}
+        className={'file-item file-item-review ' + (active ? ' active' : '')}>
         <div className="slide-container">
           {active && <div className="live" />}
           <div className="overlay">{iter}</div>
