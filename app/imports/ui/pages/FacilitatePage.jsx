@@ -128,6 +128,7 @@ class FacilitatePage extends BaseComponent {
   clearMatch = () => {
     this.setState({draftWords: []});
   };
+
   clearText = () => {
     const textarea = this.inRef.current;
     textarea.value = '';
@@ -176,24 +177,6 @@ class FacilitatePage extends BaseComponent {
 
   clearByTag = () => {
     this.setState({byTag: ''});
-  };
-
-  updateImage = fid => {
-    const link = Images.findOne({_id: fid}).link('original', '//');
-    this.setState({image: link});
-  };
-
-  updateHoverImage = link => {
-    this.setState({hoverImage: link, image: link});
-  };
-
-  handleSlideIn = e => {
-    const src = e.target.querySelector('img').src;
-    if (src) this.updateHoverImage(src);
-  };
-
-  handleSlideOut = e => {
-    this.setState({hoverImage: false});
   };
 
   renderCommentFilter = () => {
@@ -264,8 +247,6 @@ class FacilitatePage extends BaseComponent {
           fileId={f._id}
           fileName={f.name}
           active={false}
-          handleMouse={this.handleSlideIn}
-          handleMouseOut={this.handleSlideOut}
         />
       );
     });
@@ -445,7 +426,7 @@ class FacilitatePage extends BaseComponent {
   handleSearch = () => {
     const text = this.inRef.current.value.trim();
     if (!text) {
-      this.setState({draftWords: []});
+      this.setState({draftWords: []}, this.renderMatchComments);
     } else {
       const words = text
         .trim()

@@ -10,7 +10,8 @@ base="${full%.*}"
 extn="${full##*.}"
 images="$2/images"
 
-convert -density 100 "$1" "$images/$base-%04d.png"
+# Adding max-width to keep images smaller/interface responsive.
+convert -density 100 "$1" -resize 800 "$images/$base-%04d.png"
 find "$images" -type f -iname "*$base*png"
 echo "convert-pdf complete."
 exit 0

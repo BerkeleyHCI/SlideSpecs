@@ -32,7 +32,6 @@ class CommentPage extends BaseComponent {
       sorter: 'created',
       filter: 'time',
       invert: true,
-      filtered: [],
       selected: [],
       tags: [],
       bySlide: '',
@@ -45,45 +44,11 @@ class CommentPage extends BaseComponent {
   }
 
   handleLoad = () => {
-    const grid = document.getElementById('grid');
-    const itemSel = {itemSelector: '.file-item'};
-    const mason = new Masonry(grid, itemSel);
-    mason.on('layoutComplete', this.handleSelectable);
-  };
-
-  handleSelectable = items => {
     try {
-      const area = document.getElementById('grid');
-      const elements = items.map(i => i.element);
-      let {ds, selected} = this.state;
-      const updateSelection = () => {
-        const s = ds.getSelection();
-        if (s.length > 0) {
-          const filtered = s.map(this.extractFileData);
-          this.setState({selected: s, filtered});
-          this.updateImage(filtered[0].slideId);
-        }
-      };
-
-      if (!_.isEmpty(ds)) {
-        ds.selectables = elements;
-      } else {
-        ds = new DragSelect({
-          selectables: elements,
-          callback: updateSelection,
-          autoScrollSpeed: 12,
-          onDragMove: updateSelection,
-          area: area,
-        });
-        this.setState({ds});
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  elementize = x => {
-    return {element: x};
+      const grid = document.getElementById('grid');
+      const itemSel = {itemSelector: '.file-item'};
+      const mason = new Masonry(grid, itemSel);
+    } catch (e) {}
   };
 
   extractFileData = x => {
@@ -96,12 +61,6 @@ class CommentPage extends BaseComponent {
   componentDidMount = () => {
     this.handleLoad();
 
-    imagesLoaded('#grid-holder', () => {
-      const items = document.querySelectorAll('.file-item');
-      const nodes = Array.prototype.slice.call(items).map(this.elementize);
-      this.handleSelectable(nodes);
-    });
-
     // set image to link of the first slide
     const {images} = this.props;
     if (images.length > 0) {
@@ -111,13 +70,6 @@ class CommentPage extends BaseComponent {
 
   componentDidUpdate = () => {
     this.handleLoad();
-  };
-
-  componentWillUnmount = () => {
-    let {ds} = this.state;
-    if (ds && ds.stop) {
-      ds.stop(); // no drag
-    }
   };
 
   setActiveComment = ac => {
@@ -203,10 +155,10 @@ class CommentPage extends BaseComponent {
 
   updateHoverImage = id => {
     try {
-      const {image, filtered} = this.state;
+      const {image, selected} = this.state;
       const hoverImage = Images.findOne(id).link('original', '//');
       this.setState({hoverImage});
-      if (hoverImage && hoverImage !== image && filtered.length === 0) {
+      if (hoverImage && hoverImage !== image && selected.length === 0) {
         this.setState({image: hoverImage});
       }
     } catch (e) {
@@ -222,7 +174,15 @@ class CommentPage extends BaseComponent {
   };
 
   handleSlideOut = () => {
-    this.setState({hoverImage: false});
+    this.setState({hoverImage: ''});
+  };
+
+  handleMouseOver = link => {
+    this.setState({hoverImage: link});
+  };
+
+  handleMouseOut = () => {
+    this.setState({hoverImage: ''});
   };
 
   clearText = () => {
@@ -232,7 +192,7 @@ class CommentPage extends BaseComponent {
   };
 
   clearSelection = () => {
-    this.setState({filtered: [], selected: []});
+    this.setState({selected: []});
   };
 
   clearButtonBG = e => {
@@ -253,12 +213,6 @@ class CommentPage extends BaseComponent {
 
   clearButton = () => {
     this.clearSelection();
-    const {ds} = this.state;
-    if (ds) {
-      // clearing internal grid
-      const sel = ds.getSelection();
-      ds.removeSelection(sel);
-    }
   };
 
   clearGrid = e => {
@@ -271,7 +225,7 @@ class CommentPage extends BaseComponent {
   addComment = () => {
     const {defaultPriv} = this.state;
     const {reviewer, talk} = this.props;
-    const slides = this.state.filtered;
+    const slides = this.state.selected;
     const cText = this.inRef.current.value.trim();
     const priv = cText.includes('#private');
     const commentFields = {
@@ -323,8 +277,7 @@ class CommentPage extends BaseComponent {
         <span
           className="comment-option"
           onClick={() => this.redirectTo(`/discuss/${talk._id}`)}>
-          <i className={'fa fa-' + (userOwn ? 'discuss' : 'discuss')} />{' '}
-          {userOwn ? 'discuss' : 'discuss'}
+          [ discuss ]
         </span>
       </span>
     );
@@ -402,6 +355,7 @@ class CommentPage extends BaseComponent {
 
   renderFiles = () => {
     const {images} = this.props;
+    if (!images) return;
     return images.map((f, key) => {
       let link = '404';
       try {
@@ -409,16 +363,15 @@ class CommentPage extends BaseComponent {
       } catch (e) {
         console.error(e);
       }
+
+      const setHover = () => this.handleMouseOver(link);
       return (
         <FileReview
           key={'file-' + key}
           iter={key + 1}
           fileUrl={link}
-          fileId={f._id}
-          fileName={f.name}
           active={false}
-          handleMouse={this.handleSlideIn}
-          handleMouseOut={this.handleSlideOut}
+          handleMouse={setHover}
           handleLoad={this.handleLoad}
         />
       );
@@ -431,7 +384,6 @@ class CommentPage extends BaseComponent {
     const tagList = this.renderTags();
     let {byAuth, bySlide, byTag} = this.state;
     if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
-
     return (
       <div className="filterer alert">
         <p>
@@ -461,11 +413,17 @@ class CommentPage extends BaseComponent {
     ));
   };
 
+  handleCommentClick = c => {
+    if (!c || !c.slides || c.slides.length == 0) return;
+    const [first] = c.slides;
+    this.updateHoverImage(first.slideId);
+  };
+
   renderComments = () => {
     const {
       sorter,
       invert,
-      filtered,
+      selected,
       activeComment,
       focusing,
       userOwn,
@@ -525,6 +483,7 @@ class CommentPage extends BaseComponent {
         c.last = i === csort.length - 1; // no final hr
         c.active = c._id === activeComment; // highlight
         c.replies = replies.filter(r => r.replyTo == c._id);
+        c.handleClick = () => this.handleCommentClick(c);
         return {
           ...c,
           key: c._id,
@@ -562,7 +521,7 @@ class CommentPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderFiles();
-    const {image, hoverImage, filtered, bySlide} = this.state;
+    const {image, hoverImage, selected, bySlide} = this.state;
     const {name, talk, reviewer, sessionOwner} = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
 
@@ -580,18 +539,21 @@ class CommentPage extends BaseComponent {
             {reviewer}
           </small>
         </h2>
-        <Img className="big-slide" source={imgSrc} />
+        <Img className="big-slide float-at-top" source={imgSrc} />
         <div id="grid-holder">
-          <div id="grid" onMouseDown={this.clearGrid}>
+          <div
+            id="grid"
+            onMouseDown={this.clearGrid}
+            onMouseOut={this.handleMouseOut}>
             {fileList}
           </div>
         </div>
-        {filtered.length > 0 && (
+        {selected.length > 0 && (
           <div>
             <div className="v-pad" />
             <div className="no-margin clearfix alert bottom">
               <SlideTags
-                slides={filtered}
+                slides={selected}
                 bySlide={bySlide}
                 clearButton={this.clearButton}
               />

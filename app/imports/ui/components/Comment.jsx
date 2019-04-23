@@ -406,6 +406,7 @@ class Comment extends BaseComponent {
       allReplies,
       addressed,
       bySlide,
+      handleClick,
       handleAuthor,
       handleAudioUpload,
       handleMouseOver,
@@ -489,6 +490,7 @@ class Comment extends BaseComponent {
           onBlur={this.clearEdit}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
+          onClick={handleClick}
           className={
             'clearfix comment ' +
             (last ? ' last-comment' : '') +
