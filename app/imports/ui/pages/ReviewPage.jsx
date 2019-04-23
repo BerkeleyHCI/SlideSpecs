@@ -499,25 +499,27 @@ class ReviewPage extends BaseComponent {
 
     return (
       <div className="context-filter">
-        <h2 className="alert clearfix no-margin">
-          <a onClick={() => this.redirectTo(`/talk/${talk._id}`)}>
-            <span className="black"> ‹ </span>
-            {name}
-          </a>
-          {snd && (
-            <button
-              className="btn btn-menu btn-empty pull-right"
-              onClick={this.handleExtra}>
-              more
-            </button>
-          )}
-        </h2>
-        <div id="grid-holder">
+        <div id="grid-holder float-at-top">
           <div id="grid" onMouseDown={this.clearGrid}>
             <div className="v-pad" />
             {fileList}
             <div className="v-pad" />
           </div>
+        </div>
+
+        <div className="btns-menu-space">
+          <button
+            onClick={() => this.redirectTo(`/talk/${talk._id}`)}
+            className="btn btn-menu btn-note">
+            ‹ {name}
+          </button>
+          {snd && (
+            <button
+              className="btn btn-menu btn-empty"
+              onClick={this.handleExtra}>
+              more
+            </button>
+          )}
         </div>
       </div>
     );
@@ -736,12 +738,12 @@ class ReviewPage extends BaseComponent {
           onKeyPress={console.log}>
           {snd && audio}
           <div id="review-view" className="table review-table">
-            <div className="row">
-              <div className="col-sm-6">
+            <div className="row row-eq-height">
+              <div className="col-sm-5">
                 {context}
                 {!snd && generate}
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-7">
                 {filter}
                 {regions}
                 {comments}
