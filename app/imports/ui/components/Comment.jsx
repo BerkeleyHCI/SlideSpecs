@@ -10,7 +10,6 @@ import AppNotification from '../components/AppNotification.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 
 import {setRespondingComment} from '../../api/talks/methods.js';
-import {Sounds} from '../../api/sounds/sounds.js';
 import {
   agreeComment,
   discussComment,
@@ -385,7 +384,6 @@ class Comment extends BaseComponent {
       replies,
       isReply,
       userOwn,
-      sounds,
       allReplies,
       addressed,
       bySlide,
@@ -414,14 +412,19 @@ class Comment extends BaseComponent {
     } = this.props;
 
     const master = author === reviewer;
+    const facil = [reviewer, 'audience', 'SlideSpecs'];
+    const facilitatorAuth = facil.includes(author);
     const audio = author === 'transcript';
     let bData = [];
+
     if (commentView && master) {
       bData = [...this.pubButtons, ...this.privButtons];
     } else if (commentView) {
       bData = [...this.pubButtons];
-    } else if (facilitateView && depth == 0 && responding) {
+    } else if (facilitateView && depth == 0 && facilitatorAuth && responding) {
       bData = [this.finishButton, this.editButton];
+    } else if (facilitateView && depth == 0 && responding) {
+      bData = [this.finishButton];
     } else if (facilitateView && depth == 0) {
       bData = [this.activeButton, this.addressButton];
     } else if (facilitateView) {
@@ -448,8 +451,6 @@ class Comment extends BaseComponent {
         setBySlide={setBySlide}
       />
     );
-
-    const soundList = this.renderSounds();
 
     // always sort replies by time.
     const replyProps = replies
@@ -534,8 +535,6 @@ class Comment extends BaseComponent {
             </span>
           )}
 
-          {soundList}
-
           {!last && <hr />}
         </div>
 
@@ -546,17 +545,6 @@ class Comment extends BaseComponent {
         </div>
       </div>
     );
-  };
-
-  renderSounds = () => {
-    const {sounds} = this.props;
-    return sounds.map((audio, iter) => {
-      let sound = Sounds.findOne(audio);
-      if (sound) {
-        const url = sound.link('original', '//');
-        return <ReactAudioPlayer key={audio} src={url} controls />;
-      }
-    });
   };
 
   renderEditor = () => {
@@ -594,7 +582,6 @@ Comment.defaultProps = {
   isReply: false,
   wordList: false,
   replies: [],
-  sounds: [],
   depth: 0,
 };
 
