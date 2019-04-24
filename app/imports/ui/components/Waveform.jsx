@@ -25,7 +25,6 @@ export default class Waveform extends React.Component {
       visible: false,
       currentTime: 0,
       duration: 0,
-      region: {},
     };
   }
 
@@ -64,17 +63,17 @@ export default class Waveform extends React.Component {
 
       let wavesurfer = WaveSurfer.create(options);
 
-      // updating the timestamps: https://codepen.io/BusyBee/pen/pbXzgg
-      wavesurfer.on('audioprocess', () => {
-        const time = this.formatTime(wavesurfer.getCurrentTime());
-        this.setState({currentTime: time});
-      });
-
       wavesurfer.on('ready', () => {
         const duration = wavesurfer.getDuration();
         const audioSet = this.props.handleAudioSet;
         if (audioSet) audioSet(duration);
         this.setState({duration, visible: true});
+      });
+
+      // updating the timestamps: https://codepen.io/BusyBee/pen/pbXzgg
+      wavesurfer.on('audioprocess', () => {
+        const currentTime = wavesurfer.getCurrentTime();
+        this.setState({currentTime});
       });
 
       this.setState({wavesurfer, cursor, regions}, this.loadAudio);
@@ -100,6 +99,11 @@ export default class Waveform extends React.Component {
   getDuration = () => {
     const {duration} = this.state;
     return duration;
+  };
+
+  getCurrentTime = () => {
+    const {currentTime} = this.state;
+    return currentTime;
   };
 
   playAudio = () => {
@@ -166,7 +170,7 @@ export default class Waveform extends React.Component {
           {playing ? pauseTag : playTag}
         </button>
         <code>
-          {currentTime}|{this.formatTime(duration)}
+          {this.formatTime(currentTime)}|{this.formatTime(duration)}
         </code>
       </div>
     );
@@ -186,6 +190,5 @@ export default class Waveform extends React.Component {
 }
 
 Waveform.defaultProps = {
-  region: {},
   src: '',
 };
