@@ -26,10 +26,10 @@ import {createComment, completeComment} from '../../api/comments/methods.js';
 
 class ReviewTimeMarker extends Component {
   render() {
-    const {handleClick, handleOver, handleOut, word} = this.props;
+    const {handleClick, handleOver, handleOut, active, word} = this.props;
     return (
       <span
-        className="time-marker"
+        className={`time-marker ${active ? ' time-marker-active' : ''}`}
         onClick={handleClick}
         onMouseOver={handleOver}
         onMouseOut={handleOut}>
@@ -46,6 +46,7 @@ class ReviewPage extends BaseComponent {
     this.waveRef = React.createRef();
     this.state = {
       activeComment: null,
+      currentTime: 0,
       sorter: 'created',
       filter: 'time',
       invert: false,
@@ -69,13 +70,16 @@ class ReviewPage extends BaseComponent {
   handleGenerate = () => {
     const {talk} = this.props;
     console.log('starting generation');
-    toast(() => (
-      <AppNotification
-        msg={'transcript started'}
-        desc={'processing discussion audio...'}
-        icon={'spinner'}
-      />
-    ));
+    toast(
+      () => (
+        <AppNotification
+          msg={'transcript started'}
+          desc={'processing discussion audio...'}
+          icon={'spinner'}
+        />
+      ),
+      {autoClose: 8000},
+    );
 
     Meteor.call('mergeSounds', talk._id, console.log);
   };
@@ -119,11 +123,7 @@ class ReviewPage extends BaseComponent {
   };
 
   componentDidMount = () => {
-    const {images} = this.props;
     this.handleLoad();
-    if (images.length > 0) {
-      this.updateImage(images[0]._id);
-    }
   };
 
   componentDidUpdate = () => {
@@ -184,11 +184,6 @@ class ReviewPage extends BaseComponent {
     Session.set('reviewer', null);
   };
 
-  updateImage = fid => {
-    const link = Images.findOne({_id: fid}).link('original', '//');
-    this.setState({image: link});
-  };
-
   clearButtonBG = e => {
     //console.log(e.target.className);
     const base = e.target.className.split()[0];
@@ -235,8 +230,6 @@ class ReviewPage extends BaseComponent {
 
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
-
-    const {images} = this.props;
     const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f, invert) => {
@@ -391,16 +384,7 @@ class ReviewPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderImages();
-
-    const {image, selected} = this.state;
-    const {talk, name, sounds} = this.props;
-    const imgSrc = image;
-
-    let snd;
-    const [newSound] = sounds; // sorted, first
-    if (newSound && WaveSurfer) {
-      snd = Sounds.findOne({_id: newSound._id});
-    }
+    const {talk, name, sound} = this.props;
 
     return (
       <div className="context-filter">
@@ -418,7 +402,7 @@ class ReviewPage extends BaseComponent {
             className="btn btn-menu btn-note">
             ‹ {name}
           </button>
-          {snd && (
+          {sound && WaveSurfer && (
             <button
               className="btn btn-menu btn-empty"
               onClick={this.handleExtra}>
@@ -431,15 +415,12 @@ class ReviewPage extends BaseComponent {
   };
 
   renderSoundDownload = () => {
-    const {sounds, talk} = this.props;
-    const [newSound] = sounds; // sorted, first
-    if (!newSound || !WaveSurfer) return;
-    const snd = Sounds.findOne({_id: newSound._id});
-    if (!snd) return;
-    const src = snd.link('original', '//');
-    const created = this.humanDate(newSound.meta.created);
-    const size = this.humanFileSize(newSound.size);
+    const {talk, sound} = this.props;
+    if (!sound) return;
+    const created = this.humanDate(sound.meta.created);
+    const size = this.humanFileSize(sound.size);
     const name = `${talk.name}-discussion`;
+    const {src} = this.generateSoundData();
     if (!src) return;
     return (
       <a download={name} href={src} className="link-alert">
@@ -457,14 +438,13 @@ class ReviewPage extends BaseComponent {
     this.setState({duration: dur * 1000.0});
   };
 
+  setTime = time => {
+    this.setState({currentTime: time});
+  };
+
   renderSounds = () => {
     const {activeRegion} = this.state;
-    const {sounds} = this.props;
-    const [newSound] = sounds; // sorted, first
-    if (!newSound || !WaveSurfer) return;
-    const snd = Sounds.findOne({_id: newSound._id});
-    if (!snd) return;
-    const src = snd.link('original', '//');
+    const {src} = this.generateSoundData();
     if (!src) return;
     return (
       <div className="float-at-top">
@@ -513,7 +493,8 @@ class ReviewPage extends BaseComponent {
   handleExtra = () => {
     const {setModal, clearModal} = this.props;
     const generate = this.renderGenerate();
-    const mContent = generate;
+    const mContent = <div />;
+
     setModal({
       accept: false,
       deny: clearModal,
@@ -578,6 +559,17 @@ class ReviewPage extends BaseComponent {
     return (
       <CommentList title={'transcript'} content={content} defaultOpen={false} />
     );
+  };
+
+  generateSoundData = () => {
+    const {activeRegion} = this.state;
+    const {sound} = this.props;
+    if (!sound || !WaveSurfer) return {};
+    const snd = Sounds.findOne({_id: sound._id});
+    if (!snd) return {};
+    return {
+      src: snd.link('original', '//'),
+    };
   };
 
   generateBaseComments = () => {
@@ -702,7 +694,7 @@ class ReviewPage extends BaseComponent {
   };
 
   render() {
-    const {images, sounds} = this.props;
+    const {sound} = this.props;
     const trans = this.renderTranscript();
     const regions = this.renderRegions();
     const comments = this.renderComments();
@@ -711,24 +703,18 @@ class ReviewPage extends BaseComponent {
     const generate = this.renderGenerate();
     const audio = this.renderSounds();
 
-    let snd;
-    const [newSound] = sounds; // sorted, first
-    if (newSound && WaveSurfer) {
-      snd = Sounds.findOne({_id: newSound._id});
-    }
-
-    return images ? (
+    return (
       this.renderRedirect() || (
         <div
           className="full-container padded reviewPage"
           onMouseDown={this.clearButtonBG}
           onKeyPress={console.log}>
-          {snd && audio}
+          {sound && audio}
           <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5">
                 {context}
-                {!snd && generate}
+                {!sound && generate}
                 {trans}
               </div>
               <div className="col-sm-7">
@@ -740,8 +726,6 @@ class ReviewPage extends BaseComponent {
           </div>
         </div>
       )
-    ) : (
-      <div>waiting for slides...</div>
     );
   }
 }
