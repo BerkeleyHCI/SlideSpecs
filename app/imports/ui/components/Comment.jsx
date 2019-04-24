@@ -421,7 +421,7 @@ class Comment extends BaseComponent {
     } else if (commentView) {
       bData = [...this.pubButtons];
     } else if (facilitateView && depth == 0 && responding) {
-      bData = [this.finishButton];
+      bData = [this.finishButton, this.editButton];
     } else if (facilitateView && depth == 0) {
       bData = [this.activeButton, this.addressButton];
     } else if (facilitateView) {
