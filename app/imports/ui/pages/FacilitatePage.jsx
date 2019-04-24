@@ -309,6 +309,7 @@ class FacilitatePage extends BaseComponent {
         userId: Meteor.userId(),
         talkId: talk._id,
         target: talk.active || '',
+        complete: false,
       },
       streams: 'dynamic',
       chunkSize: 'dynamic',
