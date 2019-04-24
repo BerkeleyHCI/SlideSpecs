@@ -60,12 +60,15 @@ export default class TalkContainer extends BaseComponent {
     props.file = files.find(f => f.meta.talkId === _id);
     props.comments = comments.filter(c => c.talk === _id);
     props.comments = props.comments.filter(this.controlFilter);
-    props.transcript = transcripts.filter(t => t.talk === _id)[0];
+    props.transcript = transcripts.find(t => t.talk === _id);
     props.images = images.filter(f => f.meta.talkId === _id);
-    props.sounds = sounds.filter(f => f.meta.talkId === _id && f.meta.complete); // merged audio.
+    props.sound = sounds.find(f => f.meta.talkId === _id && f.meta.complete); // merged audio.
     props.sessionOwner = props.talk.userId === Meteor.userId();
     props.name = props.talk.name;
     props.reviewer = reviewer;
+
+    // trimming extra props
+    delete props.transcripts;
 
     // compute comment regions.
     props.regions = _.flatten(props.comments.map(toRegion)).filter(nullF);
