@@ -6,7 +6,7 @@ Sounds.allowClient();
 
 Meteor.publish('sounds.user', x => {
   check(x, String);
-  return Sounds.find({'meta.userId': x}).cursor;
+  return Sounds.find({'meta.userId': x, 'meta.complete': true}).cursor;
 });
 
 Meteor.publish('sounds.session', function(session) {
@@ -14,7 +14,8 @@ Meteor.publish('sounds.session', function(session) {
   if (!session) {
     return this.ready();
   } else {
-    return Sounds.find({'meta.sessionId': session}).cursor;
+    return Sounds.find({'meta.sessionId': session, 'meta.complete': true})
+      .cursor;
   }
 });
 
@@ -23,6 +24,6 @@ Meteor.publish('sounds.talk', function(talk) {
   if (!talk) {
     return this.ready();
   } else {
-    return Sounds.find({'meta.talkId': talk}).cursor;
+    return Sounds.find({'meta.talkId': talk, 'meta.complete': true}).cursor;
   }
 });
