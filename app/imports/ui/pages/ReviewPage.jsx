@@ -493,7 +493,7 @@ class ReviewPage extends BaseComponent {
   handleExtra = () => {
     const {setModal, clearModal} = this.props;
     const generate = this.renderGenerate();
-    const mContent = <div />;
+    const mContent = <div> {generate} </div>;
 
     setModal({
       accept: false,
@@ -662,9 +662,9 @@ class ReviewPage extends BaseComponent {
   renderRegions = () => {
     const {duration} = this.state;
     const {talk, regions} = this.props;
-    if (!regions || !this.waveRef || !this.waveRef.current) return;
+    if (!regions || !duration) return;
+    if (!this.waveRef || !this.waveRef.current) return;
     const wave = this.waveRef.current;
-    if (!duration) return;
     const regionComments = _.sortBy(regions, ['startTime'])
       .filter(w => w.startTime < duration && w.stopTime > 0)
       .map((w, i) => {

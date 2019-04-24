@@ -39,7 +39,6 @@ class CommentPage extends BaseComponent {
       byTag: '',
       hoverImage: '',
       image: '',
-      ds: {},
     };
   }
 
@@ -153,6 +152,14 @@ class CommentPage extends BaseComponent {
     }
   };
 
+  updateHoverImageLink = link => {
+    const {image, selected} = this.state;
+    this.setState({hoverImage: link});
+    if (link && link !== image && selected.length === 0) {
+      this.setState({image: link});
+    }
+  };
+
   updateHoverImage = id => {
     try {
       const {image, selected} = this.state;
@@ -178,7 +185,7 @@ class CommentPage extends BaseComponent {
   };
 
   handleMouseOver = link => {
-    this.setState({hoverImage: link});
+    this.updateHoverImageLink(link);
   };
 
   handleMouseOut = () => {
@@ -344,6 +351,9 @@ class CommentPage extends BaseComponent {
       slideId: image._id,
       slideNo: `${+image.meta.slideNo + 1}`,
     };
+
+    // update static image
+    this.updateImage(image._id);
 
     if (event.shiftKey || event.metaKey) {
       // adding item to list, or removing item if already in it
