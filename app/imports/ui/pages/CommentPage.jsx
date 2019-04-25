@@ -295,17 +295,20 @@ class CommentPage extends BaseComponent {
 
     const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
-    const setSort = (s, f) => {
-      return () => this.setState({sorter: s, filter: f});
+    const setSort = (s, f, invert) => {
+      return () => {
+        this.setState({sorter: s, filter: f, invert});
+      };
     };
 
-    const timeSort = setSort('created', 'time');
-    const authSort = setSort(x => x.author.toLowerCase(), 'auth');
-    const agreeSort = setSort(x => (x.agree || []).length, 'agree');
-    const flagSort = setSort(x => (x.discuss || []).length, 'flag');
+    const timeSort = setSort('created', 'time', invert);
+    const authSort = setSort(x => x.author.toLowerCase(), 'auth', false);
+    const agreeSort = setSort(x => (x.agree || []).length, 'agree', true);
+    const flagSort = setSort(x => (x.discuss || []).length, 'flag', true);
     const slideSort = setSort(
       x => (x.slides[0] ? Number(x.slides[0].slideNo) : Infinity),
       'slide',
+      false,
     );
 
     return (
