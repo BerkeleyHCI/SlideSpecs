@@ -305,24 +305,24 @@ class DiscussPage extends BaseComponent {
   renderContext = () => {
     const fileList = this.renderFiles();
     const {image, hoverImage, bySlide} = this.state;
-    const {talk, reviewer, sessionOwner} = this.props;
+    const {name, talk, reviewer, sessionOwner} = this.props;
     const cmtHead = this.renderCommentFilter();
     const imgSrc = hoverImage ? hoverImage : image;
 
     return (
       <div className="context-filter float-at-top">
-        <h2 className="alert clearfix no-margin">
+        <span className="list-title list-title-basic">
           {sessionOwner && (
             <Link to={`/talk/${talk._id}`}>
               <span className="black"> ‹ </span>
-              {talk.name}
+              {name}
             </Link>
           )}
-          {!sessionOwner && talk.name}
-          <small onClick={this.clearReviewer} className="pull-right clear-icon">
+          {!sessionOwner && name}
+          <span onClick={this.clearReviewer} className="pull-right clear-icon">
             {reviewer}
-          </small>
-        </h2>
+          </span>
+        </span>
         <Img className="big-slide" source={imgSrc} />
         <div id="grid-holder">
           <div id="grid">{fileList}</div>
