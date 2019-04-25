@@ -247,7 +247,8 @@ class FacilitatePage extends BaseComponent {
     csort = csort.filter(c => !isReply(c));
 
     // string match
-    const draftMatch = (s, dws) => dws.some(dw => s.indexOf(dw) >= 0);
+    const draftMatch = (s, dws) =>
+      dws.some(dw => s.toLowerCase().includes(dw.toLowerCase()));
 
     // comment match with replies
     const commentMatch = (c, dws) => {
@@ -271,7 +272,7 @@ class FacilitatePage extends BaseComponent {
     );
   };
 
-  handleSearch = () => {
+  handleSearch = _.debounce(() => {
     const text = this.inRef.current.value.trim();
     if (!text) {
       this.setState({draftWords: []});
@@ -283,7 +284,7 @@ class FacilitatePage extends BaseComponent {
         .filter(s => s.length > 0);
       this.setState({draftWords: words});
     }
-  };
+  }, 200);
 
   handleUpload = blob => {
     window.audioRecorder.clear();
@@ -464,16 +465,14 @@ class FacilitatePage extends BaseComponent {
             <div id="review-view" className="table review-table">
               <div className="row row-eq-height">
                 <div className="col-sm-5 no-float">
-                  <div className="float-at-top">
+                  <div className="float-at-top white-background">
                     {sounds}
                     {submit}
+                    {respond}
                   </div>
                   {matched}
                 </div>
-                <div className="col-sm-7">
-                  {respond}
-                  {comments}
-                </div>
+                <div className="col-sm-7">{comments}</div>
               </div>
             </div>
           </div>

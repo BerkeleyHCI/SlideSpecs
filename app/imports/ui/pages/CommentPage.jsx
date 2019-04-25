@@ -562,7 +562,7 @@ class CommentPage extends BaseComponent {
 
     return (
       <div className="context-filter float-at-top">
-        <h2 className="alert clearfix no-margin">
+        <span className="list-title list-title-basic">
           {sessionOwner && (
             <Link to={`/talk/${talk._id}`}>
               <span className="black"> ‹ </span>
@@ -570,10 +570,10 @@ class CommentPage extends BaseComponent {
             </Link>
           )}
           {!sessionOwner && name}
-          <small onClick={this.clearReviewer} className="pull-right clear-icon">
+          <span onClick={this.clearReviewer} className="pull-right clear-icon">
             {reviewer}
-          </small>
-        </h2>
+          </span>
+        </span>
         <Img className="big-slide float-at-top" source={imgSrc} />
         <div id="grid-holder">
           <div
