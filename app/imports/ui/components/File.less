@@ -219,9 +219,11 @@ div.reviewView {
     border: 1px solid @color-rare;
     border-top: 0px;
     background-color: white;
-    max-height: 42vh;
     display: block;
     margin: 0 auto;
+    @media only screen and (min-width: 768px) {
+      max-height: 42vh !important;
+    }
   }
 
   #review-view {
