@@ -4,6 +4,7 @@ import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {toast} from 'react-toastify';
 import {Link} from 'react-router-dom';
+import Loading from '../components/Loading.jsx';
 import CommentList from '../components/CommentList.jsx';
 import {Files} from '../../api/files/files.js';
 import {Images} from '../../api/images/images.js';
@@ -75,6 +76,12 @@ export default class TalkPage extends BaseComponent {
 
         uploadInstance.on('start', (err, file) => {
           //console.log('started', file.name);
+          this.setState({uploading: true});
+          handleToast({
+            msg: file.name,
+            icon: 'spinner',
+            desc: `Uploading...`,
+          });
         });
 
         uploadInstance.on('progress', function(progress, file) {
@@ -87,6 +94,7 @@ export default class TalkPage extends BaseComponent {
         });
 
         uploadInstance.on('end', (err, file) => {
+          this.setState({uploading: false});
           console.log('file:', file);
           handleToast({
             msg: file.name,
@@ -326,7 +334,7 @@ export default class TalkPage extends BaseComponent {
           </Link>
         </h1>
 
-        {!file && (
+        {!file && !uploading && (
           <div className="alert">
             add your presentation here.
             <SelectUpload
@@ -339,9 +347,9 @@ export default class TalkPage extends BaseComponent {
           </div>
         )}
 
-        {uploading && (
-          <div className="padded alert">
-            <FullMessage title="uploading..." />
+        {!file && uploading && (
+          <div className="clearfix padded">
+            <FullMessage title="uploading presentation..." />
           </div>
         )}
 
@@ -366,7 +374,7 @@ export default class TalkPage extends BaseComponent {
           />
         )}
 
-        {file && (
+        {file && hasComments && (
           <div className="btns-menu-space">
             <button
               onClick={this.downloadJSON}
