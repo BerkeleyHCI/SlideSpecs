@@ -232,15 +232,7 @@ class DiscussPage extends BaseComponent {
       csort = csort.filter(c => c._id !== talk.active);
 
       if (!csort || !csort.length) {
-        return (
-          <div>
-            <div className="alert">no discussion comments yet</div>
-            <AlertLink
-              text={'mark discussion comments here'}
-              link={`/comment/${talk._id}`}
-            />
-          </div>
-        );
+        return <div className="centered">no discussion comments yet</div>;
       }
 
       // Filtering 'reply' comments into array.
@@ -384,7 +376,7 @@ class DiscussPage extends BaseComponent {
                 <div id="v-pad clearfix" />
                 <div className="padded">
                   <LocalLink to={`/comment/${talk._id}`}>
-                    <center>return to commenting</center>
+                    <div className="centered">return to commenting</div>
                   </LocalLink>
                 </div>
                 {comments}

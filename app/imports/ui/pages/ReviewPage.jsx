@@ -10,6 +10,7 @@ import {Sounds} from '../../api/sounds/sounds.js';
 import {Images} from '../../api/images/images.js';
 import Waveform from '../components/Waveform.jsx';
 import AlertLink from '../components/AlertLink.jsx';
+import LocalLink from '../components/LocalLink.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import CommentList from '../components/CommentList.jsx';
@@ -389,26 +390,25 @@ class ReviewPage extends BaseComponent {
     return (
       <div className="context-filter">
         <div id="grid-holder float-at-top">
+          <span className="list-title list-title-basic">
+            <LocalLink to={`/talk/${talk._id}`}>
+              <span className="black"> ‹ </span>
+              {name}
+            </LocalLink>
+            {sound && WaveSurfer && (
+              <button
+                className="btn btn-menu pull-right btn-empty"
+                onClick={this.handleExtra}>
+                more
+              </button>
+            )}
+          </span>
+
           <div id="grid" onMouseDown={this.clearGrid}>
             <div className="v-pad" />
             {fileList}
             <div className="v-pad" />
           </div>
-        </div>
-
-        <div className="btns-menu-space">
-          <button
-            onClick={() => this.redirectTo(`/talk/${talk._id}`)}
-            className="btn btn-menu btn-note">
-            ‹ {name}
-          </button>
-          {sound && WaveSurfer && (
-            <button
-              className="btn btn-menu btn-empty"
-              onClick={this.handleExtra}>
-              more
-            </button>
-          )}
         </div>
       </div>
     );
