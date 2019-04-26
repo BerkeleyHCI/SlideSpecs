@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import {Images} from '../../api/images/images.js';
 import AlertLink from '../components/AlertLink.jsx';
+import LocalLink from '../components/LocalLink.jsx';
 import CommentList from '../components/CommentList.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
@@ -567,10 +568,10 @@ class CommentPage extends BaseComponent {
       <div className="context-filter float-at-top">
         <span className="list-title list-title-basic">
           {sessionOwner && (
-            <Link to={`/talk/${talk._id}`}>
+            <LocalLink to={`/talk/${talk._id}`}>
               <span className="black"> ‹ </span>
               {name}
-            </Link>
+            </LocalLink>
           )}
           {!sessionOwner && name}
           <span onClick={this.clearReviewer} className="pull-right clear-icon">

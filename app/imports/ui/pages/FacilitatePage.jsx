@@ -284,7 +284,7 @@ class FacilitatePage extends BaseComponent {
         .filter(s => s.length > 0);
       this.setState({draftWords: words});
     }
-  }, 200);
+  }, 150); // wait for delay after keypress.
 
   handleUpload = blob => {
     window.audioRecorder.clear();
@@ -420,9 +420,9 @@ class FacilitatePage extends BaseComponent {
         />
       ));
     } else if (recInterval) {
-      this.handleAudioUpload(); // get remaining audio from buffer.
       clearInterval(recInterval);
       this.setState({recInterval: null});
+      this.handleAudioUpload(); // get remaining audio from buffer.
       toast(() => (
         <AppNotification
           msg={'mic off'}

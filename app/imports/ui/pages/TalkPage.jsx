@@ -14,6 +14,7 @@ import MenuContainer from '../containers/MenuContainer.jsx';
 import BaseComponent from '../components/BaseComponent.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import AlertLink from '../components/AlertLink.jsx';
+import LocalLink from '../components/LocalLink.jsx';
 import {FullMessage} from '../components/Message.jsx';
 import DragUpload from '../components/DragUpload.jsx';
 import SelectUpload from '../components/SelectUpload.jsx';
@@ -262,8 +263,8 @@ export default class TalkPage extends BaseComponent {
 
   downloadHTML = () => {
     const renderComments = this.renderComments();
-    var geturl = document.querySelectorAll('link.__meteor-css__')[0].href;
-    const commentStyle = this.httpGet(geturl);
+    const styleURL = document.querySelectorAll('link.__meteor-css__')[0].href;
+    const commentStyle = this.httpGet(styleURL);
     const commentHtml = ReactDOMServer.renderToString(renderComments);
     const documentBody = `
     <head>
@@ -328,10 +329,10 @@ export default class TalkPage extends BaseComponent {
         )}
 
         <h1>
-          <Link to={`/`}>
+          <LocalLink to={`/`}>
             <span className="black"> ‹ </span>
             {talk.name}
-          </Link>
+          </LocalLink>
         </h1>
 
         {!file && !uploading && (
@@ -378,13 +379,13 @@ export default class TalkPage extends BaseComponent {
           <div className="btns-menu-space">
             <button
               onClick={this.downloadJSON}
-              className="btn btn-menu btn-primary">
+              className="btn btn-menu btn-note">
               download JSON
             </button>
 
             <button
               onClick={this.downloadHTML}
-              className="btn btn-menu btn-primary">
+              className="btn btn-menu btn-note">
               download HTML
             </button>
 
@@ -402,8 +403,11 @@ export default class TalkPage extends BaseComponent {
       </div>
     );
 
-    //{this.renderComments()}
-    return <MenuContainer {...this.props} content={content} />;
+    return (
+      this.renderRedirect() || (
+        <MenuContainer {...this.props} content={content} />
+      )
+    );
   }
 }
 

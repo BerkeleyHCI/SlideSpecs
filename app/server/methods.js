@@ -6,12 +6,12 @@ import {Talks} from '../imports/api/talks/talks.js';
 import {Sounds} from '../imports/api/sounds/sounds.js';
 import {gAudio} from '../imports/api/gAudio/gAudio.js';
 
+import {createTranscript} from '../imports/api/transcripts/methods.js';
 import {
   generateCommentRegions,
   generateWordFreq,
   setAudioStart,
 } from '../imports/api/talks/methods.js';
-import {createTranscript} from '../imports/api/transcripts/methods.js';
 
 Meteor.methods({
   async transcribeSounds(talkId, fileId) {
@@ -99,33 +99,30 @@ Meteor.methods({
       }
     };
 
-    const addGoogle = () => {
-      console.log('adding uploaded audio file: ' + fileName);
-      const meta = {
-        fileName,
-        type: 'audio/flac',
-        userId: talk.userId,
-        meta: {talkId, complete: true, created: Date.now()},
-      };
-
-      const gOptions = {
-        destination: fileName,
-        metadata: {
-          ...meta,
-          cacheControl: 'public, max-age=31536000',
-        },
-      };
-
-      const {Storage} = Npm.require('@google-cloud/storage');
-      const storage = new Storage();
-      storage
-        .bucket(bucketName)
-        .upload(fName, gOptions)
-        .then(runGoogle)
-        .catch(console.error);
+    // Main section of this method.
+    console.log('adding uploaded audio file: ' + fileName);
+    const meta = {
+      fileName,
+      type: 'audio/flac',
+      userId: talk.userId,
+      meta: {talkId, complete: true, created: Date.now()},
     };
 
-    addGoogle();
+    const gOptions = {
+      destination: fileName,
+      metadata: {
+        ...meta,
+        cacheControl: 'public, max-age=31536000000',
+      },
+    };
+
+    const {Storage} = Npm.require('@google-cloud/storage');
+    const storage = new Storage();
+    storage
+      .bucket(bucketName)
+      .upload(fName, gOptions)
+      .then(runGoogle)
+      .catch(console.error);
   },
 
   //
@@ -232,7 +229,7 @@ Meteor.methods({
 
       // add to both sounds (complete) and to google audio for transcription.
       Sounds.addFile(fName, meta);
-      gAudio.addFile(fName, meta);
+      gAudio.addFile(fName, meta); // todo is this doing anything??
       const gOptions = {
         destination: fileName,
         metadata: {

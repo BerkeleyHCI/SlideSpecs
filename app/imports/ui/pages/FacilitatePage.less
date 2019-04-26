@@ -13,26 +13,28 @@ canvas,
   display: inline-block;
   vertical-align: middle;
   text-align: center;
-  line-height: 10em;
-  height: 10em;
+  line-height: 7em;
+  height: 7em;
 }
 
 canvas {
   border-radius: 0px 4px 0px 0px;
   background: @color-full;
-  width: 70%;
+  width: 80%;
 }
 
 #record {
   background: @color-full;
   border-radius: 4px 0px 0px 0px;
-  width: 30%;
+  width: 20%;
 
   &:hover img {
     filter: brightness(100%);
   }
 
   &:hover i {
+    background-color: red;
+    border-color: @color-note;
     color: @color-note;
   }
 
@@ -45,8 +47,11 @@ canvas {
   }
 
   i {
-    .font-l3();
+    font-size: 1.2em;
     color: @color-empty;
+    border-radius: 500px;
+    border: 1px solid white;
+    line-height: 1em;
   }
 }
 
