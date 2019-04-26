@@ -46,6 +46,7 @@ Meteor.methods({
 
     const runGoogle = () => {
       const gcsURI = `gs://${bucketName}/${fileName}`;
+      console.log({note: 'starting transcription for audio', gcsURI});
       const speech = Npm.require('@google-cloud/speech').v1p1beta1;
       const client = new speech.SpeechClient();
       const config = {
