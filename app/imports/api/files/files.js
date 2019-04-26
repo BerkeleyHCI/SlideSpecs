@@ -1,6 +1,6 @@
 import {FilesCollection} from 'meteor/ostrio:files';
 import {Images} from '../images/images.js';
-import {storagePath} from '../storagePath.js'
+import {storagePath} from '../storagePath.js';
 
 export const Files = new FilesCollection({
   collectionName: 'files',

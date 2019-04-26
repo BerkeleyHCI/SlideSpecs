@@ -18,4 +18,7 @@ export const Sounds = new FilesCollection({
       return `Invalid sound type/size: ${file.extension} ${file.size}`;
     }
   },
+  onAfterUpload(file) {
+    console.log({title: 'uploaded sound file', file});
+  },
 });
