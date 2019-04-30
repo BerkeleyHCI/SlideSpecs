@@ -37,7 +37,7 @@ export default class Waveform extends React.Component {
         showTime: true,
         opacity: 1,
         customShowTimeStyle: {
-          'background-color': 'rgba(100, 100, 100, 0.8)',
+          'background-color': 'rgba(100, 100, 100, 0.9)',
           'font-family': 'monospace',
           'margin-bottom': '0px',
           padding: '0px 4px',
