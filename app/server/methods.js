@@ -23,7 +23,6 @@ Meteor.methods({
   async mergeSounds(talkId) {
     check(talkId, String);
     const talk = Talks.findOne(talkId);
-
     if (!(talk && Meteor.user() && Meteor.userId() === talk.userId)) {
       return console.error('no talk found.');
     }
@@ -56,13 +55,8 @@ Meteor.methods({
         profanityFilter: true,
         enableWordTimeOffsets: true,
         enableAutomaticPunctuation: true,
-        enableSpeakerDiarization: true,
-        diarizationSpeakerCount: 1,
-        model: 'video', // only one of these
-        //model: 'default', // only one of these
-        //model: 'phone_call', // only one of these
-        //useEnhanced: true, // add this w/ phone
         speechContexts: [{phrases: wordList}],
+        model: 'video', // enhanced
       };
 
       const request = {config, audio: {uri: gcsURI}};
@@ -72,7 +66,6 @@ Meteor.methods({
       const transcript = results
         .map(result => result.alternatives[0].transcript)
         .join('\n');
-      //.toLowerCase();
 
       let confAggregate = results.map(r => r.alternatives[0].confidence);
       const confidence = _.sum(confAggregate) / confAggregate.length;
@@ -88,23 +81,20 @@ Meteor.methods({
 
         return {
           word: res.word,
-          //word: res.word.toLowerCase(),
           startTime: genTimeObj(res.startTime),
           endTime: genTimeObj(res.endTime),
         };
       });
 
-      //console.log(JSON.stringify(words, null, 2));
       const transcriptsOptions = {
         transcript,
+        talk: talk._id,
         results: words,
         confidence,
-        talk: talk._id,
       };
 
       if (transcript) {
-        console.log('adding transcript: ', transcript);
-        console.log({confidence});
+        console.log({note: 'adding transcript', confidence});
         createTranscript.call(transcriptsOptions);
       } else {
         console.error('empty transcript');
@@ -112,7 +102,7 @@ Meteor.methods({
     };
 
     const addGoogle = () => {
-      console.log('adding merged file: ' + fileName);
+      console.log('adding file: ' + fileName);
       const meta = {
         fileName,
         type: 'audio/flac',
@@ -159,6 +149,13 @@ Meteor.methods({
     });
   },
 
+  async transcribeURL(talkId, url) {
+    check(talkId, String);
+    check(fileId, String);
+    const wordFreq = generateWordFreq.call({talkId: talk._id});
+    const wordList = wordFreq.filter(wf => wf.count >= 2).map(wf => wf.word);
+  },
+
   async transcribeSounds(talkId, fileId) {
     check(talkId, String);
     check(fileId, String);
@@ -188,13 +185,6 @@ Meteor.methods({
         enableAutomaticPunctuation: true,
         speechContexts: [{phrases: wordList}],
       };
-
-      //enableSpeakerDiarization: true,
-      //diarizationSpeakerCount: 1,
-      //model: 'video', // enhanced
-      //model: 'default', // only one of these
-      //model: 'phone_call', // only one of these
-      //useEnhanced: true, // add this w/ phone
 
       const request = {config, audio: {uri: gcsURI}};
       const [operation] = Promise.await(client.longRunningRecognize(request));
@@ -236,8 +226,7 @@ Meteor.methods({
       };
 
       if (transcript) {
-        console.log('adding transcript: ', transcript);
-        console.log({confidence});
+        console.log({note: 'adding transcript', confidence});
         createTranscript.call(transcriptsOptions);
       } else {
         console.error('empty transcript');
