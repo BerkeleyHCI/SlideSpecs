@@ -304,10 +304,10 @@ class ReviewPage extends BaseComponent {
 
   renderImages = () => {
     const {selected} = this.state;
-    const {images, comments} = this.props;
+    const {images, comments, regions} = this.props;
     return images.map((f, key) => {
       let link = Images.findOne({_id: f._id}).link('original', '//');
-      let count = comments.filter(c => {
+      let count = [...comments, ...regions].filter(c => {
         // speed up by not computing this in a loop, precompute and index.
         const general = [{slideNo: 'general'}];
         const slides = c.slides.length > 0 ? c.slides : general;
@@ -421,8 +421,8 @@ class ReviewPage extends BaseComponent {
 
         <div id="grid-holder">
           <div className="alert centered no-margin">
-            use <i class="fa fa-arrow-left" /> and{' '}
-            <i class="fa fa-arrow-right" /> to filter by slide
+            use <i className="fa fa-arrow-left" /> and{' '}
+            <i className="fa fa-arrow-right" /> to filter by slide
           </div>
           <div id="grid" onMouseDown={this.clearGrid}>
             <div className="v-pad" />
@@ -747,21 +747,24 @@ class ReviewPage extends BaseComponent {
 
   handleKeyDown = event => {
     switch (event.keyCode) {
+      case 32:
+        //console.log('space key pressed');
+        event.preventDefault();
+        event.stopPropagation();
+        this.waveRef.current.playAudio();
+        return;
+        break;
       case 37:
-        //alert('Left key pressed');
-        console.log('Left key pressed');
+        //console.log('Left key pressed');
+        event.preventDefault();
+        event.stopPropagation();
         this.moveSlideUpdate(-1);
         break;
-      case 38:
-        //alert('Up key pressed');
-        break;
       case 39:
-        //alert('Right key pressed');
-        console.log('Right key pressed');
+        //console.log('Right key pressed');
+        event.preventDefault();
+        event.stopPropagation();
         this.moveSlideUpdate(+1);
-        break;
-      case 40:
-        //alert('Down key pressed');
         break;
     }
   };
@@ -783,7 +786,8 @@ class ReviewPage extends BaseComponent {
           className="full-container padded reviewPage"
           id="__reviewBackground"
           onMouseDown={this.clearButtonBG}
-          onKeyDown={this.handleKeyDown}>
+          onKeyDown={this.handleKeyDown}
+          onKeyPress={this.handleKeyDown}>
           {sound && audio}
           <div id="review-view" className="table review-table">
             <div className="row">

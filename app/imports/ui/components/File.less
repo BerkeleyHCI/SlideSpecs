@@ -85,11 +85,17 @@ div.file-item {
     top: 0;
   }
 
+  .slide-overlay i.fa {
+    display: none;
+  }
   &:hover {
     .overlay,
     .slide-overlay {
       background: rgba(0, 0, 0, 0.75);
       opacity: 1;
+    }
+    .slide-overlay i.fa {
+      display: inline;
     }
   }
 }
