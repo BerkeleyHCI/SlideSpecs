@@ -7,6 +7,7 @@ import {toast} from 'react-toastify';
 import BaseComponent from '../components/BaseComponent.jsx';
 import TextArea from '../components/TextArea.jsx';
 import AppNotification from '../components/AppNotification.jsx';
+import Expandable from '../components/Expandable.jsx';
 import SlideTags from '../components/SlideTags.jsx';
 
 import {setRespondingComment} from '../../api/talks/methods.js';
@@ -535,10 +536,10 @@ class Comment extends BaseComponent {
             source={content}
           />
 
-          {wordList && (
+          {base && wordList && (
             <span>
               <hr />
-              <div className="padded">{wordList}</div>
+              <Expandable>{wordList}</Expandable>
             </span>
           )}
 

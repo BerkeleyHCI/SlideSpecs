@@ -94,7 +94,7 @@ Meteor.methods({
       };
 
       if (transcript) {
-        console.log({note: 'adding transcript', confidence});
+        console.log({note: 'got transcript', confidence});
         createTranscript.call(transcriptsOptions);
       } else {
         console.error('empty transcript');

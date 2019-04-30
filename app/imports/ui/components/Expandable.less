@@ -1,0 +1,25 @@
+@import '{}/imports/ui/stylesheets/utils.less';
+
+.expandable {
+  span.note {
+    padding: 2px 4px;
+    opacity: 0.5;
+    .font-s3();
+  }
+  &:hover span.note {
+    opacity: 1;
+  }
+  span.note:hover {
+    background: @color-note;
+  }
+}
+
+.expandable-open {
+  max-height: none;
+}
+
+.expandable-closed {
+  max-height: 6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
