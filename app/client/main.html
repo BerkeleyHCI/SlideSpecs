@@ -9,7 +9,7 @@
   <meta
     http-equiv="Content-Security-Policy"
     content="
-    default-src * blob:;
+    default-src * blob: https://www.youtube.com/;
     img-src 'self' * https: data:;
     style-src 'self' 'unsafe-inline' * data:;
     connect-src 'self' ws:;
@@ -17,6 +17,7 @@
     object-src 'self' * blob:;
     worker-src 'self' * blob:;
     script-src 'self' 'unsafe-inline' 'unsafe-eval' * blob:;
+    frame-src https://www.youtube.com/;
     "
     />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v1">
