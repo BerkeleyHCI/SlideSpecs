@@ -389,21 +389,21 @@ class ReviewPage extends BaseComponent {
 
     return (
       <div className="context-filter">
-        <div id="grid-holder float-at-top">
-          <span className="list-title list-title-basic">
-            <LocalLink to={`/talk/${talk._id}`}>
-              <span className="black"> ‹ </span>
-              {name}
-            </LocalLink>
-            {sound && WaveSurfer && (
-              <button
-                className="btn btn-menu pull-right btn-empty"
-                onClick={this.handleExtra}>
-                more
-              </button>
-            )}
-          </span>
+        <span className="list-title list-title-basic">
+          <LocalLink to={`/talk/${talk._id}`}>
+            <span className="black"> ‹ </span>
+            {name}
+          </LocalLink>
+          {sound && WaveSurfer && (
+            <button
+              className="btn btn-menu pull-right btn-empty"
+              onClick={this.handleExtra}>
+              more
+            </button>
+          )}
+        </span>
 
+        <div id="grid-holder">
           <div id="grid" onMouseDown={this.clearGrid}>
             <div className="v-pad" />
             {fileList}
@@ -507,7 +507,7 @@ class ReviewPage extends BaseComponent {
 
   highlightRegionComment = region => {
     return this.handleRegion({
-      color: 'rgba(255, 100, 100, 0.25)',
+      color: 'rgba(240, 248, 255, 0.15)',
       startTime: region.startTime / 1000.0,
       endTime: region.stopTime / 1000.0,
       type: 'region',
