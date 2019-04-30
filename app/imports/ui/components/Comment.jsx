@@ -242,6 +242,16 @@ class Comment extends BaseComponent {
     }
   };
 
+  handleQueue = () => {
+    const {addressed, discuss} = this.props;
+    if (addressed) {
+      this.handleAddress();
+    }
+    if (discuss.length == 0) {
+      this.handleDiscuss();
+    }
+  };
+
   handleFinishComment = () => {
     const {addressed} = this.props;
     this.handleActiveComment();
@@ -309,7 +319,7 @@ class Comment extends BaseComponent {
   };
 
   queueButton = {
-    handleClick: this.handleAddress,
+    handleClick: this.handleQueue,
     icon: 'clock-o',
     txt: 'queue',
   };
