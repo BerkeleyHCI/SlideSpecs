@@ -334,7 +334,8 @@ class FacilitatePage extends BaseComponent {
       if (!err) {
         {
           const {name, size} = file;
-          this.log({name, size});
+          console.log('upload complete', file.name);
+          //this.log({name, size});
         }
       } else {
         console.error(err);
