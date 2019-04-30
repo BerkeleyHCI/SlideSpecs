@@ -226,11 +226,7 @@ class Comment extends BaseComponent {
   };
 
   handleActiveComment = () => {
-    const {discuss, talk, _id, handleAudioUpload} = this.props;
-    if (handleAudioUpload) {
-      handleAudioUpload();
-    }
-
+    const {discuss, talk, _id} = this.props;
     const commentFields = {
       talkId: talk,
       commentId: _id,
@@ -247,22 +243,10 @@ class Comment extends BaseComponent {
   };
 
   handleFinishComment = () => {
-    const {addressed, discuss, talk, _id} = this.props;
-    const commentFields = {
-      talkId: talk,
-      commentId: _id,
-    };
-
-    if (discuss.length == 0) {
-      this.handleDiscuss();
-    }
-
-    if (talk && _id) {
-      this.log({type: 'setDiscussing', ...commentFields});
-      setRespondingComment.call(commentFields);
-      if (!addressed) {
-        this.handleAddress();
-      }
+    const {addressed} = this.props;
+    this.handleActiveComment();
+    if (!addressed) {
+      this.handleAddress();
     }
   };
 
@@ -322,6 +306,12 @@ class Comment extends BaseComponent {
     handleClick: this.handleActiveComment,
     icon: 'star',
     txt: 'discuss',
+  };
+
+  queueButton = {
+    handleClick: this.handleAddress,
+    icon: 'clock-o',
+    txt: 'queue',
   };
 
   // For active.
@@ -389,7 +379,6 @@ class Comment extends BaseComponent {
       bySlide,
       handleClick,
       handleAuthor,
-      handleAudioUpload,
       handleMouseOver,
       handleMouseOut,
       slides,
@@ -413,27 +402,37 @@ class Comment extends BaseComponent {
 
     const master = author === reviewer;
     const facil = [reviewer, 'audience', 'SlideSpecs'];
+    const toDiscuss = discuss.length > 0;
     const facilitatorAuth = facil.includes(author);
     const audio = author === 'transcript';
+    const base = depth === 0;
     let bData = [];
 
     if (commentView && master) {
       bData = [...this.pubButtons, ...this.privButtons];
     } else if (commentView) {
       bData = [...this.pubButtons];
-    } else if (facilitateView && depth == 0 && facilitatorAuth && responding) {
+    } else if (facilitateView && base && responding && facilitatorAuth) {
       bData = [this.finishButton, this.editButton];
-    } else if (facilitateView && depth == 0 && responding) {
-      bData = [this.finishButton];
-    } else if (facilitateView && depth == 0) {
-      bData = [this.activeButton, this.addressButton];
+    } else if (facilitateView && base && responding) {
+      bData = [this.finishButton]; // responding
+    } else if (facilitateView && base && addressed && facilitatorAuth) {
+      bData = [this.activeButton, this.queueButton, this.editButton]; // discussed
+    } else if (facilitateView && base && addressed) {
+      bData = [this.activeButton, this.queueButton]; // discussed
+    } else if (facilitateView && base && toDiscuss && facilitatorAuth) {
+      bData = [this.activeButton, this.addressButton, this.editButton]; // to discuss
+    } else if (facilitateView && base && toDiscuss) {
+      bData = [this.activeButton, this.addressButton]; // to discuss
+    } else if (facilitateView && base) {
+      bData = [this.activeButton, this.queueButton]; // unmarked
     } else if (facilitateView) {
-      bData = [this.editButton];
+      bData = []; // reply.
     } else if (discussView) {
       bData = [...this.pubButtons];
     } else if (regionView) {
       bData = [this.playButton];
-    } else if (reviewView && depth == 0) {
+    } else if (reviewView && base) {
       bData = [this.completeButton, this.trashButton];
     } else if (reviewView && audio) {
       bData = [this.trashButton];

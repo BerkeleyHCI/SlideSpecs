@@ -36,7 +36,6 @@ class FacilitatePage extends BaseComponent {
       recording: false,
       draftWords: [],
       timeout: 60 * 1000, // ms -> once per minute
-      //timeout: 20 * 1000, // testing with lower
     };
   }
 
@@ -134,6 +133,28 @@ class FacilitatePage extends BaseComponent {
     return <div className="filterer clearfix">{submit}</div>;
   };
 
+  generateCommentData = () => {
+    const {talk, comments, reviewer, setModal, clearModal} = this.props;
+    let csort = _.orderBy(comments, ['created'], ['asc']);
+
+    // Filter out transcript comments.
+    csort = csort.filter(c => c.author != 'transcript');
+
+    // Filtering 'reply' comments into array.
+    const reply = /\[.*\]\(\s?#c(.*?)\)/;
+    const isReply = c => reply.test(c.content);
+    const replies = csort.filter(isReply).map(c => {
+      const match = reply.exec(c.content);
+      c.replyTo = match[1].trim();
+      c.isReply = true;
+      return c;
+    });
+
+    // remove child comments.
+    csort = csort.filter(c => !isReply(c));
+    return {csort, replies};
+  };
+
   renderCommentData = (arr, replies, c, i) => {
     const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
     const {sorter, invert, byAuth, bySlide, byTag} = this.state;
@@ -165,26 +186,10 @@ class FacilitatePage extends BaseComponent {
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
-      let csort = _.orderBy(comments, ['created'], ['asc']);
+      let {csort, replies} = this.generateCommentData();
 
       // Clean - filter out active responding comments.
       csort = csort.filter(c => talk.active.indexOf(c._id) < 0);
-
-      // Filter out transcript comments.
-      csort = csort.filter(c => c.author != 'transcript');
-
-      // Filtering 'reply' comments into array.
-      const reply = /\[.*\]\(\s?#c(.*?)\)/;
-      const isReply = c => reply.test(c.content);
-      const replies = csort.filter(isReply).map(c => {
-        const match = reply.exec(c.content);
-        c.replyTo = match[1].trim();
-        c.isReply = true;
-        return c;
-      });
-
-      // remove child comments.
-      csort = csort.filter(c => !isReply(c));
 
       // split off 'addressed' comments
       const addressed = csort.filter(c => c.addressed);
@@ -351,7 +356,12 @@ class FacilitatePage extends BaseComponent {
   renderRespond = () => {
     const {talk} = this.props;
     let activeFix = _.flatten([talk.active]);
-    const respond = Comments.find({_id: {$in: activeFix}}).fetch();
+    const {csort, replies} = this.generateCommentData();
+    const trimmed = csort.filter(c => activeFix.includes(c._id));
+    const respond = trimmed.map((c, i) =>
+      this.renderCommentData(trimmed, replies, c, i),
+    );
+
     return (
       <CommentList
         title={'discussing'}
@@ -377,8 +387,6 @@ class FacilitatePage extends BaseComponent {
       </div>
     );
   };
-
-  // <canvas id="wavedisplay" width="1024" height="500" />
 
   renderSounds = () => {
     const {recording} = this.state;
