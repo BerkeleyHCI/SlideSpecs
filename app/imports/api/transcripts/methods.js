@@ -15,6 +15,7 @@ export const createTranscript = new ValidatedMethod({
   run({talk, transcript, results, confidence}) {
     const uTalk = Talks.findOne(talk);
     if (uTalk) {
+      logBlob({type: 'creating transcript'});
       const data = {
         created: Date.now(),
         talk,
@@ -22,7 +23,6 @@ export const createTranscript = new ValidatedMethod({
         results,
         confidence,
       };
-      logBlob({type: 'make transcript', data});
       return Transcripts.insert(data);
     } else {
       console.error('Talk data does not match.', talk);
