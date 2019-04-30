@@ -123,8 +123,20 @@ class ReviewPage extends BaseComponent {
     }
   };
 
+  moveSlideUpdate = inc => {
+    const {images} = this.props;
+    const {bySlide, selected} = this.state;
+    const first = bySlide.length == 0 ? 1 : +bySlide[0] + inc;
+    if (first > images.length || first == 0) return;
+    const image = images[first - 1];
+    const slide = first.toString();
+    const select = {slideNo: slide, slideId: image._id};
+    this.setState({bySlide: [slide], selected: [select]});
+  };
+
   componentDidMount = () => {
     this.handleLoad();
+    document.getElementById('__reviewBackground').focus();
   };
 
   componentDidUpdate = () => {
@@ -231,6 +243,7 @@ class ReviewPage extends BaseComponent {
 
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
+    const searcher = this.renderSearch();
     const {invert, filter} = this.state;
     const invFn = () => this.setState({invert: !invert});
     const setSort = (s, f, invert) => {
@@ -282,9 +295,12 @@ class ReviewPage extends BaseComponent {
           </button>
         </div>
         {filterer}
+        {searcher}
       </div>
     );
   };
+
+  renderSearch = () => {};
 
   renderImages = () => {
     const {selected} = this.state;
@@ -404,6 +420,10 @@ class ReviewPage extends BaseComponent {
         </span>
 
         <div id="grid-holder">
+          <div className="alert centered no-margin">
+            use <i class="fa fa-arrow-left" /> and{' '}
+            <i class="fa fa-arrow-right" /> to filter by slide
+          </div>
           <div id="grid" onMouseDown={this.clearGrid}>
             <div className="v-pad" />
             {fileList}
@@ -658,31 +678,63 @@ class ReviewPage extends BaseComponent {
     });
   };
 
-  // TODO adding the sorting here. generateBaseComponent.
   renderRegions = () => {
-    const {duration} = this.state;
+    const {duration, sorter, invert, byAuth, bySlide, byTag} = this.state;
     const {talk, regions} = this.props;
     if (!regions || !duration) return;
     if (!this.waveRef || !this.waveRef.current) return;
     const wave = this.waveRef.current;
-    const regionComments = _.sortBy(regions, ['startTime'])
+
+    let filtered = regions
       .filter(w => w.startTime < duration && w.stopTime > 0)
-      .map((w, i) => {
-        const playComment = this.playRegionComment(w);
-        const highlight = this.highlightRegionComment(w);
-        const words = this.generateWordList(w);
-        const commentWords = this.renderWordList(words);
-        //console.log(words, commentWords);
-        return {
-          ...w,
-          last: i + 1 == regions.length,
-          handlePlayAudio: playComment,
-          handleMouseOut: this.clearRegions,
-          handleMouseOver: highlight,
-          wordList: commentWords,
-          regionView: true,
-        };
+      .map(w => {
+        w.created = w.startTime;
+        return w;
       });
+
+    let rsort = _.orderBy(
+      filtered,
+      [sorter, 'startTime'],
+      [invert ? 'desc' : 'asc', 'asc'],
+    );
+
+    if (byAuth) {
+      rsort = rsort.filter(c => c.author === byAuth);
+    }
+
+    if (bySlide.length > 0) {
+      rsort = rsort.filter(c => {
+        const general = [{slideNo: 'general'}];
+        const slides = c.slides.length > 0 ? c.slides : general;
+        const slideNos = slides.map(x => x.slideNo);
+        return bySlide.some(sn => slideNos.includes(sn));
+      });
+    }
+
+    if (byTag) {
+      rsort = rsort.filter(c => c.content.includes(byTag));
+    }
+
+    const regionComments = rsort.map((w, i) => {
+      const playComment = this.playRegionComment(w);
+      const highlight = this.highlightRegionComment(w);
+      const words = this.generateWordList(w);
+      const commentWords = this.renderWordList(words);
+      //console.log(words, commentWords);
+      return {
+        ...w,
+        last: i + 1 == regions.length,
+        handlePlayAudio: playComment,
+        handleMouseOut: this.clearRegions,
+        handleMouseOver: highlight,
+        wordList: commentWords,
+        regionView: true,
+        commentRef: this.inRef,
+        setBySlide: this.setBySlide,
+        handleTag: this.setByTag,
+        handleAuthor: this.setByAuth,
+      };
+    });
 
     return (
       <CommentList
@@ -691,6 +743,27 @@ class ReviewPage extends BaseComponent {
         defaultOpen={false}
       />
     );
+  };
+
+  handleKeyDown = event => {
+    switch (event.keyCode) {
+      case 37:
+        //alert('Left key pressed');
+        console.log('Left key pressed');
+        this.moveSlideUpdate(-1);
+        break;
+      case 38:
+        //alert('Up key pressed');
+        break;
+      case 39:
+        //alert('Right key pressed');
+        console.log('Right key pressed');
+        this.moveSlideUpdate(+1);
+        break;
+      case 40:
+        //alert('Down key pressed');
+        break;
+    }
   };
 
   render() {
@@ -706,9 +779,11 @@ class ReviewPage extends BaseComponent {
     return (
       this.renderRedirect() || (
         <div
+          tabIndex="0"
           className="full-container padded reviewPage"
+          id="__reviewBackground"
           onMouseDown={this.clearButtonBG}
-          onKeyPress={console.log}>
+          onKeyDown={this.handleKeyDown}>
           {sound && audio}
           <div id="review-view" className="table review-table">
             <div className="row">
