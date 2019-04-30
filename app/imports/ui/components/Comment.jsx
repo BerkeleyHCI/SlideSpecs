@@ -528,9 +528,7 @@ class Comment extends BaseComponent {
           {wordList && (
             <span>
               <hr />
-              <div className="v-pad">
-                <b>discussion:</b> {wordList}
-              </div>
+              <div className="padded">{wordList}</div>
             </span>
           )}
 

@@ -19,7 +19,6 @@ const ClearingDiv = ({set, pre, clear}) => {
 };
 
 ClearingDiv.propTypes = {
-  //set: PropTypes.array, // this is a react element, usually
   pre: PropTypes.string,
   clear: PropTypes.func,
 };
