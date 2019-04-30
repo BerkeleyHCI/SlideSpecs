@@ -51,7 +51,7 @@ export default class Waveform extends React.Component {
       });
 
       const options = {
-        height: 100,
+        height: 80,
         normalize: true,
         responsive: true,
         container: this.$waveform,
