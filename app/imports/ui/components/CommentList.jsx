@@ -22,7 +22,9 @@ class CommentList extends Component {
     return (
       <div className="comments-list alert">
         <span
-          className={`list-title ${note ? 'list-title-note' : ''}`}
+          className={`list-title list-title-clickable ${
+            note ? 'list-title-note' : ''
+          }`}
           onClick={this.toggleOpen}>
           {title}
           <span className="pull-right danger">{expander}</span>
