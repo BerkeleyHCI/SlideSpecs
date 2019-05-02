@@ -1,5 +1,7 @@
 .DS_Store
 node_modules
 settings.json
+slidespecs.json
 data
 *log
+imports/api/storagePath.js

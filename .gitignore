@@ -6,8 +6,10 @@ data*
 *zip
 *log
 
+db-*
 log/
 data/
+db-data/
 build/
 datalogs/
 output/
