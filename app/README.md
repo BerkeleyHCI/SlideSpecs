@@ -109,3 +109,8 @@ checking what process is using a port
 netstat -nl|grep 9000
 ```
 
+meteor up
+
+- http://meteor-up.com/docs.html#mongodb
+- http://meteor-up.com/getting-started.html
+- npm install -g mup
