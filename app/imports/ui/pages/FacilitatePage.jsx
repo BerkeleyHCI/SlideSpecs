@@ -456,6 +456,13 @@ class FacilitatePage extends BaseComponent {
       //window.audioRecorder.exportWAV(this.handleUpload);
     } else {
       console.error('cant access audio recorder!');
+      toast(() => (
+        <AppNotification
+          msg={'Mic error'}
+          desc={'Error accessing audio input.'}
+          icon={'times'}
+        />
+      ));
     }
   };
 

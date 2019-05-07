@@ -151,7 +151,7 @@ div.file-item.file-item-review {
   background: transparent !important;
 }
 
-@media (min-width: 768px) {
+@media (min-width: @screen-bs-break) {
   .full-height-md {
     height: 100%;
   }
@@ -227,7 +227,7 @@ div.reviewView {
     background-color: white;
     display: block;
     margin: 0 auto;
-    @media only screen and (min-width: 768px) {
+    @media only screen and (min-width: @screen-bs-break) {
       max-height: 42vh !important;
     }
   }
@@ -274,6 +274,7 @@ div.reviewView {
     margin: 0px;
   }
   textarea {
+    .yes-select();
     animation: pulse 3s infinite ease-in-out;
     background: darken(@color-fourth, 0%);
     padding: 15px 15px 5px 15px;
