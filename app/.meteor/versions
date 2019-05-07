@@ -1,4 +1,4 @@
-accounts-base@1.4.3
+accounts-base@1.4.4
 accounts-password@1.5.1
 aldeed:collection2@2.10.0
 aldeed:collection2-core@1.2.0
@@ -38,7 +38,7 @@ diff-sequence@1.1.1
 dispatch:mocha-phantomjs@0.1.9
 dispatch:phantomjs-tests@0.0.7
 dynamic-import@0.5.1
-ecmascript@0.12.4
+ecmascript@0.12.7
 ecmascript-runtime@0.7.0
 ecmascript-runtime-client@0.8.0
 ecmascript-runtime-server@0.7.1
@@ -86,8 +86,8 @@ observe-sequence@1.0.16
 ordered-dict@1.1.0
 ostrio:cookies@2.3.0
 ostrio:files@1.10.2
-ostrio:logger@2.0.7
-ostrio:loggerconsole@2.0.4
+ostrio:logger@2.0.8
+ostrio:loggerconsole@2.0.5
 practicalmeteor:chai@2.1.0_1
 practicalmeteor:loglevel@1.2.0_2
 practicalmeteor:mocha@2.4.5_6
@@ -131,6 +131,6 @@ tracker@1.2.0
 twbs:bootstrap@3.3.6
 underscore@1.0.10
 url@1.2.0
-webapp@1.7.3
+webapp@1.7.4
 webapp-hashing@1.0.9
 xolvio:cleaner@0.3.3

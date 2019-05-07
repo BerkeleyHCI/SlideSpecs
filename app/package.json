@@ -6,29 +6,29 @@
     "test": "meteor test --once --driver-package dispatch:mocha-phantomjs"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.2",
+    "@babel/runtime": "^7.4.4",
     "autoprefixer": "^8.6.5",
     "autosize": "^4.0.2",
     "bcrypt": "^2.0.1",
-    "classnames": "^2.2.5",
-    "enzyme": "^3.8.0",
+    "classnames": "^2.2.6",
+    "enzyme": "^3.9.0",
     "faker": "^4.1.0",
-    "history": "^4.7.2",
+    "history": "^4.9.0",
     "imagesloaded": "^4.1.4",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "meteor-node-stubs": "^0.4.1",
-    "prop-types": "^15.6.1",
-    "query-string": "^6.2.0",
-    "react": "^16.4.2",
+    "prop-types": "^15.7.2",
+    "query-string": "^6.5.0",
+    "react": "^16.8.6",
     "react-addons-pure-render-mixin": "^15.6.2",
-    "react-bootstrap": "^0.32.3",
-    "react-dom": "^16.4.2",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "^16.8.6",
     "react-drop-to-upload": "^1.0.2",
-    "react-markdown": "^3.4.1",
-    "react-router-dom": "^4.2.2",
-    "react-speech-recognition": "^1.0.7",
-    "react-spring": "^5.6.10",
-    "react-toastify": "^4.2.0"
+    "react-markdown": "^3.6.0",
+    "react-router-dom": "^4.3.1",
+    "react-speech-recognition": "^1.1.0",
+    "react-spring": "^5.9.2",
+    "react-toastify": "^4.5.2"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -44,15 +44,15 @@
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
     "babel-eslint": "^8.2.6",
-    "eslint": "^5.12.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-import-resolver-meteor": "^0.4.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-meteor": "^5.1.0",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react": "^7.13.0",
     "eslint-watch": "^4.0.2",
-    "shelljs": "^0.8.1"
+    "shelljs": "^0.8.3"
   },
   "postcss": {
     "plugins": {
