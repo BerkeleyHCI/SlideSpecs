@@ -84,18 +84,15 @@ export default class SessionPage extends BaseComponent {
           //console.log('started', file.name);
         });
 
-        // TODO set the percent of the specific talk item for upload
         uploadInstance.on('progress', function(progress, file) {
           setTalkProgress.call({talkId, progress});
         });
 
-        // TODO set the percent of the specific talk item for upload
         uploadInstance.on('uploaded', (err, file) => {
           console.log('uploaded', file.name);
           setTalkProgress.call({talkId, progress: 100});
         });
 
-        // TODO set status on talk item that uploading is done.
         uploadInstance.on('end', (err, file) => {
           console.log('file:', file);
           handleToast({
@@ -120,15 +117,11 @@ export default class SessionPage extends BaseComponent {
   };
 
   render() {
-    const {uploading} = this.state;
     const {session, name, talks, files, images} = this.props;
     const shareLink = window.location.origin + '/share/' + session._id;
 
     // TODO update this into the secret session field instead of rthe regular // id
     const uploadLink = window.location.origin + '/upload/' + session._id;
-
-    //<h3> <small>{talks.length} talks</small> </h3>
-    //<Message title="uploading..." subtitle={this.state.progress + '%'} />
 
     const content = (
       <div className="main-content">
@@ -145,12 +138,6 @@ export default class SessionPage extends BaseComponent {
           bText={'open link'}
           link={uploadLink}
         />
-
-        {uploading && (
-          <div className="padded alert">
-            <FullMessage title="uploading..." />
-          </div>
-        )}
 
         {talks.length > 0 && (
           <div>
