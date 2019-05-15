@@ -444,9 +444,11 @@ class Comment extends BaseComponent {
     } else if (regionView) {
       bData = [this.playButton];
     } else if (reviewView && base) {
-      bData = [this.completeButton, this.trashButton];
+      //bData = [this.completeButton, this.trashButton];
+      bData = [];
     } else if (reviewView && audio) {
-      bData = [this.trashButton];
+      //bData = [this.trashButton];
+      bData = [];
     }
 
     const context = (
