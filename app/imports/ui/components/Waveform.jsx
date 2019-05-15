@@ -24,6 +24,7 @@ export default class Waveform extends React.Component {
       playing: false,
       visible: false,
       currentTime: 0,
+      audioSpeed: 1,
       duration: 0,
     };
   }
@@ -62,12 +63,66 @@ export default class Waveform extends React.Component {
       };
 
       let wavesurfer = WaveSurfer.create(options);
+      let st, source, length;
+      var seekingPos = null;
+      var seekingDiff = 0;
 
       wavesurfer.on('ready', () => {
         const duration = wavesurfer.getDuration();
         const audioSet = this.props.handleAudioSet;
         if (audioSet) audioSet(duration);
         this.setState({duration, visible: true});
+        st = new window.soundtouch.SoundTouch(wavesurfer.backend.ac.sampleRate);
+        var buffer = wavesurfer.backend.buffer;
+        var channels = buffer.numberOfChannels;
+        var l = buffer.getChannelData(0);
+        var r = channels > 1 ? buffer.getChannelData(1) : l;
+        length = buffer.length;
+        source = {
+          extract: function(target, numFrames, position) {
+            if (seekingPos != null) {
+              seekingDiff = seekingPos - position;
+              seekingPos = null;
+            }
+
+            position += seekingDiff;
+
+            for (var i = 0; i < numFrames; i++) {
+              target[i * 2] = l[i + position];
+              target[i * 2 + 1] = r[i + position];
+            }
+
+            return Math.min(numFrames, length - position);
+          },
+        };
+      });
+
+      // fixing audio playback rates
+      let soundtouchNode;
+      wavesurfer.on('play', function() {
+        seekingPos = ~~(wavesurfer.backend.getPlayedPercents() * length);
+        st.tempo = wavesurfer.getPlaybackRate();
+
+        if (st.tempo === 1) {
+          wavesurfer.backend.disconnectFilters();
+        } else {
+          if (!soundtouchNode) {
+            var filter = new window.soundtouch.SimpleFilter(source, st);
+            soundtouchNode = window.soundtouch.getWebAudioNode(
+              wavesurfer.backend.ac,
+              filter,
+            );
+          }
+          wavesurfer.backend.setFilter(soundtouchNode);
+        }
+      });
+
+      wavesurfer.on('pause', function() {
+        soundtouchNode && soundtouchNode.disconnect();
+      });
+
+      wavesurfer.on('seek', function() {
+        seekingPos = ~~(wavesurfer.backend.getPlayedPercents() * length);
       });
 
       // updating the timestamps: https://codepen.io/BusyBee/pen/pbXzgg
@@ -135,6 +190,14 @@ export default class Waveform extends React.Component {
     wavesurfer.clearRegions();
   };
 
+  toggleAudioSpeed = () => {
+    const {wavesurfer, audioSpeed} = this.state;
+    if (!wavesurfer || !wavesurfer.setPlaybackRate) return;
+    const newAudioSpeed = audioSpeed > 2 ? 1 : audioSpeed + 0.5;
+    this.setState({audioSpeed: newAudioSpeed});
+    wavesurfer.setPlaybackRate(newAudioSpeed);
+  };
+
   addRegion = region => {
     const {wavesurfer} = this.state;
     if (!wavesurfer || !wavesurfer.addRegion) return;
@@ -157,7 +220,7 @@ export default class Waveform extends React.Component {
   };
 
   renderTitle = () => {
-    const {duration, currentTime, playing} = this.state;
+    const {duration, currentTime, playing, audioSpeed} = this.state;
     const playclass = playing ? 'empty' : 'primary';
     const playTag = this.renderAudioTag('play');
     const pauseTag = this.renderAudioTag('pause');
@@ -168,6 +231,11 @@ export default class Waveform extends React.Component {
           className={`pull-left btn btn-menu btn-${playclass}`}
           onClick={this.playAudio}>
           {playing ? pauseTag : playTag}
+        </button>
+        <button
+          className={`bottom btn btn-menu btn-${playclass}`}
+          onClick={this.toggleAudioSpeed}>
+          {audioSpeed.toFixed(1)}x
         </button>
         <code>
           {this.formatTime(currentTime)}|{this.formatTime(duration)}
