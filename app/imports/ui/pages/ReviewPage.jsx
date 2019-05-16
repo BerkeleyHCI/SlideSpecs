@@ -132,6 +132,8 @@ class ReviewPage extends BaseComponent {
     const slide = first.toString();
     const select = {slideNo: slide, slideId: image._id};
     this.setState({bySlide: [slide], selected: [select]});
+    const [item] = document.getElementsByClassName('ds-selected');
+    if (item) item.scrollIntoView({behavior: 'smooth'});
   };
 
   componentDidMount = () => {
@@ -755,12 +757,14 @@ class ReviewPage extends BaseComponent {
         return;
         break;
       case 37:
+      case 38:
         //console.log('Left key pressed');
         event.preventDefault();
         event.stopPropagation();
         this.moveSlideUpdate(-1);
         break;
       case 39:
+      case 40:
         //console.log('Right key pressed');
         event.preventDefault();
         event.stopPropagation();

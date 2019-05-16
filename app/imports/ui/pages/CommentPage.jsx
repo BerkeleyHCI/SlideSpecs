@@ -60,6 +60,7 @@ class CommentPage extends BaseComponent {
 
   componentDidMount = () => {
     this.handleLoad();
+    document.getElementById('__reviewBackground').focus();
 
     // set image to link of the first slide
     const {images} = this.props;
@@ -401,7 +402,7 @@ class CommentPage extends BaseComponent {
       }
 
       const active = selected.some(s => s.slideId == f._id);
-      const setHover = () => this.handleMouseOver(link);
+      const setHover = _.throttle(() => this.handleMouseOver(link), 100);
       const setSelect = e => this.updateSelected(e, f);
       return (
         <FileReview
@@ -603,6 +604,44 @@ class CommentPage extends BaseComponent {
     );
   };
 
+  moveSlideUpdate = inc => {
+    const {images} = this.props;
+    const {selected} = this.state;
+    const [first] = selected;
+    const firstNo = !first ? 1 : +first.slideNo + inc;
+    if (firstNo > images.length || firstNo == 0) return;
+    const image = images[firstNo - 1];
+    //const [item] = document.getElementsByClassName('file-item-review active');
+    //if (item) item.scrollIntoView();
+    this.setState({selected: [{slideNo: `${firstNo}`, slideId: image._id}]});
+    this.updateImage(image._id);
+  };
+
+  handleKeyDown = event => {
+    switch (event.keyCode) {
+      //case 32:
+      ////console.log('space key pressed');
+      //event.preventDefault();
+      //event.stopPropagation();
+      //return;
+      //break;
+      case 37:
+      case 38:
+        console.log('Left key pressed');
+        event.preventDefault();
+        event.stopPropagation();
+        this.moveSlideUpdate(-1);
+        break;
+      case 39:
+      case 40:
+        console.log('Right key pressed');
+        event.preventDefault();
+        event.stopPropagation();
+        this.moveSlideUpdate(+1);
+        break;
+    }
+  };
+
   render() {
     const {images} = this.props;
     const cmtHead = this.renderCommentFilter();
@@ -611,7 +650,13 @@ class CommentPage extends BaseComponent {
 
     return images ? (
       this.renderRedirect() || (
-        <div className="reviewView" onMouseDown={this.clearButtonBG}>
+        <div
+          tabIndex="0"
+          className="reviewView full-height"
+          id="__reviewBackground"
+          onKeyDown={this.handleKeyDown}
+          onKeyPress={this.handleKeyDown}
+          onMouseDown={this.clearButtonBG}>
           <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
