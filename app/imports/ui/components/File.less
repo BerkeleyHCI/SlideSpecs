@@ -24,6 +24,14 @@ div.file-item.ds-selected {
   }
 }
 
+div.file-item.active {
+  .slide-overlay,
+  .overlay {
+    background: rgba(0, 0, 0, 0.75);
+    opacity: 1;
+  }
+}
+
 div.file-item {
   position: absolute;
   margin-bottom: 1em;
@@ -358,6 +366,7 @@ kbd.tag-count {
 
 .full-height {
   height: 100%;
+  outline: 0;
 }
 
 .full-width {
