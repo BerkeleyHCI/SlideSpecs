@@ -20,7 +20,7 @@
     "howler": "^2.1.2",
     "http2": "^3.3.7",
     "imagesloaded": "^4.1.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "meteor-node-stubs": "^0.4.1",
     "mongo-express": "^0.51.2",
     "prop-types": "^15.7.2",

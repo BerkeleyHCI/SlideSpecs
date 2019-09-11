@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 
 class Clock extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      time: new Date().toLocaleTimeString(),
+      time: new Date().toLocaleTimeString()
     };
   }
 
@@ -18,12 +18,13 @@ class Clock extends Component {
 
   tick() {
     this.setState({
-      time: new Date().toLocaleTimeString(),
+      time: new Date().toLocaleTimeString()
     });
   }
 
   render() {
-    return <span className="clock">{this.state.time}</span>;
+    const { className } = this.props;
+    return <span className={"clock " + className}>{this.state.time}</span>;
   }
 }
 

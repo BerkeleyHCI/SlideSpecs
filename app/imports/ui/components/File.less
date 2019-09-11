@@ -1,4 +1,4 @@
-@import '{}/imports/ui/stylesheets/utils.less';
+@import "{}/imports/ui/stylesheets/utils.less";
 
 @keyframes pulse {
   0% {
@@ -166,7 +166,7 @@ div.file-item.file-item-review {
 }
 
 div.reviewView {
-  min-height: calc(~'100vh - 25px');
+  min-height: calc(~"100vh - 25px");
   margin: 0px;
 
   .slide-tags {
@@ -190,7 +190,7 @@ div.reviewView {
     }
   }
 
-  [class*='col-'] {
+  [class*="col-"] {
     padding: 0px 15px;
   }
 
@@ -199,7 +199,7 @@ div.reviewView {
   }
 
   .clear-icon:hover:before {
-    content: '× ';
+    content: "× ";
   }
 
   .btn-round {
@@ -241,7 +241,7 @@ div.reviewView {
   }
 
   #review-view {
-    min-height: calc(~'100vh - 66px');
+    min-height: calc(~"100vh - 66px");
     max-width: 2000px;
     margin: 0px auto 4em auto;
   }
@@ -301,6 +301,12 @@ div.reviewView {
       background: @color-empty;
       animation: none;
     }
+  }
+}
+
+@media only screen and (max-width: 692px) {
+  .hidden-small {
+    display: none !important;
   }
 }
 
