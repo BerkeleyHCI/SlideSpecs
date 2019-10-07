@@ -678,7 +678,7 @@ class ReviewPage extends BaseComponent {
       };
     });
 
-    return <CommentList title={"discussion"} items={regionComments} defaultOpen={false} />;
+    return <CommentList title={"discussion"} items={regionComments} defaultOpen={true} />;
   };
 
   handleKeyDown = event => {
