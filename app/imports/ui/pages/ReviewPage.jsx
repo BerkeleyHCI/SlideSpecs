@@ -526,8 +526,9 @@ class ReviewPage extends BaseComponent {
     const wordList = this.renderWordList(results);
     const content = (
       <div className="clearfix comment">
-        <small className="note pull-right">{(confidence * 100.0).toFixed(1)}% confidence</small>
         {wordList}
+        <hr />
+        <p>{(confidence * 100.0).toFixed(1)}% confidence</p>
       </div>
     );
 
