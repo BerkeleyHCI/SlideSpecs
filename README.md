@@ -94,8 +94,13 @@ Configuration options (`.eslintrc`)
 ### Configuration
 
 - current cert: `/usr/local/etc/dehydrated`
-- renew cert: `sudo dehydrated --cron -x`
-- todo: https://github.com/tozd/docker-meteor
+- SSL/HTTPS
+    - (old) renew cert: `sudo dehydrated --cron -x`
+    - (new) https://certbot.eff.org/lets-encrypt/osx-nginx
+- todo
+    - https://github.com/tozd/docker-meteor
+    - run in 'production' mode
+
 
 ##### Server
 
