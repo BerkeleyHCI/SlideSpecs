@@ -97,6 +97,7 @@ Configuration options (`.eslintrc`)
 - SSL/HTTPS
     - (old) renew cert: `sudo dehydrated --cron -x`
     - (new) https://certbot.eff.org/lets-encrypt/osx-nginx
+    - new - `sudo certbot renew`
 - todo
     - https://github.com/tozd/docker-meteor
     - run in 'production' mode
@@ -106,6 +107,7 @@ Configuration options (`.eslintrc`)
 
 - nginx: `/usr/local/etc/nginx/servers/`
 - load conf: `sudo /usr/local/bin/nginx -s reload`
+
 
 ```
 map $http_upgrade $connection_upgrade {
