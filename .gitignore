@@ -13,3 +13,4 @@ build/
 datalogs/
 output/
 bayscope
+.DS_Store
