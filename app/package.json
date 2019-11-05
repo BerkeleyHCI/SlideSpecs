@@ -32,6 +32,7 @@
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.11.0",
     "react-drop-to-upload": "^1.0.2",
+    "react-hot-loader": "^4.12.15",
     "react-markdown": "^3.6.0",
     "react-router-dom": "^4.3.1",
     "react-speech-recognition": "^1.1.0",
