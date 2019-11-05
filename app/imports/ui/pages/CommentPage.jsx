@@ -572,6 +572,10 @@ class CommentPage extends BaseComponent {
   };
 
   handleKeyDown = event => {
+    if (event.target.type === "textarea") {
+      return; // don't change if writing
+    }
+
     switch (event.keyCode) {
       //case 32:
       ////console.log('space key pressed');
@@ -581,14 +585,14 @@ class CommentPage extends BaseComponent {
       //break;
       case 37:
       case 38:
-        console.log("Left key pressed");
+        // console.log("Left key pressed");
         event.preventDefault();
         event.stopPropagation();
         this.moveSlideUpdate(-1);
         break;
       case 39:
       case 40:
-        console.log("Right key pressed");
+        // console.log("Right key pressed");
         event.preventDefault();
         event.stopPropagation();
         this.moveSlideUpdate(+1);
