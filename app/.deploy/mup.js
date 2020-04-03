@@ -3,7 +3,8 @@ module.exports = {
     one: {
       host: '169.229.63.106',
       username: 'jwrnr',
-    }
+      //pem: '~/.ssh/bayscope',
+    },
   },
 
   app: {
@@ -19,11 +20,10 @@ module.exports = {
     },
 
     env: {
-      // TODO: Change to your app's url
       // If you are using ssl, it needs to start with https://
-      ROOT_URL: 'http://slidespecs.berkeley.edu',
-      MONGO_URL: 'mongodb://mongodb/meteor',
-      MONGO_OPLOG_URL: 'mongodb://mongodb/local',
+      ROOT_URL: 'https://slidespecs.berkeley.edu',
+      //MONGO_URL: 'mongodb://mongodb/meteor',
+      //MONGO_OPLOG_URL: 'mongodb://mongodb/local',
     },
 
     docker: {
@@ -33,14 +33,14 @@ module.exports = {
 
     // Show progress bar while uploading bundle to server
     // You might need to disable it on CI servers
-    enableUploadProgressBar: true
+    enableUploadProgressBar: true,
   },
 
   mongo: {
     version: '3.4.1',
     servers: {
-      one: {}
-    }
+      one: {},
+    },
   },
 
   // (Optional)
