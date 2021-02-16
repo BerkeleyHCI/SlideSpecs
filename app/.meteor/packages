@@ -6,7 +6,7 @@
 
 # meteor libraries
 meteor-base@1.4.0
-ecmascript@0.14.3
+ecmascript@0.15.0
 es5-shim@4.8.0
 check@1.3.1
 tracker@1.2.0
@@ -19,7 +19,7 @@ less@2.8.0
 static-html@1.1.12_1
 
 # data
-mongo@1.10.0
+mongo@1.10.1
 aldeed:simple-schema
 aldeed:collection2
 mdg:validated-method
@@ -27,12 +27,12 @@ mdg:validated-method
 # i18n
 
 # accounts
-accounts-password@1.6.0
+accounts-password@1.7.0
 
 # mobile
 
 # production
-ddp-rate-limiter@1.0.7
+ddp-rate-limiter@1.0.9
 
 # rest apis
 simple:rest-accounts-password
@@ -41,10 +41,10 @@ simple:rest
 # testing
 
 # security
-dynamic-import@0.5.2
+dynamic-import@0.6.0
 twbs:bootstrap
 session@1.2.0
-webapp@1.9.1
+webapp@1.10.0
 random@1.2.0
 browser-policy@1.1.0
 ostrio:files
