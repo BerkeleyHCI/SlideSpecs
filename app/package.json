@@ -6,7 +6,7 @@
     "test": "meteor test --once --driver-package dispatch:mocha-phantomjs"
   },
   "dependencies": {
-    "@babel/runtime": "^7.13.9",
+    "@babel/runtime": "^7.13.10",
     "@google-cloud/speech": "^2.3.1",
     "@google-cloud/storage": "^2.5.0",
     "autoprefixer": "^8.6.5",
