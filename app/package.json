@@ -12,6 +12,7 @@
     "autoprefixer": "^8.6.5",
     "autosize": "^4.0.2",
     "bcrypt": "^4.0.1",
+    "caniuse-lite": "^1.0.30001199",
     "classnames": "^2.2.6",
     "enzyme": "^3.11.0",
     "faker": "^4.1.0",
