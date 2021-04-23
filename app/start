@@ -7,10 +7,14 @@ while [ $result -ne 0 ]; do
     meteor --production 2>&1 | tee -a output.log
     result=${PIPESTATUS[0]}
     if [ $result -ne 0 ]; then
-        echo "\n\n\n*****************************************************"
+        echo ""
+        echo ""
+        echo "*****************************************************"
         echo "Date: $(date)"
         echo "Server crashed with exit code $result.  Respawning.."
-        echo "*****************************************************\n\n"
+        echo "*****************************************************"
+        echo ""
+        echo ""
     fi
 done
 
