@@ -12,8 +12,8 @@
     "autoprefixer": "^8.6.5",
     "autosize": "^4.0.2",
     "bcrypt": "^4.0.1",
-    "caniuse-lite": "^1.0.30001199",
     "classnames": "^2.2.6",
+    "core-js": "^3.11.0",
     "enzyme": "^3.11.0",
     "faker": "^4.1.0",
     "gtoken": "^5.2.1",
@@ -36,6 +36,7 @@
     "react-router-dom": "^4.3.1",
     "react-speech-recognition": "^3.8.0",
     "react-toastify": "^4.5.2",
+    "regenerator-runtime": "^0.13.7",
     "request": "^2.88.0",
     "wavesurfer.js": "^2.2.1"
   },
@@ -53,6 +54,7 @@
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
     "babel-eslint": "^8.2.6",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-import-resolver-meteor": "^0.4.0",
