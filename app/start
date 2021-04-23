@@ -2,7 +2,15 @@
 
 export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/research-slidespecs/app/private/slidespecs.json
 
-until meteor --production 2>&1 | tee -a output.log; do
-    echo "Server crashed with exit code $?.  Respawning.." >&2
-    sleep 1
+result=1
+while [ $result -ne 0 ]; do
+    meteor --production 2>&1 | tee -a output.log
+    result=${PIPESTATUS[0]}
+    if [ $result -ne 0 ]; then
+        echo "\n\n\n*****************************************************"
+        echo "Date: $(date)"
+        echo "Server crashed with exit code $result.  Respawning.."
+        echo "*****************************************************\n\n"
+    fi
 done
+
