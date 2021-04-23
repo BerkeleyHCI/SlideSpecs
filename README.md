@@ -27,7 +27,7 @@ meteor bundle (future deploy option)
 To export data from production, use [`export.sh`](./export.sh). Move the files
 in a location specified in `import/api/storagePath.js`. Import the mongoDB
 records into a running meteor application with `mongoimport`, shown in the
-[`import.sh`](./import.sh json-folder/) script. Copy from remote server:
+[`import.sh`](./import.sh) script. Copy from remote server:
 
      scp -i ~/.ssh/slidespecs slidespecs.berkeley.edu:/Users/jwrnr/Code/research-slidespecs/data.tar.gz .
 
