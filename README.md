@@ -11,16 +11,16 @@ running:
     open http://localhost:3000
     meteor
 
-deploying
+deploying:
 
-    ssh bayscope # bayscope2.eecs
-    cd Desktop/peer-feedback
+    ssh slidespecs # bayscope2.eecs.berkeley.edu
+    cd Code/research-slidespecs
     git pull
 
-meteor bundle (future deploy option)
+monitoring:
 
-    cd app && meteor build --server-only ../output
-    # TODO - move this to server, install reqs, run
+    ssh slidespecs # bayscope2.eecs.berkeley.edu
+    tmux a
 
 ##### Data Import/Export
 
