@@ -58,7 +58,7 @@ class AboutPage extends BaseComponent {
           feedback or questions.
         </p>
 
-        <h3 className="v-pad">
+        <h3 className="v-pad" />
         <div className="alert">
           SlideSpecs is a collaborative presentation feedback platform.
           <hr />
@@ -107,11 +107,7 @@ class AboutPage extends BaseComponent {
       </div>
     );
 
-    return (
-      this.renderRedirect() || (
-        <MenuContainer {...this.props} content={content} />
-      )
-    );
+    return this.renderRedirect() || <MenuContainer {...this.props} content={content} />;
   }
 }
 

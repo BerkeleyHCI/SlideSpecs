@@ -1,7 +1,5 @@
 import {FilesCollection} from 'meteor/ostrio:files';
-
-// TODO make save folder dynamic, or relative?...
-const storagePath = '/Users/jwrnr/Downloads/slidespecs';
+import {storagePath} from '../storagePath.js';
 
 export const Images = new FilesCollection({
   collectionName: 'images',
