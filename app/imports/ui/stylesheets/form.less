@@ -1,165 +1,165 @@
-@import './utils.less';
+@import "./utils.less";
 
 // Standard text input
-input[type='text'],
-input[type='email'],
-input[type='username'],
-input[type='password'],
+input[type="text"],
+input[type="email"],
+input[type="username"],
+input[type="password"],
 textarea {
-  // Sizing
-  .font-s2;
-  .type-regular;
-  padding: 0.75rem 0; //total height ~48
-  line-height: 1.5rem !important;
+    // Sizing
+    .font-s2;
+    .type-regular;
+    padding: 0.75rem 0; //total height ~48
+    line-height: 1.5rem !important;
 
-  // Style
-  ::placeholder {
-    color: @color-complementary;
-  }
+    // Style
+    ::placeholder {
+        color: @color-complementary;
+    }
 
-  border: none;
-  border-radius: 0;
-  box-sizing: border-box;
-  color: @color-full;
-  background-color: aliceblue;
-  outline: none;
+    border: none;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: @color-full;
+    background-color: aliceblue;
+    outline: none;
 
-  &:hover {
-    background-color: darken(aliceblue, 1%);
-  }
+    &:hover {
+        background-color: darken(aliceblue, 1%);
+    }
 
-  &[disabled] {
-    opacity: 0.5;
-  }
+    &[disabled] {
+        opacity: 0.5;
+    }
 }
 
 input {
-  .yes-select();
+    .yes-select();
 }
 
 code {
-  .yes-select();
-  padding-right: 0.4em;
-  padding-left: 0.4em;
+    .yes-select();
+    padding-right: 0.4em;
+    padding-left: 0.4em;
 }
 
 textarea {
-  line-height: 1rem !important;
+    line-height: 1rem !important;
 }
 
 // Remove chrome/saf autofill yellow background
 input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px @color-empty inset;
+    -webkit-box-shadow: 0 0 0 1000px @color-empty inset;
 }
 
 // Custom checkbox
 .checkbox {
-  display: inline-block;
-  height: 3rem;
-  position: relative;
-  vertical-align: middle;
-  width: 44px;
+    display: inline-block;
+    height: 3rem;
+    position: relative;
+    vertical-align: middle;
+    width: 44px;
 
-  input[type='checkbox'] {
-    font-size: 1em;
-    visibility: hidden;
+    input[type="checkbox"] {
+        font-size: 1em;
+        visibility: hidden;
 
-    & + span:before {
-      .position(absolute, 50%, auto, auto, 50%, 0.85em, 0.85em);
-      transform: translate3d(-50%, -50%, 0);
-      background: transparent;
-      box-shadow: #abdfe3 0 0 0 1px inset;
-      content: '';
-      display: block;
+        & + span:before {
+            .position(absolute, 50%, auto, auto, 50%, 0.85em, 0.85em);
+            transform: translate3d(-50%, -50%, 0);
+            background: transparent;
+            box-shadow: #abdfe3 0 0 0 1px inset;
+            content: "";
+            display: block;
+        }
+
+        &:checked + span:before {
+            box-shadow: none;
+            color: @color-medium-rare;
+
+            // Icon family from icon.lessimport
+            font-family: "todos";
+            speak: none;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+
+            // Better Font Rendering
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+
+            // Checkmark icon
+            content: "\e612";
+        }
     }
-
-    &:checked + span:before {
-      box-shadow: none;
-      color: @color-medium-rare;
-
-      // Icon family from icon.lessimport
-      font-family: 'todos';
-      speak: none;
-      font-style: normal;
-      font-weight: normal;
-      font-variant: normal;
-      text-transform: none;
-      line-height: 1;
-
-      // Better Font Rendering
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-
-      // Checkmark icon
-      content: '\e612';
-    }
-  }
 }
 
 // Input with an icon
 .input-symbol {
-  display: inline-block;
-  position: relative;
+    display: inline-block;
+    position: relative;
 
-  &.error [class^='icon-'],
-  &.error [class*=' icon-'] {
-    color: @color-negative;
-  }
-
-  // Position & padding
-  [class^='icon-'],
-  [class*=' icon-'] {
-    left: 1em;
-  }
-
-  input {
-    padding-left: 3em;
-  }
-
-  // Styling
-  input {
-    width: 100%;
-
-    &:focus {
-      & + [class^='icon-'],
-      & + [class*=' icon-'] {
-        color: @color-primary;
-      }
+    &.error [class^="icon-"],
+    &.error [class*=" icon-"] {
+        color: @color-negative;
     }
-  }
 
-  [class^='icon-'],
-  [class*=' icon-'] {
-    transition: all 300ms ease-in;
-    transform: translate3d(0, -50%, 0);
-    background: transparent;
-    color: @color-medium;
-    font-size: 1em;
-    height: 1em;
-    position: absolute;
-    top: 50%;
-    width: 1em;
-  }
+    // Position & padding
+    [class^="icon-"],
+    [class*=" icon-"] {
+        left: 1em;
+    }
+
+    input {
+        padding-left: 3em;
+    }
+
+    // Styling
+    input {
+        width: 100%;
+
+        &:focus {
+            & + [class^="icon-"],
+            & + [class*=" icon-"] {
+                color: @color-primary;
+            }
+        }
+    }
+
+    [class^="icon-"],
+    [class*=" icon-"] {
+        transition: all 300ms ease-in;
+        transform: translate3d(0, -50%, 0);
+        background: transparent;
+        color: @color-medium;
+        font-size: 1em;
+        height: 1em;
+        position: absolute;
+        top: 50%;
+        width: 1em;
+    }
 }
 
 #fileinput {
-  display: none;
+    display: none;
 }
 
-input[type='text'].code {
-  .font-s3;
-  .yes-select();
-  font-family: monospace;
-  padding: 0em 1em;
-  width: 100%;
+input[type="text"].code {
+    .font-s3;
+    .yes-select();
+    font-family: monospace;
+    padding: 0em 1em;
+    width: 100%;
 }
 
-input[type='text'].padded {
-  .font-s3;
-  .yes-select();
-  font-family: monospace;
-  padding: 1em;
-  width: 100%;
+input[type="text"].padded {
+    .font-s3;
+    .yes-select();
+    font-family: monospace;
+    padding: 1em;
+    width: 100%;
 }
 
 // Matching column height bootstrap
@@ -170,8 +170,8 @@ input[type='text'].padded {
  * --------------------------------------------------
  */
 .row-eq-height {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
 }

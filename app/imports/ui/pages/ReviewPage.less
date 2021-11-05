@@ -1,50 +1,50 @@
-@import '{}/imports/ui/stylesheets/utils.less';
+@import "{}/imports/ui/stylesheets/utils.less";
 
 .time-marker {
-  .really-no-select();
-  padding: 0.2rem;
-  .font-s1;
+    .really-no-select();
+    padding: 0.2rem;
+    .font-s1;
 }
 .time-marker:hover {
-  background: @color-note;
+    background: @color-note;
 }
 .time-marker:active,
 .time-marker-active {
-  /*box-shadow: inset 0 -2px 0 0 @color-medium;*/
-  box-shadow: inset 0 -2px 0 0 red;
-  color: red;
+    /*box-shadow: inset 0 -2px 0 0 @color-medium;*/
+    box-shadow: inset 0 -2px 0 0 red;
+    color: red;
 }
 
 #grid-holder {
-  max-height: 45vh !important;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  margin: 0px;
+    max-height: 45vh !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 0px;
 }
 
 #grid {
-  background: darken(@color-empty, 2%);
-  padding: 4px 0px;
-  position: fixed;
-  width: 100%;
+    background: darken(@color-empty, 2%);
+    padding: 4px 0px;
+    position: fixed;
+    width: 100%;
 }
 
 .reviewPage {
-  min-height: 90vh;
-  outline-color: white;
-  .btn-m-straight {
-    border-radius: 4px;
-    .btn-menu:not(.active) {
-      background-color: @color-rare;
-      color: @color-well !important;
-      &:hover {
-        background-color: @color-medium;
-        color: @color-raw !important;
-      }
+    min-height: 90vh;
+    outline-color: white;
+    .btn-m-straight {
+        border-radius: 4px;
+        .btn-menu:not(.active) {
+            background-color: @color-rare;
+            color: @color-well !important;
+            &:hover {
+                background-color: @color-medium;
+                color: @color-raw !important;
+            }
+        }
     }
-  }
 
-  div.file-item.file-item-review .overlay {
-    .font-s2();
-  }
+    div.file-item.file-item-review .overlay {
+        .font-s2();
+    }
 }

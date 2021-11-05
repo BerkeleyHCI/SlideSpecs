@@ -693,7 +693,7 @@ class CommentPage extends BaseComponent {
 
     renderContext = () => {
         const fileList = this.renderFiles();
-        const { session,  talkOwner } = this.props;
+        const { session, talkOwner } = this.props;
         const { image, hoverImage, selected, filtered, bySlide } = this.state;
         const { name, talk, reviewer, sessionOwner } = this.props;
         const imgSrc = hoverImage ? hoverImage : image;

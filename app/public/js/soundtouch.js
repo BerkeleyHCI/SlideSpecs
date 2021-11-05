@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-(function(window) {
+(function (window) {
     /**
      * Giving this value for the sequence length sets automatic parameter value
      * according to tempo setting (recommended)
@@ -76,109 +76,21 @@
     // Table for the hierarchical mixing position seeking algorithm
     var _SCAN_OFFSETS = [
         [
-            124,
-            186,
-            248,
-            310,
-            372,
-            434,
-            496,
-            558,
-            620,
-            682,
-            744,
-            806,
-            868,
-            930,
-            992,
-            1054,
-            1116,
-            1178,
-            1240,
-            1302,
-            1364,
-            1426,
-            1488,
-            0
+            124, 186, 248, 310, 372, 434, 496, 558, 620, 682, 744, 806, 868,
+            930, 992, 1054, 1116, 1178, 1240, 1302, 1364, 1426, 1488, 0,
         ],
         [
-            -100,
-            -75,
-            -50,
-            -25,
-            25,
-            50,
-            75,
-            100,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
+            -100, -75, -50, -25, 25, 50, 75, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
         ],
         [
-            -20,
-            -15,
-            -10,
-            -5,
-            5,
-            10,
-            15,
-            20,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
+            -20, -15, -10, -5, 5, 10, 15, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
         ],
         [
-            -4,
-            -3,
-            -2,
-            -1,
-            1,
-            2,
-            3,
-            4,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        ]
+            -4, -3, -2, -1, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ],
     ];
 
     // Adjust tempo param according to tempo, so that variating processing sequence length is used
@@ -245,10 +157,10 @@
         set outputBuffer(outputBuffer) {
             this._outputBuffer = outputBuffer;
         },
-        clear: function() {
+        clear: function () {
             this._inputBuffer.clear();
             this._outputBuffer.clear();
-        }
+        },
     };
 
     function RateTransposer(createBuffers) {
@@ -262,12 +174,12 @@
             this._rate = rate;
             // TODO aa filter
         },
-        _reset: function() {
+        _reset: function () {
             this.slopeCount = 0;
             this.prevSampleL = 0;
             this.prevSampleR = 0;
         },
-        process: function() {
+        process: function () {
             // TODO aa filter
             var numFrames = this._inputBuffer.frameCount;
             this._outputBuffer.ensureAdditionalCapacity(
@@ -277,7 +189,7 @@
             this._inputBuffer.receive();
             this._outputBuffer.put(numFramesOutput);
         },
-        _transpose: function(numFrames) {
+        _transpose: function (numFrames) {
             if (numFrames === 0) {
                 return 0; // No work.
             }
@@ -332,7 +244,7 @@
             this.prevSampleR = src[srcOffset + 2 * numFrames - 1];
 
             return i;
-        }
+        },
     });
 
     function FifoSampleBuffer() {
@@ -356,14 +268,14 @@
         get endIndex() {
             return (this._position + this._frameCount) * 2;
         },
-        clear: function(frameCount) {
+        clear: function (frameCount) {
             this.receive(frameCount);
             this.rewind();
         },
-        put: function(numFrames) {
+        put: function (numFrames) {
             this._frameCount += numFrames;
         },
-        putSamples: function(samples, position, numFrames) {
+        putSamples: function (samples, position, numFrames) {
             position = position || 0;
             var sourceOffset = position * 2;
             if (!(numFrames >= 0)) {
@@ -381,7 +293,7 @@
 
             this._frameCount += numFrames;
         },
-        putBuffer: function(buffer, position, numFrames) {
+        putBuffer: function (buffer, position, numFrames) {
             position = position || 0;
             if (!(numFrames >= 0)) {
                 numFrames = buffer.frameCount - position;
@@ -392,14 +304,14 @@
                 numFrames
             );
         },
-        receive: function(numFrames) {
+        receive: function (numFrames) {
             if (!(numFrames >= 0) || numFrames > this._frameCount) {
                 numFrames = this._frameCount;
             }
             this._frameCount -= numFrames;
             this._position += numFrames;
         },
-        receiveSamples: function(output, numFrames) {
+        receiveSamples: function (output, numFrames) {
             var numSamples = numFrames * 2;
             var sourceOffset = this.startIndex;
             output.set(
@@ -407,14 +319,14 @@
             );
             this.receive(numFrames);
         },
-        extract: function(output, position, numFrames) {
+        extract: function (output, position, numFrames) {
             var sourceOffset = this.startIndex + position * 2;
             var numSamples = numFrames * 2;
             output.set(
                 this._vector.subarray(sourceOffset, sourceOffset + numSamples)
             );
         },
-        ensureCapacity: function(numFrames) {
+        ensureCapacity: function (numFrames) {
             var minLength = numFrames * 2;
             if (this._vector.length < minLength) {
                 var newVector = new Float32Array(minLength);
@@ -427,17 +339,17 @@
                 this.rewind();
             }
         },
-        ensureAdditionalCapacity: function(numFrames) {
+        ensureAdditionalCapacity: function (numFrames) {
             this.ensureCapacity(this.frameCount + numFrames);
         },
-        rewind: function() {
+        rewind: function () {
             if (this._position > 0) {
                 this._vector.set(
                     this._vector.subarray(this.startIndex, this.endIndex)
                 );
                 this._position = 0;
             }
-        }
+        },
     };
 
     function SimpleFilter(sourceSound, pipe) {
@@ -458,14 +370,14 @@
         set position(position) {
             if (position > this._position) {
                 throw new RangeError(
-                    'New position may not be greater than current position'
+                    "New position may not be greater than current position"
                 );
             }
             var newOutputBufferPosition =
                 this.outputBufferPosition - (this._position - position);
             if (newOutputBufferPosition < 0) {
                 throw new RangeError(
-                    'New position falls outside of history buffer'
+                    "New position falls outside of history buffer"
                 );
             }
             this.outputBufferPosition = newOutputBufferPosition;
@@ -484,7 +396,7 @@
         get outputBuffer() {
             return this._pipe.outputBuffer;
         },
-        fillInputBuffer: function(numFrames) {
+        fillInputBuffer: function (numFrames) {
             var samples = new Float32Array(numFrames * 2);
             var numFramesExtracted = this.sourceSound.extract(
                 samples,
@@ -494,7 +406,7 @@
             this._sourcePosition += numFramesExtracted;
             this.inputBuffer.putSamples(samples, 0, numFramesExtracted);
         },
-        fillOutputBuffer: function(numFrames) {
+        fillOutputBuffer: function (numFrames) {
             while (this.outputBuffer.frameCount < numFrames) {
                 // TODO hardcoded buffer size
                 var numInputFrames = 8192 * 2 - this.inputBuffer.frameCount;
@@ -508,7 +420,7 @@
                 this._pipe.process();
             }
         },
-        extract: function(target, numFrames) {
+        extract: function (target, numFrames) {
             this.fillOutputBuffer(this.outputBufferPosition + numFrames);
 
             var numFramesExtracted = Math.min(
@@ -533,14 +445,14 @@
             this._position += numFramesExtracted;
             return numFramesExtracted;
         },
-        handleSampleData: function(e) {
+        handleSampleData: function (e) {
             this.extract(e.data, 4096);
         },
-        clear: function() {
+        clear: function () {
             // TODO yuck
             this._pipe.clear();
             this.outputBufferPosition = 0;
-        }
+        },
     };
 
     function Stretch(createBuffers, sampleRate) {
@@ -564,11 +476,11 @@
     }
     extend(Stretch.prototype, AbstractFifoSamplePipe.prototype);
     extend(Stretch.prototype, {
-        clear: function() {
+        clear: function () {
             AbstractFifoSamplePipe.prototype.clear.call(this);
             this._clearMidBuffer();
         },
-        _clearMidBuffer: function() {
+        _clearMidBuffer: function () {
             if (this.bMidBufferDirty) {
                 this.bMidBufferDirty = false;
                 this.pMidBuffer = null;
@@ -585,7 +497,7 @@
          *      position (default = 28 ms)
          * 'overlapMS' = overlapping length (default = 12 ms)
          */
-        setParameters: function(
+        setParameters: function (
             aSampleRate,
             aSequenceMS,
             aSeekWindowMS,
@@ -660,7 +572,7 @@
         /**
          * Calculates overlapInMsec period length in samples.
          */
-        calculateOverlapLength: function(overlapInMsec) {
+        calculateOverlapLength: function (overlapInMsec) {
             var newOvl;
 
             // TODO assert(overlapInMsec >= 0);
@@ -675,14 +587,14 @@
             this.pRefMidBuffer = new Float32Array(this.overlapLength * 2);
             this.pMidBuffer = new Float32Array(this.overlapLength * 2);
         },
-        checkLimits: function(x, mi, ma) {
+        checkLimits: function (x, mi, ma) {
             return x < mi ? mi : x > ma ? ma : x;
         },
 
         /**
          * Calculates processing sequence length according to tempo setting
          */
-        calcSeqParameters: function() {
+        calcSeqParameters: function () {
             var seq;
             var seek;
 
@@ -717,7 +629,7 @@
         /**
          * Seeks for the optimal overlap-mixing position.
          */
-        seekBestOverlapPosition: function() {
+        seekBestOverlapPosition: function () {
             if (this.bQuickSeek) {
                 return this.seekBestOverlapPositionStereoQuick();
             } else {
@@ -733,7 +645,7 @@
          * sample sequences are 'most alike', in terms of the highest cross-correlation
          * value over the overlapping period
          */
-        seekBestOverlapPositionStereo: function() {
+        seekBestOverlapPositionStereo: function () {
             var bestOffs, bestCorr, corr, i;
 
             // Slopes the amplitudes of the 'midBuffer' samples.
@@ -766,7 +678,7 @@
          * sample sequences are 'most alike', in terms of the highest cross-correlation
          * value over the overlapping period
          */
-        seekBestOverlapPositionStereoQuick: function() {
+        seekBestOverlapPositionStereoQuick: function () {
             var j, bestOffs, bestCorr, corr, scanCount, corrOffset, tempOffset;
 
             // Slopes the amplitude of the 'midBuffer' samples
@@ -814,7 +726,7 @@
          * Slopes the amplitude of the 'midBuffer' samples so that cross correlation
          * is faster to calculate
          */
-        precalcCorrReferenceStereo: function() {
+        precalcCorrReferenceStereo: function () {
             var i, cnt2, temp;
 
             for (i = 0; i < this.overlapLength; i++) {
@@ -825,7 +737,7 @@
             }
         },
 
-        calcCrossCorrStereo: function(mixingPos, compare) {
+        calcCrossCorrStereo: function (mixingPos, compare) {
             var mixing = this._inputBuffer.vector;
             mixingPos += this._inputBuffer.startIndex;
 
@@ -845,14 +757,14 @@
          * Overlaps samples in 'midBuffer' with the samples in 'pInputBuffer' at position
          * of 'ovlPos'.
          */
-        overlap: function(ovlPos) {
+        overlap: function (ovlPos) {
             this.overlapStereo(2 * ovlPos);
         },
 
         /**
          * Overlaps samples in 'midBuffer' with the samples in 'pInput'
          */
-        overlapStereo: function(pInputPos) {
+        overlapStereo: function (pInputPos) {
             var pInput = this._inputBuffer.vector;
             pInputPos += this._inputBuffer.startIndex;
 
@@ -881,7 +793,7 @@
                     this.pMidBuffer[cnt2 + 1] * fTemp;
             }
         },
-        process: function() {
+        process: function () {
             var ovlSkip, offset, temp, i;
             if (this.pMidBuffer === null) {
                 // if midBuffer is empty, move the first samples of the input stream
@@ -947,14 +859,14 @@
                 this.skipFract -= ovlSkip; // maintain the fraction part, i.e. real vs. integer skip
                 this._inputBuffer.receive(ovlSkip);
             }
-        }
+        },
     });
 
     // https://bugs.webkit.org/show_bug.cgi?id=57295
     extend(Stretch.prototype, {
         get tempo() {
             return this._tempo;
-        }
+        },
     });
 
     function SoundTouch(sampleRate) {
@@ -975,7 +887,7 @@
         this._calculateEffectiveRateAndTempo();
     }
     SoundTouch.prototype = {
-        clear: function() {
+        clear: function () {
             this.rateTransposer.clear();
             this.tdStretch.clear();
         },
@@ -1016,7 +928,7 @@
         get outputBuffer() {
             return this._outputBuffer;
         },
-        _calculateEffectiveRateAndTempo: function() {
+        _calculateEffectiveRateAndTempo: function () {
             var previousTempo = this._tempo;
             var previousRate = this._rate;
 
@@ -1048,7 +960,7 @@
                 }
             }
         },
-        process: function() {
+        process: function () {
             if (this._rate > 1.0) {
                 this.tdStretch.process();
                 this.rateTransposer.process();
@@ -1056,14 +968,14 @@
                 this.rateTransposer.process();
                 this.tdStretch.process();
             }
-        }
+        },
     };
 
     function WebAudioBufferSource(buffer) {
         this.buffer = buffer;
     }
     WebAudioBufferSource.prototype = {
-        extract: function(target, numFrames, position) {
+        extract: function (target, numFrames, position) {
             var l = this.buffer.getChannelData(0),
                 r = this.buffer.getChannelData(1);
             for (var i = 0; i < numFrames; i++) {
@@ -1071,14 +983,14 @@
                 target[i * 2 + 1] = r[i + position];
             }
             return Math.min(numFrames, l.length - position);
-        }
+        },
     };
 
     function getWebAudioNode(context, filter) {
         var BUFFER_SIZE = 4096;
         var node = context.createScriptProcessor(BUFFER_SIZE, 2, 2),
             samples = new Float32Array(BUFFER_SIZE * 2);
-        node.onaudioprocess = function(e) {
+        node.onaudioprocess = function (e) {
             var l = e.outputBuffer.getChannelData(0),
                 r = e.outputBuffer.getChannelData(1);
             var framesExtracted = filter.extract(samples, BUFFER_SIZE);
@@ -1099,6 +1011,6 @@
         SimpleFilter: SimpleFilter,
         SoundTouch: SoundTouch,
         WebAudioBufferSource: WebAudioBufferSource,
-        getWebAudioNode: getWebAudioNode
+        getWebAudioNode: getWebAudioNode,
     };
 })(this);

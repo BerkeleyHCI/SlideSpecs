@@ -1,2 +1,2 @@
-import {gAudio} from '../gAudio.js';
+import { gAudio } from "../gAudio.js";
 gAudio.allowClient();
