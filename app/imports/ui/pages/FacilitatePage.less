@@ -1,58 +1,58 @@
-@import '{}/imports/ui/stylesheets/utils.less';
+@import "{}/imports/ui/stylesheets/utils.less";
 
 #sound {
-  width: 100%;
+    width: 100%;
 }
 
 .link-alert .pull-right.btn-menu {
-  margin-top: -0.3em;
+    margin-top: -0.3em;
 }
 
 canvas,
 #record {
-  display: inline-block;
-  vertical-align: middle;
-  text-align: center;
-  line-height: 7em;
-  height: 7em;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 7em;
+    height: 7em;
 }
 
 canvas {
-  border-radius: 0px 4px 0px 0px;
-  background: @color-full;
-  width: 80%;
+    border-radius: 0px 4px 0px 0px;
+    background: @color-full;
+    width: 80%;
 }
 
 #record {
-  background: @color-full;
-  border-radius: 4px 0px 0px 0px;
-  width: 20%;
+    background: @color-full;
+    border-radius: 4px 0px 0px 0px;
+    width: 20%;
 
-  &:hover img {
-    filter: brightness(100%);
-  }
+    &:hover img {
+        filter: brightness(100%);
+    }
 
-  &:hover i {
-    background-color: red;
-    border-color: @color-note;
-    color: @color-note;
-  }
+    &:hover i {
+        background-color: red;
+        border-color: @color-note;
+        color: @color-note;
+    }
 
-  i,
-  img {
-    filter: brightness(80%);
-    vertical-align: middle;
-    text-align: center;
-    padding: 1em;
-  }
+    i,
+    img {
+        filter: brightness(80%);
+        vertical-align: middle;
+        text-align: center;
+        padding: 1em;
+    }
 
-  i {
-    font-size: 1.2em;
-    color: @color-empty;
-    border-radius: 500px;
-    border: 1px solid white;
-    line-height: 1em;
-  }
+    i {
+        font-size: 1.2em;
+        color: @color-empty;
+        border-radius: 500px;
+        border: 1px solid white;
+        line-height: 1em;
+    }
 }
 
 #record.recording {
@@ -60,15 +60,15 @@ canvas {
 }
 
 .facilitateView {
-  .alert:first-child {
-    margin-top: 0px !important;
-  }
+    .alert:first-child {
+        margin-top: 0px !important;
+    }
 
-  .filterer.alert {
-    border-top: 0px;
-  }
+    .filterer.alert {
+        border-top: 0px;
+    }
 }
 
 .white-background {
-  background-color: white;
+    background-color: white;
 }
