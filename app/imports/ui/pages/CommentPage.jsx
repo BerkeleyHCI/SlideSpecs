@@ -44,11 +44,63 @@ class CommentPage extends BaseComponent {
   }
 
   handleLoad = () => {
+    const grid = document.getElementById('grid');
+    const itemSel = {itemSelector: '.file-item'};
+    const mason = new Masonry(grid, itemSel);
+    mason.on('layoutComplete', this.handleSelectable);
+  };
+
+  log = data => {
+    //console.log(data);
+    const {reviewer, sessionId} = this.props;
+    if (typeof data === 'string') {
+      this.logger.info(
+        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+      );
+    } else if (Object.keys.length > 0) {
+      this.logger.info(
+        JSON.stringify({...data, reviewer, sessionId, time: Date.now()}),
+      );
+    } else {
+      this.logger.info(
+        JSON.stringify({data, reviewer, sessionId, time: Date.now()}),
+      );
+    }
+  };
+
+  handleSelectable = items => {
     try {
-      const grid = document.getElementById("grid");
-      const itemSel = { itemSelector: ".file-item" };
-      const mason = new Masonry(grid, itemSel);
-    } catch (e) {}
+      const area = document.getElementById('grid');
+      const elements = items.map(i => i.element);
+      let {ds, selected} = this.state;
+      const updateSelection = () => {
+        const s = ds.getSelection();
+        if (s.length > 0) {
+          const filtered = s.map(this.extractFileData);
+          this.setState({selected: s, filtered});
+          this.updateImage(filtered[0].slideId);
+        }
+      };
+
+      if (!_.isEmpty(ds)) {
+        ds.selectables = elements;
+      } else {
+        ds = new DragSelect({
+          selectables: elements,
+          onDragMove: updateSelection,
+          callback: updateSelection,
+          autoScrollSpeed: 12,
+          area: area,
+        });
+        this.setState({ds});
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  elementize = x => {
+    return {element: x};
   };
 
   extractFileData = x => {
@@ -71,6 +123,13 @@ class CommentPage extends BaseComponent {
 
   componentDidUpdate = () => {
     this.handleLoad();
+  };
+
+  componentWillUnmount = () => {
+    let {ds} = this.state;
+    if (ds && ds.stop) {
+      ds.stop(); // no drag
+    }
   };
 
   setActiveComment = ac => {
@@ -140,15 +199,15 @@ class CommentPage extends BaseComponent {
 
   clearReviewer = () => {
     Meteor.logout(() => {
-      localStorage.setItem("feedbacks.referringLink", "");
-      localStorage.setItem("feedbacks.reviewer", null);
-      Session.set("reviewer", null);
+      localStorage.setItem('feedbacks.referringLink', '');
+      localStorage.setItem('feedbacks.reviewer', null);
+      Session.set('reviewer', null);
     }); // clear
   };
 
   updateImage = id => {
     try {
-      this.setState({ image: Images.findOne(id).link("original", "//") });
+      this.setState({image: Images.findOne(id).link('original', '//')});
     } catch (e) {
       console.error(e);
     }
@@ -201,13 +260,19 @@ class CommentPage extends BaseComponent {
   };
 
   clearSelection = () => {
-    this.setState({ selected: [] });
+    this.setState({filtered: [], selected: []});
   };
 
   clearButtonBG = e => {
     this.clearActiveComment();
     const base = e.target.className.split()[0];
-    const matches = [/col-/, /review-table/, /row/, /reviewView/, /clearComment/].some(x => base.match(x));
+    const matches = [
+      /col-/,
+      /review-table/,
+      /row/,
+      /reviewView/,
+      /clearComment/,
+    ].some(x => base.match(x));
 
     if (matches) {
       this.clearButton();
@@ -226,17 +291,18 @@ class CommentPage extends BaseComponent {
   };
 
   addComment = () => {
-    const { defaultPriv } = this.state;
-    const { reviewer, talk } = this.props;
-    const slides = this.state.selected;
+    const {defaultPriv} = this.state;
+    const {reviewer, talkId, sessionId} = this.props;
+    const slides = this.state.filtered;
     const cText = this.inRef.current.value.trim();
     const priv = cText.includes("#private");
     const commentFields = {
       author: reviewer,
       content: cText,
-      talk: talk._id,
+      session: sessionId,
+      talk: talkId,
       userOwn: false, // defaultPriv || priv,
-      slides
+      slides,
     };
 
     createComment.call(commentFields, (err, res) => {
@@ -251,7 +317,7 @@ class CommentPage extends BaseComponent {
 
   togglePrivate = () => {
     const defaultPriv = !this.state.defaultPriv;
-    this.setState({ defaultPriv });
+    this.setState({defaultPriv});
   };
 
   toggleFocus = () => {
@@ -262,6 +328,11 @@ class CommentPage extends BaseComponent {
   toggleUserOwn = () => {
     const userOwn = !this.state.userOwn;
     this.setState({ userOwn });
+  };
+
+  toggleUserOwn = () => {
+    const userOwn = !this.state.userOwn;
+    this.setState({userOwn});
   };
 
   renderCommentHead = () => {
@@ -282,15 +353,26 @@ class CommentPage extends BaseComponent {
     );
   };
 
+  /*
+<span className="comment-option" onClick={this.togglePrivate}>
+  <i className={'fa fa-' + (defaultPriv ? 'lock' : 'globe')} />{' '}
+  {defaultPriv ? 'private' : 'public'}
+</span>{' '}
+|{' '}
+{' '}|{' '}
+<span className="comment-option" onClick={this.toggleFollow}>
+<i className={'fa fa-' + (following ? 'image' : 'tag')} />{' '}
+{following ? 'auto' : 'manual'}
+</span>
+*/
+
   renderCommentFilter = () => {
     const filterer = this.renderFilter();
 
-    const { invert, filter } = this.state;
-    const invFn = () => this.setState({ invert: !invert });
-    const setSort = (s, f, invert) => {
-      return () => {
-        this.setState({ sorter: s, filter: f, invert });
-      };
+    const {invert, filter} = this.state;
+    const invFn = () => this.setState({invert: !invert});
+    const setSort = (s, f) => {
+      return () => this.setState({sorter: s, filter: f});
     };
 
     const timeSort = setSort("created", "time", invert);
@@ -308,7 +390,9 @@ class CommentPage extends BaseComponent {
           <button className={"btn btn-menu" + (filter === "slide" ? " active" : "")} onClick={slideSort}>
             slide
           </button>
-          <button className={"hidden-small btn btn-menu" + (filter === "auth" ? " active" : "")} onClick={authSort}>
+          <button
+            className={'btn btn-menu' + (filter === 'auth' ? ' active' : '')}
+            onClick={authSort}>
             author
           </button>
           <button className={"hidden-small btn btn-menu" + (filter === "agree" ? " active" : "")} onClick={agreeSort}>
@@ -380,9 +464,11 @@ class CommentPage extends BaseComponent {
           key={"file-" + key}
           iter={key + 1}
           fileUrl={link}
-          active={active}
-          handleClick={setSelect}
-          handleMouse={setHover}
+          fileId={f._id}
+          fileName={f.name}
+          active={false}
+          handleMouse={this.handleSlideIn}
+          handleMouseOut={this.handleSlideOut}
           handleLoad={this.handleLoad}
         />
       );
@@ -437,6 +523,26 @@ class CommentPage extends BaseComponent {
   renderComments = () => {
     const { sorter, invert, selected, activeComment, focusing, userOwn, byAuth, bySlide, byTag } = this.state;
     const { comments, reviewer, setModal, clearModal } = this.props;
+  goToTop = () => {
+    const view = document.getElementsByClassName('comments-head');
+    if (view[0]) {
+      view[0].scrollIntoView({block: 'center', inline: 'center'});
+    }
+  };
+
+  renderComments = () => {
+    const {
+      sorter,
+      invert,
+      filtered,
+      activeComment,
+      focusing,
+      userOwn,
+      byAuth,
+      bySlide,
+      byTag,
+    } = this.state;
+    const {sessionId, comments, reviewer, setModal, clearModal} = this.props;
     if (!comments || !comments.length) {
       return <div className="alert"> no comments yet</div>;
     } else {
@@ -450,8 +556,9 @@ class CommentPage extends BaseComponent {
         csort = csort.filter(c => c.author === reviewer);
       }
 
-      // Filtering 'reply' comments into array.
       // TODO - make it so this seperates on punctuation
+
+      // Filtering 'reply' comments into array.
       const reply = /\[.*\]\(\s?#c(.*?)\)/;
       const isReply = c => reply.test(c.content);
       const replies = csort.filter(isReply).map(c => {
@@ -522,6 +629,8 @@ class CommentPage extends BaseComponent {
 
   renderContext = () => {
     const fileList = this.renderFiles();
+    const {image, hoverImage, filtered, bySlide} = this.state;
+    const {name, session, talk, reviewer, talkOwner} = this.props;
     const { image, hoverImage, selected, bySlide } = this.state;
     const { name, talk, reviewer, sessionOwner } = this.props;
     const imgSrc = hoverImage ? hoverImage : image;
@@ -602,25 +711,32 @@ class CommentPage extends BaseComponent {
 
   render() {
     const { images } = this.props;
+  renderDownload = () => {
+    const {talk, talkOwner} = this.props;
+    const dlLink = `/download/${talk._id}`;
+    return (
+      talkOwner && (
+        <AlertLink center={true} text={'download comments'} link={dlLink} />
+      )
+    );
+  };
+
+  render() {
+    const {files, userId, talkOwner} = this.props;
     const cmtHead = this.renderCommentFilter();
     const comments = this.renderComments();
+    const download = this.renderDownload();
     const context = this.renderContext();
 
-    return images ? (
+    return files ? (
       this.renderRedirect() || (
-        <div
-          tabIndex="0"
-          className="reviewView full-height"
-          id="__reviewBackground"
-          onKeyDown={this.handleKeyDown}
-          onKeyPress={this.handleKeyDown}
-          onMouseDown={this.clearButtonBG}
-        >
+        <div className="reviewView" onMouseDown={this.clearButtonBG}>
           <div id="review-view" className="table review-table">
             <div className="row">
               <div className="col-sm-5 full-height-md no-float">{context}</div>
               <div className="col-sm-7">
                 {cmtHead}
+                {download}
                 {comments}
               </div>
             </div>

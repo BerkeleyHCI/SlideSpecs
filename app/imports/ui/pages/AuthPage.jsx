@@ -20,9 +20,11 @@ class AuthPage extends BaseComponent {
           {!loggingIn && !loggingOut && (
             <div>
               <Link to={`/about`}>
-                <span className="black"> [ </span>
-                about SlideSpecs
-                <span className="black"> ] </span>
+                <div className="alert">
+                  <span className="black"> [ </span>
+                  about SlideSpecs
+                  <span className="black"> ] </span>
+                </div>
               </Link>
               {content}
               <h2>{link}</h2>

@@ -9,8 +9,9 @@ import TextArea from '../components/TextArea.jsx';
 import AppNotification from '../components/AppNotification.jsx';
 import Expandable from '../components/Expandable.jsx';
 import SlideTags from '../components/SlideTags.jsx';
-
-import {setRespondingComment} from '../../api/talks/methods.js';
+import Markdown from 'react-markdown';
+import {toast} from 'react-toastify';
+import {setRespondingComment} from '../../api/sessions/methods.js';
 import {
   agreeComment,
   discussComment,
@@ -365,6 +366,19 @@ class Comment extends BaseComponent {
         <strong> {this.formatTime(startTime)} </strong>—
         <strong> {this.formatTime(stopTime)} </strong>
       </span>
+      !focused && (
+        <button
+          key={key}
+          title={txt}
+          data-id={_id}
+          data-auth={reviewer}
+          data-toggle="tooltip"
+          data-placement="top"
+          onClick={handleClick}
+          className={`btn btn-empty btn-list-item ${master && 'btn-user'}`}>
+          <i className={'fa fa-' + icon} />
+        </button>
+      )
     );
   };
 
