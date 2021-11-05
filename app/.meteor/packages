@@ -4,50 +4,31 @@
 # 'meteor add' and 'meteor remove' will edit this file for you
 # but you can also edit it by hand.
 
-# meteor libraries
 meteor-base@1.4.0
 ecmascript@0.12.4
+mongo@1.6.2
 es5-shim@4.8.0
 check@1.3.1
 tracker@1.2.0
-
-# standard libraries
 jquery
 less@2.8.0
-
-# ui
 static-html@1.1.12_1
-
-# data
-mongo@1.6.2
 aldeed:simple-schema
 aldeed:collection2
 mdg:validated-method
-
-# accounts
-accounts-password@1.7.0
-
-# production
-juliancwirko:postcss@1.0.0-beta.11
-standard-minifier-js@2.4.1
-ddp-rate-limiter@1.0.7
-app-prod-security
-
-# rest apis
+accounts-password
 simple:rest-accounts-password
 simple:rest
-
-# testing
-
-# security
-dynamic-import@0.6.0
+standard-minifiers@1.1.0
+standard-minifier-js@2.4.1
+ddp-rate-limiter@1.0.7
+dynamic-import
 twbs:bootstrap
-session@1.2.0
-webapp@1.10.1
-random@1.2.0
+session
+webapp
+random
 browser-policy@1.1.0
 ostrio:files
 react-meteor-data
-standard-minifiers@1.1.0
-npm-bcrypt@0.9.3
-service-configuration@1.0.11
+npm-bcrypt
+service-configuration
