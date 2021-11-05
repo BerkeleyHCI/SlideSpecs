@@ -28,6 +28,15 @@ class AppModal extends Component {
   }
 }
 
+AppModal.propTypes = {
+  isOpen: PropTypes.bool,
+  mtitle: PropTypes.string,
+  mtext: PropTypes.string,
+  accept: PropTypes.func,
+  deny: PropTypes.func,
+  act: PropTypes.string,
+};
+
 AppModal.defaultProps = {
   mtitle: '',
   mtext: '',

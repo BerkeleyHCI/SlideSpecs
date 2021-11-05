@@ -2,46 +2,48 @@ import {Meteor} from 'meteor/meteor';
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {Random} from 'meteor/random';
-import _ from 'lodash';
 
+import {Sessions} from '../sessions/sessions.js';
 import {Talks} from './talks.js';
 import {Comments} from '../comments/comments.js';
-import {Events} from '../events/events.js';
 import {Files} from '../files/files.js';
-import {Sounds} from '../sounds/sounds.js';
 import {Images} from '../images/images.js';
-import {logEvent} from '../events/methods.js';
+import _ from 'lodash';
 
 export const createTalk = new ValidatedMethod({
   name: 'talks.create',
-  validate: new SimpleSchema({}).validator(),
-  run({name}) {
+  validate: new SimpleSchema({
+    sessionId: {type: String},
+    name: {type: String},
+  }).validator(),
+  run({sessionId, name}) {
     if (!this.userId) {
       throw new Meteor.Error(
-        'api.sessions.create.accessDenied',
-        'You must log in to create a session.',
+        'api.talks.create.accessDenied',
+        'You must log in to create a talk.',
       );
-    }
-
-    if (!name) {
-      const iter = new Date().toLocaleDateString();
-      name = `talk ${iter}`;
+      return false;
     }
 
     const talkId = Talks.insert({
+      name: name.replace(/\.[^/.]+$/, ''),
       userId: this.userId,
       created: Date.now(),
       secret: Random.id(),
-      name,
+      session: sessionId,
+      progress: 0,
     });
 
-    // set default tags
-    //Comments.insert({
-    //talk: talkId,
-    //created: Date.now(),
-    //author: 'SlideSpecs',
-    //content: '#great #story #clarity #slideDesign',
-    //});
+    const session = Sessions.findOne(sessionId);
+    if (!session) {
+      throw new Meteor.Error(
+        'api.talks.addTalk.sessionNotFound',
+        'This session for the talk does not exist.',
+      );
+    } else {
+      const newTalks = [...session.talks, talkId];
+      Sessions.update(sessionId, {$set: {talks: newTalks}});
+    }
 
     return talkId;
   },
@@ -62,8 +64,9 @@ export const renameTalk = new ValidatedMethod({
       );
     }
 
-    // Talk owner should be able to edit/delete talk
-    if (talk.userId === this.userId) {
+    // Talk owner or session owner should be able to edit/delete talk
+    const sess = Sessions.findOne(talk.session);
+    if (talk.userId === this.userId || sess.userId === this.userId) {
       return Talks.update(talkId, {$set: {name: newName}});
     } else {
       throw new Meteor.Error(
@@ -91,8 +94,9 @@ export const setTalkProgress = new ValidatedMethod({
       );
     }
 
-    // Talk owner should be able to edit/delete talk
-    if (talk.userId === this.userId) {
+    // Talk owner or session owner should be able to edit/delete talk
+    const sess = Sessions.findOne(talk.session);
+    if (talk.userId === this.userId || sess.userId === this.userId) {
       return Talks.update(talkId, {$set: {progress: progress}});
     } else {
       throw new Meteor.Error(
@@ -100,194 +104,6 @@ export const setTalkProgress = new ValidatedMethod({
         "You don't have permission to edit this talk.",
       );
     }
-  },
-});
-
-export const setRespondingComment = new ValidatedMethod({
-  name: 'talks.setRespondingComment',
-  validate: new SimpleSchema({
-    talkId: {type: String},
-    commentId: {type: String},
-  }).validator(),
-  run({talkId, commentId}) {
-    const talk = Talks.findOne(talkId);
-    const comment = Comments.findOne(commentId);
-    if (!comment || !talk) {
-      throw new Meteor.Error('api.talks', 'Talk/comment not found.');
-      console.error(comment, talk, commentId, talkId);
-      return false;
-    }
-
-    let data;
-    if (!talk.active) {
-      data = [];
-    } else if (
-      typeof talk.active === 'string' ||
-      talk.active instanceof String
-    ) {
-      data = [talk.active];
-    } else {
-      data = talk.active;
-    }
-
-    let newActive, string;
-    const base = {
-      talk: talkId,
-      comment: commentId,
-      type: 'setRespondingComment',
-    };
-
-    const activeIdx = data.indexOf(commentId);
-    if (activeIdx >= 0) {
-      // Comment no longer being discussed.
-      string = JSON.stringify({responding: false});
-      logEvent.call({data: string, ...base});
-      data.splice(activeIdx, 1);
-      newActive = data;
-    } else {
-      // Comment is now being discussed.
-      string = JSON.stringify({responding: true});
-      logEvent.call({data: string, ...base});
-      newActive = data.concat([commentId]);
-    }
-
-    Talks.update(talkId, {$set: {active: newActive}});
-  },
-});
-
-// Testing method to see when a comment has been discussed.
-export const generateWordFreq = new ValidatedMethod({
-  name: 'talk.generateWordFreq',
-  validate: new SimpleSchema({
-    talkId: {type: SimpleSchema.RegEx.Id},
-  }).validator(),
-  run({talkId}) {
-    console.log(`generating hint words for talk: ${talkId}`);
-    const talk = Talks.findOne(talkId);
-    if (!talk) throw 'talk not found';
-
-    const fillerWords = [
-      'like',
-      'actually',
-      'the',
-      'as',
-      'the',
-      'yes',
-      'no',
-      'agree',
-    ];
-
-    const punctuation = /[.,\/#!$%\^&\*;:{}=\-_`~()]/g;
-
-    const commentWords = Comments.find({talk: talkId})
-      .fetch()
-      .map(c => c.content.trim())
-      .join('\n')
-      .split(/\s/)
-      .map(c => c.replace(punctuation, ''))
-      .map(c => c.trim())
-      .filter(c => !fillerWords.includes(c));
-    const wordFreq = _.countBy(commentWords);
-    const wordArray = Object.keys(wordFreq)
-      .map(key => {
-        return {
-          word: key,
-          count: wordFreq[key],
-        };
-      })
-      .slice(0, 500); // google cloud limit
-
-    const sortArray = _.orderBy(wordArray, ['count'], ['desc']);
-    return sortArray;
-  },
-});
-
-export const generateCommentRegions = new ValidatedMethod({
-  name: 'talk.generateCommentRegions',
-  validate: new SimpleSchema({
-    talkId: {type: SimpleSchema.RegEx.Id},
-    callback: {type: Function, optional: true},
-  }).validator(),
-  run({talkId, callback}) {
-    console.log(`generating regions for talk: ${talkId}`);
-    if (!callback) callback = console.log;
-    const talk = Talks.findOne(talkId);
-    if (!talk) throw 'talk not found';
-
-    const convertData = c => {
-      if (c.data) {
-        const data = JSON.parse(c.data); // deserialize event data.
-        delete c.data;
-        return {...c, ...data};
-      } else {
-        return c;
-      }
-    };
-
-    // TODO filter out regions that are beyond the end of the audio recording.
-
-    const commentToRegions = c => {
-      let events = Events.find({comment: c._id}, {sort: {created: 1}})
-        .fetch()
-        .map(convertData)
-        .filter(e => e && e.type && e.type === 'setRespondingComment');
-
-      //make sure first event is turning on responding.
-      while (events[0] && events[0].responding !== true) {
-        console.log('cleaning events in generator:', events);
-        events.shift(); // remove element
-      }
-
-      // TODO - set start to first audio recording click.
-
-      // group by two, only accept pairs
-      const audioOffset = 60 * 1000; // length of clip (1 minute)
-      const audioStart = talk.audioStart - audioOffset;
-      const paired = _.chunk(events, 2).filter(x => x.length === 2);
-      const regions = paired.map(pair => {
-        return {
-          commentId: c._id,
-          startTime: pair[0].created - audioStart,
-          stopTime: pair[1].created - audioStart,
-        };
-      });
-
-      return regions;
-    };
-
-    const updateRegions = regions => {
-      if (regions[0]) {
-        const cleanRegions = regions.map(({startTime, stopTime}) => {
-          return {startTime, stopTime};
-        });
-        return Comments.update(regions[0].commentId, {
-          $set: {regions: cleanRegions},
-        });
-      }
-    };
-
-    const comments = Comments.find({talk: talkId})
-      .fetch()
-      .map(commentToRegions)
-      .map(updateRegions);
-  },
-});
-
-export const setAudioStart = new ValidatedMethod({
-  name: 'talk.setAudioStart',
-  validate: new SimpleSchema({
-    talkId: {type: String},
-  }).validator(),
-  run({talkId}) {
-    const talk = Talks.findOne(talkId);
-    if (!talk) return false; // talk does not exist
-    const [oldest] = Sounds.find(
-      {'meta.talkId': talkId},
-      {sort: {'meta.created': 1}, limit: 1},
-    ).fetch();
-    if (!oldest) return false; // sound does not exist
-    //console.log(oldest);
-    Talks.update(talkId, {$set: {audioStart: oldest.meta.created}});
   },
 });
 
@@ -303,6 +119,45 @@ export const checkUserTalk = new ValidatedMethod({
     } else if (talk.userId === this.userId) {
       return true; // user owns talk
     }
+
+    // check if user owns session in talk
+    const sess = Sessions.findOne(talk.session);
+    if (sess && sess.userId === this.userId) {
+      return true; // not talk owner but session owner
+    } else {
+      return false; // refuse to let see talk.
+    }
+  },
+});
+
+export const moveSessionTalk = new ValidatedMethod({
+  name: 'talk.moveSessionTalk',
+  validate: new SimpleSchema({
+    talkId: {type: String},
+    position: {type: Number},
+  }).validator(),
+  run({talkId, position}) {
+    const talk = Talks.findOne(talkId);
+    if (!talk) {
+      throw new Meteor.Error('api.talks.noTalk', 'There is no talk.');
+    }
+
+    const sess = Sessions.findOne(talk.session);
+    if (!sess || sess.userId !== this.userId) {
+      throw new Meteor.Error(
+        'api.talks.addTalk.sessionNotEditable',
+        'You cannot edit this session.',
+      );
+    }
+
+    // move element from one array position to another
+    const oldIdx = sess.talks.findIndex(t => t == talk._id);
+    const oTalks = sess.talks.filter(t => t != talk._id);
+    const before = oTalks.slice(0, position);
+    const after = oTalks.slice(position);
+    const newTalks = [...before, talk._id, ...after];
+
+    Sessions.update(talk.session, {$set: {talks: newTalks}});
   },
 });
 
@@ -321,8 +176,13 @@ export const deleteTalk = new ValidatedMethod({
     }
 
     // Talk owner or session owner should be able to edit/delete talk
-    if (talk.userId === this.userId) {
+    const sess = Sessions.findOne(talk.session);
+    if (talk.userId === this.userId || sess.userId === this.userId) {
       try {
+        // Remove id from the session object
+        const newTalks = _.remove(sess.talks, t => t == talk._id);
+        Sessions.update(talk.session, {$set: {talks: newTalks}});
+
         // deleting related files
         Files.remove({'meta.talkId': talkId});
         Images.remove({'meta.talkId': talkId});

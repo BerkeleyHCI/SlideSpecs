@@ -1,54 +1,64 @@
 {
-    "scripts": {
-        "start": "meteor",
-        "lint": "eslint --ext .js,.jsx .",
-        "pretest": "npm run lint --silent",
-        "test": "meteor test --once --driver-package dispatch:mocha-phantomjs"
+  "scripts": {
+    "start": "meteor",
+    "lint": "eslint --ext .js,.jsx .",
+    "pretest": "npm run lint --silent",
+    "test": "meteor test --once --driver-package dispatch:mocha-phantomjs"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.4.4",
+    "autoprefixer": "^8.6.5",
+    "autosize": "^4.0.2",
+    "bcrypt": "^2.0.1",
+    "classnames": "^2.2.6",
+    "enzyme": "^3.9.0",
+    "faker": "^4.1.0",
+    "history": "^4.9.0",
+    "imagesloaded": "^4.1.4",
+    "lodash": "^4.17.11",
+    "meteor-node-stubs": "^0.4.1",
+    "prop-types": "^15.7.2",
+    "query-string": "^6.5.0",
+    "react": "^16.8.6",
+    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "^16.8.6",
+    "react-drop-to-upload": "^1.0.2",
+    "react-markdown": "^3.6.0",
+    "react-router-dom": "^4.3.1",
+    "react-speech-recognition": "^1.1.0",
+    "react-spring": "^5.9.2",
+    "react-toastify": "^4.5.2"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      }
     },
-    "dependencies": {
-        "@babel/runtime": "^7.14.8",
-        "@google-cloud/speech": "^4.5.6",
-        "@google-cloud/storage": "^5.12.0",
-        "autoprefixer": "^10.3.1",
-        "autosize": "^5.0.1",
-        "bcrypt": "^5.0.1",
-        "classnames": "^2.3.1",
-        "core-js": "^3.16.0",
-        "enzyme": "^3.11.0",
-        "faker": "^5.5.3",
-        "gtoken": "^5.3.0",
-        "history": "^5.0.0",
-        "howler": "^2.2.3",
-        "imagesloaded": "^4.1.4",
-        "lodash": "^4.17.21",
-        "meteor-node-stubs": "^1.1.0",
-        "prop-types": "^15.7.2",
-        "query-string": "^7.0.1",
-        "react": "^17.0.2",
-        "react-addons-pure-render-mixin": "^15.6.3",
-        "react-audio-player": "^0.17.0",
-        "react-audioplayer": "^0.3.1",
-        "react-bootstrap": "^1.6.1",
-        "react-dom": "^17.0.2",
-        "react-drop-to-upload": "^1.0.2",
-        "react-hot-loader": "^4.13.0",
-        "react-markdown": "^6.0.3",
-        "react-router-dom": "^5.2.0",
-        "react-speech-recognition": "^3.8.2",
-        "react-toastify": "^7.0.4",
-        "regenerator-runtime": "^0.13.9",
-        "request": "^2.88.0",
-        "wavesurfer.js": "^5.1.0"
-    },
-    "eslintConfig": {
-        "parserOptions": {
-            "ecmaFeatures": {
-                "jsx": true
-            }
-        },
-        "extends": [
-            "eslint:recommended",
-            "plugin:react/recommended"
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended"
+    ]
+  },
+  "devDependencies": {
+    "@meteorjs/eslint-config-meteor": "^1.0.5",
+    "babel-eslint": "^8.2.6",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-import-resolver-meteor": "^0.4.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-meteor": "^5.1.0",
+    "eslint-plugin-react": "^7.13.0",
+    "eslint-watch": "^4.0.2",
+    "shelljs": "^0.8.3"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          "last 2 versions"
         ]
     },
     "meteor": {

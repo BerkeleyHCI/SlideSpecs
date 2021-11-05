@@ -1,3 +1,5 @@
+import '../../api/sessions/methods.js';
+import '../../api/sessions/server/publications.js';
 import '../../api/talks/methods.js';
 import '../../api/talks/server/publications.js';
 import '../../api/comments/methods.js';

@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import {renameTalk, deleteTalk, moveTalkTalk} from '../../api/talks/methods.js';
+import {Link} from 'react-router-dom';
+import {
+  renameTalk,
+  deleteTalk,
+  moveSessionTalk,
+} from '../../api/talks/methods.js';
 import {Images} from '../../api/images/images.js';
 import Img from '../components/Image.jsx';
-import LocalLink from '../components/LocalLink.jsx';
 
 class TalkListItem extends Component {
   renameTalk = () => {
@@ -23,12 +27,12 @@ class TalkListItem extends Component {
 
   moveTalkUp = e => {
     const {iter, talk} = this.props;
-    moveTalkTalk.call({talkId: talk._id, position: iter - 1});
+    moveSessionTalk.call({talkId: talk._id, position: iter - 1});
   };
 
   moveTalkDown = e => {
     const {iter, talk} = this.props;
-    moveTalkTalk.call({talkId: talk._id, position: iter + 1});
+    moveSessionTalk.call({talkId: talk._id, position: iter + 1});
   };
 
   deleteTalk = () => {
@@ -85,9 +89,9 @@ class TalkListItem extends Component {
             <div className="col-sm-3">
               {!linkPre && <Img className="preview" source={iLink} />}
               {linkPre && (
-                <LocalLink to={talkLink}>
+                <Link to={talkLink}>
                   <Img className="preview" source={iLink} />
-                </LocalLink>
+                </Link>
               )}
             </div>
 

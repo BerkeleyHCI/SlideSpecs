@@ -1,6 +1,7 @@
 import {ValidatedMethod} from 'meteor/mdg:validated-method';
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 
+import {Sessions} from '../sessions/sessions.js';
 import {Talks} from '../talks/talks.js';
 import {Comments} from './comments.js';
 import {logBlob} from '../events/methods.js';
@@ -13,6 +14,7 @@ const SlideSchema = new SimpleSchema({
 export const createComment = new ValidatedMethod({
   name: 'comments.create',
   validate: new SimpleSchema({
+    session: {type: SimpleSchema.RegEx.Id},
     talk: {type: SimpleSchema.RegEx.Id},
     author: {type: String, min: 1},
     content: {type: String, min: 1},
@@ -24,18 +26,25 @@ export const createComment = new ValidatedMethod({
     completed: {type: Boolean, optional: true},
     sounds: {type: [String], optional: true},
   }).validator(),
-  run(args) {
-    const {talk} = args;
+  run({session, talk, author, content, slides, agree, discuss, userOwn}) {
+    const sess = Sessions.findOne(session);
     const uTalk = Talks.findOne(talk);
-    if (uTalk) {
+    if (sess && uTalk && uTalk.session === sess._id) {
       const data = {
         created: Date.now(),
-        ...args,
+        session,
+        talk,
+        author,
+        content,
+        slides,
+        agree,
+        discuss,
+        userOwn,
       };
-      logBlob({data, type: 'create comment'});
+      //console.log({type: 'comment.create', ...data});
       return Comments.insert(data);
     } else {
-      console.error('Talk data does not match.', sess, uTalk);
+      console.error('Session and Talk data does not match.', sess, uTalk);
     }
   },
 });

@@ -51,6 +51,10 @@ export default class App extends BaseComponent {
 
   componentDidMount = () => {
     this.renewSubscription();
+    setTimeout(() => {
+      /* eslint-disable react/no-did-mount-set-state */
+      this.setState({showConnectionIssue: true});
+    }, CONNECTION_ISSUE_TIMEOUT);
   };
 
   componentDidUpdate = () => {
@@ -75,45 +79,53 @@ export default class App extends BaseComponent {
 
   preRender = (match, Comp, pType) => {
     const shared = this.getSharedProps();
-    if (pType == "user") {
+    if (pType == 'user') {
       return <UserContainer Comp={Comp} {...shared} id={Meteor.userId()} />;
-    } else if (pType == "talk") {
+    } else if (pType == 'session') {
+      return <SessionContainer Comp={Comp} {...shared} id={match.params.id} />;
+    } else if (pType == 'speaker') {
+      return <SpeakerContainer Comp={Comp} {...shared} id={match.params.id} />;
+    } else if (pType == 'talk') {
       return <TalkContainer Comp={Comp} {...shared} id={match.params.id} />;
     } else {
       return <NotFoundPage />;
     }
   };
 
-  renderGuidePage = ({ match }) => {
-    return this.preRender(match, GuidePage, "user");
+  renderGuidePage = ({match}) => {
+    return this.preRender(match, GuidePage, 'user');
   };
 
-  renderAboutPage = ({ match }) => {
-    return this.preRender(match, AboutPage, "user");
+  renderAboutPage = ({match}) => {
+    return this.preRender(match, AboutPage, 'user');
   };
 
-  renderTalkList = ({ match }) => {
-    return this.preRender(match, TalkListPage, "user");
+  renderSessionList = ({match}) => {
+    return this.preRender(match, SessionListPage, 'user');
   };
 
-  renderComment = ({ match }) => {
-    return this.preRender(match, CommentPage, "talk");
+  renderSession = ({match}) => {
+    return this.preRender(match, SessionPage, 'session');
   };
 
-  renderDiscuss = ({ match }) => {
-    return this.preRender(match, DiscussPage, "talk");
+  renderUpload = ({match}) => {
+    return this.preRender(match, UploadPage, 'speaker');
   };
 
-  renderTalk = ({ match }) => {
-    return this.preRender(match, TalkPage, "talk");
+  renderTalk = ({match}) => {
+    return this.preRender(match, TalkPage, 'talk');
   };
 
-  renderFacilitate = ({ match }) => {
-    return this.preRender(match, FacilitatePage, "talk");
+  renderShare = ({match}) => {
+    return this.preRender(match, SharePage, 'session');
   };
 
-  renderReview = ({ match }) => {
-    return this.preRender(match, ReviewPage, "talk");
+  renderComment = ({match}) => {
+    return this.preRender(match, CommentPage, 'talk');
+  };
+
+  renderDownload = ({match}) => {
+    return this.preRender(match, DownloadPage, 'talk');
   };
 
   renderSecure = () => {
@@ -124,10 +136,9 @@ export default class App extends BaseComponent {
     }
   };
 
-  renderContent = ({ location, ...other }) => {
+  renderContent = ({location, ...other}) => {
     this.renderSecure(); // http -> https
-    const { modal } = this.state;
-    const { user, talks, files, loading } = this.props;
+    const {user, sessions, files, loading} = this.props;
     const params = queryString.parse(location.search);
     const shared = this.getSharedProps();
 
@@ -152,17 +163,32 @@ export default class App extends BaseComponent {
             <Route path="/signin" component={AuthPageSignIn} {...shared} />
             <Route path="/guide" render={this.renderGuidePage} />
             <Route path="/about" render={this.renderAboutPage} />
+            <Route path="/share/:id" render={this.renderShare} />
             <Route path="/comment/:id" render={this.renderComment} />
-            <Route path="/discuss/:id" render={this.renderDiscuss} />
-            <Route path="/facilitate/:id" render={this.renderFacilitate} />
-            <PrivateRoute exact path="/" render={this.renderTalkList} />
-            <PrivateRoute path="/talk/:id" render={this.renderTalk} />
-            <PrivateRoute path="/review/:id" render={this.renderReview} />
+            <Route path="/download/:id" render={this.renderDownload} />
+            <PrivateRoute exact path="/" render={this.renderSessionList} />
+            <PrivateRoute path="/sessions/:id" render={this.renderSession} />
+            <PrivateRoute path="/upload/:id" render={this.renderUpload} />
+            <PrivateRoute path="/slides/:id" render={this.renderTalk} />
             <PrivateRoute render={() => <NotFoundPage />} />
           </Switch>
         )}
       </div>
     );
+  };
+
+  showConnection = () => {
+    const {showConnectionIssue} = this.state;
+    const {connected} = this.props;
+    if (showConnectionIssue && !connected) {
+      toast(() => (
+        <AppNotification
+          msg="connection issue"
+          desc="trying to reconnect..."
+          icon="refresh"
+        />
+      ));
+    }
   };
 
   render() {
@@ -192,8 +218,8 @@ const PrivateRoute = ({ render, ...other }) => {
   if (user && permitted) {
     out = render;
   } else if (!user && !Meteor.loggingOut()) {
-    localStorage.setItem("feedbacks.referringLink", loc);
-    out = () => (loc !== "/signin" ? <Redirect to="/signin" /> : null);
+    localStorage.setItem('feedbacks.referringLink', loc);
+    out = () => (loc !== '/signin' ? <Redirect to="/signin" /> : null);
   } else if (!permitted) {
     out = () => <ForbiddenPage user={user} />;
   }
@@ -202,18 +228,21 @@ const PrivateRoute = ({ render, ...other }) => {
 };
 
 App.propTypes = {
+  connected: PropTypes.bool.isRequired, // server connection status
   loading: PropTypes.bool.isRequired, // subscription status
   user: PropTypes.object, // current meteor user
+  sessions: PropTypes.array,
   talks: PropTypes.array,
   comments: PropTypes.array,
   files: PropTypes.array,
-  images: PropTypes.array
+  images: PropTypes.array,
 };
 
 App.defaultProps = {
   user: null,
+  sessions: [],
   talks: [],
   comments: [],
   files: [],
-  images: []
+  images: [],
 };
