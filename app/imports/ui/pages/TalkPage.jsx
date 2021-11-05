@@ -302,7 +302,8 @@ export default class TalkPage extends BaseComponent {
 
     render() {
         const { uploading } = this.state;
-        const { talk, name, file, images, comments } = this.props;
+        const { talk, session, name, file, images, comments, sessionOwner } =
+            this.props;
         const hasComments = comments.length > 0;
 
         let talkFile;
@@ -421,50 +422,7 @@ export default class TalkPage extends BaseComponent {
 
         return (
             this.renderRedirect() || (
-                <Fragment>
-                    <MenuContainer {...this.props} content={content} />
-                    <div className="main-content">
-                        <h1>
-                            <Link to={homeLink}>
-                                <span className="black"> ‹ </span>
-                                {session.name}
-                            </Link>
-
-                            <small> / {name}</small>
-                        </h1>
-
-                        <AlertLink
-                            center={true}
-                            text={"view commenting interface"}
-                            link={commentLink}
-                        />
-                        <AlertLink
-                            center={true}
-                            text={"download comments"}
-                            link={downloadLink}
-                        />
-
-                        <div className="alert">
-                            <ul>
-                                <li>slides: {images.length}</li>
-                                <li>comments: {comments.length}</li>
-                            </ul>
-                            <hr />
-
-                            <div className="btns-menu-space">
-                                <a download href={talkFile}>
-                                    <button className="btn btn-menu btn-primary pull-right">
-                                        download slides pdf
-                                    </button>
-                                </a>
-                            </div>
-                        </div>
-
-                        {images.length == 0 && <TalkListItem talk={talk} />}
-
-                        <div id="grid">{imageSet}</div>
-                    </div>
-                </Fragment>
+                <MenuContainer {...this.props} content={content} />
             )
         );
     }

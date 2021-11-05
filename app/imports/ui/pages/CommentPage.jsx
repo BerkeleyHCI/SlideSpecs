@@ -1,8 +1,8 @@
+/* global Masonry, DragSelect */
+
 import { Meteor } from "meteor/meteor";
 import React, { Fragment } from "react";
 import { Session } from "meteor/session.js";
-import imagesLoaded from "imagesloaded";
-import { Link } from "react-router-dom";
 import _ from "lodash";
 
 import { Images } from "../../api/images/images.js";
@@ -16,7 +16,8 @@ import ClearingDiv from "../components/ClearingDiv.jsx";
 import FileReview from "../components/FileReview.jsx";
 import Clock from "../components/Clock.jsx";
 import Img from "../components/Image.jsx";
-import Comment from "../components/Comment.jsx";
+// import Comment from "../components/Comment.jsx";
+
 import { createComment } from "../../api/comments/methods.js";
 
 class CommentPage extends BaseComponent {
@@ -77,7 +78,7 @@ class CommentPage extends BaseComponent {
         try {
             const area = document.getElementById("grid");
             const elements = items.map((i) => i.element);
-            let { ds, selected } = this.state;
+            let { ds } = this.state;
             const updateSelection = () => {
                 const s = ds.getSelection();
                 if (s.length > 0) {
@@ -693,8 +694,9 @@ class CommentPage extends BaseComponent {
 
     renderContext = () => {
         const fileList = this.renderFiles();
-        const { session, talkOwner } = this.props;
-        const { image, hoverImage, selected, filtered, bySlide } = this.state;
+        // const { session, talkOwner } = this.props;
+        const { image, hoverImage, selected, bySlide } = this.state;
+        // const { image, hoverImage, selected, filtered, bySlide } = this.state;
         const { name, talk, reviewer, sessionOwner } = this.props;
         const imgSrc = hoverImage ? hoverImage : image;
 

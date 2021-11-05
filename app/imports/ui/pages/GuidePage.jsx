@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import AlertLink from "../components/AlertLink.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
+import {Link} from 'react-router-dom';
+import MenuContainer from '../containers/MenuContainer.jsx';
 
-// import {Link} from 'react-router-dom';
-// import MenuContainer from '../containers/MenuContainer.jsx';
 //<img className="gif" src="guide/jw_facilitate.gif" />
 //<img className="gif" src="guide/jw_transcription.gif" />
 //<VideoLink video={'hrCHEy5k_rU'} />

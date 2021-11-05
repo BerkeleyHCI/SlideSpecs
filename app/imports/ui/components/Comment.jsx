@@ -1,9 +1,10 @@
-import React from "react";
+/* global $ */
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import Markdown from "react-markdown";
 import { toast } from "react-toastify";
-
 // import ReactAudioPlayer from "react-audio-player";
+
 import BaseComponent from "../components/BaseComponent.jsx";
 import TextArea from "../components/TextArea.jsx";
 import AppNotification from "../components/AppNotification.jsx";
@@ -61,17 +62,16 @@ class Comment extends BaseComponent {
 
     renderers = {
         link: (props) => {
-            const { handleTag, setActive, _id } = this.props;
+            const { setActive, _id } = this.props;
             if (props.href[0] == "#") {
                 const scrollView = (e) => {
                     e.preventDefault();
-                    const _id = props.href.substring(2);
                     setActive(_id);
                     this.goToElementId("c" + _id);
                 };
                 return (
                     <a
-                        key={props.children.toString() + this.props._id}
+                        key={props.children.toString() + _id}
                         className="internal reply"
                         onClick={scrollView}
                     >
@@ -91,7 +91,8 @@ class Comment extends BaseComponent {
             }
         },
         text: (props) => {
-            const { handleTag, setActive, _id } = this.props;
+            // const { handleTag, setActive, _id } = this.props;
+            const { handleTag } = this.props;
             const id = this.props._id;
             // split here for hashtag rendering
             //const words = props.split(/\s+|.,\/#!$%\^&\*;:{}=\-_`~()/).map((x, i) => {
@@ -372,28 +373,10 @@ class Comment extends BaseComponent {
         const { startTime, stopTime } = this.props;
         if (!startTime || !stopTime) return null;
         return (
-            <Fragment>
-                <span className="meta">
-                    <strong> {this.formatTime(startTime)} </strong>—
-                    <strong> {this.formatTime(stopTime)} </strong>
-                </span>
-                {!focused && (
-                    <button
-                        key={key}
-                        title={txt}
-                        data-id={_id}
-                        data-auth={reviewer}
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        onClick={handleClick}
-                        className={`btn btn-empty btn-list-item ${
-                            master && "btn-user"
-                        }`}
-                    >
-                        <i className={"fa fa-" + icon} />
-                    </button>
-                )}
-            </Fragment>
+            <span className="meta">
+                <strong> {this.formatTime(startTime)} </strong>—
+                <strong> {this.formatTime(stopTime)} </strong>
+            </span>
         );
     };
 

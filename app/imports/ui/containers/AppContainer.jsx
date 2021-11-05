@@ -38,11 +38,11 @@ export default withTracker(() => {
         const comments = Meteor.subscribe(`comments.${sub.type}`, sub._id);
         const files = Meteor.subscribe(`files.${sub.type}`, sub._id);
         const images = Meteor.subscribe(`images.${sub.type}`, sub._id);
-        const sounds = Meteor.subscribe(`sounds.${sub.type}`, sub._id);
-        const transcripts = Meteor.subscribe(
-            `transcripts.${sub.type}`,
-            sub._id
-        );
+        // const sounds = Meteor.subscribe(`sounds.${sub.type}`, sub._id);
+        // const transcripts = Meteor.subscribe(
+        //     `transcripts.${sub.type}`,
+        //     sub._id
+        // );
         data = Object.assign(data, {
             loading: [talks, comments, files, images].some((s) => !s.ready()),
             sessions: Sessions.find({}, { sort: { created: -1 } }).fetch(),

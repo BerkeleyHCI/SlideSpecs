@@ -1,4 +1,5 @@
 import React from "react";
+import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import MenuContainer from "../containers/MenuContainer.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
@@ -19,19 +20,19 @@ class AuthPage extends BaseComponent {
                     {loggingOut && <Message title="logging out..." />}
                     {!loggingIn && !loggingOut && (
                         <div>
-                            <Link to={`/about`}>
-                                <div className="alert">
-                                    <span className="black"> [ </span>
-                                    about SlideSpecs
-                                    <span className="black"> ] </span>
-                                </div>
-                            </Link>
-                            {content}
-                            <h2>{link}</h2>
-                        </div>
-                    )}
-                </div>
+                        <Link to={`/about`}>
+                    <div className="alert">
+                        <span className="black"> [ </span>
+                        about SlideSpecs
+                        <span className="black"> ] </span>
+                    </div>
+                </Link>
+                    {content}
+                    <h2>{link}</h2>
             </div>
+                )}
+                </div>
+                </div>
         );
     };
 
