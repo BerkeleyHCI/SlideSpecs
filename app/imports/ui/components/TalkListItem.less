@@ -1,55 +1,55 @@
 .list-group-item span.span-link {
-  color: @color-well;
-  .font-m1();
+    color: @color-well;
+    .font-m1();
 }
 .list-group-item span.span-link:hover {
-  color: @color-primary;
+    color: @color-primary;
 }
 
 .preview {
-  display: inline-block;
-  margin-right: 1em;
+    display: inline-block;
+    margin-right: 1em;
 }
 
-.list-group-item [class^='col-'] {
-  min-height: 6em;
+.list-group-item [class^="col-"] {
+    min-height: 6em;
 }
 
 .list-group-item:hover {
-  .move-tag {
-    border-color: @color-rare;
-    .btn-menu {
-      color: @color-well;
+    .move-tag {
+        border-color: @color-rare;
+        .btn-menu {
+            color: @color-well;
+        }
     }
-  }
 }
 
 @media only screen and (min-width: @screen-bs-break) {
-  .list-group-item .col-sm-9 {
-    width: 75%;
-  }
-  .list-group-item .col-sm-3 {
-    width: 25%;
-  }
+    .list-group-item .col-sm-9 {
+        width: 75%;
+    }
+    .list-group-item .col-sm-3 {
+        width: 25%;
+    }
 }
 
 @media only screen and (max-width: 500px) {
-  .list-group-item .col-sm-3 {
-    display: none;
-  }
-  .list-group-item .col-sm-9 {
-    width: 100%;
-  }
+    .list-group-item .col-sm-3 {
+        display: none;
+    }
+    .list-group-item .col-sm-9 {
+        width: 100%;
+    }
 }
 
 .move-tag {
-  border-color: @color-empty;
-  position: absolute;
-  bottom: 0.5em;
-  right: 1em;
-  .btn-menu {
-    color: @color-rare;
-    padding: 6px;
-    .font-m1;
-  }
+    border-color: @color-empty;
+    position: absolute;
+    bottom: 0.5em;
+    right: 1em;
+    .btn-menu {
+        color: @color-rare;
+        padding: 6px;
+        .font-m1;
+    }
 }

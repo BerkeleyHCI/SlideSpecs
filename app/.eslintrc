@@ -8,23 +8,10 @@
                 "jsx": true
             }
         },
-        "plugins": [
-            "react",
-        "meteor"
-        ],
-        "env": {
-            "es6":     true,
-            "browser": true,
-            "node":    true,
-            "mocha":   true
-        },
-        "extends": [
-            "eslint:recommended",
-            "plugin:react/recommended",
-        ],
-        "rules": {
-            "react/display-name": "off",
-        },
+        "plugins": ["react", "meteor"],
+        "env": { "es6": true, "browser": true, "node": true, "mocha": true },
+        "extends": ["eslint:recommended", "plugin:react/recommended"],
+        "rules": { "react/display-name": "off", "strict": ["error", "global"], },
         "settings": {
             "react": {
                 "pragma": "React",

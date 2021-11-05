@@ -1,53 +1,53 @@
-@import '{}/imports/ui/stylesheets/utils.less';
+@import "{}/imports/ui/stylesheets/utils.less";
 
 .waveform {
-  margin-bottom: 20px;
-  border-radius: 0px 0 4px 4px;
-  * {
+    margin-bottom: 20px;
     border-radius: 0px 0 4px 4px;
-  }
+    * {
+        border-radius: 0px 0 4px 4px;
+    }
 
-  box-sizing: border-box;
-  overflow-x: hidden;
+    box-sizing: border-box;
+    overflow-x: hidden;
 
-  .wave {
-    /*border-bottom: @color-rare 1px solid;*/
-    position: relative;
-  }
-  .wave canvas {
-    background: #333;
-    width: 100%;
-  }
-  .wavesurfer-region {
-    z-index: 3 !important;
-    border: solid 1px blue;
-  }
+    .wave {
+        /*border-bottom: @color-rare 1px solid;*/
+        position: relative;
+    }
+    .wave canvas {
+        background: #333;
+        width: 100%;
+    }
+    .wavesurfer-region {
+        z-index: 3 !important;
+        border: solid 1px blue;
+    }
 
-  button {
-    position: absolute;
-    z-index: 5;
-  }
+    button {
+        position: absolute;
+        z-index: 5;
+    }
 
-  button.bottom {
-    border-radius: 0px 4px 0px 4px;
-    bottom: 0px;
-  }
+    button.bottom {
+        border-radius: 0px 4px 0px 4px;
+        bottom: 0px;
+    }
 
-  code {
-    background-color: 'rgba(100, 100, 100, 0.8)';
-    font-family: monospace;
-    position: absolute;
-    padding: 4px;
-    z-index: 10;
-    right: 0px;
-  }
+    code {
+        background-color: "rgba(100, 100, 100, 0.8)";
+        font-family: monospace;
+        position: absolute;
+        padding: 4px;
+        z-index: 10;
+        right: 0px;
+    }
 
-  .controls,
-  .controls * {
-    width: 100%;
-  }
+    .controls,
+    .controls * {
+        width: 100%;
+    }
 
-  cursor {
-    border-right: 1px solid white !important;
-  }
+    cursor {
+        border-right: 1px solid white !important;
+    }
 }

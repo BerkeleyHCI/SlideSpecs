@@ -1,156 +1,156 @@
-@import './utils.less';
+@import "./utils.less";
 
-[class^='btn-'],
-[class*=' btn-'] {
-  // Sizing
-  .font-s2;
-  line-height: 20px !important; //override line-height always so we can use em's to size
-  padding: 1em 1.25em; // 48px tall
+[class^="btn-"],
+[class*=" btn-"] {
+    // Sizing
+    .font-s2;
+    line-height: 20px !important; //override line-height always so we can use em's to size
+    padding: 1em 1.25em; // 48px tall
 
-  &:focus {
-    outline: 0;
-  }
-
-  // Style
-  .title-caps;
-  /*transition: all 100ms ease-in;*/
-  color: @color-empty !important;
-  display: inline-block;
-  position: relative;
-  text-align: center;
-  border-radius: 4px;
-  text-decoration: none !important; //prevents global <a> styles from applying
-  vertical-align: middle;
-  white-space: nowrap;
-
-  &[class*='menu'] {
-    background-color: lighten(@color-danger, 25%);
-    color: @color-empty;
-    padding: 0.2em 0.4em;
-    letter-spacing: initial;
-    text-transform: none;
-    text-indent: initial;
-    &:hover {
-      background-color: lighten(@color-danger, 10%);
-    }
-  }
-
-  &[class*='primary'] {
-    background-color: @color-primary;
-    color: @color-empty;
-    border: none;
-
-    &:hover {
-      background-color: darken(@color-primary, 5%);
+    &:focus {
+        outline: 0;
     }
 
-    &:active {
-      box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
+    // Style
+    .title-caps;
+    /*transition: all 100ms ease-in;*/
+    color: @color-empty !important;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    border-radius: 4px;
+    text-decoration: none !important; //prevents global <a> styles from applying
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &[class*="menu"] {
+        background-color: lighten(@color-danger, 25%);
+        color: @color-empty;
+        padding: 0.2em 0.4em;
+        letter-spacing: initial;
+        text-transform: none;
+        text-indent: initial;
+        &:hover {
+            background-color: lighten(@color-danger, 10%);
+        }
     }
-  }
 
-  &[class*='secondary'] {
-    box-shadow: lighten(#111, 5%) 0 0 0 1px inset;
-    color: @color-medium !important;
+    &[class*="primary"] {
+        background-color: @color-primary;
+        color: @color-empty;
+        border: none;
 
-    &:hover {
-      color: @color-empty !important;
+        &:hover {
+            background-color: darken(@color-primary, 5%);
+        }
+
+        &:active {
+            box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
+        }
     }
-    &.active {
-      box-shadow: lighten(#111, 25%) 0 0 0 1px inset;
+
+    &[class*="secondary"] {
+        box-shadow: lighten(#111, 5%) 0 0 0 1px inset;
+        color: @color-medium !important;
+
+        &:hover {
+            color: @color-empty !important;
+        }
+        &.active {
+            box-shadow: lighten(#111, 25%) 0 0 0 1px inset;
+        }
     }
-  }
 
-  &[class*='danger'] {
-    background-color: @color-danger;
-    color: @color-empty;
-    border: none;
+    &[class*="danger"] {
+        background-color: @color-danger;
+        color: @color-empty;
+        border: none;
 
-    &:hover {
-      background-color: darken(@color-danger, 5%);
+        &:hover {
+            background-color: darken(@color-danger, 5%);
+        }
+        &:active {
+            box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
+        }
     }
-    &:active {
-      box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
+
+    &[class*="group"] {
+        padding: 0em;
     }
-  }
-
-  &[class*='group'] {
-    padding: 0em;
-  }
-  &[class*='round'] {
-    border-radius: 2em;
-    padding: 1em;
-  }
-  &[class*='user'] {
-    /*background-color: darken(@color-primary, 5%) !important;*/
-  }
-  &[class*='list-item'] {
-    padding: 5px 10px;
-  }
-
-  &[class*='empty'] {
-    background-color: @color-empty;
-    color: @color-danger !important;
-    &:hover {
-      background-color: darken(@color-empty, 5%);
+    &[class*="round"] {
+        border-radius: 2em;
+        padding: 1em;
     }
-  }
+    &[class*="user"] {
+        /*background-color: darken(@color-primary, 5%) !important;*/
+    }
+    &[class*="list-item"] {
+        padding: 5px 10px;
+    }
 
-  &[disabled] {
-    opacity: 0.5;
-  }
+    &[class*="empty"] {
+        background-color: @color-empty;
+        color: @color-danger !important;
+        &:hover {
+            background-color: darken(@color-empty, 5%);
+        }
+    }
+
+    &[disabled] {
+        opacity: 0.5;
+    }
 }
 
 .btn.active {
-  background-color: @color-ancillary;
-  box-shadow: none;
+    background-color: @color-ancillary;
+    box-shadow: none;
 }
 
 .btns-empty {
-  padding: 0px !important;
-  border: 1px solid @color-rare;
-  border-radius: 4px;
-  .btn:not(:last-child) {
-    border-right: 1px solid @color-rare;
-  }
+    padding: 0px !important;
+    border: 1px solid @color-rare;
+    border-radius: 4px;
+    .btn:not(:last-child) {
+        border-right: 1px solid @color-rare;
+    }
 }
 
 .btns-menu-space {
-  *:not(:last-child) {
-    margin-right: 1em;
-  }
+    *:not(:last-child) {
+        margin-right: 1em;
+    }
 }
 
 .btn-m-group {
-  .btn-menu {
-    &:focus {
-      outline: 0;
+    .btn-menu {
+        &:focus {
+            outline: 0;
+        }
+        &:first-child {
+            border-radius: 6px 0px 0px 6px;
+        }
+        &:last-child {
+            border-radius: 0px 6px 6px 0px;
+        }
+        &:only-child {
+            border-radius: 6px;
+        }
     }
-    &:first-child {
-      border-radius: 6px 0px 0px 6px;
-    }
-    &:last-child {
-      border-radius: 0px 6px 6px 0px;
-    }
-    &:only-child {
-      border-radius: 6px;
-    }
-  }
 }
 .btn-m-straight .btn {
-  border-radius: 0px !important;
-  text-transform: uppercase;
+    border-radius: 0px !important;
+    text-transform: uppercase;
 }
 
 .btns-group {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  [class*='btn-'] {
-    .ellipsized;
-    flex: 1;
-    & + [class*='btn-'] {
-      margin-left: -1px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    [class*="btn-"] {
+        .ellipsized;
+        flex: 1;
+        & + [class*="btn-"] {
+            margin-left: -1px;
+        }
     }
-  }
 }

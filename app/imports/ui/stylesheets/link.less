@@ -1,4 +1,4 @@
-@import './utils.less';
+@import "./utils.less";
 
 a,
 a:focus,
@@ -6,49 +6,49 @@ a:visited,
 span.span-link,
 span.span-link:focus,
 span.span-link:visited {
-  color: @color-primary;
-  cursor: pointer;
-  text-decoration: none;
-  &:active {
     color: @color-primary;
+    cursor: pointer;
     text-decoration: none;
-  }
-  &:focus {
-    color: @color-primary;
-    text-decoration: none;
-    outline: none;
-  } //removes FF dotted outline
-  &:hover {
-    color: darken(@color-primary, 15%);
-    text-decoration: none;
-  }
+    &:active {
+        color: @color-primary;
+        text-decoration: none;
+    }
+    &:focus {
+        color: @color-primary;
+        text-decoration: none;
+        outline: none;
+    } //removes FF dotted outline
+    &:hover {
+        color: darken(@color-primary, 15%);
+        text-decoration: none;
+    }
 
-  // for back arrows
-  .black {
-    color: black !important;
-  }
-  .gray {
-    color: gray;
-  }
-  .white {
-    color: white !important;
-  }
+    // for back arrows
+    .black {
+        color: black !important;
+    }
+    .gray {
+        color: gray;
+    }
+    .white {
+        color: white !important;
+    }
 }
 
 a.link-alert,
 a.link-alert:focus,
 a.link-alert:visited {
-  color: @color-danger;
-  &:hover {
-    color: @color-primary;
-    font-weight: bold;
-  }
-  &:hover div {
-    box-shadow: 0em 1px @color-primary;
-  }
+    color: @color-danger;
+    &:hover {
+        color: @color-primary;
+        font-weight: bold;
+    }
+    &:hover div {
+        box-shadow: 0em 1px @color-primary;
+    }
 }
 
 h1 > .span-link,
 h1 > a {
-  color: @color-danger;
+    color: @color-danger;
 }
