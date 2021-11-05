@@ -319,6 +319,11 @@ export default class TalkPage extends BaseComponent {
     const uploadLink = window.location.origin + '/upload/' + talk._id;
     const facilitateLink = window.location.origin + '/facilitate/' + talk._id;
     const reviewLink = window.location.origin + '/review/' + talk._id;
+    const downloadLink = `/download/${talk._id}`;
+    const shareLink = `/share/${session._id}`;
+    const sessLink = `/sessions/${session._id}`;
+    const homeLink = sessionOwner ? sessLink : shareLink;
+
 
     const content = (
       <div className="main-content">
@@ -403,17 +408,10 @@ export default class TalkPage extends BaseComponent {
       </div>
     );
 
-    return (
-      this.renderRedirect() || (
-        <MenuContainer {...this.props} content={content} />
-    const downloadLink = `/download/${talk._id}`;
-    const commentLink = `/comment/${talk._id}`;
-    const shareLink = `/share/${session._id}`;
-    const sessLink = `/sessions/${session._id}`;
-    const homeLink = sessionOwner ? sessLink : shareLink;
 
-    return (
-      this.renderRedirect() || (
+    return this.renderRedirect() || (
+      <Fragment>
+        <MenuContainer {...this.props} content={content} />
         <div className="main-content">
           <h1>
             <Link to={homeLink}>
@@ -428,12 +426,12 @@ export default class TalkPage extends BaseComponent {
             center={true}
             text={'view commenting interface'}
             link={commentLink}
-          />
+            />
           <AlertLink
             center={true}
             text={'download comments'}
             link={downloadLink}
-          />
+            />
 
           <div className="alert">
             <ul>
@@ -455,8 +453,9 @@ export default class TalkPage extends BaseComponent {
 
           <div id="grid">{imageSet}</div>
         </div>
+</Fragment>
       )
-    );
+
   }
 }
 
@@ -475,4 +474,3 @@ TalkPage.defaultProps = {
   images: [],
 };
 
-export default TalkPage;

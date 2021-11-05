@@ -21,6 +21,7 @@
     "query-string": "^6.5.0",
     "react": "^16.8.6",
     "react-addons-pure-render-mixin": "^15.6.2",
+    "react-audio-player": "^0.17.0",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.8.6",
     "react-drop-to-upload": "^1.0.2",
@@ -60,34 +61,7 @@
         "browsers": [
           "last 2 versions"
         ]
-    },
-    "meteor": {
-        "mainModule": {
-            "client": "client/main.js",
-            "server": "server/main.js"
-        }
-    },
-    "devDependencies": {
-        "@meteorjs/eslint-config-meteor": "^1.0.5",
-        "babel-eslint": "^8.2.6",
-        "babel-plugin-transform-runtime": "^6.23.0",
-        "eslint": "^7.32.0",
-        "eslint-config-airbnb": "^18.2.1",
-        "eslint-import-resolver-meteor": "^0.4.0",
-        "eslint-plugin-import": "^2.23.4",
-        "eslint-plugin-jsx-a11y": "^6.4.1",
-        "eslint-plugin-meteor": "^7.3.0",
-        "eslint-plugin-react": "^7.24.0",
-        "eslint-watch": "^7.0.0",
-        "shelljs": "^0.8.4"
-    },
-    "postcss": {
-        "plugins": {
-            "autoprefixer": {
-                "browsers": [
-                    "last 2 versions"
-                ]
-            }
-        }
+      }
     }
+  }
 }
