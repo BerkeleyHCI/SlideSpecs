@@ -406,6 +406,55 @@ export default class TalkPage extends BaseComponent {
     return (
       this.renderRedirect() || (
         <MenuContainer {...this.props} content={content} />
+    const downloadLink = `/download/${talk._id}`;
+    const commentLink = `/comment/${talk._id}`;
+    const shareLink = `/share/${session._id}`;
+    const sessLink = `/sessions/${session._id}`;
+    const homeLink = sessionOwner ? sessLink : shareLink;
+
+    return (
+      this.renderRedirect() || (
+        <div className="main-content">
+          <h1>
+            <Link to={homeLink}>
+              <span className="black"> ‹ </span>
+              {session.name}
+            </Link>
+
+            <small> / {name}</small>
+          </h1>
+
+          <AlertLink
+            center={true}
+            text={'view commenting interface'}
+            link={commentLink}
+          />
+          <AlertLink
+            center={true}
+            text={'download comments'}
+            link={downloadLink}
+          />
+
+          <div className="alert">
+            <ul>
+              <li>slides: {images.length}</li>
+              <li>comments: {comments.length}</li>
+            </ul>
+            <hr />
+
+            <div className="btns-menu-space">
+              <a download href={talkFile}>
+                <button className="btn btn-menu btn-primary pull-right">
+                  download slides pdf
+                </button>
+              </a>
+            </div>
+          </div>
+
+          {images.length == 0 && <TalkListItem talk={talk} />}
+
+          <div id="grid">{imageSet}</div>
+        </div>
       )
     );
   }
@@ -413,12 +462,17 @@ export default class TalkPage extends BaseComponent {
 
 TalkPage.propTypes = {
   user: PropTypes.object,
-  images: PropTypes.array,
+  session: PropTypes.object,
+  talkId: PropTypes.string,
   comments: PropTypes.array,
+  images: PropTypes.array,
 };
 
 TalkPage.defaultProps = {
   user: null,
+  session: {},
   comments: [],
   images: [],
 };
+
+export default TalkPage;

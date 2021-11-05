@@ -41,7 +41,11 @@ class DragUpload extends BaseComponent {
         onLeave={this.handleLeave}
         onOver={this.handleOver}
         onDrop={this.handleDrop}>
-        <FullMessage className={dClass} title={title} subtitle={subtitle} />
+        <FullMessage
+          className={dClass}
+          title="drop files here"
+          subtitle="PDF only"
+        />
       </DropToUpload>
     );
   }

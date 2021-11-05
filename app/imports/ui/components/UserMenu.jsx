@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Meteor} from 'meteor/meteor';
+import {Link} from 'react-router-dom';
 import BaseComponent from './BaseComponent.jsx';
 import {Session} from 'meteor/session.js';
 import LocalLink from '../components/LocalLink.jsx';
