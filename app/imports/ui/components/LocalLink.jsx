@@ -1,8 +1,5 @@
-import React, { Component } from "react";
+import React from "react";
 import BaseComponent from "../components/BaseComponent.jsx";
-import PropTypes from "prop-types";
-import { Meteor } from "meteor/meteor";
-import { Session } from "meteor/session.js";
 
 class LocalLink extends BaseComponent {
     render() {

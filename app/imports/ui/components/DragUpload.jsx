@@ -44,8 +44,8 @@ class DragUpload extends BaseComponent {
             >
                 <FullMessage
                     className={dClass}
-                    title="drop files here"
-                    subtitle="PDF only"
+                    title={title}
+                    subtitle={subtitle}
                 />
             </DropToUpload>
         );

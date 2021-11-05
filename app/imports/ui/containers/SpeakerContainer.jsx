@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session.js";
 import BaseComponent from "../components/BaseComponent.jsx";
-import AuthPageSignIn from "../pages/AuthPageSignIn.jsx";
-import AuthPageJoin from "../pages/AuthPageJoin.jsx";
 
 export default class SpeakerContainer extends BaseComponent {
     renewSubscription = (_id) => {

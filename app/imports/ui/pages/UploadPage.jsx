@@ -96,20 +96,28 @@ export default class UploadPage extends BaseComponent {
             />
         );
 
-        uploadInstance.on("progress", function (progress, file) {
+        uploadInstance.on("progress", function (progress, _) {
             setTalkProgress.call({ talkId, progress });
         });
 
-        uploadInstance.on("uploaded", (err, file) => {
-            console.log("uploaded", file.name);
-            setTalkProgress.call({ talkId, progress: 100 });
+        uploadInstance.on("uploaded", (error, file) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log("uploaded", file.name);
+                setTalkProgress.call({ talkId, progress: 100 });
+            }
         });
 
-        uploadInstance.on("end", function (error, fileObj) {
-            toast(() => toastDone, { autoClose: 2000 });
+        uploadInstance.on("end", function (error, _) {
+            if (error) {
+                console.error(error);
+            } else {
+                toast(() => toastDone, { autoClose: 2000 });
+            }
         });
 
-        uploadInstance.on("error", function (error, fileObj) {
+        uploadInstance.on("error", function (error, _) {
             console.error(`Error during upload.`, error);
         });
 

@@ -1,5 +1,5 @@
-/* eslint max-len 0 */
 import React from "react";
+import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import { Session } from "meteor/session.js";
 import BaseComponent from "../components/BaseComponent.jsx";

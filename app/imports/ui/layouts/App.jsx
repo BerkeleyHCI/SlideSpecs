@@ -1,5 +1,3 @@
-/* eslint max-len 0 */
-
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session.js";
@@ -14,21 +12,30 @@ import AppNotification from "../components/AppNotification.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import UserContainer from "../containers/UserContainer.jsx";
 import TalkContainer from "../containers/TalkContainer.jsx";
+import SessionContainer from "../containers/SessionContainer"
+import SpeakerContainer from "../containers/SpeakerContainer"
 
 import AuthPageSignIn from "../pages/AuthPageSignIn.jsx";
 import AuthPageJoin from "../pages/AuthPageJoin.jsx";
-import TalkListPage from "../pages/TalkListPage.jsx";
 import TalkPage from "../pages/TalkPage.jsx";
 import GuidePage from "../pages/GuidePage.jsx";
 import AboutPage from "../pages/AboutPage.jsx";
 import CommentPage from "../pages/CommentPage.jsx";
-import DiscussPage from "../pages/DiscussPage.jsx";
-import FacilitatePage from "../pages/FacilitatePage.jsx";
-import ReviewPage from "../pages/ReviewPage.jsx";
+import SessionPage from "../pages/SessionPage.jsx";
+import UploadPage from "../pages/UploadPage.jsx";
+import SharePage from "../pages/SharePage.jsx";
+import DownloadPage from "../pages/DownloadPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import ForbiddenPage from "../pages/ForbiddenPage.jsx";
+import SessionListPage from "../pages/SessionListPage.jsx";
+// import TalkListPage from "../pages/TalkListPage.jsx";
+// import DiscussPage from "../pages/DiscussPage.jsx";
+// import FacilitatePage from "../pages/FacilitatePage.jsx";
+// import ReviewPage from "../pages/ReviewPage.jsx";
 
 import { checkUserTalk } from "../../api/talks/methods.js";
+
+const CONNECTION_ISSUE_TIMEOUT = 2000
 
 const Fade = cssTransition({
     enter: "fadeIn",
