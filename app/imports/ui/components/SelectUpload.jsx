@@ -3,16 +3,19 @@ import PropTypes from "prop-types";
 import BaseComponent from "./BaseComponent.jsx";
 
 class SelectUpload extends BaseComponent {
+    componentDidMount() {
+        this.myRef = React.createRef();
+    }
     render() {
         const { handleUpload, labelText, className, inProgress } = this.props;
         return (
             <label className={`btn ${className}`}>
                 {labelText}
                 <input
+                    ref={this.myRef}
                     type={"file"}
                     id={"fileinput"}
                     disabled={inProgress}
-                    ref={"fileinput"}
                     onChange={handleUpload}
                     multiple
                 />

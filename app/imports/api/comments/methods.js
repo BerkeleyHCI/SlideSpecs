@@ -4,7 +4,6 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Sessions } from "../sessions/sessions.js";
 import { Talks } from "../talks/talks.js";
 import { Comments } from "./comments.js";
-import { logBlob } from "../events/methods.js";
 
 const SlideSchema = new SimpleSchema({
     slideNo: { type: String },

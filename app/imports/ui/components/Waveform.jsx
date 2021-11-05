@@ -1,10 +1,10 @@
-// components/waveform.js
+/* global WaveSurfer */
+
 import React from "react";
 import ReactDOM from "react-dom";
-import _ from "lodash";
 
 // exposed through main.html. npm broken
-//import WaveSurfer from 'wavesurfer.js';
+// import WaveSurfer from 'wavesurfer.js';
 //import CursorPlugin from 'wavesurfer.js/src/plugin/cursor.js';
 
 // wavesurfer docs
@@ -256,7 +256,7 @@ export default class Waveform extends React.Component {
     };
 
     render() {
-        const { visible, playing } = this.state;
+        const { visible } = this.state;
         const title = this.renderTitle();
         const vizClass = visible ? "" : "waveform-hidden";
         return (

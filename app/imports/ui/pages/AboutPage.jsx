@@ -1,4 +1,3 @@
-/* eslint max-len 0 */
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -92,7 +91,7 @@ class AboutPage extends BaseComponent {
                         </li>
                         <li>
                             <b>Why:</b> The audience works in a shared view,
-                            able to see each other's comments. This allows for
+                            able to see each other&apos;s comments. This allows for
                             real-time and ad-hoc collaboration (i.e., replying
                             to or agreeing with others). For the presenter,
                             SlideSpecs provides organization and filtering

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import LocalLink from "./LocalLink"
 import {
     renameTalk,
     deleteTalk,
@@ -25,12 +26,12 @@ class TalkListItem extends Component {
         }
     };
 
-    moveTalkUp = (e) => {
+    moveTalkUp = () => {
         const { iter, talk } = this.props;
         moveSessionTalk.call({ talkId: talk._id, position: iter - 1 });
     };
 
-    moveTalkDown = (e) => {
+    moveTalkDown = () => {
         const { iter, talk } = this.props;
         moveSessionTalk.call({ talkId: talk._id, position: iter + 1 });
     };
@@ -87,8 +88,8 @@ class TalkListItem extends Component {
         const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
         const uploadState = <span>uploading: {talk.progress}%</span>;
 
-        const comments = talk.comments ? talk.comments.length : 0;
-        const hasComments = comments > 1;
+        // const comments = talk.comments ? talk.comments.length : 0;
+        // const hasComments = comments > 1;
 
         return (
             <li className="list-group-item clearfix">

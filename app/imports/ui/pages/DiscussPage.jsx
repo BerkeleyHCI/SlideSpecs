@@ -1,3 +1,5 @@
+/* global Masonry */
+
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import React, { Component } from "react";

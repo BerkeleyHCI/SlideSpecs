@@ -9,7 +9,7 @@ class SlideFile extends Component {
     };
 
     render() {
-        const { iter, fileName, fileSize, fileUrl, handleLoad } = this.props;
+        const { iter, fileUrl, handleLoad } = this.props;
         return (
             <div className="file-item">
                 <div className="slide-container">

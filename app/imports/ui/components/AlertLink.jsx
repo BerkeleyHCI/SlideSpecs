@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Meteor } from "meteor/meteor";
-import { Session } from "meteor/session.js";
 
 class AlertLink extends Component {
     render() {
