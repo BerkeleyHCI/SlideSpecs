@@ -1,8 +1,5 @@
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
-
-import { Talks } from "../talks/talks.js";
-import { storagePath } from "../storagePath.js";
 import { Sounds } from "./sounds.js";
 
 export const renameSound = new ValidatedMethod({

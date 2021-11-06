@@ -139,6 +139,14 @@ export default class App extends BaseComponent {
         return this.preRender(match, TalkPage, "talk");
     };
 
+    renderFacilitate = ({ match }) => {
+        return this.preRender(match, FacilitatePage, "talk");
+    };
+
+    renderReview = ({ match }) => {
+        return this.preRender(match, ReviewPage, "talk");
+    };
+
     renderShare = ({ match }) => {
         return this.preRender(match, SharePage, "session");
     };
@@ -223,6 +231,14 @@ export default class App extends BaseComponent {
                         <PrivateRoute
                             path="/slides/:id"
                             render={this.renderTalk}
+                        />
+                        <PrivateRoute
+                            path="/facilitate/:id"
+                            render={this.renderFacilitate}
+                        />
+                        <PrivateRoute
+                            path="/review/:id"
+                            render={this.renderReview}
                         />
                         <PrivateRoute render={() => <NotFoundPage />} />
                     </Switch>

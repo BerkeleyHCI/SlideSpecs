@@ -73,10 +73,6 @@ class CommentPage extends BaseComponent {
         }
     };
 
-    elementize = (x) => {
-        return { element: x };
-    };
-
     extractFileData = (x) => {
         return {
             slideId: x.getAttribute("data-file-id"),
@@ -86,7 +82,7 @@ class CommentPage extends BaseComponent {
 
     componentDidMount = () => {
         this.handleLoad();
-        document.getElementById("__reviewBackground").focus();
+        document.getElementById("review-view").focus();
 
         // set image to link of the first slide
         const { images } = this.props;
@@ -97,13 +93,6 @@ class CommentPage extends BaseComponent {
 
     componentDidUpdate = () => {
         this.handleLoad();
-    };
-
-    componentWillUnmount = () => {
-        let { ds } = this.state;
-        if (ds && ds.stop) {
-            ds.stop(); // no drag
-        }
     };
 
     setActiveComment = (ac) => {
@@ -181,7 +170,9 @@ class CommentPage extends BaseComponent {
 
     updateImage = (id) => {
         try {
-            this.setState({ image: Images.findOne(id).link("original", "//") });
+            this.setState({
+                image: Images.findOne({ _id: id }).link("original", "//"),
+            });
         } catch (e) {
             console.error(e);
         }
@@ -198,7 +189,10 @@ class CommentPage extends BaseComponent {
     updateHoverImage = (id) => {
         try {
             const { image, selected } = this.state;
-            const hoverImage = Images.findOne(id).link("original", "//");
+            const hoverImage = Images.findOne({ _id: id }).link(
+                "original",
+                "//"
+            );
             this.setState({ hoverImage });
             if (hoverImage && hoverImage !== image && selected.length === 0) {
                 this.setState({ image: hoverImage });
@@ -265,9 +259,9 @@ class CommentPage extends BaseComponent {
     };
 
     addComment = () => {
-        const { defaultPriv } = this.state;
+        // const { defaultPriv } = this.state;
         const { reviewer, talkId, sessionId } = this.props;
-        const slides = this.state.filtered;
+        const slides = this.state.selected;
         const cText = this.inRef.current.value.trim();
         const priv = cText.includes("#private");
         const commentFields = {
@@ -275,7 +269,7 @@ class CommentPage extends BaseComponent {
             content: cText,
             session: sessionId,
             talk: talkId,
-            userOwn: false, // defaultPriv || priv,
+            userOwn: priv, // defaultPriv || priv,
             slides,
         };
 
@@ -304,11 +298,6 @@ class CommentPage extends BaseComponent {
         this.setState({ userOwn });
     };
 
-    toggleUserOwn = () => {
-        const userOwn = !this.state.userOwn;
-        this.setState({ userOwn });
-    };
-
     renderCommentHead = () => {
         const { talk } = this.props;
         const { defaultPriv, focusing, userOwn } = this.state;
@@ -326,7 +315,7 @@ class CommentPage extends BaseComponent {
                     className="comment-option"
                     onClick={() => this.redirectTo(`/discuss/${talk._id}`)}
                 >
-                    [ discuss ]
+                    discuss
                 </span>
             </span>
         );
@@ -662,17 +651,15 @@ class CommentPage extends BaseComponent {
 
     renderContext = () => {
         const fileList = this.renderFiles();
-        // const { session, talkOwner } = this.props;
         const { image, hoverImage, selected, bySlide } = this.state;
-        // const { image, hoverImage, selected, filtered, bySlide } = this.state;
-        const { name, talk, reviewer, sessionOwner } = this.props;
+        const { name, sessionId, reviewer, sessionOwner } = this.props;
         const imgSrc = hoverImage ? hoverImage : image;
 
         return (
             <div className="context-filter float-at-top">
                 <span className="list-title list-title-basic">
                     {sessionOwner && (
-                        <LocalLink to={`/talk/${talk._id}`}>
+                        <LocalLink to={`/sessions/${sessionId}`}>
                             <span className="black"> ‹ </span>
                             {name}
                         </LocalLink>
@@ -771,13 +758,12 @@ class CommentPage extends BaseComponent {
 
     render = () => {
         const { images } = this.props;
-        const { files, userId, talkOwner } = this.props;
         const cmtHead = this.renderCommentFilter();
         const comments = this.renderComments();
         const download = this.renderDownload();
         const context = this.renderContext();
 
-        return files ? (
+        return images ? (
             this.renderRedirect() || (
                 <div className="reviewView" onMouseDown={this.clearButtonBG}>
                     <div id="review-view" className="table review-table">
