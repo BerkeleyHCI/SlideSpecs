@@ -6,7 +6,7 @@ import { Accounts } from "meteor/accounts-base";
 import BaseComponent from "../components/BaseComponent.jsx";
 import AuthPage from "./AuthPage.jsx";
 
-class JoinPage extends BaseComponent {
+class SignUpPage extends BaseComponent {
     constructor(props) {
         super(props);
         this.state = { errors: {} };
@@ -125,4 +125,4 @@ class JoinPage extends BaseComponent {
     }
 }
 
-export default JoinPage;
+export default SignUpPage;

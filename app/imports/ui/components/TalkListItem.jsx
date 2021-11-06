@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-import LocalLink from "./LocalLink"
+import LocalLink from "./LocalLink";
 import {
     renameTalk,
     deleteTalk,

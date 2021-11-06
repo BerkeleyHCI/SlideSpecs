@@ -12,11 +12,11 @@ import AppNotification from "../components/AppNotification.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import UserContainer from "../containers/UserContainer.jsx";
 import TalkContainer from "../containers/TalkContainer.jsx";
-import SessionContainer from "../containers/SessionContainer"
-import SpeakerContainer from "../containers/SpeakerContainer"
+import SessionContainer from "../containers/SessionContainer";
+import SpeakerContainer from "../containers/SpeakerContainer";
 
 import AuthPageSignIn from "../pages/AuthPageSignIn.jsx";
-import AuthPageJoin from "../pages/AuthPageJoin.jsx";
+import AuthPageSignUp from "../pages/AuthPageSignUp.jsx";
 import TalkPage from "../pages/TalkPage.jsx";
 import GuidePage from "../pages/GuidePage.jsx";
 import AboutPage from "../pages/AboutPage.jsx";
@@ -35,7 +35,7 @@ import SessionListPage from "../pages/SessionListPage.jsx";
 
 import { checkUserTalk } from "../../api/talks/methods.js";
 
-const CONNECTION_ISSUE_TIMEOUT = 2000
+const CONNECTION_ISSUE_TIMEOUT = 2000;
 
 const Fade = cssTransition({
     enter: "fadeIn",
@@ -187,8 +187,8 @@ export default class App extends BaseComponent {
                 ) : (
                     <Switch location={location}>
                         <Route
-                            path="/join"
-                            component={AuthPageJoin}
+                            path="/signup"
+                            component={AuthPageSignUp}
                             {...shared}
                         />
                         <Route
