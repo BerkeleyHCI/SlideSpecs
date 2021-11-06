@@ -262,7 +262,7 @@ export default class TalkPage extends BaseComponent {
                     <span className="comments-head" />
                     <CommentList title={"comments"} items={items} />
                     {items.length == 0 && (
-                        <div className="alert"> no comments</div>
+                        <div className="alert"> no comments </div>
                     )}
                 </div>
             );
@@ -302,13 +302,20 @@ export default class TalkPage extends BaseComponent {
 
     render() {
         const { uploading } = this.state;
-        const { talk, session, name, file, images, comments, sessionOwner } =
-            this.props;
+        const {
+            talkId,
+            sessionId,
+            name,
+            file,
+            images,
+            comments,
+            sessionOwner,
+        } = this.props;
         const hasComments = comments.length > 0;
 
         let talkFile;
         try {
-            let fileParams = { "meta.talkId": talk._id };
+            let fileParams = { "meta.talkId": talkId };
             talkFile = Files.findOne(fileParams).link("original", "//");
         } catch (e) {
             talkFile = "/404";
@@ -325,14 +332,13 @@ export default class TalkPage extends BaseComponent {
         ));
 
         // TODO update this into the secret talk field instead of the regular // id
-        const commentLink = window.location.origin + "/comment/" + talk._id;
-        const uploadLink = window.location.origin + "/upload/" + talk._id;
-        const facilitateLink =
-            window.location.origin + "/facilitate/" + talk._id;
-        const reviewLink = window.location.origin + "/review/" + talk._id;
-        const downloadLink = `/download/${talk._id}`;
-        const shareLink = `/share/${session._id}`;
-        const sessLink = `/sessions/${session._id}`;
+        const commentLink = window.location.origin + "/comment/" + talkId;
+        const facilitateLink = window.location.origin + "/facilitate/" + talkId;
+        const reviewLink = window.location.origin + "/review/" + talkId;
+        const uploadLink = window.location.origin + "/upload/" + talkId;
+        const downloadLink = `/download/${talkId}`;
+        const shareLink = `/share/${sessionId}`;
+        const sessLink = `/sessions/${sessionId}`;
         const homeLink = sessionOwner ? sessLink : shareLink;
 
         const content = (
@@ -344,9 +350,9 @@ export default class TalkPage extends BaseComponent {
                 )}
 
                 <h1>
-                    <LocalLink to={`/`}>
+                    <LocalLink to={homeLink}>
                         <span className="black"> ‹ </span>
-                        {talk.name}
+                        {name}
                     </LocalLink>
                 </h1>
 

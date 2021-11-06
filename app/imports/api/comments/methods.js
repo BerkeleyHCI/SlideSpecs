@@ -40,7 +40,7 @@ export const createComment = new ValidatedMethod({
                 discuss,
                 userOwn,
             };
-            //console.log({type: 'comment.create', ...data});
+            console.log({type: 'comment.create', ...data});
             return Comments.insert(data);
         } else {
             console.error("Session and Talk data does not match.", sess, uTalk);
