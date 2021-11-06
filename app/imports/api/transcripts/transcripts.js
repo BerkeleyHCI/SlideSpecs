@@ -25,7 +25,8 @@ export const wordSchema = new SimpleSchema({
 
 Transcripts.schema = new SimpleSchema({
     created: { type: Date },
-    talk: { type: SimpleSchema.RegEx.Id },
+    session: { type: String, regEx: SimpleSchema.RegEx.Id },
+    talk: { type: String, regEx: SimpleSchema.RegEx.Id },
     transcript: { type: String },
     results: { type: [wordSchema], optional: true, defaultValue: [] },
     confidence: {

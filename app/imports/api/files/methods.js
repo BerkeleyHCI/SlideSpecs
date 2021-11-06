@@ -41,12 +41,12 @@ export const deleteFile = new ValidatedMethod({
     },
 });
 
-export const deleteTalkFiles = new ValidatedMethod({
-    name: "files.deleteTalkFiles",
+export const deleteSessionFiles = new ValidatedMethod({
+    name: "files.deleteSessionFiles",
     validate: new SimpleSchema({
-        talkId: { type: String },
+        sessionId: { type: String },
     }).validator(),
-    run({ talkId }) {
+    run({ sessionId }) {
         try {
             Files.remove({ "meta.sessionId": sessionId });
             Images.remove({ "meta.sessionId": sessionId });
