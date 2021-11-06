@@ -13,14 +13,12 @@ span.span-link:visited {
         color: @color-primary;
         text-decoration: none;
     }
-    &:focus {
-        color: @color-primary;
-        text-decoration: none;
-        outline: none;
-    } //removes FF dotted outline
+    &:focus,
     &:hover {
-        color: darken(@color-primary, 15%);
-        text-decoration: none;
+        z-index: 1;
+        color: #888;
+        text-decoration: underline;
+        outline: 0;
     }
 
     // for back arrows
