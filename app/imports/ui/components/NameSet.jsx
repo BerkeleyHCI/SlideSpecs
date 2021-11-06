@@ -35,8 +35,8 @@ class NameSet extends Component {
         return (
             <div className="padded">
                 <div className="padded">
-                    <h1>name entry</h1>
-                    please enter your name before providing feedback:
+                    <h1>Name Entry</h1>
+                    Please enter your name before providing feedback:
                     <hr />
                     <Input
                         inRef={this.inRef}

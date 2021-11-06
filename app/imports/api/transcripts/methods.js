@@ -38,7 +38,7 @@ export const deleteTranscript = new ValidatedMethod({
     run({ transcriptId }) {
         const transcript = Transcripts.findOne(transcriptId);
         if (transcript && Meteor.user()) {
-            console.log({ type: "transcript.delete", ...transcript });
+            // console.log({ type: "transcript.delete", ...transcript });
             Transcripts.remove(transcriptId);
         }
     },
