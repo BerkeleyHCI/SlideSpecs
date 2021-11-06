@@ -2,16 +2,16 @@ import React from "react";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
-import BaseComponent from "../components/BaseComponent.jsx";
-import MenuContainer from "../containers/MenuContainer.jsx";
-import AppNotification from "../components/AppNotification.jsx";
 import AlertLink from "../components/AlertLink.jsx";
-import { FullMessage } from "../components/Message.jsx";
-import { Files } from "../../api/files/files.js";
 import DragUpload from "../components/DragUpload.jsx";
 import SelectUpload from "../components/SelectUpload.jsx";
 import TalkListItem from "../components/TalkListItem.jsx";
+import BaseComponent from "../components/BaseComponent.jsx";
+import MenuContainer from "../containers/MenuContainer.jsx";
+import AppNotification from "../components/AppNotification.jsx";
+import { Files } from "../../api/files/files.js";
 import { deleteSessionFiles } from "../../api/files/methods.js";
 import { createTalk, setTalkProgress } from "../../api/talks/methods.js";
 
@@ -44,22 +44,22 @@ export default class SessionPage extends BaseComponent {
         if (files) {
             files.map((file) => {
                 // Allow uploading files under 30MB for now.
+                // const goodType = /(pdf)$/i.test(file.name);
                 const goodSize = file.size <= 30985760;
-                //const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
-                const goodType = /(pdf)$/i.test(file.name);
+                const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
                 if (!goodSize || !goodType) {
                     handleToast({
                         msg: "error",
                         icon: "times",
                         desc:
-                            //'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
-                            "Please only upload pdf files, with size equal or less than 30MB.",
+                            'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
+                            // "Please only upload pdf files, with size equal or less than 30MB.",
                     });
                     return; // skip this file.
                 }
 
                 const talkId = createTalk.call({
-                    sessionId,
+                    sessionId: sessionId,
                     name: file.name,
                 });
 
@@ -77,11 +77,11 @@ export default class SessionPage extends BaseComponent {
                         chunkSize: "dynamic",
                         allowWebWorkers: true,
                     },
-                    false // dont autostart the uploadg
+                    false // dont autostart the upload.
                 );
 
                 uploadInstance.on("start", (err, file) => {
-                    //console.log('started', file.name);
+                    console.log('started', file.name);
                 });
 
                 uploadInstance.on("progress", function (progress, file) {
@@ -128,13 +128,13 @@ export default class SessionPage extends BaseComponent {
                 <h1>{name}</h1>
 
                 <AlertLink
-                    text={"share this session with a public link"}
+                    text={"Share this session with a public link"}
                     bText={"open link"}
                     link={shareLink}
                 />
 
                 <AlertLink
-                    text={"let presenters add their own slides"}
+                    text={"Let presenters add their own slides"}
                     bText={"open link"}
                     link={uploadLink}
                 />
@@ -159,7 +159,7 @@ export default class SessionPage extends BaseComponent {
                 )}
 
                 <div className="alert">
-                    add {talks.length > 0 && " more "} presentations here.
+                    Add {talks.length > 0 && " more "} presentations here.
                     <SelectUpload
                         labelText="+ new"
                         className="pull-right btn-menu btn-primary"
@@ -178,6 +178,12 @@ export default class SessionPage extends BaseComponent {
                         </div>
                     )}
                 </div>
+
+                <h3>
+                    <Link to={`/`}>
+                        <span className="black"> ‹ </span> back
+                    </Link>
+                </h3>
             </div>
         );
 

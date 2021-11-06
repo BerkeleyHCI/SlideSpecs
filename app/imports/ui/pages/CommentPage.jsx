@@ -1,4 +1,4 @@
-/* global Masonry, DragSelect */
+/* global Masonry */
 
 import { Meteor } from "meteor/meteor";
 import React, { Fragment } from "react";
@@ -48,7 +48,6 @@ class CommentPage extends BaseComponent {
         const grid = document.getElementById("grid");
         const itemSel = { itemSelector: ".file-item" };
         const mason = new Masonry(grid, itemSel);
-        mason.on("layoutComplete", this.handleSelectable);
     };
 
     log = (data) => {
@@ -71,37 +70,6 @@ class CommentPage extends BaseComponent {
             this.logger.info(
                 JSON.stringify({ data, reviewer, sessionId, time: Date.now() })
             );
-        }
-    };
-
-    handleSelectable = (items) => {
-        try {
-            const area = document.getElementById("grid");
-            const elements = items.map((i) => i.element);
-            let { ds } = this.state;
-            const updateSelection = () => {
-                const s = ds.getSelection();
-                if (s.length > 0) {
-                    const filtered = s.map(this.extractFileData);
-                    this.setState({ selected: s, filtered });
-                    this.updateImage(filtered[0].slideId);
-                }
-            };
-
-            if (!_.isEmpty(ds)) {
-                ds.selectables = elements;
-            } else {
-                ds = new DragSelect({
-                    selectables: elements,
-                    onDragMove: updateSelection,
-                    callback: updateSelection,
-                    autoScrollSpeed: 12,
-                    area: area,
-                });
-                this.setState({ ds });
-            }
-        } catch (e) {
-            console.log(e);
         }
     };
 

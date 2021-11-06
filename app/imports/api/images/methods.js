@@ -10,9 +10,12 @@ export const renameImage = new ValidatedMethod({
     }).validator(),
     run({ imageId, newName }) {
         this.unblock(); // <-- Use to make this method asynchronous
-        const good = Images.collection.update(imageId, {
-            $set: { name: newName },
-        });
+        const good = Images.collection.update(
+            { _id: imageId },
+            {
+                $set: { name: newName },
+            }
+        );
         return good;
     },
 });
@@ -24,7 +27,7 @@ export const deleteImage = new ValidatedMethod({
     }).validator(),
     run({ imageId }) {
         try {
-            Images.remove(imageId);
+            Images.remove({ id: imageId });
         } catch (e) {
             console.error(e);
         }

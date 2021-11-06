@@ -13,7 +13,8 @@ import {
 // Helper class for individual file items.
 
 class SessionItem extends BaseComponent {
-    renameSession = () => {
+    renameSession = (e) => {
+        e.stopPropagation();
         const { _id, name } = this.props;
         let validName = /[^a-zA-Z0-9 .:+()\-_%!&]/gi;
         let prompt = window.prompt("New session name?", name);
@@ -28,7 +29,8 @@ class SessionItem extends BaseComponent {
         }
     };
 
-    deleteSession = () => {
+    deleteSession = (e) => {
+        e.stopPropagation();
         const { name } = this.props;
         if (confirm(`Delete ${name}?`))
             deleteSession.call({ sessionId: this.props._id });
@@ -52,14 +54,6 @@ class SessionItem extends BaseComponent {
         );
     }
 }
-
-// too dangerous for user study
-// also TODO confirm w/ modal
-//<button onClick={this.deleteSession} className="btn-menu">
-//delete
-//</button>
-
-SessionItem.propTypes = { id: PropTypes.string };
 
 export default class SessionListPage extends BaseComponent {
     addSession = () => {
@@ -86,7 +80,7 @@ export default class SessionListPage extends BaseComponent {
 
         const content = (
             <div className="main-content">
-                <h1>sessions</h1>
+                <h1>Sessions</h1>
                 <Link to={"/guide"} className="btn btn-empty pull-right">
                     user guide
                 </Link>

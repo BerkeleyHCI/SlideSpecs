@@ -1,4 +1,3 @@
-import { Meteor } from "meteor/meteor";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Events } from "./events.js";
@@ -31,6 +30,6 @@ export const deleteEvent = new ValidatedMethod({
         eventId: { type: String },
     }).validator(),
     run({ eventId }) {
-        Events.remove(eventId);
+        Events.remove({ _id: eventId });
     },
 });

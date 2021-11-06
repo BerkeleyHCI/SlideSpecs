@@ -2,9 +2,9 @@ import React from "react";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session.js";
 import PropTypes from "prop-types";
-import queryString from "query-string";
 import { ToastContainer, toast, cssTransition } from "react-toastify";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+// import queryString from "query-string";
 
 import AppModal from "../components/AppModal.jsx";
 import Loading from "../components/Loading.jsx";
@@ -14,6 +14,8 @@ import UserContainer from "../containers/UserContainer.jsx";
 import TalkContainer from "../containers/TalkContainer.jsx";
 import SessionContainer from "../containers/SessionContainer";
 import SpeakerContainer from "../containers/SpeakerContainer";
+import { checkUserTalk } from "../../api/talks/methods.js";
+import { checkUserSession } from "../../api/sessions/methods.js";
 
 import AuthPageSignIn from "../pages/AuthPageSignIn.jsx";
 import AuthPageSignUp from "../pages/AuthPageSignUp.jsx";
@@ -32,8 +34,6 @@ import SessionListPage from "../pages/SessionListPage.jsx";
 // import DiscussPage from "../pages/DiscussPage.jsx";
 // import FacilitatePage from "../pages/FacilitatePage.jsx";
 // import ReviewPage from "../pages/ReviewPage.jsx";
-
-import { checkUserTalk } from "../../api/talks/methods.js";
 
 const CONNECTION_ISSUE_TIMEOUT = 2000;
 
@@ -165,9 +165,9 @@ export default class App extends BaseComponent {
     renderContent = ({ location, ...other }) => {
         this.renderSecure(); // http -> https
         const { modal } = this.state;
-        const { user, sessions, files, loading } = this.props;
-        const params = queryString.parse(location.search);
+        const { loading } = this.props;
         const shared = this.getSharedProps();
+        // const params = queryString.parse(location.search);
 
         return (
             <div id="container">
@@ -262,8 +262,9 @@ const PrivateRoute = ({ render, ...other }) => {
 
     const sharedPaths = ["/", "/upload/:id"];
     const talkPermit = checkUserTalk.call({ matchId });
+    const sessionPermit = checkUserSession.call({ matchId });
     const shared = sharedPaths.includes(other.path);
-    const permitted = shared || talkPermit;
+    const permitted = shared || talkPermit || sessionPermit;
 
     //console.log(Meteor.loggingIn(), user, other.path, matchId, loc);
     //console.log(saved, Meteor.loggingOut(), loc);

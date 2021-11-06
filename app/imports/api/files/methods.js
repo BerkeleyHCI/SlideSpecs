@@ -17,9 +17,12 @@ export const renameFile = new ValidatedMethod({
     }).validator(),
     run({ fileId, newName }) {
         this.unblock(); // <-- Use to make this method asynchronous
-        const good = Files.collection.update(fileId, {
-            $set: { name: newName },
-        });
+        const good = Files.collection.update(
+            { _id: fileId },
+            {
+                $set: { name: newName },
+            }
+        );
         return good;
     },
 });
