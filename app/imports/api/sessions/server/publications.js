@@ -14,6 +14,6 @@ Meteor.publish("sessions.session", (x) => {
 
 Meteor.publish("sessions.talk", (x) => {
     check(x, String);
-    const ref = Talks.findOne(x) || {};
-    return Sessions.find(ref.session);
+    const ref = Talks.findOne({ _id: x }) || {};
+    return Sessions.find({ _id: ref.session });
 });

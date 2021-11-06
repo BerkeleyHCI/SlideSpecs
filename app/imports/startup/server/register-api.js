@@ -8,7 +8,6 @@ import "../../api/transcripts/methods.js";
 import "../../api/transcripts/server/publications.js";
 import "../../api/events/methods.js";
 import "../../api/events/server/publications.js";
-
 import "../../api/files/methods.js";
 import "../../api/files/server/publications.js";
 import "../../api/images/methods.js";

@@ -1,7 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { DDPRateLimiter } from "meteor/ddp-rate-limiter";
 import { BrowserPolicy } from "meteor/browser-policy-common";
-import _ from "lodash";
 
 // Don't let people write arbitrary data to their 'profile' field from the client
 Meteor.users.deny({
@@ -35,7 +34,7 @@ BrowserPolicy.content.allowOriginForAll("blob:");
 DDPRateLimiter.addRule(
     {
         name(name) {
-            return _.includes(AUTH_METHODS, name);
+            return AUTH_METHODS.includes(name);
         },
 
         // Rate limit per connection ID

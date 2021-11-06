@@ -28,8 +28,7 @@ export const Files = new FilesCollection({
             script = "convert-slides";
         }
 
-        const util = Npm.require("util"),
-            spawn = Npm.require("child_process").spawn,
+        const spawn = Npm.require("child_process").spawn,
             convert = spawn(`${process.env.PWD}/private/${script}`, [
                 file.path,
                 storagePath,

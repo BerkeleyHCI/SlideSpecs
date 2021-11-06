@@ -26,8 +26,8 @@ export const createComment = new ValidatedMethod({
         sounds: { type: [String], optional: true },
     }).validator(),
     run({ session, talk, author, content, slides, agree, discuss, userOwn }) {
-        const sess = Sessions.findOne(session);
-        const uTalk = Talks.findOne(talk);
+        const sess = Sessions.findOne({_id: session});
+        const uTalk = Talks.findOne({_id: talk});
         if (sess && uTalk && uTalk.session === sess._id) {
             const data = {
                 created: Date.now(),
@@ -54,7 +54,7 @@ export const addressComment = new ValidatedMethod({
         commentId: { type: String },
     }).validator(),
     run({ commentId }) {
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (comment) {
             const newAddress = !comment.addressed;
             return Comments.update(commentId, {
@@ -73,7 +73,7 @@ export const completeComment = new ValidatedMethod({
         commentId: { type: String },
     }).validator(),
     run({ commentId }) {
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (!comment) {
             return false;
         } else {
@@ -93,7 +93,7 @@ export const agreeComment = new ValidatedMethod({
     }).validator(),
     run({ author, commentId }) {
         author = author.trim();
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (!comment) {
             return false;
         }
@@ -126,7 +126,7 @@ export const discussComment = new ValidatedMethod({
     }).validator(),
     run({ author, commentId }) {
         author = author.trim();
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (!comment) {
             return false;
         }
@@ -156,7 +156,7 @@ export const updateComment = new ValidatedMethod({
         newContent: { type: String, min: 1 },
     }).validator(),
     run({ author, commentId, newContent }) {
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (comment && comment.author == author) {
             const newOwn = comment.userOwn || newContent.includes("#private");
             Comments.update(commentId, {
@@ -173,7 +173,7 @@ export const toggleVisibility = new ValidatedMethod({
         commentId: { type: String },
     }).validator(),
     run({ author, commentId }) {
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (comment && comment.author == author) {
             Comments.update(commentId, {
                 $set: { userOwn: !comment.userOwn },
@@ -189,7 +189,7 @@ export const deleteComment = new ValidatedMethod({
         commentId: { type: String },
     }).validator(),
     run({ author, commentId }) {
-        const comment = Comments.findOne(commentId);
+        const comment = Comments.findOne({_id: commentId});
         if (comment && comment.author == author) {
             console.log({ type: "comment.delete", ...comment });
             Comments.remove(commentId);

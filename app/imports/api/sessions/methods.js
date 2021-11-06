@@ -30,7 +30,7 @@ export const createSession = new ValidatedMethod({
         }
 
         if (!name) {
-            const basename = "session ";
+            const basename = "Session ";
             let iter = new Date().toLocaleDateString();
             name = `${basename} ${iter}`;
         }
@@ -51,8 +51,8 @@ export const checkUserSession = new ValidatedMethod({
         matchId: { type: String },
     }).validator(),
     run({ matchId }) {
-        //console.log(matchId, sess, this.userId);
-        const sess = Sessions.findOne(matchId);
+        const sess = Sessions.findOne({_id: matchId})
+        // console.log(matchId, sess, this.userId);
         if (sess && sess.userId === this.userId) {
             return true; // user owns session
         } else {
@@ -68,7 +68,7 @@ export const renameSession = new ValidatedMethod({
         newName: { type: String },
     }).validator(),
     run({ sessionId, newName }) {
-        const session = Sessions.findOne(sessionId);
+        const session = Sessions.findOne({_id: sessionId});
         if (session.userId !== this.userId) {
             throw new Meteor.Error(
                 "api.sessions.rename.accessDenied",
@@ -86,7 +86,7 @@ export const deleteSession = new ValidatedMethod({
         sessionId: { type: String },
     }).validator(),
     run({ sessionId }) {
-        const session = Sessions.findOne(sessionId);
+        const session = Sessions.findOne({ _id: sessionId });
         if (!session || session.userId !== this.userId) {
             throw new Meteor.Error(
                 "api.sessions.delete.accessDenied",
@@ -99,7 +99,7 @@ export const deleteSession = new ValidatedMethod({
                 Images.remove({ "meta.sessionId": sessionId });
                 Comments.remove({ session: sessionId });
                 Talks.remove({ session: sessionId });
-                Sessions.remove(sessionId);
+                Sessions.remove({ _id: sessionId });
             } catch (e) {
                 console.error(e);
             }
