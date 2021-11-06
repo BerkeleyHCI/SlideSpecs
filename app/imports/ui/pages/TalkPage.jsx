@@ -376,13 +376,13 @@ export default class TalkPage extends BaseComponent {
                 )}
 
                 <AlertLink
-                    text={"share this talk with a public link"}
+                    text={"Share this talk with a public link"}
                     bText={"open link"}
                     link={commentLink}
                 />
 
                 <AlertLink
-                    text={"send to your discussion facilitator"}
+                    text={"Send to your discussion facilitator"}
                     bText={"open link"}
                     link={facilitateLink}
                     blank={true}
@@ -390,7 +390,7 @@ export default class TalkPage extends BaseComponent {
 
                 {hasComments && (
                     <AlertLink
-                        text={"review comments and feedback"}
+                        text={"Review comments and feedback"}
                         bText={"open link"}
                         link={reviewLink}
                     />

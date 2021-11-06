@@ -475,9 +475,10 @@ class CommentPage extends BaseComponent {
                     fileUrl={link}
                     fileId={f._id}
                     fileName={f.name}
-                    active={false}
-                    handleMouse={this.handleSlideIn}
-                    handleMouseOut={this.handleSlideOut}
+                    active={active}
+                    handleMouse={setHover}
+                    handleClick={setSelect}
+                    handleMouseOut={this.handleMouseOut}
                     handleLoad={this.handleLoad}
                 />
             );

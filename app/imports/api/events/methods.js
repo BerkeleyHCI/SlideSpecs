@@ -13,7 +13,7 @@ export const logEvent = new ValidatedMethod({
     }).validator(),
     run(args) {
         const log = { created: Date.now(), ...args };
-        console.log({ type: "event", ...log });
+        // console.log({ type: "event", ...log });
         return Events.insert(log);
     },
 });
