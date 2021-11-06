@@ -32,3 +32,5 @@ ostrio:files
 react-meteor-data
 npm-bcrypt
 service-configuration
+ostrio:logger
+ostrio:loggerconsole
