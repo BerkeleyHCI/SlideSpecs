@@ -35,10 +35,10 @@ export default class UserMenu extends BaseComponent {
         return (
             <div className="user-menu">
                 <LocalLink to="/signin" className="btn-secondary">
-                    signin
+                    sign in
                 </LocalLink>
-                <LocalLink to="/join" className="btn-secondary">
-                    join
+                <LocalLink to="/signup" className="btn-secondary">
+                    sign up
                 </LocalLink>
                 <LocalLink to="/guide" className="btn-secondary">
                     guide

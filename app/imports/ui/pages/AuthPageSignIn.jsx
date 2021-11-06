@@ -93,8 +93,8 @@ class SignInPage extends BaseComponent {
         );
 
         const link = (
-            <Link to="/join" className="link-auth-alt">
-                join
+            <Link to="/signup" className="link-auth-alt">
+                sign up
             </Link>
         );
 
