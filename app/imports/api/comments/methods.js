@@ -40,7 +40,7 @@ export const createComment = new ValidatedMethod({
                 discuss,
                 userOwn,
             };
-            console.log({type: 'comment.create', ...data});
+            // console.log({type: 'comment.create', ...data});
             return Comments.insert(data);
         } else {
             console.error("Session and Talk data does not match.", sess, uTalk);
@@ -191,7 +191,7 @@ export const deleteComment = new ValidatedMethod({
     run({ author, commentId }) {
         const comment = Comments.findOne({_id: commentId});
         if (comment && comment.author == author) {
-            console.log({ type: "comment.delete", ...comment });
+            // console.log({ type: "comment.delete", ...comment });
             Comments.remove(commentId);
         }
     },

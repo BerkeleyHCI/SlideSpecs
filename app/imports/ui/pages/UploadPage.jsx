@@ -149,7 +149,7 @@ export default class UploadPage extends BaseComponent {
                     </div>
                 )}
 
-                <h3>speaker slide management</h3>
+                <h3>Speaker Slide Management</h3>
 
                 {talk && (
                     <div>
@@ -166,7 +166,7 @@ export default class UploadPage extends BaseComponent {
                             </ul>
                         </div>
                         <AlertLink
-                            text={"view all talks for this session"}
+                            text={"View all talks for this session"}
                             bText={"open link"}
                             link={shareLink}
                         />

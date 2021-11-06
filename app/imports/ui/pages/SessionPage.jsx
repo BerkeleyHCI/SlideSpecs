@@ -81,7 +81,7 @@ export default class SessionPage extends BaseComponent {
                 );
 
                 uploadInstance.on("start", (err, file) => {
-                    console.log('started', file.name);
+                    // console.log('started', file.name);
                 });
 
                 uploadInstance.on("progress", function (progress, file) {
