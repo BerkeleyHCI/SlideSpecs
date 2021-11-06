@@ -104,9 +104,7 @@ class GuidePage extends BaseComponent {
 
                 <h2 id="instructors">For Instructors</h2>
                 <div className="alert">
-                    <p>
-                        Need-to-know information about starting with SlideSpecs:
-                    </p>
+                    Need-to-know information about starting with SlideSpecs:
                     <ul>
                         <li>
                             <b>When:</b> As earlier as the day of a class

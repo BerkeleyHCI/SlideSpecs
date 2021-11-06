@@ -34,6 +34,7 @@ export default withTracker(() => {
     };
 
     if (sub) {
+        const sessions = Meteor.subscribe(`sessions.${sub.type}`, sub._id);
         const talks = Meteor.subscribe(`talks.${sub.type}`, sub._id);
         const comments = Meteor.subscribe(`comments.${sub.type}`, sub._id);
         const files = Meteor.subscribe(`files.${sub.type}`, sub._id);
@@ -44,7 +45,7 @@ export default withTracker(() => {
         //     sub._id
         // );
         data = Object.assign(data, {
-            loading: [talks, comments, files, images].some((s) => !s.ready()),
+            loading: [sessions, talks, comments, files, images].some((s) => !s.ready()),
             sessions: Sessions.find({}, { sort: { created: -1 } }).fetch(),
             talks: Talks.find({}, { sort: { created: -1 } }).fetch(),
             comments: Comments.find({}, { sort: { name: 1 } }).fetch(),

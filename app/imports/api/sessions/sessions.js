@@ -8,9 +8,7 @@ Sessions.deny({
         return true;
     },
     // allowing updates for talk order
-    //update() {
-    //return true;
-    //},
+    // update() { return true; },
     remove() {
         return true;
     },

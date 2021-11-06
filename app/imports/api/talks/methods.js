@@ -19,10 +19,9 @@ export const createTalk = new ValidatedMethod({
     run({ sessionId, name }) {
         if (!this.userId) {
             throw new Meteor.Error(
-                "api.talks.create.accessDenied",
+                "api.talks.createTalk.accessDenied",
                 "You must log in to create a talk."
             );
-            return false;
         }
 
         const talkId = Talks.insert({
@@ -34,15 +33,15 @@ export const createTalk = new ValidatedMethod({
             progress: 0,
         });
 
-        const session = Sessions.findOne(sessionId);
+        const session = Sessions.findOne({ _id: sessionId });
         if (!session) {
             throw new Meteor.Error(
-                "api.talks.addTalk.sessionNotFound",
+                "api.talks.createTalk.sessionNotFound",
                 "This session for the talk does not exist."
             );
         } else {
             const newTalks = [...session.talks, talkId];
-            Sessions.update(sessionId, { $set: { talks: newTalks } });
+            Sessions.update({ _id: sessionId }, { $set: { talks: newTalks } });
         }
 
         return talkId;
@@ -56,24 +55,23 @@ export const renameTalk = new ValidatedMethod({
         newName: { type: String },
     }).validator(),
     run({ talkId, newName }) {
-        const talk = Talks.findOne(talkId);
+        const talk = Talks.findOne({ _id: talkId });
         if (!talk) {
             throw new Meteor.Error(
-                "api.talks.delete.talkNotFound",
+                "api.talks.renameTalk.talkNotFound",
                 "This talk does not exist."
             );
         }
 
         // Talk owner or session owner should be able to edit/delete talk
-        const sess = Sessions.findOne(talk.session);
+        const sess = Sessions.findOne({ _id: talk.session });
         if (talk.userId === this.userId || sess.userId === this.userId) {
-            return Talks.update(talkId, { $set: { name: newName } });
+            return Talks.update({ _id: talkId }, { $set: { name: newName } });
         } else {
             throw new Meteor.Error(
-                "api.talks.rename.accessDenied",
+                "api.talks.renameTalk.accessDenied",
                 "You don't have permission to edit this talk."
             );
-            return false;
         }
     },
 });
@@ -86,21 +84,24 @@ export const setTalkProgress = new ValidatedMethod({
         progress: { type: Number },
     }).validator(),
     run({ talkId, progress }) {
-        const talk = Talks.findOne(talkId);
+        const talk = Talks.findOne({ _id: talkId });
         if (!talk) {
             throw new Meteor.Error(
-                "api.talks.delete.talkNotFound",
+                "api.talks.setProgress.talkNotFound",
                 "This talk does not exist."
             );
         }
 
         // Talk owner or session owner should be able to edit/delete talk
-        const sess = Sessions.findOne(talk.session);
+        const sess = Sessions.findOne({ _id: talk.session });
         if (talk.userId === this.userId || sess.userId === this.userId) {
-            return Talks.update(talkId, { $set: { progress: progress } });
+            return Talks.update(
+                { _id: talkId },
+                { $set: { progress: progress } }
+            );
         } else {
             throw new Meteor.Error(
-                "api.talks.rename.accessDenied",
+                "api.talks.setProgress.accessDenied",
                 "You don't have permission to edit this talk."
             );
         }
@@ -108,12 +109,12 @@ export const setTalkProgress = new ValidatedMethod({
 });
 
 export const checkUserTalk = new ValidatedMethod({
-    name: "talk.checkUser",
+    name: "talk.checkUserTalk",
     validate: new SimpleSchema({
         matchId: { type: String },
     }).validator(),
     run({ matchId }) {
-        const talk = Talks.findOne(matchId);
+        const talk = Talks.findOne({ _id: matchId });
         if (!talk) {
             return false; // talk does not exist
         } else if (talk.userId === this.userId) {
@@ -121,7 +122,7 @@ export const checkUserTalk = new ValidatedMethod({
         }
 
         // check if user owns session in talk
-        const sess = Sessions.findOne(talk.session);
+        const sess = Sessions.findOne({ _id: talk.session });
         if (sess && sess.userId === this.userId) {
             return true; // not talk owner but session owner
         } else {
@@ -137,12 +138,12 @@ export const moveSessionTalk = new ValidatedMethod({
         position: { type: Number },
     }).validator(),
     run({ talkId, position }) {
-        const talk = Talks.findOne(talkId);
+        const talk = Talks.findOne({ _id: talkId });
         if (!talk) {
             throw new Meteor.Error("api.talks.noTalk", "There is no talk.");
         }
 
-        const sess = Sessions.findOne(talk.session);
+        const sess = Sessions.findOne({ _id: talk.session });
         if (!sess || sess.userId !== this.userId) {
             throw new Meteor.Error(
                 "api.talks.addTalk.sessionNotEditable",
@@ -151,49 +152,52 @@ export const moveSessionTalk = new ValidatedMethod({
         }
 
         // move element from one array position to another
-        const oldIdx = sess.talks.findIndex((t) => t == talk._id);
+        // const oldIdx = sess.talks.findIndex((t) => t == talk._id);
         const oTalks = sess.talks.filter((t) => t != talk._id);
         const before = oTalks.slice(0, position);
         const after = oTalks.slice(position);
         const newTalks = [...before, talk._id, ...after];
 
-        Sessions.update(talk.session, { $set: { talks: newTalks } });
+        Sessions.update({ _id: talk.session }, { $set: { talks: newTalks } });
     },
 });
 
 export const deleteTalk = new ValidatedMethod({
-    name: "talks.delete",
+    name: "talks.deleteTalk",
     validate: new SimpleSchema({
         talkId: { type: String },
     }).validator(),
     run({ talkId }) {
-        const talk = Talks.findOne(talkId);
+        const talk = Talks.findOne({ _id: talkId });
         if (!talk) {
             throw new Meteor.Error(
-                "api.talks.delete.talkNotFound",
+                "api.talks.deleteTalk.talkNotFound",
                 "This talk does not exist."
             );
         }
 
         // Talk owner or session owner should be able to edit/delete talk
-        const sess = Sessions.findOne(talk.session);
+        const sess = Sessions.findOne({ _id: talk.session });
         if (talk.userId === this.userId || sess.userId === this.userId) {
             try {
                 // Remove id from the session object
-                const newTalks = _.remove(sess.talks, (t) => t == talk._id);
-                Sessions.update(talk.session, { $set: { talks: newTalks } });
+                const newTalks = sess.talks.filter((t) => t == talk._id);
+                Sessions.update(
+                    { id: talk.session },
+                    { $set: { talks: newTalks } }
+                );
 
                 // deleting related files
                 Files.remove({ "meta.talkId": talkId });
                 Images.remove({ "meta.talkId": talkId });
                 Comments.remove({ talk: talkId });
-                return Talks.remove(talkId);
+                return Talks.remove({ _id: talkId });
             } catch (e) {
                 console.error(e);
             }
         } else {
             throw new Meteor.Error(
-                "api.talks.delete.accessDenied",
+                "api.talks.deleteTalk.accessDenied",
                 "You don't have permission to delete this talk."
             );
         }
