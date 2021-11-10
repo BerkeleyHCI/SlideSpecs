@@ -83,6 +83,7 @@ class CommentPage extends BaseComponent {
     componentDidMount = () => {
         this.handleLoad();
         document.getElementById("review-view").focus();
+        document.addEventListener("keydown", this.handleKeyDown);
 
         // set image to link of the first slide
         const { images } = this.props;
@@ -93,6 +94,10 @@ class CommentPage extends BaseComponent {
 
     componentDidUpdate = () => {
         this.handleLoad();
+    };
+
+    componentWillUnmount = () => {
+        document.removeListener("keydown", this.handleKeyDown);
     };
 
     setActiveComment = (ac) => {
