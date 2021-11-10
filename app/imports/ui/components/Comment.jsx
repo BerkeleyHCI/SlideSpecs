@@ -11,7 +11,8 @@ import AppNotification from "../components/AppNotification.jsx";
 import Expandable from "../components/Expandable.jsx";
 import SlideTags from "../components/SlideTags.jsx";
 
-import { setRespondingComment } from "../../api/sessions/methods.js";
+// import { setRespondingComment } from "../../api/sessions/methods.js";
+
 import {
     agreeComment,
     discussComment,
@@ -251,8 +252,8 @@ class Comment extends BaseComponent {
         }
 
         if (talk && _id) {
-            this.log({ type: "setDiscussing", ...commentFields });
-            setRespondingComment.call(commentFields);
+            // this.log({ type: "setDiscussing", ...commentFields });
+            // setRespondingComment.call(commentFields);
         }
     };
 
@@ -452,8 +453,10 @@ class Comment extends BaseComponent {
             bData = [this.activeButton, this.queueButton]; // unmarked
         } else if (facilitateView) {
             bData = []; // reply.
+        } else if (discussView && master) {
+            bData = [this.addressButton, this.editButton];
         } else if (discussView) {
-            bData = [...this.pubButtons];
+            bData = [this.addressButton];
         } else if (regionView) {
             bData = [this.playButton];
         } else if (reviewView && base) {
