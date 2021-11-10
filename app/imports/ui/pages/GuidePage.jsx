@@ -33,9 +33,8 @@ class GuidePage extends BaseComponent {
         const content = (
             <div className="main-content" id="guide-container">
                 <h3 className="pull-right">
-                    <Link to={`/`}>
-                        <span className="black"> ‹ </span> back
-                    </Link>
+                    <span className="black"> ‹ </span>
+                    <Link to={`/`}>back</Link>
                 </h3>
                 <h1>User Guide</h1>
                 <div className="v-pad">
@@ -220,9 +219,8 @@ class GuidePage extends BaseComponent {
                 )}
 
                 <h3>
-                    <Link to={`/`}>
-                        <span className="black"> ‹ </span> back
-                    </Link>
+                    <span className="black"> ‹ </span>
+                    <Link to={`/`}>back</Link>
                 </h3>
 
                 <br />

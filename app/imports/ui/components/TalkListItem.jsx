@@ -13,7 +13,7 @@ import Img from "../components/Image.jsx";
 
 class TalkListItem extends Component {
     renameTalk = () => {
-        const { talk } = this.props;
+        const { talk, talkId } = this.props;
         let validName = /[^a-zA-Z0-9 .:+()\-_%!&]/gi;
         let prompt = window.prompt("New talk name?", talk.name);
         if (prompt) {
@@ -22,23 +22,23 @@ class TalkListItem extends Component {
         }
 
         if (!_.isEmpty(prompt)) {
-            renameTalk.call({ talkId: talk._id, newName: prompt });
+            renameTalk.call({ talkId, newName: prompt });
         }
     };
 
     moveTalkUp = () => {
-        const { iter, talk } = this.props;
-        moveSessionTalk.call({ talkId: talk._id, position: iter - 1 });
+        const { iter, talkId } = this.props;
+        moveSessionTalk.call({ talkId, position: iter - 1 });
     };
 
     moveTalkDown = () => {
-        const { iter, talk } = this.props;
-        moveSessionTalk.call({ talkId: talk._id, position: iter + 1 });
+        const { iter, talkId } = this.props;
+        moveSessionTalk.call({ talkId, position: iter + 1 });
     };
 
     deleteTalk = () => {
-        const { talk } = this.props;
-        deleteTalk.call({ talkId: talk._id });
+        const { talkId } = this.props;
+        deleteTalk.call({ talkId });
     };
 
     renderOrdering = () => {
@@ -61,13 +61,15 @@ class TalkListItem extends Component {
     };
 
     render() {
-        const { talk, ordering, linkPre, images, sessionOwner } = this.props;
+        const { talk, ordering, linkPre, comments, images, sessionOwner } =
+            this.props;
         const orderControls = this.renderOrdering();
         const talkLink = `/${linkPre}/${talk._id}`;
         let iLink = "/loading.svg";
 
         const tImages = images.filter((i) => i.meta.talkId === talk._id);
         const hasImages = tImages && tImages.length > 0;
+        const Nimages = tImages ? tImages.length : 0;
         if (hasImages) {
             try {
                 let testImage;
@@ -88,8 +90,9 @@ class TalkListItem extends Component {
         const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
         const uploadState = <span>uploading: {talk.progress}%</span>;
 
-        const comments = talk.comments ? talk.comments.length : 0;
-        const hasComments = comments > 1;
+        const tComments = comments.filter((c) => c.talk === talk._id);
+        const Ncomments = tComments ? tComments.length : 0;
+        const hasComments = Ncomments >= 1;
 
         return (
             <li className="list-group-item clearfix">
@@ -128,7 +131,18 @@ class TalkListItem extends Component {
                             {linkPre && (
                                 <LocalLink to={talkLink}>{talk.name}</LocalLink>
                             )}
-                            {hasComments && ( <i> <br /> {comments} comments </i>)}
+                            <hr />
+                            {hasImages && (
+                                <small>
+                                    <br />
+                                    {Nimages} slide{Nimages > 1 && "s"}{" "}
+                                </small>
+                            )}
+                            {hasComments && (
+                                <small>
+                                    | {Ncomments} comment{Ncomments > 1 && "s"}
+                                </small>
+                            )}
                             {!hasImages && (
                                 <i>
                                     <br />
@@ -150,19 +164,21 @@ class TalkListItem extends Component {
     }
 }
 
-
 TalkListItem.propTypes = {
     talk: PropTypes.object,
     images: PropTypes.array,
+    comments: PropTypes.array,
     linkPre: PropTypes.string,
     sessionOwner: PropTypes.bool,
     ordering: PropTypes.bool,
 };
 
 TalkListItem.defaultProps = {
-    talk: { name: "", comments: [] },
     iter: 0,
+    talk: { name: "", comments: [] },
+    talkId: "",
     images: [],
+    comments: [],
     linkPre: "",
     sessionOwner: false,
     ordering: false,
