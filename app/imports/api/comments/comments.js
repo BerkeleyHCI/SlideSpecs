@@ -32,7 +32,7 @@ Comments.schema = new SimpleSchema({
     author: { type: String },
     content: { type: String },
     session: { type: String, regEx: SimpleSchema.RegEx.Id },
-    talk: { type: String, regEx: SimpleSchema.RegEx.Id },    
+    talk: { type: String, regEx: SimpleSchema.RegEx.Id },
     agree: { type: [String], defaultValue: [] },
     discuss: { type: [String], defaultValue: [] },
     slides: { type: [SlideSchema], defaultValue: [], optional: true },
