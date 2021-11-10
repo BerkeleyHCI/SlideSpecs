@@ -51,7 +51,7 @@ export const checkUserSession = new ValidatedMethod({
         matchId: { type: String },
     }).validator(),
     run({ matchId }) {
-        const sess = Sessions.findOne({_id: matchId})
+        const sess = Sessions.findOne({ _id: matchId });
         // console.log(matchId, sess, this.userId);
         if (sess && sess.userId === this.userId) {
             return true; // user owns session
@@ -68,7 +68,7 @@ export const renameSession = new ValidatedMethod({
         newName: { type: String },
     }).validator(),
     run({ sessionId, newName }) {
-        const session = Sessions.findOne({_id: sessionId});
+        const session = Sessions.findOne({ _id: sessionId });
         if (session.userId !== this.userId) {
             throw new Meteor.Error(
                 "api.sessions.rename.accessDenied",

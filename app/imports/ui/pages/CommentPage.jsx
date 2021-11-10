@@ -665,7 +665,12 @@ class CommentPage extends BaseComponent {
                             {name}
                         </LocalLink>
                     )}
-                    {!sessionOwner && name}
+                    {!sessionOwner && (
+                        <LocalLink to={`/share/${sessionId}`}>
+                            <span className="black"> ‹ </span>
+                            {name}
+                        </LocalLink>
+                    )}
                     <span
                         onClick={this.clearReviewer}
                         className="pull-right clear-icon"

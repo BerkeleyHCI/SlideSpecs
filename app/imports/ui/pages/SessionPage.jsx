@@ -51,9 +51,8 @@ export default class SessionPage extends BaseComponent {
                     handleToast({
                         msg: "error",
                         icon: "times",
-                        desc:
-                            'Please only upload pdf/ppt/pptx, with size equal or less than 30MB.',
-                            // "Please only upload pdf files, with size equal or less than 30MB.",
+                        desc: "Please only upload pdf/ppt/pptx, with size equal or less than 30MB.",
+                        // "Please only upload pdf files, with size equal or less than 30MB.",
                     });
                     return; // skip this file.
                 }
