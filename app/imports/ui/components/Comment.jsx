@@ -66,8 +66,9 @@ class Comment extends BaseComponent {
             if (props.href[0] == "#") {
                 const scrollView = (e) => {
                     e.preventDefault();
-                    setActive(_id);
-                    this.goToElementId("c" + _id);
+                    const tId = props.href.slice(1)
+                    setActive(tId.slice(1));
+                    this.goToElementId(tId);
                 };
                 return (
                     <a
