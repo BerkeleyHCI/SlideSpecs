@@ -88,8 +88,8 @@ class TalkListItem extends Component {
         const uploading = (!timedOut && !talk.progress) || talk.progress < 100;
         const uploadState = <span>uploading: {talk.progress}%</span>;
 
-        // const comments = talk.comments ? talk.comments.length : 0;
-        // const hasComments = comments > 1;
+        const comments = talk.comments ? talk.comments.length : 0;
+        const hasComments = comments > 1;
 
         return (
             <li className="list-group-item clearfix">
@@ -128,6 +128,7 @@ class TalkListItem extends Component {
                             {linkPre && (
                                 <LocalLink to={talkLink}>{talk.name}</LocalLink>
                             )}
+                            {hasComments && ( <i> <br /> {comments} comments </i>)}
                             {!hasImages && (
                                 <i>
                                     <br />
@@ -149,8 +150,6 @@ class TalkListItem extends Component {
     }
 }
 
-// todo: add comment and slide notes as a tag overlay
-//{hasComments && ( <i> <br /> {comments} comments </i>)}
 
 TalkListItem.propTypes = {
     talk: PropTypes.object,

@@ -23,6 +23,20 @@ import SlideFile from "../components/SlideFile.jsx";
 import ReactDOMServer from "react-dom/server";
 
 export default class TalkPage extends BaseComponent {
+    componentDidMount = () => {
+        this.handleLoad();
+    };
+
+    componentDidUpdate = () => {
+        this.handleLoad();
+    };
+
+    handleLoad = () => {
+        const grid = document.getElementById("grid");
+        const itemSel = { itemSelector: ".file-item" };
+        const mason = new Masonry(grid, itemSel);
+    };
+
     handleDropUpload = (files) => {
         this.handleUpload(files);
     };
@@ -335,8 +349,8 @@ export default class TalkPage extends BaseComponent {
         const commentLink = window.location.origin + "/comment/" + talkId;
         const facilitateLink = window.location.origin + "/facilitate/" + talkId;
         const reviewLink = window.location.origin + "/review/" + talkId;
-        const uploadLink = window.location.origin + "/upload/" + talkId;
-        const downloadLink = `/download/${talkId}`;
+        // const uploadLink = window.location.origin + "/upload/" + talkId;
+        // const downloadLink = `/download/${talkId}`;
         const shareLink = `/share/${sessionId}`;
         const sessLink = `/sessions/${sessionId}`;
         const homeLink = sessionOwner ? sessLink : shareLink;
@@ -422,6 +436,13 @@ export default class TalkPage extends BaseComponent {
 
                 {file && images.length == 0 && (
                     <TalkListItem className={"v-margin"} talk={talk} />
+                )}
+                {file && images.length > 0 && (
+                    <div className="v-pad">
+                    <div className="v-margin" id="grid-holder">
+                        <div id="grid">{imageSet}</div>
+                    </div>
+                    </div>
                 )}
             </div>
         );
