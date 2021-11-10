@@ -664,22 +664,8 @@ class CommentPage extends BaseComponent {
         return (
             <div className="context-filter float-at-top">
                 <span className="list-title list-title-basic">
-                    {sessionOwner && (
-                        <Fragment>
-                            <span className="black"> ‹ </span>
-                            <LocalLink to={`/sessions/${sessionId}`}>
-                                {name}
-                            </LocalLink>
-                        </Fragment>
-                    )}
-                    {!sessionOwner && (
-                        <Fragment>
-                            <span className="black"> ‹ </span>
-                            <LocalLink to={`/share/${sessionId}`}>
-                                {name}
-                            </LocalLink>
-                        </Fragment>
-                    )}
+                    <span className="black"> ‹ </span>
+                    <LocalLink to={`/share/${sessionId}`}>{name}</LocalLink>
                     <span
                         onClick={this.clearReviewer}
                         className="pull-right clear-icon"

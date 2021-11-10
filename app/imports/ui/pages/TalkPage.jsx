@@ -337,7 +337,7 @@ export default class TalkPage extends BaseComponent {
                 key={"file-" + key}
                 iter={key + 1}
                 fileUrl={Images.findOne(i._id).link("original", "//")}
-                handleLoad={this.updateMason}
+                handleLoad={this.handleLoad}
                 fileId={i._id}
                 fileName={i.name}
             />
@@ -350,7 +350,7 @@ export default class TalkPage extends BaseComponent {
         // const downloadLink = `/download/${talkId}`;
         const shareLink = `/share/${sessionId}`;
         const sessLink = `/sessions/${sessionId}`;
-        const homeLink = sessionOwner ? sessLink : shareLink;
+        const homeLink = shareLink;
 
         /*
                        <AlertLink
@@ -369,10 +369,8 @@ export default class TalkPage extends BaseComponent {
                 )}
 
                 <h1>
-                    <LocalLink to={homeLink}>
-                        <span className="black"> ‹ </span>
-                        {name}
-                    </LocalLink>
+                    <span className="black"> ‹ </span>
+                    <LocalLink to={homeLink}>{name}</LocalLink>
                 </h1>
 
                 {!file && !uploading && (
@@ -411,17 +409,10 @@ export default class TalkPage extends BaseComponent {
                 {file && hasComments && (
                     <div className="btns-menu-space">
                         <button
-                            onClick={this.downloadJSON}
-                            className="btn btn-menu btn-note"
-                        >
-                            download JSON
-                        </button>
-
-                        <button
                             onClick={this.downloadHTML}
-                            className="btn btn-menu btn-note"
+                            className="btn btn-menu pull-right"
                         >
-                            download HTML
+                            download comments
                         </button>
 
                         <a download href={talkFile}>
@@ -433,11 +424,15 @@ export default class TalkPage extends BaseComponent {
                 )}
 
                 {file && images.length == 0 && (
-                    <TalkListItem className={"v-margin"} talk={talk} />
+                    <TalkListItem
+                        className={"v-margin"}
+                        talkId={talkId}
+                        talk={talk}
+                    />
                 )}
                 {file && images.length > 0 && (
                     <div className="v-pad">
-                        <div className="v-margin" id="grid-holder">
+                        <div className="v-margin">
                             <div id="grid">{imageSet}</div>
                         </div>
                     </div>
@@ -452,6 +447,15 @@ export default class TalkPage extends BaseComponent {
         );
     }
 }
+
+/*
+                        <button
+                            onClick={this.downloadJSON}
+                            className="btn btn-menu btn-note"
+                        >
+                            download JSON
+                        </button>
+*/
 
 TalkPage.propTypes = {
     user: PropTypes.object,

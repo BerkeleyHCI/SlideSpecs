@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -11,7 +11,6 @@ import Comment from "../components/Comment.jsx";
 // Control-log.
 import { Logger } from "meteor/ostrio:logger";
 import { LoggerConsole } from "meteor/ostrio:loggerconsole";
-import { getDiffieHellman } from "crypto";
 
 class DownloadPage extends BaseComponent {
     constructor(props) {
@@ -392,8 +391,8 @@ class DownloadPage extends BaseComponent {
                         <div className="row">
                             <div className="col-sm-12">
                                 <h1>
+                                    <span className="black"> ‹ </span>
                                     <Link to={`/slides/${talk._id}`}>
-                                        <span className="black"> ‹ </span>
                                         {session.name}
                                     </Link>
                                     <small> / {talk.name}</small>

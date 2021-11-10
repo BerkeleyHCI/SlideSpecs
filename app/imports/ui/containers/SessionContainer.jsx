@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session.js";
 import BaseComponent from "../components/BaseComponent.jsx";
-import _ from "lodash";
 
 export default class SessionContainer extends BaseComponent {
     renewSubscription = (_id) => {
@@ -19,13 +18,16 @@ export default class SessionContainer extends BaseComponent {
         let props = {};
         const { sessions, talks, files, images, comments } = this.props;
         const session = sessions.find((s) => s._id === _id) || { talks: [] };
-        const unsortedTalks = talks.filter((f) => f.session === _id);
-        props.talks = _.sortBy(unsortedTalks, (t) => t.name.toLowerCase()).map(
-            (t) => {
-                t.comments = comments.filter((c) => c.talk === t._id) || [];
-                return t;
-            }
-        );
+
+        props.talks = session.talks.map((tId, i) => {
+            let t = talks.find((t) => t._id === tId) || {
+                _id: i,
+                comments: [],
+            };
+            t.comments = comments.filter((c) => c.talk === tId) || [];
+            t.talkId = tId;
+            return t;
+        });
 
         props.files = files.filter((f) => f.meta.sessionId === _id);
         props.images = images.filter((f) => f.meta.sessionId === _id);

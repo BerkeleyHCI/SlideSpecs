@@ -7,10 +7,16 @@ Sessions.deny({
     insert() {
         return true;
     },
-    // allowing updates for talk order
-    // update() { return true; },
     remove() {
         return true;
+    },
+});
+
+// Explicitly allowing updates for talk order
+
+Sessions.allow({
+    update(userId, doc, fieldNames, modifier) {
+        return true; // doc.userId === userId;
     },
 });
 
