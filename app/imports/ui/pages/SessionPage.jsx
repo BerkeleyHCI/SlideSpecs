@@ -17,9 +17,9 @@ import { createTalk, setTalkProgress } from "../../api/talks/methods.js";
 
 export default class SessionPage extends BaseComponent {
     deleteFiles = () => {
-        const { session } = this.props;
+        const { sessionId } = this.props;
         if (confirm("Delete ALL talks for this session?"))
-            deleteSessionFiles.call({ sessionId: session._id });
+            deleteSessionFiles.call({ sessionId });
     };
 
     handleDropUpload = (files) => {
@@ -44,9 +44,9 @@ export default class SessionPage extends BaseComponent {
         if (files) {
             files.map((file) => {
                 // Allow uploading files under 30MB for now.
-                // const goodType = /(pdf)$/i.test(file.name);
+                const goodType = /(pdf)$/i.test(file.name);
                 const goodSize = file.size <= 30985760;
-                const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
+                // const goodType = /(pdf|ppt|pptx|key)$/i.test(file.name);
                 if (!goodSize || !goodType) {
                     handleToast({
                         msg: "error",

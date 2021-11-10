@@ -48,10 +48,11 @@ export const deleteSessionFiles = new ValidatedMethod({
     }).validator(),
     run({ sessionId }) {
         try {
-            Files.remove({ "meta.sessionId": sessionId });
-            Images.remove({ "meta.sessionId": sessionId });
-            Talks.remove({ session: sessionId });
             Comments.remove({ session: sessionId });
+            Talks.remove({ session: sessionId });
+            Images.remove({ "meta.sessionId": sessionId });
+            Files.remove({ "meta.sessionId": sessionId });
+            Sessions.update({ _id: sessionId }, { $set: { talks: [] } });
         } catch (e) {
             console.error(e);
         }
