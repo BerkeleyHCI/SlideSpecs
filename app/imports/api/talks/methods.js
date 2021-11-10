@@ -154,11 +154,8 @@ export const moveSessionTalk = new ValidatedMethod({
             );
         }
 
-        // Skip if outside of the range
-        console.log({ sess, talk, talkId, position });
-        
         // move element from one array position to another
-        const oTalks = sess.talks.filter((t) => t != talkId);
+        const oTalks = sess.talks.filter((t) => t !== talkId);
         const before = oTalks.slice(0, position);
         const after = oTalks.slice(position);
         const newTalks = [...before, talkId, ...after];
@@ -186,9 +183,9 @@ export const deleteTalk = new ValidatedMethod({
         if (talk.userId === this.userId || sess.userId === this.userId) {
             try {
                 // Remove id from the session object
-                const newTalks = sess.talks.filter((t) => t == talk._id);
+                const newTalks = sess.talks.filter((t) => t !== talkId);
                 Sessions.update(
-                    { id: talk.session },
+                    { _id: talk.session },
                     { $set: { talks: newTalks } }
                 );
 

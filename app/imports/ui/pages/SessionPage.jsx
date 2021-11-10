@@ -181,9 +181,8 @@ export default class SessionPage extends BaseComponent {
                 </div>
 
                 <h3>
-                    <Link to={`/`}>
-                        <span className="black"> ‹ </span> back
-                    </Link>
+                    <span className="black"> ‹ </span>
+                    <Link to={`/`}>back</Link>
                 </h3>
             </div>
         );

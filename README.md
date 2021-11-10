@@ -65,7 +65,7 @@ brew install sox
 ```bash
 brew install gs  # dependency
 brew install imagemagick      # convert
-brew cask install libreoffice # soffice
+brew install --cask libreoffice # soffice
 ```
 
 ### Scripts

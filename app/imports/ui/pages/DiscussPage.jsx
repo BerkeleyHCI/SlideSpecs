@@ -1,28 +1,16 @@
 /* global Masonry */
 
-import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { Session } from "meteor/session.js";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import _ from "lodash";
 
 import { Images } from "../../api/images/images.js";
 import BaseComponent from "../components/BaseComponent.jsx";
-import AlertLink from "../components/AlertLink.jsx";
 import LocalLink from "../components/LocalLink.jsx";
 import CommentList from "../components/CommentList.jsx";
-import AppNotification from "../components/AppNotification.jsx";
-import SpeechRecognition from "react-speech-recognition";
-import Input from "../components/Input.jsx";
-import TextArea from "../components/TextArea.jsx";
-import SlideTags from "../components/SlideTags.jsx";
 import ClearingDiv from "../components/ClearingDiv.jsx";
 import FileReview from "../components/FileReview.jsx";
-import Clock from "../components/Clock.jsx";
 import Img from "../components/Image.jsx";
-import Message from "../components/Message.jsx";
 import Comment from "../components/Comment.jsx";
 import { Comments } from "../../api/comments/comments.js";
 
@@ -323,10 +311,10 @@ class DiscussPage extends BaseComponent {
             <div className="context-filter float-at-top">
                 <span className="list-title list-title-basic">
                     {sessionOwner && (
-                        <Link to={`/talk/${talk._id}`}>
+                        <Fragment>
                             <span className="black"> ‹ </span>
-                            {name}
-                        </Link>
+                            <Link to={`/talk/${talk._id}`}>{name}</Link>
+                        </Fragment>
                     )}
                     {!sessionOwner && name}
                     <span

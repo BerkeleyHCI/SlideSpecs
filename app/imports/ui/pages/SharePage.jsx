@@ -16,19 +16,32 @@ class SharePage extends BaseComponent {
     };
 
     renderTalks = () => {
-        const { talks, images } = this.props;
+        const { talks, images, comments } = this.props;
         return (
             <div>
                 <ul className="v-pad list-group">
                     {talks.map((talk) => (
                         <TalkListItem
                             key={talk._id}
+                            talkId={talk._id}
                             talk={talk}
+                            comments={comments}
                             images={images}
                             linkPre="comment"
                         />
                     ))}
                 </ul>
+            </div>
+        );
+    };
+
+    renderInstruction = () => {
+        return (
+            <div className="alert">
+                Please give feedback for each group's presentation.
+                <hr />
+                You can attach feedback to specific slides and use #tags to
+                label comments.
             </div>
         );
     };
@@ -70,12 +83,5 @@ class SharePage extends BaseComponent {
         );
     }
 }
-
-//<div className="alert">
-//Please give feedback for each group's presentation.
-//<hr />
-//You can attach feedback to specific slides and use #tags to label
-//comments.
-//</div>
 
 export default SharePage;

@@ -11,9 +11,8 @@ class AboutPage extends BaseComponent {
         const content = (
             <div className="main-content" id="guide-container">
                 <h3 className="pull-right">
-                    <Link to={`/`}>
-                        <span className="black"> ‹ </span> back
-                    </Link>
+                    <span className="black"> ‹ </span>
+                    <Link to={`/`}>back</Link>
                 </h3>
 
                 <h1>About</h1>
@@ -53,14 +52,7 @@ class AboutPage extends BaseComponent {
                     </dl>
                     <div className="v-pad">
                         Check out the [ <Link to="/guide">user guide</Link> ] to
-                        see more of what SlideSpecs can do.
-                    </div>
-                </div>
-
-                <h3>Contact</h3>
-                <div>
-                    <p>
-                        Please email{" "}
+                        see more of what SlideSpecs can do. Please contact [{" "}
                         <a
                             href="https://jeremywrnr.com/"
                             rel="noopener noreferrer"
@@ -68,14 +60,13 @@ class AboutPage extends BaseComponent {
                         >
                             Jeremy Warner
                         </a>{" "}
-                        with feedback or questions.
-                    </p>
+                        ] with feedback or questions.
+                    </div>
                 </div>
 
                 <h3>
-                    <Link to={`/`}>
-                        <span className="black"> ‹ </span> back
-                    </Link>
+                    <span className="black"> ‹ </span>
+                    <Link to={`/`}>back</Link>
                 </h3>
             </div>
         );
