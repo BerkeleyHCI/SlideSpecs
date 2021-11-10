@@ -30,10 +30,10 @@ import DownloadPage from "../pages/DownloadPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import ForbiddenPage from "../pages/ForbiddenPage.jsx";
 import SessionListPage from "../pages/SessionListPage.jsx";
-// import TalkListPage from "../pages/TalkListPage.jsx";
-// import DiscussPage from "../pages/DiscussPage.jsx";
-// import FacilitatePage from "../pages/FacilitatePage.jsx";
-// import ReviewPage from "../pages/ReviewPage.jsx";
+import FacilitatePage from "../pages/FacilitatePage.jsx";
+import ReviewPage from "../pages/ReviewPage.jsx";
+import TalkListPage from "../pages/TalkListPage.jsx";
+import DiscussPage from "../pages/DiscussPage.jsx";
 
 const CONNECTION_ISSUE_TIMEOUT = 2000;
 
@@ -118,17 +118,18 @@ export default class App extends BaseComponent {
     renderGuidePage = ({ match }) => {
         return this.preRender(match, GuidePage, "user");
     };
-
     renderAboutPage = ({ match }) => {
         return this.preRender(match, AboutPage, "user");
     };
-
     renderSessionList = ({ match }) => {
         return this.preRender(match, SessionListPage, "user");
     };
 
     renderSession = ({ match }) => {
         return this.preRender(match, SessionPage, "session");
+    };
+    renderShare = ({ match }) => {
+        return this.preRender(match, SharePage, "session");
     };
 
     renderUpload = ({ match }) => {
@@ -138,23 +139,15 @@ export default class App extends BaseComponent {
     renderTalk = ({ match }) => {
         return this.preRender(match, TalkPage, "talk");
     };
-
-    renderFacilitate = ({ match }) => {
-        return this.preRender(match, FacilitatePage, "talk");
-    };
-
-    renderReview = ({ match }) => {
-        return this.preRender(match, ReviewPage, "talk");
-    };
-
-    renderShare = ({ match }) => {
-        return this.preRender(match, SharePage, "session");
-    };
-
     renderComment = ({ match }) => {
         return this.preRender(match, CommentPage, "talk");
     };
-
+    renderFacilitate = ({ match }) => {
+        return this.preRender(match, FacilitatePage, "talk");
+    };
+    renderReview = ({ match }) => {
+        return this.preRender(match, ReviewPage, "talk");
+    };
     renderDownload = ({ match }) => {
         return this.preRender(match, DownloadPage, "talk");
     };
@@ -207,9 +200,14 @@ export default class App extends BaseComponent {
                         <Route path="/guide" render={this.renderGuidePage} />
                         <Route path="/about" render={this.renderAboutPage} />
                         <Route path="/share/:id" render={this.renderShare} />
+                        <Route path="/review/:id" render={this.renderReview} />
                         <Route
                             path="/comment/:id"
                             render={this.renderComment}
+                        />
+                        <Route
+                            path="/discuss/:id"
+                            render={this.renderDiscuss}
                         />
                         <Route
                             path="/download/:id"
