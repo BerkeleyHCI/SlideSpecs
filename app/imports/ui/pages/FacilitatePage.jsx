@@ -26,7 +26,7 @@ import Message from "../components/Message.jsx";
 import Comment from "../components/Comment.jsx";
 import { Comments } from "../../api/comments/comments.js";
 import { createComment, addressComment } from "../../api/comments/methods.js";
-import { setRespondingComment } from "../../api/talks/methods.js";
+// import { setRespondingComment } from "../../api/talks/methods.js";
 
 class FacilitatePage extends BaseComponent {
     constructor(props) {
@@ -115,7 +115,7 @@ class FacilitatePage extends BaseComponent {
             } else {
                 this.clearText();
                 this.clearMatch();
-                setRespondingComment.call({ talkId: talk._id, commentId: res });
+                // setRespondingComment.call({ talkId: talk._id, commentId: res });
             }
         });
     };
@@ -367,7 +367,7 @@ class FacilitatePage extends BaseComponent {
 
     clearRespond = () => {
         const { talk } = this.props;
-        setRespondingComment.call({ talkId: talk._id, commentId: "" });
+        // setRespondingComment.call({ talkId: talk._id, commentId: "" });
     };
 
     renderRespond = () => {

@@ -145,6 +145,9 @@ export default class App extends BaseComponent {
     renderFacilitate = ({ match }) => {
         return this.preRender(match, FacilitatePage, "talk");
     };
+    renderDiscuss = ({ match }) => {
+        return this.preRender(match, DiscussPage, "talk");
+    };
     renderReview = ({ match }) => {
         return this.preRender(match, ReviewPage, "talk");
     };
