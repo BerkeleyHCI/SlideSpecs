@@ -253,13 +253,14 @@ class DiscussPage extends BaseComponent {
             // Clean - filter out active responding comments.
             csort = csort.filter((c) => talk.active.indexOf(c._id) < 0);
 
+            if (byAuth) {
+                csort = csort.filter((c) => c.author === byAuth);
+            }
+            
             // split off 'addressed' comments
             const addressed = csort.filter((c) => c.addressed);
             csort = csort.filter((c) => !c.addressed);
 
-            if (byAuth) {
-                csort = csort.filter((c) => c.author === byAuth);
-            }
 
             if (bySlide) {
                 csort = csort.filter((c) => {
@@ -286,14 +287,15 @@ class DiscussPage extends BaseComponent {
                 <div>
                     <span className="comments-head" />
                     <CommentList
+                        discussView={true}
                         title={"to discuss"}
                         items={items}
-                        focused={true}
                     />
                     <CommentList
+                        discussView={true}
                         title={"discussed"}
                         items={addressedItems}
-                        focused={true}
+                        defaultOpen={false}
                     />
                 </div>
             );
