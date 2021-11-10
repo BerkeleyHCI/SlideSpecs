@@ -116,7 +116,7 @@ export default class SessionPage extends BaseComponent {
     };
 
     render() {
-        const { session, name, talks, files, images } = this.props;
+        const { session, name, talks, files, images, comments } = this.props;
         const shareLink = window.location.origin + "/share/" + session._id;
 
         // TODO update this into the secret session field instead of rthe regular // id
@@ -145,8 +145,10 @@ export default class SessionPage extends BaseComponent {
                                 <TalkListItem
                                     iter={i}
                                     key={talk._id}
+                                    talkId={talk._id}
                                     talk={talk}
                                     images={images}
+                                    comments={comments}
                                     files={files}
                                     linkPre="slides"
                                     ordering={true}

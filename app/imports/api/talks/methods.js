@@ -140,23 +140,28 @@ export const moveSessionTalk = new ValidatedMethod({
     run({ talkId, position }) {
         const talk = Talks.findOne({ _id: talkId });
         if (!talk) {
-            throw new Meteor.Error("api.talks.noTalk", "There is no talk.");
+            throw new Meteor.Error(
+                "api.talks.moveSessionTalk.noTalk",
+                "There is no talk."
+            );
         }
 
         const sess = Sessions.findOne({ _id: talk.session });
         if (!sess || sess.userId !== this.userId) {
             throw new Meteor.Error(
-                "api.talks.addTalk.sessionNotEditable",
+                "api.talks.moveSessionTalk.sessionNotEditable",
                 "You cannot edit this session."
             );
         }
 
+        // Skip if outside of the range
+        console.log({ sess, talk, talkId, position });
+        
         // move element from one array position to another
-        // const oldIdx = sess.talks.findIndex((t) => t == talk._id);
-        const oTalks = sess.talks.filter((t) => t != talk._id);
+        const oTalks = sess.talks.filter((t) => t != talkId);
         const before = oTalks.slice(0, position);
         const after = oTalks.slice(position);
-        const newTalks = [...before, talk._id, ...after];
+        const newTalks = [...before, talkId, ...after];
 
         Sessions.update({ _id: talk.session }, { $set: { talks: newTalks } });
     },

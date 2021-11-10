@@ -41,6 +41,9 @@ a.link-alert:visited {
         color: @color-primary;
         font-weight: bold;
     }
+    &:hover .btn-primary {
+        background-color: #00f;
+    }
     &:hover div {
         box-shadow: 0em 1px @color-primary;
     }
@@ -48,5 +51,11 @@ a.link-alert:visited {
 
 h1 > .span-link,
 h1 > a {
+    text-decoration: none;
     color: @color-danger;
+}
+
+h1:hover > .span-link {
+    text-decoration: none;
+    color: #00f;
 }

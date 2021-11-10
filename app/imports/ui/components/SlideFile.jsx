@@ -11,7 +11,7 @@ class SlideFile extends Component {
     render() {
         const { iter, fileUrl, handleLoad } = this.props;
         return (
-            <div className="file-item">
+            <div className="file-item file-item-review">
                 <div className="slide-container">
                     <div className="overlay">
                         <p>{iter}</p>

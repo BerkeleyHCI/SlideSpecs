@@ -3,9 +3,7 @@
 import { Meteor } from "meteor/meteor";
 import React, { Component } from "react";
 import { Session } from "meteor/session.js";
-import ReactAudioPlayer from "react-audio-player";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 import _ from "lodash";
 
 import { Sounds } from "../../api/sounds/sounds.js";
@@ -16,16 +14,8 @@ import LocalLink from "../components/LocalLink.jsx";
 import AppNotification from "../components/AppNotification.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import CommentList from "../components/CommentList.jsx";
-import Input from "../components/Input.jsx";
 import ClearingDiv from "../components/ClearingDiv.jsx";
-import DragUpload from "../components/DragUpload.jsx";
-import SelectUpload from "../components/SelectUpload.jsx";
-import TextArea from "../components/TextArea.jsx";
 import FileReview from "../components/FileReview.jsx";
-import Img from "../components/Image.jsx";
-import Message from "../components/Message.jsx";
-import Comment from "../components/Comment.jsx";
-import { createComment, completeComment } from "../../api/comments/methods.js";
 
 class ReviewTimeMarker extends Component {
     render() {
@@ -224,7 +214,7 @@ class ReviewPage extends BaseComponent {
         }
     };
 
-    renderSlideTags = (selected, done: false) => {
+    renderSlideTags = (selected) => {
         const { bySlide } = this.state;
         const active = (sn) => (bySlide.includes(sn) ? "active" : "");
         if (selected.length === 0) {
@@ -445,10 +435,8 @@ class ReviewPage extends BaseComponent {
         return (
             <div className="context-filter">
                 <span className="list-title list-title-basic">
-                    <LocalLink to={`/talk/${talk._id}`}>
-                        <span className="black"> ‹ </span>
-                        {name}
-                    </LocalLink>
+                    <span className="black"> ‹ </span>
+                    <LocalLink to={`/slides/${talk._id}`}>{name}</LocalLink>
                     {sound && WaveSurfer && (
                         <button
                             className="btn btn-menu pull-right btn-empty"
@@ -647,7 +635,6 @@ class ReviewPage extends BaseComponent {
         );
 
         // Filtering 'reply' comments into array.
-        // TODO - make it so this seperates on punctuation
         const reply = /\[.*\]\(\s?#c(.*?)\)/;
         const isReply = (c) => reply.test(c.content);
         const replies = _.orderBy(
@@ -791,13 +778,13 @@ class ReviewPage extends BaseComponent {
 
     handleKeyDown = (event) => {
         switch (event.keyCode) {
-            case 32:
-                //console.log('space key pressed');
-                event.preventDefault();
-                event.stopPropagation();
-                this.waveRef.current.playAudio();
-                return;
-                break;
+            // case 32:
+            //     //console.log('space key pressed');
+            //     event.preventDefault();
+            //     event.stopPropagation();
+            //     this.waveRef.current.playAudio();
+            //     return;
+            //     break;
             case 37:
             case 38:
                 //console.log('Left key pressed');
@@ -816,14 +803,18 @@ class ReviewPage extends BaseComponent {
     };
 
     render() {
-        const { sound } = this.props;
-        const trans = this.renderTranscript();
-        const regions = this.renderRegions();
-        const comments = this.renderComments();
         const context = this.renderContext();
+        const comments = this.renderComments();
         const filter = this.renderCommentFilter();
-        const generate = this.renderGenerate();
-        const audio = this.renderSounds();
+        // const trans = this.renderTranscript();
+        // const regions = this.renderRegions();
+        // const { sound } = this.props;
+        // const generate = this.renderGenerate();
+        // {!sound && generate}
+        // const audio = this.renderSounds();
+        // {sound && audio}
+        // {regions}
+        // {trans}
 
         return (
             this.renderRedirect() || (
@@ -835,17 +826,11 @@ class ReviewPage extends BaseComponent {
                     onKeyDown={this.handleKeyDown}
                     onKeyPress={this.handleKeyDown}
                 >
-                    {sound && audio}
                     <div id="review-view" className="table review-table">
                         <div className="row">
-                            <div className="col-sm-5">
-                                {context}
-                                {!sound && generate}
-                                {trans}
-                            </div>
+                            <div className="col-sm-5">{context}</div>
                             <div className="col-sm-7">
                                 {filter}
-                                {regions}
                                 {comments}
                             </div>
                         </div>
