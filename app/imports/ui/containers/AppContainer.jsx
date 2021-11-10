@@ -45,7 +45,9 @@ export default withTracker(() => {
         //     sub._id
         // );
         data = Object.assign(data, {
-            loading: [sessions, talks, comments, files, images].some((s) => !s.ready()),
+            loading: [sessions, talks, comments, files, images].some(
+                (s) => !s.ready()
+            ),
             sessions: Sessions.find({}, { sort: { created: -1 } }).fetch(),
             talks: Talks.find({}, { sort: { created: -1 } }).fetch(),
             comments: Comments.find({}, { sort: { name: 1 } }).fetch(),
