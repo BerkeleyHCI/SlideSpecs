@@ -62,14 +62,6 @@ class TalkItem extends BaseComponent {
         return (
             <li className="list-group-item clearfix">
                 <Link to={talkLink}>{name}</Link>
-                {/* <div className="btn-m-group pull-right">
-                    <button onClick={this.renameSession} className="btn-menu">
-                        rename
-                    </button>
-                    <button onClick={this.deleteSession} className="btn-menu">
-                        delete
-                    </button>
-                </div> */}
             </li>
         );
     }
@@ -88,10 +80,11 @@ export default class SessionListPage extends BaseComponent {
 
     // Return talks for this user where they dont own the session
     talkFilter = (t) => {
-        const { id, sessions } = this.props;
-        if (t.userId !== id) return false;
+        const { user, sessions } = this.props;
+        const id = user._id;
+        if (!t.session || t.userId !== id) return false;
         const tSession = sessions.find((s) => s.talks.includes(t._id));
-        return tSession && tSession.userId !== id;
+        return !tSession;
     };
 
     render() {
@@ -106,7 +99,6 @@ export default class SessionListPage extends BaseComponent {
             ));
         }
 
-        
         let Talks;
         if (!talks || !talks.length) {
             Talks = <div></div>;
