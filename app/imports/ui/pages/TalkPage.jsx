@@ -3,13 +3,11 @@ import _ from "lodash";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
-import Loading from "../components/Loading.jsx";
+
 import CommentList from "../components/CommentList.jsx";
 import { Files } from "../../api/files/files.js";
 import { Images } from "../../api/images/images.js";
-import { createTalk, setTalkProgress } from "../../api/talks/methods.js";
-
+import { setTalkProgress } from "../../api/talks/methods.js";
 import MenuContainer from "../containers/MenuContainer.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import AppNotification from "../components/AppNotification.jsx";
@@ -345,9 +343,8 @@ export default class TalkPage extends BaseComponent {
             />
         ));
 
-        // TODO update this into the secret talk field instead of the regular // id
+        // const facilitateLink = window.location.origin + "/facilitate/" + talkId;
         const commentLink = window.location.origin + "/comment/" + talkId;
-        const facilitateLink = window.location.origin + "/facilitate/" + talkId;
         const reviewLink = window.location.origin + "/review/" + talkId;
         // const uploadLink = window.location.origin + "/upload/" + talkId;
         // const downloadLink = `/download/${talkId}`;
@@ -355,6 +352,14 @@ export default class TalkPage extends BaseComponent {
         const sessLink = `/sessions/${sessionId}`;
         const homeLink = sessionOwner ? sessLink : shareLink;
 
+        /*
+                       <AlertLink
+                    text={"Send to your discussion facilitator"}
+                    bText={"open link"}
+                    link={facilitateLink}
+                    blank={true}
+                />
+        */
         const content = (
             <div className="main-content">
                 {file && (
@@ -395,13 +400,6 @@ export default class TalkPage extends BaseComponent {
                     link={commentLink}
                 />
 
-                <AlertLink
-                    text={"Send to your discussion facilitator"}
-                    bText={"open link"}
-                    link={facilitateLink}
-                    blank={true}
-                />
-
                 {hasComments && (
                     <AlertLink
                         text={"Review comments and feedback"}
@@ -439,9 +437,9 @@ export default class TalkPage extends BaseComponent {
                 )}
                 {file && images.length > 0 && (
                     <div className="v-pad">
-                    <div className="v-margin" id="grid-holder">
-                        <div id="grid">{imageSet}</div>
-                    </div>
+                        <div className="v-margin" id="grid-holder">
+                            <div id="grid">{imageSet}</div>
+                        </div>
                     </div>
                 )}
             </div>

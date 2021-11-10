@@ -451,7 +451,7 @@ class CommentPage extends BaseComponent {
                 <TextArea
                     inRef={this.inRef}
                     handleSubmit={this.addComment}
-                    defaultValue="add feedback here."
+                    defaultValue="Add feedback here."
                     className="code comment-text"
                 />
             </div>
@@ -646,7 +646,7 @@ class CommentPage extends BaseComponent {
             return (
                 <div>
                     <span className="comments-head" />
-                    <CommentList title={"comments"} items={items} />
+                    <CommentList title={"Comments"} items={items} />
                     {items.length == 0 && (
                         <div className="alert"> no comments</div>
                     )}
@@ -665,16 +665,20 @@ class CommentPage extends BaseComponent {
             <div className="context-filter float-at-top">
                 <span className="list-title list-title-basic">
                     {sessionOwner && (
-                        <LocalLink to={`/sessions/${sessionId}`}>
+                        <Fragment>
                             <span className="black"> ‹ </span>
-                            {name}
-                        </LocalLink>
+                            <LocalLink to={`/sessions/${sessionId}`}>
+                                {name}
+                            </LocalLink>
+                        </Fragment>
                     )}
                     {!sessionOwner && (
-                        <LocalLink to={`/share/${sessionId}`}>
+                        <Fragment>
                             <span className="black"> ‹ </span>
-                            {name}
-                        </LocalLink>
+                            <LocalLink to={`/share/${sessionId}`}>
+                                {name}
+                            </LocalLink>
+                        </Fragment>
                     )}
                     <span
                         onClick={this.clearReviewer}
