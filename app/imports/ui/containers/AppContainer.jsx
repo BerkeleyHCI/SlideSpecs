@@ -49,7 +49,7 @@ export default withTracker(() => {
                 (s) => !s.ready()
             ),
             sessions: Sessions.find({}, { sort: { created: -1 } }).fetch(),
-            talks: Talks.find({}, { sort: { created: -1 } }).fetch(),
+            talks: Talks.find({}, {}).fetch(),
             comments: Comments.find({}, { sort: { name: 1 } }).fetch(),
             files: Files.find({}, { sort: { name: 1 } }).fetch(),
             images: Images.find({}, { sort: { name: 1 } }).fetch(),

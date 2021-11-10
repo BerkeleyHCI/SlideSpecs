@@ -56,7 +56,7 @@ class DragUpload extends BaseComponent {
 
 DragUpload.defaultProps = {
     title: "drop files here",
-    subtitle: "PDF or PowerPoint",
+    subtitle: "PDF only",
 };
 
 DragUpload.propTypes = {

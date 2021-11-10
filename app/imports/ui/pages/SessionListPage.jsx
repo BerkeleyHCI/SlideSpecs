@@ -55,6 +55,26 @@ class SessionItem extends BaseComponent {
     }
 }
 
+class TalkItem extends BaseComponent {
+    render() {
+        const { id, name } = this.props;
+        const talkLink = `/share/${_id}`;
+        return (
+            <li className="list-group-item clearfix">
+                <Link to={talkLink}>{name}</Link>
+                {/* <div className="btn-m-group pull-right">
+                    <button onClick={this.renameSession} className="btn-menu">
+                        rename
+                    </button>
+                    <button onClick={this.deleteSession} className="btn-menu">
+                        delete
+                    </button>
+                </div> */}
+            </li>
+        );
+    }
+}
+
 export default class SessionListPage extends BaseComponent {
     addSession = () => {
         createSession.call({}, (err, res) => {
@@ -67,7 +87,7 @@ export default class SessionListPage extends BaseComponent {
     };
 
     render() {
-        const { sessions } = this.props;
+        const { sessions, talks } = this.props;
 
         let Sessions;
         if (!sessions || !sessions.length) {
@@ -76,6 +96,13 @@ export default class SessionListPage extends BaseComponent {
             Sessions = sessions.map((sess) => (
                 <SessionItem key={sess._id} {...sess} />
             ));
+        }
+
+        let Talks;
+        if (!talks || !talks.length) {
+            Talks = <div></div>;
+        } else {
+            Talks = talks.map((t) => <TalkItem key={t._id} {...t} />);
         }
 
         const content = (
@@ -88,6 +115,8 @@ export default class SessionListPage extends BaseComponent {
                     + new session
                 </button>
                 <ul className="v-pad list-group">{Sessions}</ul>
+
+                <ul className="v-pad list-group">{Talks}</ul>
             </div>
         );
 

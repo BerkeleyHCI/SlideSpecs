@@ -19,7 +19,6 @@ import { createTalk, setTalkProgress } from "../../api/talks/methods.js";
  * This page is for the presenters to add their own slides, rather than
  * the default session manager slide which can upload multiple slides at one
  * time.
- *
  */
 
 export default class UploadPage extends BaseComponent {
@@ -157,6 +156,7 @@ export default class UploadPage extends BaseComponent {
                             <ul className="v-pad list-group">
                                 <TalkListItem
                                     key={talk._id}
+                                    talkId={talk._id}
                                     talk={talk}
                                     images={images}
                                     files={files}
