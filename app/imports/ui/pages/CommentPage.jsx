@@ -97,7 +97,7 @@ class CommentPage extends BaseComponent {
     };
 
     componentWillUnmount = () => {
-        document.removeListener("keydown", this.handleKeyDown);
+        // document.removeListener("keydown", this.handleKeyDown);
     };
 
     setActiveComment = (ac) => {
