@@ -57,8 +57,8 @@ class SessionItem extends BaseComponent {
 
 class TalkItem extends BaseComponent {
     render() {
-        const { id, name } = this.props;
-        const talkLink = `/share/${_id}`;
+        const { session, name } = this.props;
+        const talkLink = `/upload/${session}`;
         return (
             <li className="list-group-item clearfix">
                 <Link to={talkLink}>{name}</Link>
@@ -86,6 +86,14 @@ export default class SessionListPage extends BaseComponent {
         });
     };
 
+    // Return talks for this user where they dont own the session
+    talkFilter = (t) => {
+        const { id, sessions } = this.props;
+        if (t.userId !== id) return false;
+        const tSession = sessions.find((s) => s.talks.includes(t._id));
+        return tSession && tSession.userId !== id;
+    };
+
     render() {
         const { sessions, talks } = this.props;
 
@@ -98,11 +106,14 @@ export default class SessionListPage extends BaseComponent {
             ));
         }
 
+        
         let Talks;
         if (!talks || !talks.length) {
             Talks = <div></div>;
         } else {
-            Talks = talks.map((t) => <TalkItem key={t._id} {...t} />);
+            Talks = talks
+                .filter(this.talkFilter)
+                .map((t) => <TalkItem key={t._id} {...t} />);
         }
 
         const content = (
@@ -116,6 +127,7 @@ export default class SessionListPage extends BaseComponent {
                 </button>
                 <ul className="v-pad list-group">{Sessions}</ul>
 
+                {Talks.length > 0 && <h1>Talks</h1>}
                 <ul className="v-pad list-group">{Talks}</ul>
             </div>
         );
