@@ -18,7 +18,6 @@
         "react/no-direct-mutation-state": "off",
         "react/no-find-dom-node": "off",
         "no-console": "off",
-        "no-unused-vars": "off",
         "no-unreachable": "off",
         "strict": ["error", "global"]
     },

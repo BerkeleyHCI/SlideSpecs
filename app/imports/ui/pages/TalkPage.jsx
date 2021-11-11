@@ -1,3 +1,5 @@
+/* global Masonry */
+
 import React from "react";
 import _ from "lodash";
 import { Meteor } from "meteor/meteor";
@@ -32,7 +34,7 @@ export default class TalkPage extends BaseComponent {
     handleLoad = () => {
         const grid = document.getElementById("grid");
         const itemSel = { itemSelector: ".file-item" };
-        const mason = new Masonry(grid, itemSel);
+        new Masonry(grid, itemSel);
     };
 
     handleDropUpload = (files) => {
@@ -97,7 +99,7 @@ export default class TalkPage extends BaseComponent {
                     });
                 });
 
-                uploadInstance.on("progress", function (progress, file) {
+                uploadInstance.on("progress", function (progress) {
                     setTalkProgress.call({ talkId: talk._id, progress });
                 });
 
@@ -193,15 +195,13 @@ export default class TalkPage extends BaseComponent {
         const {
             sorter,
             invert,
-            filtered,
             activeComment,
-            focusing,
             userOwn,
             byAuth,
             bySlide,
             byTag,
         } = this.state;
-        const { talk, comments, reviewer, setModal, clearModal } = this.props;
+        const { talk, comments, reviewer } = this.props;
         if (!comments || !comments.length) {
             return <div className="alert"> no comments yet</div>;
         } else {
@@ -315,13 +315,13 @@ export default class TalkPage extends BaseComponent {
     render() {
         const { uploading } = this.state;
         const {
+            talk,
             talkId,
             sessionId,
             name,
             file,
             images,
             comments,
-            sessionOwner,
         } = this.props;
         const hasComments = comments.length > 0;
 
@@ -348,8 +348,8 @@ export default class TalkPage extends BaseComponent {
         const reviewLink = window.location.origin + "/review/" + talkId;
         // const uploadLink = window.location.origin + "/upload/" + talkId;
         // const downloadLink = `/download/${talkId}`;
+        // const sessLink = `/sessions/${sessionId}`;
         const shareLink = `/share/${sessionId}`;
-        const sessLink = `/sessions/${sessionId}`;
         const homeLink = shareLink;
 
         /*

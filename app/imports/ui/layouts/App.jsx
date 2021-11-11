@@ -32,7 +32,6 @@ import ForbiddenPage from "../pages/ForbiddenPage.jsx";
 import SessionListPage from "../pages/SessionListPage.jsx";
 import FacilitatePage from "../pages/FacilitatePage.jsx";
 import ReviewPage from "../pages/ReviewPage.jsx";
-import TalkListPage from "../pages/TalkListPage.jsx";
 import DiscussPage from "../pages/DiscussPage.jsx";
 
 const CONNECTION_ISSUE_TIMEOUT = 2000;
@@ -166,7 +165,7 @@ export default class App extends BaseComponent {
         }
     };
 
-    renderContent = ({ location, ...other }) => {
+    renderContent = ({ location }) => {
         this.renderSecure(); // http -> https
         const { modal } = this.state;
         const { loading } = this.props;
@@ -285,7 +284,7 @@ const PrivateRoute = ({ render, ...other }) => {
 
     //console.log(Meteor.loggingIn(), user, other.path, matchId, loc);
     //console.log(saved, Meteor.loggingOut(), loc);
-    const saved = localStorage.getItem("feedbacks.referringLink");
+    // const saved = localStorage.getItem("feedbacks.referringLink");
 
     if (user && permitted) {
         out = render;
