@@ -1,41 +1,5 @@
 # SlideSpecs
 
-cloning:
-
-    git clone https://github.com/berkeleyhci/SlideSpecs
-    cd SlideSpecs/app
-    meteor npm install
-
-running:
-
-    open http://localhost:3000
-    meteor
-
-deploying:
-
-    ssh slidespecs # bayscope2.eecs.berkeley.edu
-    cd Code/research-slidespecs
-    git pull
-
-monitoring:
-
-    ssh slidespecs # bayscope2.eecs.berkeley.edu
-    tmux a
-
-##### Data Import/Export
-
-To export data from production, use [`export.sh`](./export.sh). Move the files
-in a location specified in `import/api/storagePath.js`. Import the mongoDB
-records into a running meteor application with `mongoimport`, shown in the
-[`import.sh`](./import.sh) script. Copy from remote server:
-
-     scp -i ~/.ssh/slidespecs slidespecs.berkeley.edu:/Users/jwrnr/Code/research-slidespecs/data.tar.gz .
-
-Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
-
-[more instructions here](/app)
-# SlideSpecs
-
 - This is a Meteor app following [this structure guide](http://guide.meteor.com/structure.html).
 - The UI is implemented in [React](https://facebook.github.io/react/index.html).
 - More about using React in Meteor [here](http://guide.meteor.com/v1.3/react.html).
@@ -90,6 +54,18 @@ Configuration options (`.eslintrc`)
         ],
 }
 ```
+
+##### Data Import/Export
+
+To export data from production, use [`export.sh`](./export.sh). Move the files
+in a location specified in `import/api/storagePath.js`. Import the mongoDB
+records into a running meteor application with `mongoimport`, shown in the
+[`import.sh`](./import.sh) script. Copy from remote server:
+
+     scp -i ~/.ssh/slidespecs slidespecs.berkeley.edu:/Users/jwrnr/Code/research-slidespecs/data.tar.gz .
+
+Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
+
 
 ### Configuration
 
