@@ -33,9 +33,7 @@ class DiscussPage extends BaseComponent {
 
     handleLoad = () => {
         const grid = document.getElementById("grid");
-        const mason = new Masonry(grid, {
-            itemSelector: ".file-item",
-        });
+        new Masonry(grid, { itemSelector: ".file-item" });
     };
 
     extractFileData = (x) => {
@@ -131,7 +129,7 @@ class DiscussPage extends BaseComponent {
         if (src) this.updateHoverImage(src);
     };
 
-    handleSlideOut = (e) => {
+    handleSlideOut = () => {
         this.setState({ hoverImage: false });
     };
 
@@ -162,7 +160,6 @@ class DiscussPage extends BaseComponent {
     renderFilter = () => {
         let { byAuth, bySlide, byTag } = this.state;
         const sType = bySlide === "general" ? "scope" : "slide";
-        const { browserSupportsSpeechRecognition } = this.props;
         if (bySlide) bySlide = <kbd>{bySlide}</kbd>;
 
         return (
@@ -183,9 +180,8 @@ class DiscussPage extends BaseComponent {
     };
 
     renderCommentData = (arr, replies, c, i) => {
-        const { sessionId, comments, reviewer, setModal, clearModal } =
-            this.props;
-        const { sorter, invert, byAuth, bySlide, byTag } = this.state;
+        const { sessionId, reviewer, setModal, clearModal } = this.props;
+        const { byAuth, bySlide, byTag } = this.state;
         c.last = i === arr.length - 1; // no final hr
         c.replies = replies.filter((r) => r.replyTo == c._id);
         return {
@@ -214,7 +210,7 @@ class DiscussPage extends BaseComponent {
 
     renderComments = () => {
         const { sorter, invert, byAuth, bySlide, byTag } = this.state;
-        const { talk, comments, reviewer, setModal, clearModal } = this.props;
+        const { talk, comments } = this.props;
         if (!comments || !comments.length) {
             return <div className="alert"> no comments yet</div>;
         } else {
@@ -256,11 +252,10 @@ class DiscussPage extends BaseComponent {
             if (byAuth) {
                 csort = csort.filter((c) => c.author === byAuth);
             }
-            
+
             // split off 'addressed' comments
             const addressed = csort.filter((c) => c.addressed);
             csort = csort.filter((c) => !c.addressed);
-
 
             if (bySlide) {
                 csort = csort.filter((c) => {
@@ -304,7 +299,7 @@ class DiscussPage extends BaseComponent {
 
     renderContext = () => {
         const fileList = this.renderFiles();
-        const { image, hoverImage, bySlide } = this.state;
+        const { image, hoverImage } = this.state;
         const { name, talk, reviewer, sessionOwner } = this.props;
         const cmtHead = this.renderCommentFilter();
         const imgSrc = hoverImage ? hoverImage : image;

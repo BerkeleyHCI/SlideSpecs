@@ -1,32 +1,17 @@
 /* global gotStream, audioRecorder, audioContext */
 
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { Session } from "meteor/session.js";
-import { Link } from "react-router-dom";
+import React from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
 import { Sounds } from "../../api/sounds/sounds.js";
-import { Images } from "../../api/images/images.js";
 import BaseComponent from "../components/BaseComponent.jsx";
-import AlertLink from "../components/AlertLink.jsx";
 import CommentList from "../components/CommentList.jsx";
 import AppNotification from "../components/AppNotification.jsx";
-import SpeechRecognition from "react-speech-recognition";
-import Input from "../components/Input.jsx";
 import TextArea from "../components/TextArea.jsx";
-import SlideTags from "../components/SlideTags.jsx";
-import ClearingDiv from "../components/ClearingDiv.jsx";
-import FileReview from "../components/FileReview.jsx";
-import Clock from "../components/Clock.jsx";
-import Img from "../components/Image.jsx";
-import Message from "../components/Message.jsx";
-import Comment from "../components/Comment.jsx";
-import { Comments } from "../../api/comments/comments.js";
-import { createComment, addressComment } from "../../api/comments/methods.js";
-// import { setRespondingComment } from "../../api/talks/methods.js";
+import { createComment } from "../../api/comments/methods.js";
+import { setRespondingComment } from "../../api/talks/methods.js";
 
 class FacilitatePage extends BaseComponent {
     constructor(props) {
@@ -105,7 +90,7 @@ class FacilitatePage extends BaseComponent {
             content: cText,
             talk: talk._id,
             discuss: ["audience"],
-            userOwn: false,
+            userOwn: priv,
             slides: [],
         };
 
@@ -115,7 +100,7 @@ class FacilitatePage extends BaseComponent {
             } else {
                 this.clearText();
                 this.clearMatch();
-                // setRespondingComment.call({ talkId: talk._id, commentId: res });
+                setRespondingComment.call({ talkId: talk._id, commentId: res });
             }
         });
     };
@@ -136,7 +121,7 @@ class FacilitatePage extends BaseComponent {
     };
 
     generateCommentData = () => {
-        const { talk, comments, reviewer, setModal, clearModal } = this.props;
+        const { comments } = this.props;
         let csort = _.orderBy(comments, ["created"], ["asc"]);
 
         // Filter out transcript comments.
@@ -158,9 +143,8 @@ class FacilitatePage extends BaseComponent {
     };
 
     renderCommentData = (arr, replies, c, i) => {
-        const { sessionId, comments, reviewer, setModal, clearModal } =
-            this.props;
-        const { sorter, invert, byAuth, bySlide, byTag } = this.state;
+        const { sessionId, reviewer, setModal, clearModal } = this.props;
+        const { bySlide } = this.state;
         c.last = i === arr.length - 1; // no final hr
         c.replies = replies.filter((r) => r.replyTo == c._id);
         return {
@@ -185,7 +169,7 @@ class FacilitatePage extends BaseComponent {
     };
 
     renderComments = () => {
-        const { talk, comments, reviewer, setModal, clearModal } = this.props;
+        const { talk, comments } = this.props;
         if (!comments || !comments.length) {
             return <div className="alert"> no comments yet</div>;
         } else {
@@ -233,9 +217,8 @@ class FacilitatePage extends BaseComponent {
     };
 
     renderMatchComments = () => {
-        const { draftWords, sorter, invert, byAuth, bySlide, byTag } =
-            this.state;
-        const { talk, comments, reviewer, setModal, clearModal } = this.props;
+        const { draftWords, sorter, invert } = this.state;
+        const { talk, comments } = this.props;
         if (!draftWords || !comments || !comments.length) return null;
 
         let csort = _.orderBy(
@@ -310,12 +293,12 @@ class FacilitatePage extends BaseComponent {
     handleUpload = (blob) => {
         window.audioRecorder.clear();
         let { talk } = this.props;
-        const handleToast = ({ msg, desc, icon, closeTime }) => {
-            if (!closeTime) closeTime = 4000;
-            toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
-                autoClose: closeTime,
-            });
-        };
+        // const handleToast = ({ msg, desc, icon, closeTime }) => {
+        //     if (!closeTime) closeTime = 4000;
+        //     toast(() => <AppNotification msg={msg} desc={desc} icon={icon} />, {
+        //         autoClose: closeTime,
+        //     });
+        // };
 
         // Allow uploading files under 50MB for now.
         const goodSize = blob.size <= 50985760 && blob.size > 4096;
@@ -350,8 +333,8 @@ class FacilitatePage extends BaseComponent {
             if (!err) {
                 {
                     const { name, size } = file;
-                    console.log("upload complete", file.name);
-                    //this.log({name, size});
+                    console.log("upload complete", name);
+                    this.log({ name, size });
                 }
             } else {
                 console.error(err);
@@ -367,7 +350,7 @@ class FacilitatePage extends BaseComponent {
 
     clearRespond = () => {
         const { talk } = this.props;
-        // setRespondingComment.call({ talkId: talk._id, commentId: "" });
+        setRespondingComment.call({ talkId: talk._id, commentId: "" });
     };
 
     renderRespond = () => {
@@ -437,7 +420,6 @@ class FacilitatePage extends BaseComponent {
         this.setState({ recording: newRecord });
         this.log({ type: "record", recording: newRecord });
 
-        let msg;
         if (newRecord) {
             const newInterval = setInterval(this.handleAudioUpload, timeout);
             this.setState({ recInterval: newInterval });

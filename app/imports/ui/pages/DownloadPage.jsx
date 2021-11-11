@@ -281,16 +281,7 @@ class DownloadPage extends BaseComponent {
     };
 
     renderComments = () => {
-        const {
-            sorter,
-            invert,
-            filtered,
-            focusing,
-            userOwn,
-            byAuth,
-            bySlide,
-            byTag,
-        } = this.state;
+        const { sorter, invert, userOwn, byAuth, bySlide, byTag } = this.state;
         const { sessionId, comments, reviewer, setModal, clearModal } =
             this.props;
         if (!comments || !comments.length) {
@@ -380,7 +371,7 @@ class DownloadPage extends BaseComponent {
     };
 
     render() {
-        const { files, userId, session, talk } = this.props;
+        const { files, session, talk } = this.props;
         const download = this.renderDownload();
         const comments = this.renderComments();
 

@@ -1,5 +1,5 @@
 /* global $ */
-import React, { Fragment } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Markdown from "react-markdown";
 import { toast } from "react-toastify";
@@ -163,7 +163,7 @@ class Comment extends BaseComponent {
 
     handleEdit = () => {
         const newContent = this.editRef.current.value.trim();
-        const { author, discuss, reviewer, _id } = this.props;
+        const { author, _id } = this.props;
         const editFields = {
             commentId: _id,
             newContent,
@@ -242,10 +242,10 @@ class Comment extends BaseComponent {
 
     handleActiveComment = () => {
         const { discuss, talk, _id } = this.props;
-        const commentFields = {
-            talkId: talk,
-            commentId: _id,
-        };
+        // const commentFields = {
+        //     talkId: talk,
+        //     commentId: _id,
+        // };
 
         if (discuss.length == 0) {
             this.handleDiscuss();
@@ -383,7 +383,6 @@ class Comment extends BaseComponent {
     };
 
     renderComment = () => {
-        const { replying } = this.state;
         const {
             _id,
             author,
@@ -412,10 +411,7 @@ class Comment extends BaseComponent {
             clearButton,
             clearBySlide,
             setBySlide,
-            startTime,
-            stopTime,
             wordList,
-
             activeComment,
             facilitateView,
             discussView,

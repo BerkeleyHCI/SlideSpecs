@@ -56,9 +56,7 @@ class ReviewPage extends BaseComponent {
 
     handleLoad = () => {
         const grid = document.getElementById("grid");
-        const mason = new Masonry(grid, {
-            itemSelector: ".file-item",
-        });
+        new Masonry(grid, { itemSelector: ".file-item" });
     };
 
     handleGenerate = () => {
@@ -122,7 +120,7 @@ class ReviewPage extends BaseComponent {
 
     moveSlideUpdate = (inc) => {
         const { images } = this.props;
-        const { bySlide, selected } = this.state;
+        const { bySlide } = this.state;
         const first = bySlide.length == 0 ? 1 : +bySlide[0] + inc;
         if (first > images.length || first == 0) return;
         const image = images[first - 1];
@@ -220,7 +218,6 @@ class ReviewPage extends BaseComponent {
         if (selected.length === 0) {
             return null;
         } else {
-            const plural = selected.length > 1;
             const slideNos = _.sortBy(selected, (x) => Number(x.slideNo));
             const slideKeys = slideNos.map((s) => (
                 <kbd
@@ -389,9 +386,7 @@ class ReviewPage extends BaseComponent {
     };
 
     renderComments = () => {
-        const { comments, reviewer, setModal, clearModal } = this.props;
-        const { sorter, invert, activeComment, byAuth, bySlide, byTag } =
-            this.state;
+        const { comments } = this.props;
         if (!comments || !comments.length) {
             return <div className="alert"> no comments yet</div>;
         } else {
@@ -613,7 +608,6 @@ class ReviewPage extends BaseComponent {
     };
 
     generateSoundData = () => {
-        const { activeRegion } = this.state;
         const { sound } = this.props;
         if (!sound || !WaveSurfer) return {};
         const snd = Sounds.findOne({ _id: sound._id });
@@ -668,7 +662,7 @@ class ReviewPage extends BaseComponent {
             csort = csort.filter((c) => c.content.includes(byTag));
         }
 
-        const items = csort.map((c, i) => {
+        const items = csort.map((c) => {
             c.transcript = c.author === "transcript";
             c.active = c._id === activeComment; // highlight
             c.replies = replies.filter((r) => r.replyTo == c._id);
@@ -711,10 +705,10 @@ class ReviewPage extends BaseComponent {
 
     renderRegions = () => {
         const { duration, sorter, invert, byAuth, bySlide, byTag } = this.state;
-        const { talk, regions } = this.props;
+        const { regions } = this.props;
         if (!regions || !duration) return;
         if (!this.waveRef || !this.waveRef.current) return;
-        const wave = this.waveRef.current;
+        // const wave = this.waveRef.current;
 
         let filtered = regions
             .filter((w) => w.startTime < duration && w.stopTime > 0)
