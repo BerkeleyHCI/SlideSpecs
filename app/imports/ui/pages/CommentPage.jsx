@@ -47,7 +47,7 @@ class CommentPage extends BaseComponent {
     handleLoad = () => {
         const grid = document.getElementById("grid");
         const itemSel = { itemSelector: ".file-item" };
-        const mason = new Masonry(grid, itemSel);
+        new Masonry(grid, itemSel);
     };
 
     log = (data) => {
@@ -278,7 +278,7 @@ class CommentPage extends BaseComponent {
             slides,
         };
 
-        createComment.call(commentFields, (err, res) => {
+        createComment.call(commentFields, (err) => {
             if (err) {
                 console.error(err);
             } else {
@@ -305,7 +305,7 @@ class CommentPage extends BaseComponent {
 
     renderCommentHead = () => {
         const { talk } = this.props;
-        const { defaultPriv, focusing, userOwn } = this.state;
+        const { focusing, userOwn } = this.state;
         return (
             <span className="comment-config pull-right">
                 <span className="comment-option" onClick={this.toggleFocus}>
@@ -555,7 +555,6 @@ class CommentPage extends BaseComponent {
         const {
             sorter,
             invert,
-            filtered,
             activeComment,
             focusing,
             userOwn,
@@ -563,8 +562,7 @@ class CommentPage extends BaseComponent {
             bySlide,
             byTag,
         } = this.state;
-        const { sessionId, comments, reviewer, setModal, clearModal } =
-            this.props;
+        const { comments, reviewer, setModal, clearModal } = this.props;
         if (!comments || !comments.length) {
             return <div className="alert"> no comments yet</div>;
         } else {
@@ -658,7 +656,7 @@ class CommentPage extends BaseComponent {
     renderContext = () => {
         const fileList = this.renderFiles();
         const { image, hoverImage, selected, bySlide } = this.state;
-        const { name, sessionId, reviewer, sessionOwner } = this.props;
+        const { name, sessionId, reviewer } = this.props;
         const imgSrc = hoverImage ? hoverImage : image;
 
         return (

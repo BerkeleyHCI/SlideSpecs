@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import AlertLink from "../components/AlertLink.jsx";
 import BaseComponent from "../components/BaseComponent.jsx";
 import { Link } from "react-router-dom";
@@ -6,26 +6,6 @@ import MenuContainer from "../containers/MenuContainer.jsx";
 
 //<img className="gif" src="guide/jw_facilitate.gif" />
 //<img className="gif" src="guide/jw_transcription.gif" />
-//<VideoLink video={'hrCHEy5k_rU'} />
-//<VideoLink video={'mHI9E5xycc4'} />
-
-class VideoLink extends Component {
-    render() {
-        const { video } = this.props;
-        return (
-            <div className="embed-container">
-                <iframe
-                    width="560"
-                    height="315"
-                    src={`https://www.youtube.com/embed/${video}?rel=0&autohide=2`}
-                    frameBorder="0"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                />
-            </div>
-        );
-    }
-}
 
 class GuidePage extends BaseComponent {
     render() {

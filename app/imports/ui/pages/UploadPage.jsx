@@ -95,7 +95,7 @@ export default class UploadPage extends BaseComponent {
             />
         );
 
-        uploadInstance.on("progress", function (progress, _) {
+        uploadInstance.on("progress", function (progress) {
             setTalkProgress.call({ talkId, progress });
         });
 
@@ -108,7 +108,7 @@ export default class UploadPage extends BaseComponent {
             }
         });
 
-        uploadInstance.on("end", function (error, _) {
+        uploadInstance.on("end", function (error) {
             if (error) {
                 console.error(error);
             } else {
@@ -116,7 +116,7 @@ export default class UploadPage extends BaseComponent {
             }
         });
 
-        uploadInstance.on("error", function (error, _) {
+        uploadInstance.on("error", function (error) {
             console.error(`Error during upload.`, error);
         });
 
