@@ -6,10 +6,18 @@
 
 ### Running the app
 
+Copy and Edit this file to tell meteor where to save files:
+
+```bash
+cp imports/api/storagePath.default.js imports/api/storagePath.js
+```
+
+Installing and running the app
+
 ```bash
 meteor npm install
 meteor
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/slidespecs-research/app/private/slidespecs.json
+export GOOGLE_APPLICATION_CREDENTIALS=./app/private/slidespecs.json
 open http://localhost:3000
 ```
 
