@@ -530,7 +530,7 @@ class CommentPage extends BaseComponent {
         const getTag = (t) =>
             t.split(/\s/).filter((t) => t[0] == "#" && t.length > 1);
         const alltags = comments.map((c) => getTag(c.content));
-        const unique = _.uniq(_.flatten(alltags));
+        const unique = _.uniq(_.flatten(alltags)).filter(t => t !== "#private");
         return unique.map((tag) => (
             <a key={tag} onClick={this.insertTag} className="tag-link">
                 {tag}
