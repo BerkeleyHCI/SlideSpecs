@@ -102,10 +102,7 @@
     }
 }
 
-.btn.active {
-    background-color: @color-ancillary;
-    box-shadow: none;
-}
+
 
 .btns-empty {
     padding: 0px !important;
@@ -136,9 +133,22 @@
         }
     }
 }
-.btn-m-straight .btn {
+.btn-m-straight .btn.btn-menu {
+    border: 2px solid @color-raw;
     border-radius: 0px !important;
     text-transform: uppercase;
+    color: @color-well !important;
+    background-color: @color-raw;
+    &:hover {
+        background-color: darken(@color-raw, 5%);
+    }
+    &[class*="active"] {
+        border-bottom-color: @color-well;
+        box-shadow: none;
+        font-weight: bold;
+
+    }
+
 }
 
 .btns-group {
