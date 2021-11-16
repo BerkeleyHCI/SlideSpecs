@@ -29,11 +29,22 @@ class SessionItem extends BaseComponent {
         }
     };
 
-    deleteSession = (e) => {
-        e.stopPropagation();
-        const { name } = this.props;
-        if (confirm(`Delete ${name}?`))
-            deleteSession.call({ sessionId: this.props._id });
+    confirmDeleteSession = () => {
+        const { setModal, clearModal, name } = this.props;
+        setModal({
+            accept: this.deleteSession,
+            deny: clearModal,
+            mtitle: "Delete this session?",
+            mtext: name,
+            act: "delete",
+            isOpen: true,
+        });
+    };
+
+    deleteSession = () => {
+        const { clearModal } = this.props;
+        deleteSession.call({ sessionId: this.props._id });
+        clearModal()
     };
 
     render() {
@@ -46,7 +57,10 @@ class SessionItem extends BaseComponent {
                     <button onClick={this.renameSession} className="btn-menu">
                         rename
                     </button>
-                    <button onClick={this.deleteSession} className="btn-menu">
+                    <button
+                        onClick={this.confirmDeleteSession}
+                        className="btn-menu btn-danger"
+                    >
                         delete
                     </button>
                 </div>
@@ -88,14 +102,15 @@ export default class SessionListPage extends BaseComponent {
     };
 
     render() {
-        const { sessions, talks } = this.props;
+        const { sessions, talks, setModal, clearModal } = this.props;
+        const modal = { setModal, clearModal };
 
         let Sessions;
         if (!sessions || !sessions.length) {
             Sessions = <div className="alert">no sessions yet</div>;
         } else {
             Sessions = sessions.map((sess) => (
-                <SessionItem key={sess._id} {...sess} />
+                <SessionItem key={sess._id} {...sess} {...modal} />
             ));
         }
 

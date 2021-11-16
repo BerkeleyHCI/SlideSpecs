@@ -14,8 +14,7 @@
 
     // Style
     .title-caps;
-    /*transition: all 100ms ease-in;*/
-    color: @color-empty !important;
+    border: none;
     display: inline-block;
     position: relative;
     text-align: center;
@@ -25,53 +24,48 @@
     white-space: nowrap;
 
     &[class*="menu"] {
-        background-color: lighten(@color-danger, 25%);
-        color: @color-empty;
         padding: 0.2em 0.4em;
         letter-spacing: initial;
         text-transform: none;
         text-indent: initial;
+        color: @color-well;
+        background-color: @color-rare;
         &:hover {
-            background-color: lighten(@color-danger, 10%);
+            background-color: @color-note;
+            color: @color-full;
         }
+
     }
 
     &[class*="primary"] {
         background-color: @color-primary;
         color: @color-empty;
-        border: none;
-
         &:hover {
+            color: @color-empty;
             background-color: #00f;
         }
-
-        &:active {
-            box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
-        }
     }
-
+    
     &[class*="secondary"] {
-        box-shadow: lighten(#111, 5%) 0 0 0 1px inset;
         color: @color-medium !important;
-
         &:hover {
             color: @color-empty !important;
         }
-        &.active {
-            box-shadow: lighten(#111, 25%) 0 0 0 1px inset;
+    }
+    
+    &[class*="empty"] {
+        background-color: @color-empty;
+        color: @color-complementary !important;
+        &:hover {
+            background-color: darken(@color-empty, 5%);
         }
     }
-
+    
     &[class*="danger"] {
-        background-color: @color-danger;
-        color: @color-empty;
         border: none;
-
         &:hover {
-            background-color: darken(@color-danger, 5%);
-        }
-        &:active {
-            box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0 inset;
+            color: @color-empty !important;
+            background-color: @color-negative !important;
         }
     }
 
@@ -82,20 +76,11 @@
         border-radius: 2em;
         padding: 1em;
     }
-    &[class*="user"] {
-        /*background-color: darken(@color-primary, 5%) !important;*/
-    }
     &[class*="list-item"] {
         padding: 5px 10px;
     }
 
-    &[class*="empty"] {
-        background-color: @color-empty;
-        color: @color-danger !important;
-        &:hover {
-            background-color: darken(@color-empty, 5%);
-        }
-    }
+
 
     &[disabled] {
         opacity: 0.5;
@@ -140,7 +125,7 @@
     color: @color-well !important;
     background-color: @color-raw;
     &:hover {
-        background-color: darken(@color-raw, 5%);
+        background-color: @color-note;
     }
     &[class*="active"] {
         border-bottom-color: @color-well;

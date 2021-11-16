@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/research-slidespecs/app/private/slidespecs.json
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
+#export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/SlideSpecs/app/private/slidespecs.json
 
 result=1
 while [ $result -ne 0 ]; do

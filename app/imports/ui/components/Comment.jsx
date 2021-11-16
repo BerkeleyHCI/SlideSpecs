@@ -31,7 +31,7 @@ const CommentButton = ({ _id, reviewer, icon, txt, handleClick, master }) => {
             data-toggle="tooltip"
             data-placement="top"
             onClick={handleClick}
-            className={`btn btn-empty btn-list-item ${master && "btn-user"}`}
+            className={`btn btn-menu btn-list-item ${master && "btn-user"}`}
         >
             <i className={"fa fa-" + icon} />
         </button>

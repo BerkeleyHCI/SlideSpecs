@@ -157,10 +157,10 @@ class DownloadPage extends BaseComponent {
     renderDownload = () => {
         return (
             <div className="btns-group">
-                <button onClick={this.downloadJSON} className="btn btn-empty">
+                <button onClick={this.downloadJSON} className="btn btn-menu">
                     download JSON
                 </button>
-                <button onClick={this.downloadHTML} className="btn btn-empty">
+                <button onClick={this.downloadHTML} className="btn btn-menu">
                     download HTML
                 </button>
             </div>

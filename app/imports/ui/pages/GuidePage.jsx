@@ -32,6 +32,7 @@ class GuidePage extends BaseComponent {
                         your talks.
                     </p>
                     <img className="gif" src="guide/jw_signin.gif" />
+                    <hr />
                     <h3>Uploading slides</h3>
                     <p>
                         Drag and drop a PDF into the highlighted box to add a
@@ -41,6 +42,7 @@ class GuidePage extends BaseComponent {
                         comment.
                     </p>
                     <img className="gif" src="guide/jw_newtalk.gif" />
+                    <hr />
                     <h3>Feedback Review</h3>
                     <p>
                         SlideSpecs lets you sort and filter feedback by time,
@@ -197,6 +199,11 @@ class GuidePage extends BaseComponent {
                         link={`/signup`}
                     />
                 )}
+
+                <div className="v-pad">
+                    Please see the [ <Link to="/about">about page</Link> ] for
+                    more details and contact info.
+                </div>
 
                 <h3>
                     <span className="black"> ‹ </span>

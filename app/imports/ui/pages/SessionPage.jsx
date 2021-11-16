@@ -172,7 +172,7 @@ export default class SessionPage extends BaseComponent {
                         <div className="btns-group">
                             <button
                                 onClick={this.deleteFiles}
-                                className="btn btn-empty"
+                                className="btn btn-danger"
                             >
                                 delete all
                             </button>
