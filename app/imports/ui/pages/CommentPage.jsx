@@ -315,7 +315,7 @@ class CommentPage extends BaseComponent {
                 <span className="comment-option" onClick={this.toggleUserOwn}>
                     <i className={"fa fa-" + (userOwn ? "user" : "globe")} />{" "}
                     {userOwn ? "mine" : "all"}
-                </span>
+                </span>{" "}
                 <span
                     className="comment-option"
                     onClick={() => this.redirectTo(`/discuss/${talk._id}`)}

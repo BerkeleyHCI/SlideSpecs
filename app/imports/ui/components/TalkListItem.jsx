@@ -121,7 +121,7 @@ class TalkListItem extends Component {
                                     </button>
                                     <button
                                         onClick={this.deleteTalk}
-                                        className="btn-menu"
+                                        className="btn-menu btn-danger"
                                     >
                                         delete
                                     </button>

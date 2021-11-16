@@ -57,8 +57,8 @@ class SharePage extends BaseComponent {
                 <hr />
                 <code>{window.location.href}</code>
                 <hr />
+                <span className="black"> ‹ </span>
                 <Link to={`/sessions/${session._id}`}>
-                    <span className="black"> ‹ </span>
                     Go back to the session management panel.
                 </Link>
             </div>

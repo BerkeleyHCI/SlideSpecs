@@ -4,13 +4,13 @@
     span.list-title {
         cursor: pointer;
     }
-    border: 1px solid @color-raw;
+    border: 1px solid @color-rare;
     margin-top: 15px;
     padding: 0px;
 }
 
 .list-title {
-    background-color: @color-raw;
+    background-color: @color-rare;
     color: @color-well;
     padding: 10px 15px;
     display: block;
@@ -19,16 +19,8 @@
 }
 .list-title-clickable {
     &:hover {
-        background-color: darken(@color-raw, 5%);
+        background-color: darken(@color-rare, 5%);
     }
-}
-.list-title-note {
-    background-color: @color-note;
-}
-.list-title-basic {
-    background-color: @color-raw;
-    border: 1px solid @color-rare;
-    border-radius: 0px;
 }
 
 #comment-image {
@@ -46,17 +38,19 @@
 }
 
 .comment-config {
-    color: @color-danger;
-    .comment-option {
-        padding-left: 1em;
-    }
-    .comment-option:hover {
-        text-decoration: underline;
-    }
+    color: @color-well;
     &:hover {
         .comment-option {
-            color: @color-ancillary;
+            background-color: @color-rare;
         }
+    }
+
+    .comment-option {
+        padding: 0 0.5em;
+    }
+    .comment-option:hover {
+        background-color: @color-note !important;
+        color: @color-full;
     }
 }
 
@@ -99,7 +93,6 @@ div.comment {
     }
 
     &:hover {
-        background-color: lighten(@color-raw, 4%);
         .btns-empty {
             visibility: visible;
             .no-transition();
@@ -118,7 +111,7 @@ div.comment {
         }
         kbd {
             .no-select();
-            background-color: lighten(@color-danger, 10%);
+            background-color: darken(@color-rare, 5%);
         }
     }
 
@@ -177,7 +170,7 @@ div.comment {
             }
         }
         .btn-user:hover {
-            color: @color-ancillary !important;
+            color: @color-full !important;
         }
     }
 
@@ -198,10 +191,10 @@ div.comment.editing {
         background-color: @color-rare;
     }
     button:hover {
-        background-color: darken(@color-rare, 4%);
+        background-color: darken(@color-rare, 5%);
     }
     textarea {
-        background-color: darken(@color-rare, 4%);
+        background-color: darken(@color-rare, 5%);
         margin-bottom: 1em;
         padding: 1em;
     }
@@ -224,19 +217,19 @@ div.comment.editing {
     /*border-left-width: 1em;*/
 }
 .reply-comment-1 {
-    border-left: 0.5em solid @color-medium-rare;
+    border-left: 0.5em solid darken(@color-rare, 10%);
 }
 .reply-comment-2 {
-    border-left: 0.5em solid darken(@color-medium-rare, 15%);
+    border-left: 0.5em solid darken(@color-rare, 20%);
 }
 .reply-comment-3 {
-    border-left: 0.5em solid darken(@color-medium-rare, 25%);
+    border-left: 0.5em solid darken(@color-rare, 30%);
 }
 .reply-comment-4 {
-    border-left: 0.5em solid darken(@color-medium-rare, 30%);
+    border-left: 0.5em solid darken(@color-rare, 40%);
 }
 .reply-comment-5 {
-    border-left: 0.5em solid darken(@color-medium-rare, 35%);
+    border-left: 0.5em solid darken(@color-rare, 50%);
 }
 
 .markdown-comment {

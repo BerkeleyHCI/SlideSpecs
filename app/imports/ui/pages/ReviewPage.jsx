@@ -434,7 +434,7 @@ class ReviewPage extends BaseComponent {
                     <LocalLink to={`/slides/${talk._id}`}>{name}</LocalLink>
                     {sound && WaveSurfer && (
                         <button
-                            className="btn btn-menu pull-right btn-empty"
+                            className="btn btn-menu pull-right btn-menu"
                             onClick={this.handleExtra}
                         >
                             more

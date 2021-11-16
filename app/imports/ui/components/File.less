@@ -59,7 +59,7 @@ div.file-item {
     }
 
     button {
-        color: @color-danger !important;
+        color: @color-complementary !important;
         padding: 0.4em;
         &:hover {
             background: darken(@color-empty, 3%);
@@ -140,7 +140,7 @@ div.file-item.file-item-review {
         width: 2em;
         left: 0;
         z-index: 5;
-        background: red;
+        background: @color-negative;
         opacity: 0.9;
         animation: pulse 2s infinite ease-in-out;
         transition: width 0.5s;
@@ -247,7 +247,7 @@ div.reviewView {
 
     .btn-empty {
         border-width: 0px;
-        color: @color-danger !important;
+        color: @color-complementary !important;
         background-color: @color-empty !important;
         border-color: @color-raw !important;
         box-shadow: none !important;
@@ -311,16 +311,16 @@ div.reviewView {
     textarea {
         .yes-select();
         animation: pulse 3s infinite ease-in-out;
-        background: darken(aliceblue, 0%);
+        background: @color-secondary;
         padding: 15px 15px 5px 15px;
         &:hover {
-            border-left: 0.5em solid @color-raw;
+            border-left: 0.5em solid @color-rare;
             transition: border-width 0.1s ease;
             transition: background 0.1s ease;
-            background: darken(aliceblue, 3%);
+            background: darken(@color-secondary, 3%);
         }
         &:focus {
-            box-shadow: 0 4px 2px -2px @color-ancillary;
+            box-shadow: 0 4px 2px -2px @color-full;
             border-left: 1em solid @color-full;
             transition: border-width 0.1s ease;
             transition: border-color 0.1s ease;
@@ -340,27 +340,21 @@ div.reviewView {
 kbd {
     line-height: initial;
     display: inline-block;
-    background-color: lighten(@color-danger, 20%);
+    color: @color-well;
+    background-color: @color-rare;
     &:hover {
         background-color: @color-note !important;
         color: @color-full;
-    }
-}
-kbd.active {
-    background-color: @color-ancillary;
-    &:hover {
-        background-color: lighten(@color-ancillary, 10%);
-        color: @color-raw;
     }
 }
 
 .tag-active {
     opacity: 1;
     kbd.tag-count {
-        background-color: darken(@color-ancillary, 5%);
+        background-color: darken(@color-full, 5%);
         opacity: 1;
         &:hover {
-            background-color: @color-ancillary;
+            background-color: @color-full;
             opacity: 1;
         }
     }

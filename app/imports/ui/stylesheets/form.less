@@ -21,11 +21,11 @@ textarea {
     border-radius: 0;
     box-sizing: border-box;
     color: @color-full;
-    background-color: aliceblue;
+    background-color: @color-secondary;
     outline: none;
 
     &:hover {
-        background-color: darken(aliceblue, 2%);
+        background-color: darken(@color-secondary, 2%);
     }
 
     &[disabled] {
