@@ -97,7 +97,7 @@ class Comment extends BaseComponent {
             const { handleTag } = this.props;
             const id = this.props._id;
             // split here for hashtag rendering
-            //const words = props.split(/\s+|.,\/#!$%\^&\*;:{}=\-_`~()/).map((x, i) => {
+            // const words = props.split(/\s+|.,\/#!$%\^&\*;:{}=\-_`~()/).map((x, i) => {
             const words = props.split(/\s+/).map((x, i) => {
                 if (x[0] == "#" && x.length > 1) {
                     return (
