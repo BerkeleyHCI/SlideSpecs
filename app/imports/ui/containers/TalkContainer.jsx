@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Session } from "meteor/session.js";
 import BaseComponent from "../components/BaseComponent.jsx";
 import ReviewContainer from "../containers/ReviewContainer.jsx";
+import { checkUserTalk } from "../../api/talks/methods.js";
 import _ from "lodash";
 
 export default class TalkContainer extends BaseComponent {
@@ -12,16 +13,13 @@ export default class TalkContainer extends BaseComponent {
         return _id && (!sub || sub.type != "talk" || sub._id != _id);
     };
 
-    oldControlFilter = (comment) => {
-        const auth = ["system", this.props.reviewer];
+    controlFilter = (comment) => {
+        const auth = ["system", "SlideSpecs", this.props.reviewer];
         return (
-            !comment.userOwn ||
+            checkUserTalk.call({ matchId: comment.talk }) ||
+            (comment.author !== "transcript" && !comment.userOwn) ||
             (comment.userOwn && auth.includes(comment.author))
         );
-    };
-
-    controlFilter = (comment) => {
-        return comment.author !== "transcript";
     };
 
     getTalkProps = (_id) => {
