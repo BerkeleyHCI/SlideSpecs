@@ -1,4 +1,11 @@
-# SlideSpecs
+# [SlideSpecs](https://jeremywrnr.com/SlideSpecs/)
+
+*Automatic and Interactive Presentation Feedback Collation*
+
+
+Presenters often collect audience feedback through practice talks to refine their presentations. In formative interviews, we find that although text feedback and verbal discussions allow presenters to receive feedback, organizing that feedback into actionable presentation revisions remains challenging. Feedback can be redundant, lack context, or be spread across various emails, notes, and conversations. To collate and contextualize both text and verbal feedback, we present SlideSpecs. SlideSpecs lets audience members provide text feedback (e.g., ‘font too small’) along with an automatically detected context, including relevant slides (e.g., Slide 7) or content tags (e.g., ‘slide design’). In addition, SlideSpecs records and transcribes the spoken group discussion that commonly occurs after practice talks and facilitates linking text critiques to their relevant discussion segments. Finally, SlideSpecs lets the presenter review all text and spoken feedback in a single context-rich interface (e.g., relevant slides, topics, and follow-up discussions). We demonstrate the effectiveness of SlideSpecs by applying it to a range of eight presentations across computer vision, programming notebooks, sensemaking, and more. When surveyed, 85% of presenters and audience members reported they would use the tool again. Presenters reported that using SlideSpecs improved feedback organization, provided valuable context, and reduced redundancy.
+
+### Overview
 
 - This is a Meteor app following [this structure guide](http://guide.meteor.com/structure.html).
 - The UI is implemented in [React](https://facebook.github.io/react/index.html).
@@ -75,69 +82,8 @@ records into a running meteor application with `mongoimport`, shown in the
 Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
 
 
-### Configuration
 
-- current cert: `/usr/local/etc/dehydrated`
-- SSL/HTTPS
-    - (old) renew cert: `sudo dehydrated --cron -x`
-    - (new) https://certbot.eff.org/lets-encrypt/osx-nginx
-    - new - `sudo certbot renew`
-- todo
-    - https://github.com/tozd/docker-meteor
-    - run in 'production' mode
+Full paper: [PDF]()
 
+*Published in the Proceedings of the ACM Conference on Intelligent User Interfaces — IUI 2023*
 
-##### Server
-
-- nginx: `/usr/local/etc/nginx/servers/`
-- load conf: `sudo /usr/local/bin/nginx -s reload`
-
-
-```
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    ''      close;
-}
-
-server {
-    listen       80;
-    listen       8081;
-    listen       443 ssl;
-    server_name  slidespecs.berkeley.edu;
-
-    ssl_certificate /usr/local/etc/dehydrated/certs/slidespecs.berkeley.edu/fullchain.pem;
-    ssl_certificate_key  /usr/local/etc/dehydrated/certs/slidespecs.berkeley.edu/privkey.pem;
-
-    ssl_stapling on;
-    ssl_stapling_verify on;
-
-    location / {
-        proxy_pass   http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-    }
-
-    location /.well-known/acme-challenge {
-        alias /var/www/dehydrated;
-    }
-}
-```
-
-for accessing google cloud storage
-
-```
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/slidespecs-research/app/private/slidespecs.json
-```
-
-checking what process is using a port
-
-```
-netstat -nl|grep 9000
-```
-
-meteor up
-
-- http://meteor-up.com/docs.html#mongodb
-- http://meteor-up.com/getting-started.html
-- npm install -g mup
