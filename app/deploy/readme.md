@@ -1,4 +1,76 @@
 
+### Running the app
+
+Copy and Edit this file to tell meteor where to save files:
+
+```bash
+cp imports/api/storagePath.default.js imports/api/storagePath.js
+```
+
+Installing and running the app
+
+```bash
+meteor npm install
+meteor
+export GOOGLE_APPLICATION_CREDENTIALS=./app/private/slidespecs.json
+open http://localhost:3000
+```
+
+
+##### Audio Concatenation (osx)
+
+Best practices for audio recording: https://cloud.google.com/speech-to-text/docs/best-practices
+
+transcription material: http://www.ushistory.org/declaration/document/
+
+```
+brew install sox
+```
+
+##### PDF Conversion (osx)
+
+```bash
+brew install gs  # dependency
+brew install imagemagick      # convert
+brew install --cask libreoffice # soffice
+```
+
+### Scripts
+
+
+##### Linting
+
+To lint:
+
+```bash
+meteor npm run lint
+```
+
+Configuration options (`.eslintrc`)
+
+```json
+{
+        "extends": [
+            "eslint:recommended",
+            "plugin:react/recommended",
+            "@meteorjs/eslint-config-meteor",
+        ],
+}
+```
+
+##### Data Import/Export
+
+To export data from production, use [`export.sh`](./export.sh). Move the files
+in a location specified in `import/api/storagePath.js`. Import the mongoDB
+records into a running meteor application with `mongoimport`, shown in the
+[`import.sh`](./import.sh) script. Copy from remote server:
+
+     scp -i ~/.ssh/slidespecs slidespecs.berkeley.edu:/Users/jwrnr/Code/research-slidespecs/data.tar.gz .
+
+Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
+
+
+
 ### Configuration Notes
 
 - current cert: `/usr/local/etc/dehydrated`
