@@ -9,6 +9,7 @@ import AuthPage from "./AuthPage.jsx";
 class SignUpPage extends BaseComponent {
     constructor(props) {
         super(props);
+        document.title = "SlideSpecs — Sign Up";
         this.state = { errors: {} };
     }
 
@@ -112,8 +113,8 @@ class SignUpPage extends BaseComponent {
         );
 
         const link = (
-            <Link to="/signin" className="link-auth-alt">
-                sign in
+            <Link to="/login" className="link-auth-alt">
+                login
             </Link>
         );
 

@@ -115,42 +115,54 @@ export default class App extends BaseComponent {
     };
 
     renderGuidePage = ({ match }) => {
+        document.title = "SlideSpecs — Guide";
         return this.preRender(match, GuidePage, "user");
     };
     renderAboutPage = ({ match }) => {
+        document.title = "SlideSpecs — About";
         return this.preRender(match, AboutPage, "user");
     };
     renderSessionList = ({ match }) => {
+        document.title = "SlideSpecs — Home";
         return this.preRender(match, SessionListPage, "user");
     };
 
     renderSession = ({ match }) => {
+        document.title = "SlideSpecs — Session";
         return this.preRender(match, SessionPage, "session");
     };
     renderShare = ({ match }) => {
+        document.title = "SlideSpecs — Share";
         return this.preRender(match, SharePage, "session");
     };
 
     renderUpload = ({ match }) => {
+        document.title = "SlideSpecs — Upload";
         return this.preRender(match, UploadPage, "speaker");
     };
 
     renderTalk = ({ match }) => {
+        document.title = "SlideSpecs — Talk";
         return this.preRender(match, TalkPage, "talk");
     };
     renderComment = ({ match }) => {
+        document.title = "SlideSpecs — Comment";
         return this.preRender(match, CommentPage, "talk");
     };
     renderFacilitate = ({ match }) => {
+        document.title = "SlideSpecs — Facilitate";
         return this.preRender(match, FacilitatePage, "talk");
     };
     renderDiscuss = ({ match }) => {
+        document.title = "SlideSpecs — Discuss";
         return this.preRender(match, DiscussPage, "talk");
     };
     renderReview = ({ match }) => {
+        document.title = "SlideSpecs — Review";
         return this.preRender(match, ReviewPage, "talk");
     };
     renderDownload = ({ match }) => {
+        document.title = "SlideSpecs — Download";
         return this.preRender(match, DownloadPage, "talk");
     };
 
@@ -195,12 +207,18 @@ export default class App extends BaseComponent {
                             {...shared}
                         />
                         <Route
-                            path="/signin"
+                            path="/login"
                             component={AuthPageSignIn}
                             {...shared}
                         />
-                        <Route path="/guide" render={this.renderGuidePage} />
-                        <Route path="/about" render={this.renderAboutPage} />
+                        <Route
+                            path="/guide"
+                            render={this.renderGuidePage}
+                        />
+                        <Route
+                            path="/about"
+                            render={this.renderAboutPage}
+                        />
                         <Route path="/share/:id" render={this.renderShare} />
                         <Route path="/review/:id" render={this.renderReview} />
                         <Route
@@ -290,7 +308,7 @@ const PrivateRoute = ({ render, ...other }) => {
         out = render;
     } else if (!user && !Meteor.loggingOut()) {
         localStorage.setItem("feedbacks.referringLink", loc);
-        out = () => (loc !== "/signin" ? <Redirect to="/signin" /> : null);
+        out = () => (loc !== "/login" ? <Redirect to="/login" /> : null);
     } else if (!permitted) {
         out = () => <ForbiddenPage user={user} />;
     }

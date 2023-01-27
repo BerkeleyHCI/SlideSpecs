@@ -34,8 +34,8 @@ export default class UserMenu extends BaseComponent {
     renderLoggedOut() {
         return (
             <div className="user-menu">
-                <LocalLink to="/signin" className="btn-secondary">
-                    sign in
+                <LocalLink to="/login" className="btn-secondary">
+                    login
                 </LocalLink>
                 <LocalLink to="/signup" className="btn-secondary">
                     sign up
