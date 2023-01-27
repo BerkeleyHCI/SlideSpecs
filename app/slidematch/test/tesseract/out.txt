@@ -1,0 +1,17 @@
+INTRODUCTION
+
+Data can help makerspace staff and leadership understand the
+“pulse" of their space and inform strategic planning and deci-
+sion making. Data can also be useful in crafting compelling
+narratives to stakeholders and funders. Multiple prior papers
+at ISAM have stressed the importance of collecting and ana-
+lyzing data about makerspace usage. Prior work tends to fol-
+low one of two primary methodological approaches. First, de-
+scriptive statistics of automatically collected usage or sign—in
+data may reveal a ﬁne—grained view of activity patterns. Sec-
+ond, surveys completed by makerspace users can unravel the
+motivations and reasons for makerspace use. In this paper, we
+describe how to gain additional insights ﬁ'om automatically
+collected makerspace data by applying aggregated time—series
+analytics over multiple semesters.
+
