@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-#export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
+# export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
 export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/SlideSpecs/app/private/slidespecs.json
 
 result=1
 while [ $result -ne 0 ]; do
+    # from https://stackoverflow.com/questions/71147852/getting-certificate-has-expired-error-while-running-meteor
+    export NODE_TLS_REJECT_UNAUTHORIZED=0
     meteor --production 2>&1 | tee -a output.log
     result=${PIPESTATUS[0]}
     if [ $result -ne 0 ]; then

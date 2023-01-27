@@ -8,6 +8,7 @@ import AuthPage from "./AuthPage.jsx";
 class SignInPage extends BaseComponent {
     constructor(props) {
         super(props);
+        document.title = "SlideSpecs — Login";
         this.state = { errors: {} };
     }
 
@@ -54,7 +55,7 @@ class SignInPage extends BaseComponent {
 
         const content = (
             <div className="wrapper-auth">
-                <h1 className="title-auth">sign in</h1>
+                <h1 className="title-auth">login</h1>
                 <form onSubmit={this.onSubmit}>
                     <div className="list-errors">
                         {errorMessages.map((msg) => (
@@ -86,7 +87,7 @@ class SignInPage extends BaseComponent {
                         />
                     </div>
                     <button type="submit" className="btn-primary">
-                        sign in
+                        login
                     </button>
                 </form>
             </div>

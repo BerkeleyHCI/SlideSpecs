@@ -28,7 +28,7 @@ class GuidePage extends BaseComponent {
                     <h3>Getting Started</h3>
                     <p>
                         Login by typing in your password and username. The [{" "}
-                        <Link to={`/signin`}>home page</Link> ] lists all of
+                        <Link to={`/login`}>home page</Link> ] lists all of
                         your talks.
                     </p>
                     <img className="gif" src="guide/jw_signin.gif" />
