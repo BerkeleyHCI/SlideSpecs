@@ -13,4 +13,5 @@ build/
 datalogs/
 output/
 bayscope
+slidespecs
 .DS_Store
