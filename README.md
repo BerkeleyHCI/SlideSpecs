@@ -12,14 +12,15 @@ Presenters often collect audience feedback through practice talks to refine thei
 ### Overview
 
 - App feature overview: [SlideSpecs guide](https://slidespecs.berkeley.edu/guide)
+- Full research paper: [PDF]()
+- Hosted site: [SlideSpecs](https://slidespecs.berkeley.edu)
+<!-- - Video: [YouTube]() -->
+
+
+### Details
+
 - This is a Meteor app following [this structure guide](http://guide.meteor.com/structure.html).
   - The UI is implemented in [React](https://facebook.github.io/react/index.html).
   - Using React in Meteor: [more info](http://guide.meteor.com/v1.3/react.html).
 - More configuration notes: [readme.md](https://github.com/BerkeleyHCI/SlideSpecs/blob/main/app/deploy/readme.md)
 
-
-### Details
-
-- Hosted site: [SlideSpecs](https://slidespecs.berkeley.edu)
-- Full paper: [PDF]()
-<!-- - Video: [YouTube]() -->
