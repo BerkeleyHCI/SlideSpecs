@@ -13,7 +13,7 @@ Presenters often collect audience feedback through practice talks to refine thei
 
 - App feature overview: [SlideSpecs guide](https://slidespecs.berkeley.edu/guide)
 - Full research paper: [PDF]()
-- Hosted site: [SlideSpecs](https://slidespecs.berkeley.edu)
+- Example talk: [SlideSpecs](https://slidespecs.berkeley.edu/comment/tAHHEDR5n688c8rXM  )
 <!-- - Video: [YouTube]() -->
 
 
