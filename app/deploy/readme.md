@@ -7,7 +7,7 @@ Copy and Edit this file to tell meteor where to save files:
 cp imports/api/storagePath.default.js imports/api/storagePath.js
 ```
 
-Installing and running the app
+Installing and running the app:
 
 ```bash
 meteor npm install
@@ -15,6 +15,10 @@ meteor
 export GOOGLE_APPLICATION_CREDENTIALS=./app/private/slidespecs.json
 open http://localhost:3000
 ```
+
+Note that you'd need to use your own Google Application credential JSON.
+
+More on that: https://cloud.google.com/docs/authentication/application-default-credentials
 
 
 ##### Audio Concatenation (osx)
