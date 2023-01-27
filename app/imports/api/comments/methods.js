@@ -28,6 +28,13 @@ export const createComment = new ValidatedMethod({
     run({ session, talk, author, content, slides, agree, discuss, userOwn }) {
         const sess = Sessions.findOne({ _id: session });
         const uTalk = Talks.findOne({ _id: talk });
+
+        // Locking the demo session.
+        if (!sess || sess._id == "tAHHEDR5n688c8rXM") {
+            console.error("Session is locked.");
+            return false;
+        }
+
         if (sess && uTalk && uTalk.session === sess._id) {
             const data = {
                 created: Date.now(),
@@ -157,6 +164,13 @@ export const updateComment = new ValidatedMethod({
     }).validator(),
     run({ author, commentId, newContent }) {
         const comment = Comments.findOne({ _id: commentId });
+
+        // Locking the demo session.
+        if (!comment || comment.talk == "tAHHEDR5n688c8rXM") {
+            console.error("Session is locked.");
+            return false;
+        }
+        
         if (comment && comment.author == author) {
             const newOwn = comment.userOwn || newContent.includes("#private");
             Comments.update(commentId, {
