@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# run in / git.root
 
 NOW=$(date)
+
+LOCALFILES="$HOME/Downloads/slidespecs"
 
 # Mongo Collections to export.
 declare -a arr=("users" "Talks" "Comments" "Events" "Transcripts" "files" "images" "sounds")
@@ -14,10 +15,9 @@ done
 
 # copy files/images (hardcoded path)
 if [[ $1 != "--skip-files" ]]; then
-    files="$HOME/Downloads/research"
     dfile="db-files $NOW"
     mkdir -pv "$dfile"
-    cp -av "$files/." "$dfile/"
+    cp -av "$LOCALFILES/." "$dfile/"
 fi
 
 # export and zip
