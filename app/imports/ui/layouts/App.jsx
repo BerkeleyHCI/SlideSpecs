@@ -211,14 +211,8 @@ export default class App extends BaseComponent {
                             component={AuthPageSignIn}
                             {...shared}
                         />
-                        <Route
-                            path="/guide"
-                            render={this.renderGuidePage}
-                        />
-                        <Route
-                            path="/about"
-                            render={this.renderAboutPage}
-                        />
+                        <Route path="/guide" render={this.renderGuidePage} />
+                        <Route path="/about" render={this.renderAboutPage} />
                         <Route path="/share/:id" render={this.renderShare} />
                         <Route path="/review/:id" render={this.renderReview} />
                         <Route

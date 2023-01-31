@@ -1,4 +1,3 @@
-
 ### Running the app
 
 Copy and Edit this file to tell meteor where to save files:
@@ -20,7 +19,6 @@ Note that you'd need to use your own Google Application credential JSON.
 
 More on that: https://cloud.google.com/docs/authentication/application-default-credentials
 
-
 ##### Audio Concatenation (osx)
 
 Best practices for audio recording: https://cloud.google.com/speech-to-text/docs/best-practices
@@ -41,7 +39,6 @@ brew install --cask libreoffice # soffice
 
 ### Scripts
 
-
 ##### Linting
 
 To lint:
@@ -54,11 +51,11 @@ Configuration options (`.eslintrc`)
 
 ```json
 {
-        "extends": [
-            "eslint:recommended",
-            "plugin:react/recommended",
-            "@meteorjs/eslint-config-meteor",
-        ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "@meteorjs/eslint-config-meteor"
+    ]
 }
 ```
 
@@ -73,25 +70,21 @@ records into a running meteor application with `mongoimport`, shown in the
 
 Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
 
-
-
 ### Configuration Notes
 
-- current cert: `/usr/local/etc/dehydrated`
-- SSL/HTTPS
-    - (old) renew cert: `sudo dehydrated --cron -x`
-    - (new) https://certbot.eff.org/lets-encrypt/osx-nginx
-    - new - `sudo certbot renew`
-- todo
-    - https://github.com/tozd/docker-meteor
-    - run in 'production' mode
-
+-   current cert: `/usr/local/etc/dehydrated`
+-   SSL/HTTPS
+    -   (old) renew cert: `sudo dehydrated --cron -x`
+    -   (new) https://certbot.eff.org/lets-encrypt/osx-nginx
+    -   new - `sudo certbot renew`
+-   todo
+    -   https://github.com/tozd/docker-meteor
+    -   run in 'production' mode
 
 ##### Server
 
-- nginx: `/usr/local/etc/nginx/servers/`
-- load conf: `sudo /usr/local/bin/nginx -s reload`
-
+-   nginx: `/usr/local/etc/nginx/servers/`
+-   load conf: `sudo /usr/local/bin/nginx -s reload`
 
 ```
 map $http_upgrade $connection_upgrade {
@@ -138,6 +131,6 @@ netstat -nl|grep 9000
 
 meteor up
 
-- http://meteor-up.com/docs.html#mongodb
-- http://meteor-up.com/getting-started.html
-- npm install -g mup
+-   http://meteor-up.com/docs.html#mongodb
+-   http://meteor-up.com/getting-started.html
+-   npm install -g mup

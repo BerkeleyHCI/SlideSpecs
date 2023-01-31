@@ -44,7 +44,7 @@ class SessionItem extends BaseComponent {
     deleteSession = () => {
         const { clearModal } = this.props;
         deleteSession.call({ sessionId: this.props._id });
-        clearModal()
+        clearModal();
     };
 
     render() {

@@ -314,15 +314,8 @@ export default class TalkPage extends BaseComponent {
 
     render() {
         const { uploading } = this.state;
-        const {
-            talk,
-            talkId,
-            sessionId,
-            name,
-            file,
-            images,
-            comments,
-        } = this.props;
+        const { talk, talkId, sessionId, name, file, images, comments } =
+            this.props;
         const hasComments = comments.length > 0;
 
         let talkFile;
