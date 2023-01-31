@@ -21,6 +21,18 @@ class GuidePage extends BaseComponent {
                     Jump to: <a href="#presenters">presenters</a> |{" "}
                     <a href="#audience">audience</a> |{" "}
                     <a href="#instructors">instructors</a>
+                    <br />
+                    <br />
+                    Check out{" "}
+                    <a href="https://slidespecs.berkeley.edu/comment/W3dadgycsieaxMESB">
+                        an example talk with feedback.
+                    </a>
+                    <br />
+                    <br />
+                    See also: <Link to="/about">about SlideSpecs.</Link>
+                    <br />
+                    <br />
+                    <br />
                 </div>
 
                 <h2 id="presenters">For Presenters</h2>
@@ -28,8 +40,8 @@ class GuidePage extends BaseComponent {
                     <h3>Getting Started</h3>
                     <p>
                         Login by typing in your password and username. The [{" "}
-                        <Link to={`/login`}>home page</Link> ] lists all of
-                        your talks.
+                        <Link to={`/login`}>home page</Link> ] lists all of your
+                        talks.
                     </p>
                     <img className="gif" src="guide/jw_signin.gif" />
                     <hr />
