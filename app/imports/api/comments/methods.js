@@ -30,7 +30,7 @@ export const createComment = new ValidatedMethod({
         const uTalk = Talks.findOne({ _id: talk });
 
         // Locking the demo session.
-        if (!sess || sess._id == "tAHHEDR5n688c8rXM") {
+        if (!sess || sess._id == "W3dadgycsieaxMESB") {
             console.error("Session is locked.");
             return false;
         }
@@ -166,7 +166,7 @@ export const updateComment = new ValidatedMethod({
         const comment = Comments.findOne({ _id: commentId });
 
         // Locking the demo session.
-        if (!comment || comment.talk == "tAHHEDR5n688c8rXM") {
+        if (!comment || comment.talk == "W3dadgycsieaxMESB") {
             console.error("Session is locked.");
             return false;
         }
