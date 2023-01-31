@@ -64,6 +64,13 @@ export const addressComment = new ValidatedMethod({
     }).validator(),
     run({ commentId }) {
         const comment = Comments.findOne({ _id: commentId });
+
+        // Locking the demo session.
+        if (!comment || comment.talk == lockedTalkId) {
+            console.error("Session is locked.");
+            return false;
+        }
+
         if (comment) {
             const newAddress = !comment.addressed;
             return Comments.update(commentId, {
@@ -83,7 +90,7 @@ export const completeComment = new ValidatedMethod({
     }).validator(),
     run({ commentId }) {
         const comment = Comments.findOne({ _id: commentId });
-        if (!comment) {
+        if (!comment || comment.talk == lockedTalkId) {
             return false;
         } else {
             const newComplete = !comment.completed;
@@ -103,7 +110,7 @@ export const agreeComment = new ValidatedMethod({
     run({ author, commentId }) {
         author = author.trim();
         const comment = Comments.findOne({ _id: commentId });
-        if (!comment) {
+        if (!comment || comment.talk == lockedTalkId) {
             return false;
         }
 
@@ -136,7 +143,7 @@ export const discussComment = new ValidatedMethod({
     run({ author, commentId }) {
         author = author.trim();
         const comment = Comments.findOne({ _id: commentId });
-        if (!comment) {
+        if (!comment || comment.talk == lockedTalkId) {
             return false;
         }
 
@@ -172,7 +179,7 @@ export const updateComment = new ValidatedMethod({
             console.error("Session is locked.");
             return false;
         }
-        
+
         if (comment && comment.author == author) {
             const newOwn = comment.userOwn || newContent.includes("#private");
             Comments.update(commentId, {
@@ -190,6 +197,10 @@ export const toggleVisibility = new ValidatedMethod({
     }).validator(),
     run({ author, commentId }) {
         const comment = Comments.findOne({ _id: commentId });
+        if (!comment || comment.talk == lockedTalkId) {
+            return false;
+        }
+
         if (comment && comment.author == author) {
             Comments.update(commentId, {
                 $set: { userOwn: !comment.userOwn },
@@ -206,6 +217,10 @@ export const deleteComment = new ValidatedMethod({
     }).validator(),
     run({ author, commentId }) {
         const comment = Comments.findOne({ _id: commentId });
+        if (!comment || comment.talk == lockedTalkId) {
+            return false;
+        }
+
         if (comment && comment.author == author) {
             // console.log({ type: "comment.delete", ...comment });
             Comments.remove(commentId);
