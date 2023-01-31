@@ -10,6 +10,8 @@ const SlideSchema = new SimpleSchema({
     slideId: { type: String },
 });
 
+const lockedTalkId = "W3dadgycsieaxMESB";
+
 export const createComment = new ValidatedMethod({
     name: "comments.create",
     validate: new SimpleSchema({
@@ -30,7 +32,7 @@ export const createComment = new ValidatedMethod({
         const uTalk = Talks.findOne({ _id: talk });
 
         // Locking the demo session.
-        if (!sess || sess._id == "W3dadgycsieaxMESB") {
+        if (!talk || talk == lockedTalkId) {
             console.error("Session is locked.");
             return false;
         }
@@ -166,7 +168,7 @@ export const updateComment = new ValidatedMethod({
         const comment = Comments.findOne({ _id: commentId });
 
         // Locking the demo session.
-        if (!comment || comment.talk == "W3dadgycsieaxMESB") {
+        if (!comment || comment.talk == lockedTalkId) {
             console.error("Session is locked.");
             return false;
         }
