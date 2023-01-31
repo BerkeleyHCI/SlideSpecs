@@ -30,7 +30,7 @@ class GuidePage extends BaseComponent {
                     .
                     <br />
                     <br />
-                    See also: <Link to="/about">about SlideSpecs.</Link>
+                    See also: <Link to="/about">about SlideSpecs</Link>.
                     <br />
                     <br />
                     <br />
