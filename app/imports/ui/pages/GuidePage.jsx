@@ -25,8 +25,9 @@ class GuidePage extends BaseComponent {
                     <br />
                     Check out{" "}
                     <a href="https://slidespecs.berkeley.edu/comment/W3dadgycsieaxMESB">
-                        an example talk with feedback.
+                        an example talk with feedback
                     </a>
+                    .
                     <br />
                     <br />
                     See also: <Link to="/about">about SlideSpecs.</Link>
