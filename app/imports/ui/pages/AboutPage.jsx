@@ -51,16 +51,24 @@ class AboutPage extends BaseComponent {
                         </dd>
                     </dl>
                     <div className="v-pad">
-                        Check out the [ <Link to="/guide">user guide</Link> ] to
-                        see more of what SlideSpecs can do. Please contact [{" "}
-                        <a
-                            href="https://jeremywrnr.com/"
-                            rel="noopener noreferrer"
-                            target="_blank"
-                        >
-                            Jeremy Warner
-                        </a>{" "}
-                        ] with feedback or questions.
+                        <p>
+                            See the [<Link to="/guide">user guide</Link>] for
+                            more of what SlideSpecs can do.
+                        </p>
+
+                        <p>
+                            Please contact [
+                            <a href="https://jeremywrnr.com/">Jeremy Warner</a>]
+                            with feedback or questions.
+                        </p>
+
+                        <p>
+                            The [
+                            <a href="https://github.com/BerkeleyHCI/SlideSpecs">
+                                source code
+                            </a>
+                            ] for SlideSpecs is on GitHub.
+                        </p>
                     </div>
                 </div>
 
