@@ -32,19 +32,25 @@ class GuidePage extends BaseComponent {
                     <br />
                     See also: <Link to="/about">about SlideSpecs</Link>.
                     <br />
-                    <br />
-                    <br />
                 </div>
+
+                {!user && (
+                    <AlertLink
+                        center={true}
+                        text={"Create An Account"}
+                        link={`/signup`}
+                    />
+                )}
 
                 <h2 id="presenters">For Presenters</h2>
                 <div className="alert">
                     <h3>Getting Started</h3>
                     <p>
-                        Login by typing in your password and username. The [{" "}
-                        <Link to={`/login`}>home page</Link> ] lists all of your
+                        Login by typing in your password and username. The [
+                        <Link to={`/login`}>home page</Link>] lists all of your
                         talks.
                     </p>
-                    <img className="gif" src="guide/jw_signin.gif" />
+                    {/* <img className="gif" src="guide/jw_signin.gif" /> */}
                     <hr />
                     <h3>Uploading slides</h3>
                     <p>
@@ -54,14 +60,14 @@ class GuidePage extends BaseComponent {
                         Share the first link with your audience to let them
                         comment.
                     </p>
-                    <img className="gif" src="guide/jw_newtalk.gif" />
+                    {/* <img className="gif" src="guide/jw_newtalk.gif" /> */}
                     <hr />
                     <h3>Feedback Review</h3>
                     <p>
                         SlideSpecs lets you sort and filter feedback by time,
                         author, or slide.
                     </p>
-                    <img src="guide/review.png" />
+                    {/* <img src="guide/review.png" /> */}
                 </div>
 
                 <h2 id="audience">For Audience Members</h2>
@@ -73,7 +79,7 @@ class GuidePage extends BaseComponent {
                         <br /> You can also edit and delete comments that you
                         have authored.
                     </p>
-                    <img className="gif" src="guide/jw_comment.gif" />
+                    {/* <img className="gif" src="guide/jw_comment.gif" /> */}
                     <h4>Attach Comments to Specific Slides</h4>
                     <p>
                         To select a single slide to associate your comment with,
@@ -87,13 +93,14 @@ class GuidePage extends BaseComponent {
                     <p>
                         With the share view, you can hover over comments to
                         reply, agree, and discuss.
-                    </p>
-                    <img className="outlined" src="guide/share-mode.png" />
-                    <p>
+                        <br />
                         With the focus view, comments hide any interaction
                         options.
+                    {/* 
+                     <img className="outlined" src="guide/share-mode.png" /> 
+                    */}
                     </p>
-                    <img className="outlined" src="guide/focus-mode.png" />
+                    {/* <img className="outlined" src="guide/focus-mode.png" /> */}
                 </div>
 
                 <h2 id="instructors">For Instructors</h2>
@@ -124,10 +131,10 @@ class GuidePage extends BaseComponent {
                 </div>
                 <div className="alert">
                     <h3>Logging in</h3>
-                    <img
+                    {/* <img
                         className="gif"
                         src="guide/logging_in_session_owner.gif"
-                    />
+                    /> */}
                     <p>
                         If it is your first time using SlideSpecs, create an
                         account.
@@ -137,14 +144,14 @@ class GuidePage extends BaseComponent {
                     </p>
                     <hr />
                     <h3>View all sessions</h3>
-                    <img src="guide/session_home_screen.png" />
+                    {/* <img src="guide/session_home_screen.png" /> */}
                     <p>
                         The home page lists all your sessions. You can also
                         create new sessions here.
                     </p>
                     <hr />
                     <h3>Uploading slides</h3>
-                    <img className="gif" src="guide/add_presentations.gif" />
+                    {/* <img className="gif" src="guide/add_presentations.gif" /> */}
                     <p>
                         Drag and drop PDFs into the highlighted box to add
                         presentations. <br /> Alternatively, click "+ new" to
@@ -156,13 +163,13 @@ class GuidePage extends BaseComponent {
                     shift the order of talks. <br />
                     You can also rename talks with the "rename" button.
                     <hr />
-                    <h3>Sharing a session</h3>
+                    {/* <h3>Sharing a session</h3> */}
                     <div className="subsection">
                         <h4>Allowing presenters to add their own slides</h4>
-                        <img
+                        {/* <img
                             className="gif"
                             src="guide/share_presenter_link_working.gif"
-                        />
+                        /> */}
                         To allow presenters to add their own slides click on
                         'open link.'
                         <ul>
@@ -170,10 +177,10 @@ class GuidePage extends BaseComponent {
                         </ul>
                         <hr />
                         <h4>Sharing presentation link with audience members</h4>
-                        <img
+                        {/* <img
                             className="gif"
                             src="guide/share_slides_with_audience_2.gif"
-                        />
+                        /> */}
                         To share the presentation click on 'open link.'
                         <ul>
                             <li> Home → Selected Session → Open Link </li>
@@ -184,9 +191,9 @@ class GuidePage extends BaseComponent {
                         </ul>
                     </div>
                     <hr />
-                    <h3>Entering a Session</h3>
-                    <img className="gif" src="guide/entering_session.gif" />
-                    <hr />
+                    {/* <h3>Entering a Session</h3> */}
+                    {/* <img className="gif" src="guide/entering_session.gif" />
+                    <hr /> */}
                     <h3 id="facilitators">Facilitators</h3>
                     <p>
                         To augment the feedback data, a discussion facilitator
@@ -197,12 +204,12 @@ class GuidePage extends BaseComponent {
                         discussion, which can later be transcribed. The
                         facilitator can mark which comments are being discussed.
                     </p>
-                    <img className="gif" src="guide/jw_audio.gif" />
+                    {/* <img className="gif" src="guide/jw_audio.gif" /> */}
                     <p>
                         Mark top-level comments for discussion; these comments
                         will show in the discussion view.
                     </p>
-                    <img className="gif" src="guide/jw_discuss.gif" />
+                    {/* <img className="gif" src="guide/jw_discuss.gif" /> */}
                 </div>
 
                 {!user && (
@@ -214,7 +221,7 @@ class GuidePage extends BaseComponent {
                 )}
 
                 <div className="v-pad">
-                    Please see the [ <Link to="/about">about page</Link> ] for
+                    Please see the [<Link to="/about">about page</Link>] for
                     more details and contact info.
                 </div>
 

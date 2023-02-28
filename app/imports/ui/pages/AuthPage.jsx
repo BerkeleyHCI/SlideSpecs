@@ -22,9 +22,9 @@ class AuthPage extends BaseComponent {
                         <div>
                             <Link to={`/about`}>
                                 <div className="alert">
-                                    <span className="black"> [ </span>
+                                    <span className="black">[</span>
                                     about SlideSpecs
-                                    <span className="black"> ] </span>
+                                    <span className="black">]</span>
                                 </div>
                             </Link>
                             {content}
