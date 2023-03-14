@@ -3,6 +3,9 @@
 # export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
 export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/SlideSpecs/app/private/slidespecs.json
 
+# periodically update browserlists
+meteor npx browserslist@latest --update-db
+
 result=1
 while [ $result -ne 0 ]; do
     # from https://stackoverflow.com/questions/71147852/getting-certificate-has-expired-error-while-running-meteor
