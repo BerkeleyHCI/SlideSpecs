@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # convert-slides [file.pptx] [/out/dir/]
 # will output in /out/dir/images and

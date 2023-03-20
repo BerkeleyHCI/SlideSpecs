@@ -1,9 +1,13 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # convert-pdf [file.pdf] [/out/dir]
 
 # requirements
 # convert -- brew install imagemagick
+
+export MAGICK_HOME="$HOME/Code/ImageMagick-7.0.10"
+export PATH="$MAGICK_HOME/bin:$PATH"
+export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 
 full=$(basename -- "$1")
 base="${full%.*}"
