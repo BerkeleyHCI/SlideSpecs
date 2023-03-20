@@ -336,7 +336,7 @@ export default class TalkPage extends BaseComponent {
             />
         ));
 
-        // const facilitateLink = window.location.origin + "/facilitate/" + talkId;
+        const facilitateLink = window.location.origin + "/facilitate/" + talkId;
         const commentLink = window.location.origin + "/comment/" + talkId;
         const reviewLink = window.location.origin + "/review/" + talkId;
         // const uploadLink = window.location.origin + "/upload/" + talkId;
@@ -389,6 +389,11 @@ export default class TalkPage extends BaseComponent {
                     text={"Share this talk with a public link"}
                     bText={"open link"}
                     link={commentLink}
+                />
+                <AlertLink
+                    text={"Facilitate a discussion for this talk"}
+                    bText={"open link"}
+                    link={facilitateLink}
                 />
 
                 {hasComments && (

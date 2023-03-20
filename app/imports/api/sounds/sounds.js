@@ -8,6 +8,9 @@ export const Sounds = new FilesCollection({
     storagePath: `${storagePath}/sounds`, // persist in this spot
     allowClientCode: false, // Disallow remove files from Client
     onBeforeUpload(file) {
+        console.log("Audio upload disabled.");
+        return false;
+
         if (
             file.size > 1000 &&
             file.size <= 29485760 &&

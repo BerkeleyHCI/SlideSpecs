@@ -171,7 +171,7 @@ class FacilitatePage extends BaseComponent {
     renderComments = () => {
         const { talk, comments } = this.props;
         if (!comments || !comments.length) {
-            return <div className="alert"> no comments yet</div>;
+            return <div className="alert"> no discussion comments yet</div>;
         } else {
             let { csort, replies } = this.generateCommentData();
 
@@ -453,6 +453,8 @@ class FacilitatePage extends BaseComponent {
     };
 
     handleAudioUpload = () => {
+        return // no more audio uploads
+
         if (window.audioRecorder) {
             window.audioRecorder.exportMonoWAV(this.handleUpload);
             //window.audioRecorder.exportWAV(this.handleUpload);
