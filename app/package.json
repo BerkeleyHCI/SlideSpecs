@@ -9,7 +9,7 @@
         "@babel/runtime": "^7.16.3",
         "autoprefixer": "^8.6.5",
         "autosize": "^4.0.4",
-        "bcrypt": "^2.0.1",
+        "bcrypt": "^5.1.0",
         "browserslist": "^4.21.5",
         "classnames": "^2.2.6",
         "enzyme": "^3.9.0",
