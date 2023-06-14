@@ -4,32 +4,23 @@
 
 server {
     server_name  slidespecs.berkeley.edu;
+    listen       80;
+    listen       [::]:80;
     ssl_stapling on;
     ssl_stapling_verify on;
 
     location / {
         proxy_pass   http://127.0.0.1:3000;
         proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
     }
 
     listen 443 ssl; # managed by Certbot
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
     ssl_certificate /etc/letsencrypt/live/slidespecs.berkeley.edu/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/slidespecs.berkeley.edu/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
-
-
-
-server {
-    if ($host = slidespecs.berkeley.edu) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-    listen       80;
-    server_name  slidespecs.berkeley.edu;
-    return 404; # managed by Certbot
 }
 
