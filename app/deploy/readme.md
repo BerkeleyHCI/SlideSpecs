@@ -134,3 +134,13 @@ meteor up
 -   http://meteor-up.com/docs.html#mongodb
 -   http://meteor-up.com/getting-started.html
 -   npm install -g mup
+
+
+autostart mac running ubuntu on power failure
+
+- http://www.macfreek.nl/memory/Reboot_Mac_running_Linux_after_power_failure
+- https://superuser.com/questions/212434/how-to-reboot-after-power-failure-for-mac-mini-running-ubuntu
+- https://smackerelofopinion.blogspot.com/2011/09/mac-mini-rebooting-tweaks-setpci-s-01f0.html
+- https://askubuntu.com/questions/99263/use-setpci-to-restart-ubuntu-server-after-power-failure-on-macbook
+- https://www.intel.com/content/www/us/en/io/io-controller-hub-10-family-datasheet.html
+
