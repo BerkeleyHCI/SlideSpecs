@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/jeremy/Code/SlideSpecs/app/private/slidespecs.json
 # export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/SlideSpecs/app/private/slidespecs.json
 
 # periodically update browserlists
 meteor npx browserslist@latest --update-db
