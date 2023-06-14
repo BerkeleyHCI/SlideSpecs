@@ -1,7 +1,18 @@
-#!/usr/bin/env zsh
+#!/usr/bin/zsh
 
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/jeremy/Code/SlideSpecs/app/private/slidespecs.json
-# export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Documents/Code/research-slidespecs/app/private/slidespecs.json
+# Repo location
+export SLIDESPECS=/home/jeremy/Code/SlideSpecs/app
+# export SLIDESPECS=/Users/jwrnr/Documents/Code/research-slidespecs/app
+
+# Get path for tmux invocation
+source /home/jeremy/.zshrc
+
+# Go to app
+cd $SLIDESPECS
+pwd
+
+# File uploading
+export GOOGLE_APPLICATION_CREDENTIALS=$SLIDESPECS/private/slidespecs.json
 
 # periodically update browserlists
 meteor npx browserslist@latest --update-db
