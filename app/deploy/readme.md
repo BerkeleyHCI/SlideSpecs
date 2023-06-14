@@ -6,7 +6,7 @@ Copy and Edit this file to tell meteor where to save files:
 cp imports/api/storagePath.default.js imports/api/storagePath.js
 ```
 
-Installing and running the app:
+Installing and running the app (or [start](../start)):
 
 ```bash
 meteor npm install
@@ -32,9 +32,8 @@ brew install sox
 ##### PDF Conversion (osx)
 
 ```bash
-brew install gs  # dependency
-brew install imagemagick      # convert
-brew install --cask libreoffice # soffice
+brew install gs imagemagick     # for convert
+brew install --cask libreoffice # for soffice
 ```
 
 ### Scripts
@@ -66,77 +65,57 @@ in a location specified in `import/api/storagePath.js`. Import the mongoDB
 records into a running meteor application with `mongoimport`, shown in the
 [`import.sh`](./import.sh) script. Copy from remote server:
 
-     scp -i ~/.ssh/slidespecs slidespecs.berkeley.edu:/Users/jwrnr/Code/research-slidespecs/data.tar.gz .
+     scp -i ~/.ssh/slidespecs slidespecs.berkeley.edu:/home/jeremy/Code/slidespecs/data.tar.gz .
 
 Installing `mongodb` may be required to use `mongoimport`: `brew install mongodb`
 
 ### Configuration Notes
 
--   current cert: `/usr/local/etc/dehydrated`
 -   SSL/HTTPS
-    -   (old) renew cert: `sudo dehydrated --cron -x`
-    -   (new) https://certbot.eff.org/lets-encrypt/osx-nginx
-    -   new - `sudo certbot renew`
+    - https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal
+    - see also [nginx.conf](./nginx.conf) and [slidespecs.nginx](./slidespecs.nginx)  
 -   todo
     -   https://github.com/tozd/docker-meteor
     -   run in 'production' mode
 
 ##### Server
 
--   nginx: `/usr/local/etc/nginx/servers/`
--   load conf: `sudo /usr/local/bin/nginx -s reload`
+-   nginx: `/etc/nginx/`
+-   load conf: `sudo nginx -s reload`
+-   see also [nginx.conf](./nginx.conf) and [slidespecs.nginx](./slidespecs.nginx)
 
-```
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    ''      close;
-}
 
-server {
-    listen       80;
-    listen       8081;
-    listen       443 ssl;
-    server_name  slidespecs.berkeley.edu;
+## etc
 
-    ssl_certificate /usr/local/etc/dehydrated/certs/slidespecs.berkeley.edu/fullchain.pem;
-    ssl_certificate_key  /usr/local/etc/dehydrated/certs/slidespecs.berkeley.edu/privkey.pem;
+##### starting a tmux shell on boot
 
-    ssl_stapling on;
-    ssl_stapling_verify on;
-
-    location / {
-        proxy_pass   http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-    }
-
-    location /.well-known/acme-challenge {
-        alias /var/www/dehydrated;
-    }
-}
+```bash
+crontab -e              # user
+sudo vim /etc/crontab   # root
 ```
 
-for accessing google cloud storage
+relevant scripts: [tmux-init.sh](./tmux-init.sh) and [start](../start)
 
-```
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/jwrnr/Code/slidespecs-research/app/private/slidespecs.json
-```
+##### for accessing google cloud storage
 
-checking what process is using a port
-
-```
-netstat -nl|grep 9000
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS=/home/jeremy/Code/SlideSpecs/app/private/slidespecs.json
 ```
 
-meteor up
+##### checking what process is using a port
+
+```bash
+netstat -nl | grep 9000
+```
+
+##### meteor up (see [mup.js](./mup.js))
 
 -   http://meteor-up.com/docs.html#mongodb
 -   http://meteor-up.com/getting-started.html
 -   npm install -g mup
 
 
-autostart mac running ubuntu on power failure
+##### autostart mac hardware running ubuntu on power failure
 
 - http://www.macfreek.nl/memory/Reboot_Mac_running_Linux_after_power_failure
 - https://superuser.com/questions/212434/how-to-reboot-after-power-failure-for-mac-mini-running-ubuntu
