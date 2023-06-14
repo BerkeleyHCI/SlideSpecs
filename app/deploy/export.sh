@@ -2,7 +2,8 @@
 
 NOW=$(date)
 
-LOCALFILES="$HOME/Downloads/slidespecs"
+SLIDESPECS=/home/jeremy/Code/SlideSpecs
+LOCALFILES="/home/jeremy/Documents/slidespecs-db"
 
 # Mongo Collections to export.
 declare -a arr=("users" "Talks" "Comments" "Events" "Transcripts" "files" "images" "sounds")
@@ -20,13 +21,16 @@ if [[ $1 != "--skip-files" ]]; then
     cp -av "$LOCALFILES/." "$dfile/"
 fi
 
-# export and zip
+# Compress and move
 echo "Compressing."
 dump="data.tar.gz"
 if [[ -n $dfile ]]; then
     tar -czf "$dump" "$data" "$dfile"
+    mv "$dump" "$data" "$dfile" "$SLIDESPECS"
 else
     tar -czf "$dump" "$data"
+    mv "$dump" "$data" "$SLIDESPECS"
 fi
+
 echo "Export done."
 
