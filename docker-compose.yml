@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  slidespecs:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - STORAGE_PATH=/storage
+    volumes:
+      - ./storage:/storage
